@@ -1,0 +1,60 @@
+视频 
+http://edu.51cto.com/index.php?do=search&m=course&q=mongodb
+
+
+MongoDB的存储结构及对空间使用率的影响
+http://www.mongoing.com/blog/file-storage
+http://blog.csdn.net/laczff21/article/details/7783573
+
+
+MongoDB 3.0正式发布，支持多存储引擎
+
+http://www.infoq.com/cn/news/2015/03/mongodb-3-release
+
+
+
+MongoDB 3.0 用户创建
+
+http://www.cnblogs.com/zhoujinyi/p/4610050.html
+http://bubkoo.com/2014/02/07/mongodb-authentication/
+
+MongoDB索引原理
+http://www.mongoing.com/archives/2797
+http://www.cnblogs.com/zhoujinyi/p/4665903.html
+
+
+
+MongoDB的备份与恢复
+http://weizhifeng.net/backup-and-restore-data-of-mongodb.html
+http://blog.csdn.net/xia7139/article/details/12066801
+
+
+MongoDB干货系列2-MongoDB执行计划分析详
+http://www.mongoing.com/eshu_explain1
+
+
+学习MongoDB--（4-2）：MongoDB查询(数组、内嵌文档和$where)
+http://blog.csdn.net/drifterj/article/details/7833883
+
+
+MongoDB 副本集的原理、搭建、应用
+http://www.cnblogs.com/zhoujinyi/p/3554010.html
+
+http://www.cnblogs.com/zhoujinyi/category/472730.html
+
+
+
+MongoDB的Replica Sets+Sharding架构
+http://database.51cto.com/art/201207/350522.htm
+
+http://blog.csdn.net/mchdba/article/details/9856239
+
+
+
+MongoDB 聚合管道（Aggregation Pipeline）
+http://www.cnblogs.com/shanyou/p/3494854.html
+
+
+MongoDB 聚合
+http://www.runoob.com/mongodb/mongodb-aggregate.html
+

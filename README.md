@@ -1,2 +1,2 @@
-# note
-# all notes put here
+# mynote# mynote
+# notebook
