@@ -18,6 +18,7 @@ tags: [spark]
 ## 1.1.flume向spark streaming 中push
 
  spark streaming 代码
+ 
 ```
 package cn.itcast.spark.day5
  
@@ -49,6 +50,7 @@ object FlumePushWordCount {
 
 
  flume配置文件 flume-push.conf
+ 
 ```
 # Name the components on this agent
 a1.sources = r1
@@ -78,6 +80,7 @@ a1.sinks.k1.channel = c1
 ```
 
  启动
+ 
 ```
 #首先启动spark-streaming应用程序
 bin/spark-submit --class cn.itcast.spark.streaming.FlumeWordCount /root/streaming-1.0.jar
@@ -89,6 +92,7 @@ bin/flume-ng agent -n a1 -c conf/ -f conf/flume-push.conf -Dflume.root.logger=WA
 ## 1.2.spark streaming 从flume中拉取数据(poll)
 
  spark streaming 代码
+ 
 ```
 package cn.itcast.spark.day5
  
@@ -118,6 +122,7 @@ object FlumePollWordCount {
 ```
 
  flume配置文件 flume-poll.conf
+ 
 ```
 # Name the components on this agent
 a1.sources = r1
@@ -146,6 +151,7 @@ a1.sinks.k1.channel = c1
 ```
 
  启动
+ 
 ```
 #首先将下载好的spark-streaming-flume-sink_2.10-1.6.1.jar和scala-library-2.10.5.jar还有commons-lang3-3.3.2.jar三个包放入到flume的lib目录下
 #启动flume

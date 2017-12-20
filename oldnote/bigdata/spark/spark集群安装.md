@@ -78,6 +78,7 @@ scp -r /export/servers/spark/ hdp-node-02:/export/servers/
 
 到此为止，Spark集群安装完毕，但是有一个很大的问题，那就是Master节点存在单点故障，要解决此问题，就要借助zookeeper，并且启动至少两个Master节点来实现高可靠，配置方式比较简单：
 Spark集群规划：node1，node2是Master；node3，node4，node5是Worker  , 安装配置zk集群，并启动zk集群, 停止spark所有服务，修改配置文件spark-env.sh，在该配置文件中删掉SPARK_MASTER_IP并添加如下配置
+
 ```
 export SPARK_DAEMON_JAVA_OPTS="-Dspark.deploy.recoveryMode=ZOOKEEPER -Dspark.deploy.zookeeper.url=zk1,zk2,zk3 -Dspark.deploy.zookeeper.dir=/spark"
 ```

@@ -15,6 +15,7 @@ kafka的配置分为 broker、producter、consumer三个不同的配置,分别�
 
 # 1.BROKER(server)的全局配置
 最为核心的三个配置 broker.id、log.dir、zookeeper.connect 。
+
 ```
 #------------------------------------------- 系统相关 -------------------------------------------
 ##每一个broker在集群中的唯一标示，要求是正数。在改变IP地址，不改变broker.id的话不会影响consumers
@@ -228,6 +229,10 @@ bin/kafka-topics.sh --zookeeper localhost:2181 --alter --topic my-topic --config
  
 删除配置：
 bin/kafka-topics.sh --zookeeper localhost:2181 --alter --topic my-topic --deleteConfig max.message.bytes
+
+
+delete.topic.enable	false	Enables delete topic. Delete topic through the admin tool will have no effect if this config is turned off
+
 ```
 
 # 2.CONSUMER 配置
@@ -301,6 +306,7 @@ bin/kafka-topics.sh --zookeeper localhost:2181 --alter --topic my-topic --delete
 ```
 # 3.PRODUCER 的配置
 比较核心的配置：metadata.broker.list、request.required.acks、producer.type、serializer.class
+
 ```
 ## 消费者获取消息元信息(topics, partitions and replicas)的地址,配置格式是：host1:port1,host2:port2，也可以在外面设置一个vip
  metadata.broker.list

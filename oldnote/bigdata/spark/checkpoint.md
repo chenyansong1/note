@@ -39,6 +39,7 @@ def checkpoint(): Unit = RDDCheckpointData.synchronized {
 
 # 实例代码
 &emsp;在进行checkpoint的时候,会进行重新的计算,然后将checkpoint的结果放到磁盘,但是如果我们在checkpoint之前就进行一次cache,那么checkpoint的时候需要的计算结果就直接从内存中拿到,然后在将数据保存到磁盘
+
 ```
 package spark.examples.rddapi  
   

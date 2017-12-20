@@ -44,6 +44,7 @@ exit 退出shell
 2.向hdfs上传一个文件到
 
 words.txt
+
 ```
 [root@hdp-node-02 export]# cat words.txt
 
@@ -56,16 +57,20 @@ chenyansong
 ```
  
 上传文件
+
 ```
 hdfs dfs -put words.txt /wordcount/
 ```
+
 3.在spark shell中用scala语言编写spark程序
+
 ```
 scala> sc.textFile("hdfs://hdp-node-01:9000/wordcount/words.txt").flatMap(_.split(" ")).map((_ ,1)).reduceByKey(_+_).saveAsTextFile("hdfs://hdp-node-01:9000/wordcount/out")
 
 ```
  
 4.使用hdfs命令查看结果
+
 ```
 [root@hdp-node-02 export]# hdfs dfs -ls /wordcount/out3
 Found 3 items

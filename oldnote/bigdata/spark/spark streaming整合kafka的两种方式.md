@@ -8,8 +8,6 @@ tags: [spark]
 # 方式一
 有receiver,会记录log日志
 
-
-
  启动
 
 ```
@@ -36,6 +34,7 @@ bin/spark-submit --class cn.itcast.spark.UrlCount --master spark://node1.itcast.
 ```
 
  KafkaWordCount 代码
+ 
 ```
 package cn.itcast.spark.day5
  
@@ -74,6 +73,7 @@ object KafkaWordCount {
 
 
  启动一个生产者发送消息
+ 
 ```
  
 #启动一个生产者发送消息
@@ -171,6 +171,7 @@ object DirectKafkaWordCount {
 ```
 
  org.apache.spark.streaming.kafka.KafkaManager 类
+ 
 ```
 package org.apache.spark.streaming.kafka
  

@@ -19,6 +19,7 @@ flush privileges;
  
 # 3.将配置好的hive-site.xml放入$SPARK-HOME/conf目录下
  hive-site.xml文件:其实就是写:连接的数据库/jdbc驱动/用户名/密码
+ 
 ```
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
@@ -67,6 +68,7 @@ flush privileges;
 ```
 
 # 4.写测试sql
+
 ```
 
 #方式一:启动spark-shell时指定mysql连接驱动位置

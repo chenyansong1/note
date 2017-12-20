@@ -27,10 +27,12 @@ tags: [spark]
 # 3.创建RDD
 创建RDD的两种方式:
 1.由一个已经存在的Scala集合创建(通过Scala集合或数组以并行化的方式创建RDD)
+
 ```
  val rdd1 = sc.parallelize(Array(1,2,3,4,5,6,7,8))
 ```
 2.由外部存储系统的数据集创建，包括本地的文件系统，还有所有Hadoop支持的数据集，比如HDFS、Cassandra、HBase等
+
 ```
  val rdd2 = sc.textFile("hdfs://node1.itcast.cn:9000/words.txt")
 ```
