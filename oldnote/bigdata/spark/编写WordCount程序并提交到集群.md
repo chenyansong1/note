@@ -1,5 +1,5 @@
 ---
-title: 编写WordCount程序并提交到集群
+title: 从环境搭建到编写WordCount程序并提交到集群
 categories: spark  
 tags: [spark]
 ---
