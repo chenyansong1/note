@@ -15,6 +15,12 @@ http://www.ruanyifeng.com/blog/2013/12/getting_started_with_postgresql.html
 3.清理程序的完整
 4.调试
 
+0.测试不同的数据类型是否可以插入
+1.测试新的execute接口的执行速度
+2.让每个线程跑一遍大数据量的看看
+
+
+
 
 
 /usr/local/pgsql
