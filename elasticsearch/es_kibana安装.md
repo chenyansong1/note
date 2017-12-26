@@ -25,3 +25,22 @@ chown -R elsearch:elsearch /bigdata_installed/elasticsearch/
 chown -R elsearch:elsearch /bigdata_installed/kibana/
 
 ```
+
+
+
+
+5. 在 Kibana 目录下运行下面的命令，下载并安装 Sense app：
+
+```
+./bin/kibana plugin --install elastic/sense 
+```
+
+NOTE：你可以直接从这里 https://download.elastic.co/elastic/sense/sense-latest.tar.gz 下载 Sense 离线安装可以查看这里 install it on an offline machine 。
+
+启动 Kibana.
+
+```
+./bin/kibana 
+```
+
+参见： https://www.elastic.co/guide/cn/elasticsearch/guide/current/running-elasticsearch.html

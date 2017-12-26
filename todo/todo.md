@@ -20,18 +20,28 @@ http://www.ruanyifeng.com/blog/2013/12/getting_started_with_postgresql.html
 2.让每个线程跑一遍大数据量的看看
 
 
+1.现在没有数据，需要1千万条数据
+2.测试通过多线程，看下插入的性能
+3.
 
 
+1.shell脚本中执行copy
+2.造一批100w条的数据
+3.使用脚本进行测试，看入库的时间
 
-/usr/local/pgsql
-[root@master data]# /etc/init.d/postgresql status
-pg_ctl: server is running (PID: 3850)
-/usr/local/pgsql/bin/postgres "-D" "/usr/local/pgsql/data"
-[root@master data]# /etc/init.d/postgresql
-Usage: /etc/init.d/postgresql {start|stop|restart|reload|status}
-[root@master data]# /etc/init.d/postgresql restart
-Restarting PostgreSQL: ok
-[root@master data]# 
+4.如果时间测试OK的话，那么将ES数据批量导出CVS，使用脚本插入
+
+#导入文件
+172.16.10.112:/tmp/tbl_test1.csv
+#导入语句
+BDSSA1=# copy t_siem_general_log(dublecount,recordid,reportapp,reportip,sourceip,sourceport,destip,destport,eventaction,actionresult,reportnetype,eventdefid,eventname,eventlevel,orgid,infoid,affectedsystem,attackmethod,appid,victimtype,attacker,victim,host,filemd5,filedir,referer,requestmethod,firstrecvtime) from '/tmp/tbl_test1.csv' delimiter ',';
+
+sense:
+http://172.16.14.21:5601/app/sense
+
+需要安装es的Python插件，这里直接安装的话，那么使用的是最新的版的，看看能不能指定版本：
+pip install elasticsearch
+
 
 
 
