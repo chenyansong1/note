@@ -8,3 +8,5 @@ http://www.cnblogs.com/yxpblog/p/5141738.html
 
 #需要安装es的Python插件，这里直接安装的话，那么使用的是最新的版的，看看能不能指定版本：
 pip install elasticsearch
+
+

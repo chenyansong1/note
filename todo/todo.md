@@ -45,5 +45,37 @@ pip install elasticsearch
 
 
 
+pg 在shell中执行
+http://bbs.csdn.net/topics/370171611
+
+不输入密码：
+http://blog.csdn.net/fm0517/article/details/53130244
+http://www.postgres.cn/docs/9.3/app-psql.html
+http://blog.csdn.net/xocoder/article/details/24368107
+
+
+psql --c 执行SQL语句
+
+highgo@sourcedb ~]$ psql --c 'select version();'
+              version               
+------------------------------------
+ HighGo Database 3.1.4 Linux 64-bit
+(1 row)
+
+试试这个：shell脚本中，最好使用su -l postgres psql -U xxx -W password -c "";
+
+
+# ES的分页
+
+```
+GET /_search?size=5
+GET /_search?size=5&from=5
+GET /_search?size=5&from=10
+
+```
+
+https://www.elastic.co/guide/cn/elasticsearch/guide/cn/pagination.html
+https://www.elastic.co/guide/cn/elasticsearch/guide/cn/_ranges.html
+
 
 
