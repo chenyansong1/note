@@ -78,4 +78,9 @@ https://www.elastic.co/guide/cn/elasticsearch/guide/cn/pagination.html
 https://www.elastic.co/guide/cn/elasticsearch/guide/cn/_ranges.html
 
 
+需要重新组织sh文件：
+172.16.10.112/tmp
+
+
+
 

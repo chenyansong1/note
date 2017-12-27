@@ -108,6 +108,32 @@ spam
 #有了上面的试验，我们可以知道，print的好处，我们只是使用了print的中的file可以临时的改变输出流的指向，当打印完毕之后，输出流又重新回到原来的默认的流
 ```
 
+python2.x print输出到文件
+
+```
+#!/usr/bin/env python3  
+#coding:utf-8
+K = 10
+f = open("./output/recard", 'w+')  
+for i in range(K) 
+    print>>f,"第{0}条数据".format(i)  
+	
+	
+
+import sys
+f=open('test.txt','a+')
+s= '123'
+abc= '456'
+print >> f, s,abc
+f.close()
+ 
+ 
+r 读
+w 写
+a 追加
+
+```
+
 
 
 
