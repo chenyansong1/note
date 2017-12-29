@@ -159,6 +159,36 @@ DELETE /secisland
 }
 ```
 
+#去重统计
+去重是一个很常见的操作，可以回答很多基本的业务问题：
+
+```
+SELECT COUNT(DISTINCT color)
+FROM cars
+```
+网站独立访客是多少？
+卖了多少种汽车？
+每月有多少独立用户购买了商品？
+我们可以用 cardinality 度量确定经销商销售汽车颜色的数量：
+
+```
+GET /cars/transactions/_search
+{
+    "size" : 0,
+    "aggs" : {
+        "distinct_colors" : {
+            "cardinality" : {
+              "field" : "color"
+            }
+        }
+    }
+}
+
+```
+
+
+ 
+
 
 
 

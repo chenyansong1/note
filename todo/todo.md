@@ -82,5 +82,12 @@ https://www.elastic.co/guide/cn/elasticsearch/guide/cn/_ranges.html
 172.16.10.112/tmp
 
 
+1.将写入csv，copy，和delete，放入一个py文件
+2.测试general_log跑完一遍的时间
+3.添加其他2张表的脚本
+
+所有的工程：
+172.16.10.112：/root/es2pg_genlog
+
 
 

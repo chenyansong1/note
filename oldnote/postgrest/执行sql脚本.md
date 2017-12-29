@@ -12,7 +12,7 @@ cd shell
  mkdir back #存放备份文件
  vi execute_sql.shell
 
-
+# 执行一个脚本文件
 
 ```
 #!/bin/bash
@@ -42,4 +42,14 @@ psql -h $HOST -d $dataname -U $USER -f *.sql -o out.log
 http://blog.csdn.net/odoo_autoyong/article/details/52212979
 
 
+# 执行命令
 
+```
+[root@master es2pg_genlog]# psql -h 127.0.0.1 -d BDSSA1 -U postgres -c "select count(1) from t_siem_original_log;"
+ count 
+-------
+   100
+(1 row)
+
+[root@master es2pg_genlog]# 
+```
