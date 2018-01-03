@@ -18,7 +18,7 @@ java -version
 
 ## 3.1.es的JAVA_OPTS参数
 
-因为es是Java开发的，所以JVM的环境变量JAVA_OPTS对es是非常重要的，在JAVA_OPTS中对es最重要的参数是-Xmx（最大可以使用内存参数），一般情况下大内存更能发挥es的作用，建议设置-Xmx为物理内存的一半，为了减小内存分配带来的性能损耗，最好一开始就设置初始内存和最大内存都为物理内存的一半（即Xms和Xmx着两个参数）
+因为es是Java开发的，所以JVM的环境变量JAVA\_OPTS对es是非常重要的，在JAVA_OPTS中对es最重要的参数是-Xmx（最大可以使用内存参数），**一般情况下大内存更能发挥es的作用，建议设置-Xmx为物理内存的一半，为了减小内存分配带来的性能损耗，最好一开始就设置初始内存和最大内存都为物理内存的一半（即Xms和Xmx着两个参数）**
 
 由于JAVA_OPTS大多数对整个机器环境起作用，所以最好保留默认的JAVA_OPTS，最好用ES_JAVA_OPTS环境变量来设置JAVA_OPTS参数
 
@@ -46,7 +46,7 @@ JAVA_OPTS="$JAVA_OPTS -Xmx${ES_MAX_MEM}"
 
 ```
 
-ES_HEAP_SIZE环境变量允许设置被es中Java进程的堆内存大小，最小值和最大值将分配相同的值，可以通过ES_MIN_MEM(默认是256M),和ES_MAX_MEM（默认是1g)对堆内存进行设置
+ES\_HEAP\_SIZE环境变量允许设置被es中Java进程的堆内存大小，最小值和最大值将分配相同的值，可以通过ES\_MIN\_MEM(默认是256M),和ES\_MAX\_MEM（默认是1g)对堆内存进行设置
 
 
 ## 3.2.参数配置的几种方式
@@ -65,6 +65,7 @@ ES_HEAP_SIZE环境变量允许设置被es中Java进程的堆内存大小，最�
 ES提供了多种方式进行设置，下面是使用不同的个格式进行设置：
 
 1.在yml文件中配置
+
 ```
 node.name:node-01
 ```
@@ -90,6 +91,7 @@ node.name:node-01
 在路径：/bigdata_installed/elasticsearch/config
 
 在这个配置文件中会配置：**集群节点的名字，node的名字，ip,port 等**
+
 ```
 # ---------------------------------- Cluster -----------------------------------
 # 集群名称：确保在不同的环境中集群的名称不能重复，否则，节点可能连接到错误的集群上
@@ -178,6 +180,7 @@ node.name:node-01
 在集群中创建的索引可以提供每个索引自己的设置，例如：下面创建一个索引刷新间隔是5秒钟而不是默认的刷新间隔（格式可以是YML或JSON)
 
 1.在yml中配置
+
 ```
 # vim elasticsearch.yml
 index.refresh.interval:5s
@@ -266,16 +269,19 @@ sudo su - elsearch
 #启动，这样的启动方式是前台启动，如果需要后台启动，那么需要指定参数-d
 bin/elasticsearch 
 
-#bin/elasticsearch -d
+#后台启动
+bin/elasticsearch -d
 ```
 
 当然，我们也是可以在启动的时候指定一些其他的参数，如指定集群的名称和结点的名称
+
 ```
 bin/elasticsearch --cluster.name my_cluster_name --node.name my_node_name
 
 ```
 
 默认情况下es使用9200端口提供的REST API,当然该端口是可以配置的,浏览器输入：http://192.168.153.202:9200/ ，得到如下的内容：
+
 ```
 {
   "name" : "Hitman",

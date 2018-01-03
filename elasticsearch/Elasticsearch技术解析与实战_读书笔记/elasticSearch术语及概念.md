@@ -77,8 +77,7 @@ ElasticSearch术语及概念
 
 下图就是索引（index），类型（type），文档（document）的关系图：
 
-![](/elasticsearch/Elasticsearch技术解析与实战_读书笔记/images/1_/index_type_doc_relation.jpg
-)
+![](/Users/chenyansong/Documents/note/elasticsearch/Elasticsearch技术解析与实战_读书笔记/images/index_type_doc_relation.jpg)
 
 
 # 14.映射（mapping）
