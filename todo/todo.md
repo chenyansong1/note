@@ -90,4 +90,10 @@ https://www.elastic.co/guide/cn/elasticsearch/guide/cn/_ranges.html
 172.16.10.112：/root/es2pg_genlog
 
 
+--
+
+
+
+
+
 
