@@ -183,3 +183,255 @@ true or false	-->	boolean
 7.查看mapping
 
 GET /index/_mapping/type
+
+
+
+
+
+1、如何建立索引
+
+analyzed
+not_analyzed
+no
+
+2、修改mapping
+
+只能创建index时手动建立mapping，或者新增field mapping，但是不能update field mapping
+
+```
+PUT /website
+{
+  "mappings": {
+    "article": {
+      "properties": {
+        "author_id": {
+          "type": "long"
+        },
+        "title": {
+          "type": "text",
+          "analyzer": "english"
+        },
+        "content": {
+          "type": "text"
+        },
+        "post_date": {
+          "type": "date"
+        },
+        "publisher_id": {
+          "type": "text",
+          "index": "not_analyzed"
+        }
+      }
+    }
+  }
+}
+```
+修改报错
+
+```
+PUT /website
+{
+  "mappings": {
+    "article": {
+      "properties": {
+        "author_id": {
+          "type": "text"
+        }
+      }
+    }
+  }
+}
+
+{
+  "error": {
+    "root_cause": [
+      {
+        "type": "index_already_exists_exception",
+        "reason": "index [website/co1dgJ-uTYGBEEOOL8GsQQ] already exists",
+        "index_uuid": "co1dgJ-uTYGBEEOOL8GsQQ",
+        "index": "website"
+      }
+    ],
+    "type": "index_already_exists_exception",
+    "reason": "index [website/co1dgJ-uTYGBEEOOL8GsQQ] already exists",
+    "index_uuid": "co1dgJ-uTYGBEEOOL8GsQQ",
+    "index": "website"
+  },
+  "status": 400
+}
+
+```
+
+新增
+
+```
+PUT /website/_mapping/article
+{
+  "properties" : {
+    "new_field" : {
+      "type" :    "string",
+      "index":    "not_analyzed"
+    }
+  }
+}
+```
+
+3、测试分词器
+
+```
+GET /website/_analyze
+{
+  "field": "content",
+  "text": "my-dogs" 
+}
+
+
+GET website/_analyze
+{
+  "field": "new_field",#这个字段是没有分词
+  "text": "my dogs"
+}
+
+{
+  "error": {
+    "root_cause": [
+      {
+        "type": "remote_transport_exception",
+        "reason": "[4onsTYV][127.0.0.1:9300][indices:admin/analyze[s]]"
+      }
+    ],
+    "type": "illegal_argument_exception",
+    "reason": "Can't process field [new_field], Analysis requests are only supported on tokenized fields"
+  },
+  "status": 400
+}
+```
+
+# 复杂数据类型以及object类型数据底层结构
+
+
+1、multivalue field
+
+{ "tags": [ "tag1", "tag2" ]}
+
+建立索引时与string是一样的，数据类型不能混，就是数组中都是同一种元素
+
+
+2、object field
+
+插入数据
+
+```
+PUT /company/employee/1
+{
+  "address": {
+    "country": "china",
+    "province": "guangdong",
+    "city": "guangzhou"
+  },
+  "name": "jack",
+  "age": 27,
+  "join_date": "2017-01-01"
+}
+```
+
+address：object类型
+查看映射
+
+```
+{
+  "company": {
+    "mappings": {
+      "employee": {
+        "properties": {
+          "address": {
+            "properties": {
+              "city": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "country": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "province": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              }
+            }
+          },
+          "age": {
+            "type": "long"
+          },
+          "join_date": {
+            "type": "date"
+          },
+          "name": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+对于对象类型，es底层是如何存储的
+
+```
+{
+  "address": {
+    "country": "china",
+    "province": "guangdong",
+    "city": "guangzhou"
+  },
+  "name": "jack",
+  "age": 27,
+  "join_date": "2017-01-01"
+}
+
+#扁平的存储
+{
+    "name":            [jack],
+    "age":          [27],
+    "join_date":      [2017-01-01],
+    "address.country":         [china],
+    "address.province":   [guangdong],
+    "address.city":  [guangzhou]
+}
+
+#由行式存储变成列式存储
+{
+    "authors": [
+        { "age": 26, "name": "Jack White"},
+        { "age": 55, "name": "Tom Jones"},
+        { "age": 39, "name": "Kitty Smith"}
+    ]
+}
+
+{
+    "authors.age":    [26, 55, 39],
+    "authors.name":   [jack, white, tom, jones, kitty, smith]
+}
+```
