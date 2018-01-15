@@ -1,5 +1,6 @@
 # 安装
 
+
 ```
 [hadoop@hdp-node-01 bin]$ ./plugin install mobz/elasticsearch-head
 //.....
@@ -129,3 +130,4 @@ https://www.elastic.co/guide/cn/elasticsearch/guide/current/dynamic-mapping.html
 
 
 
+postman 发送HTTP的客户端
