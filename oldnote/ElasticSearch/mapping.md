@@ -8,6 +8,7 @@ tag: [elasticsearch]
 
 
 
+
 插入几条数据，让es自动为我们建立一个索引
 
 ```
