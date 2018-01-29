@@ -25,6 +25,7 @@ public interface Channel{
 
 ## 2.1.ServerSocketChannel
 &emsp;ServerSocketChannel是一个<font color=red>基于通道的socket监听器。但它没有bind()方法，因此需要取出对等的Socket对象并使用它来 绑定到某一端口以开始监听连接</font>。在非阻塞模式下，当没有传入连接在等待时，其accept()方法会立即返回null。正是这种检查连接而不阻塞的能力实 现了可伸缩性并降低了复杂性，选择性也因此得以实现。
+
 ```
 ByteBuffer buffer = ByteBuffer.wrap("Hello World".getBytes());
     ServerSocketChannel ssc = ServerSocketChannel.open();
@@ -47,6 +48,7 @@ ByteBuffer buffer = ByteBuffer.wrap("Hello World".getBytes());
 
 
 ## 2.2.SocketChannel
+
 &emsp;相对于ServerSocketChannel，它扮演客户端，发起到监听服务器的连接，连接成功后，开始接收数据。要注意的是，调用它的open()方法仅仅是打开但并未连接，要建立连接需要紧接着调用connect()方法；也可以两步合为一步，调用open(SocketAddress remote)方法。你会发现connect()方法并未提供timout参数，作为替代方案，你可以用isConnected()、isConnectPending()或finishConnect()方法来检查连接状态。 
 
 
