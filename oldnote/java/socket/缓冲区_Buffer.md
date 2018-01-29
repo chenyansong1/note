@@ -50,6 +50,7 @@ public abstract class Buffer {
 # 4.缓冲区存取
 上文所列出的的 Buffer API 并没有包括 get()或 put()方法。每一个 Buffer 类都有这两个方法，但它们所采用的参数类型，以及它们返回的数据类型，对每个子类来说都是唯一
 的，所以它们不能在顶层 Buffer 类中被抽象地声明。它们的定义必须被特定类型的子类所遵从。如：ByteBuffer
+
 ```
 public abstract class ByteBuffer  extends Buffer implements Comparable{
    // This is a partial API listing
@@ -63,15 +64,19 @@ public abstract class ByteBuffer  extends Buffer implements Comparable{
 
 # 5.填充到缓冲区
 填充
+
 ```
 buffer.put((byte)'H').put((byte)'e').put((byte)'l').put((byte)'l').put((byte)'o');
 ```
+
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/java/socket/NIO_buffer_2.png)
 
 修改
+
 ```
 buffer.put(0,(byte)'M').put((byte)'w');
 ```
+
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/java/socket/NIO_buffer_3.png)
 
 
@@ -79,14 +84,17 @@ buffer.put(0,(byte)'M').put((byte)'w');
 &emsp;我们已经写满了缓冲区，现在我们必须准备将其清空。我们想把这个缓冲区传递给一个通道，以使内容能被全部写出。但如果通道现在在缓冲区上执行 get()，那么它将从我们刚刚
 插入的有用数据之外取出未定义数据。如果我们将位置值重新设为 0，通道就会从正确位置开始获取，但是它是怎样知道何时到达我们所插入数据末端的呢？这就是上界属性被引入的目
 的。上界属性指明了缓冲区有效内容的末端。我们需要将上界属性设置为当前位置，然后将位置重置为 0。我们可以人工用下面的代码实现：
+
 ```
 buffer.limit(buffer.position()).position(0); //将limit设置为当前position，然后将position=0
 ```
+
 Buffer.flip(); 方法就是实现了上面的人工代码
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/java/socket/NIO_buffer_4.png)
 
 # 7.释放缓冲区
+
 ```
 buffer.clear( );
 ```
@@ -109,6 +117,7 @@ public abstract class CharBuffer extends Buffer implements CharSequence, Compara
 ```
 
 要分配一个容量为 100 个 char 变量的 Charbuffer:
+
 ```
 CharBuffer charBuffer = CharBuffer.allocate (100);
 #这段代码隐含地从堆空间中分配了一个 char 型数组作为备份存储器来储存 100 个 char变量
@@ -116,6 +125,7 @@ CharBuffer charBuffer = CharBuffer.allocate (100);
 
 
 提供您自己的数组用做缓冲区的备份存储器，请调用 wrap()方法
+
 ```
 char [] myArray = new char [100];
 CharBuffer charbuffer = CharBuffer.wrap (myArray);
@@ -131,6 +141,7 @@ CharBuffer charbuffer = CharBuffer.wrap (myArray, 12, 42);
 
 
 # 9.Example
+
 ```
 package cn.itcast.test;
 import java.nio.IntBuffer;
@@ -177,8 +188,7 @@ public class NIOBuffer {
         for(int a: array){
             System.out.println("array:"+a+"\t");
         }
-        
-        //对缓冲区中的内容进行反转
+对缓冲区中的内容进行反转
 //        System.out.println("flip前："+buffer);//flip前：java.nio.HeapIntBuffer[pos=3 lim=3 cap=3]
 //        buffer.flip();// limit=pos; pos=0
 //        System.out.println("flip后："+buffer);//flip后：java.nio.HeapIntBuffer[pos=0 lim=3 cap=3]
@@ -190,29 +200,5 @@ public class NIOBuffer {
         
     }
 }
-
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
