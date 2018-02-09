@@ -94,6 +94,7 @@ SPARK_PUBLISC_DNS				master和worker的公共dns域名，默认是没有的
 ```
 
 
+
 下面是给大家列出spark所有的启动和关闭shell脚本
 ```
 sbin/start-all.sh				根据配置，在集群中各个节点上，启动一个master进程和多个worker进程

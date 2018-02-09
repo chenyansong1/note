@@ -122,7 +122,7 @@ spark web ui
 Application web ui
 1.可以看到job,stage,task的详细运行信息
 2.shuffle read,shuffle write,gc,运行时间,每个task分配的数据量
-3.定位很多性能问题、troubleshooting等等，如task数据分布不允许，那么就是数据倾斜
+3.定位很多性能问题、troubleshooting等等，如task数据分布不均匀，那么就是数据倾斜
 4.哪个stage运行的时间最慢，通过之前讲解的stage划分算法，去你的代码里定位到，那个stage对应的是哪一块儿代码，你的那段代码为什么会运行太慢,使用优化策略去优化性能
 
 但是有个问题，作业运行完了以后，我们就看不到了,此时跟history server有关，需要我们开启

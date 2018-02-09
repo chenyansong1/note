@@ -18,6 +18,7 @@ java虚拟机垃圾回收调优的背景
 监测垃圾回收
 
 我们可以对垃圾回收进行监测,包括多久进行一次垃圾回收,以及每次垃圾回收耗费的时间,只要在spark-submit脚本中,增加一个配置即可:
+
 ```
 --conf "spark.executor.extraJavaOptions=-verbose:gc-X;+PrintGCDetails-XX;+PrintGCTimeStamps"
 ```
@@ -28,6 +29,7 @@ java虚拟机垃圾回收调优的背景
 
 
 优化Executor内存比例
+
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/bigdata/spark从入门到精通_笔记/GC对spark性能影响的原理2.png)
 
 
@@ -36,6 +38,7 @@ java虚拟机垃圾回收调优的背景
 在这种情况下,很有可能因为你的内存空间的不足,task创建的对象过大,那么一旦发现40%内存空间不够用了,就会触发java虚拟机的垃圾回收操作,因为在极端情况下,垃圾回收操作可能会被频繁触发
 
 在上述情况下,如果发现垃圾回收频繁发生,那么就需要对那个比例进行调优,使用:
+
 ```
 SparkConf().set("spark.storage.memoryFaction", "0.5")
 

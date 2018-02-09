@@ -130,6 +130,7 @@ export SPARK_DAEMON_JAVA_OPTS="-Dspark.deploy.recoveryMode=ZOOKEEPER -Dspark.dep
 在我们编写的程序中将master地址修改为192.168.0.103:7077,192.168.0.103:7078
 
 这里使用spark-shell去模拟提交应用程序
+
 ```
 spark-shell --master spark://192.168.0.103:7077,192.168.0.104:7077
 
@@ -140,6 +141,7 @@ scala>counts.collect
 
 ```
 此时在web ui上查看(alive master)
+
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/bigdata/spark从入门到精通_笔记/master_ha_4.png)
 
 5、杀掉原先的leader master

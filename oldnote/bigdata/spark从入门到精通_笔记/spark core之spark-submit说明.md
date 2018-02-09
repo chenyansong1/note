@@ -87,6 +87,7 @@ wordcount.sh hdfs://hadoop-node1:9000/test/hello.txt
 
 
 # spark-submit多个示例,及常用参数详解
+
 ```
 # 使用local本地模式，以及8个线程运行
 # --class 指定要执行的main类

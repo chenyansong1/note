@@ -7,7 +7,7 @@ tags: [spark]
 
 
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/bigdata/spark从入门到精通_笔记/提高并行度原理.png)
+![](http://ols7leonh.bkt.clouddn.com/assert/img/bigdata/spark从入门到精通_笔记/提高并行度原理.png)
 
 
 

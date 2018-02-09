@@ -75,5 +75,3 @@ scala>counts.collect
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/bigdata/spark从入门到精通_笔记/rest_api_4.png)
 
 
-
-
