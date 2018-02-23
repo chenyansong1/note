@@ -19,6 +19,7 @@ tags: [spark]
 比如说，http://192.168.0.103:18080/api/v1/applications，就可以获取到所有历史作业的基本信息
 
 以下是所有API的说明
+
 ```
 /applications																	获取作业列表
 /applications/[app-id]/jobs														指定作业的job列表
