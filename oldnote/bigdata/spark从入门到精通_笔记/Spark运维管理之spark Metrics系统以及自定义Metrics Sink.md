@@ -50,6 +50,7 @@ metrics系统的意义
 ```
 
 2、配置spark.metrics.conf文件，启用CSVSink
+
 ```
 cd conf
 cp metrics.properties.template metrics.properties

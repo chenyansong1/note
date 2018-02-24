@@ -24,7 +24,7 @@ mv   zoo_sample.cfg   zoo.cfg               #将配置文件改名
 '修改下列选项'
 tickTime=2000
 dataDir=/usr/local/zk/data
-dataLogDir=/usr/local/zk/dataLog      
+dataLogDir=/usr/local/zk/log      
 clientPort=2181
 
 ```
@@ -280,4 +280,21 @@ zkCli.sh                #连接的是本地
 ```
 
 
+# 错误集锦
 
+```
+在我们需要修改指定的目录，然后将这样注释，
+#dataDir=/tmp/zookeeper
+
+回报下面的错误：
+[root@node01 app]# /home/hadoop/app/zookeeper-3.3.6/bin/zkServer.sh start
+JMX enabled by default
+Using config: /home/hadoop/app/zookeeper-3.3.6/bin/../conf/zoo.cfg
+Starting zookeeper ... /home/hadoop/app/zookeeper-3.3.6/bin/zkServer.sh: line 93: [: /tmp/zookeeper: binary operator expected
+/home/hadoop/app/zookeeper-3.3.6/bin/zkServer.sh: line 103: /tmp/zookeeper
+/usr/local/zk/data/zookeeper_server.pid: No such file or directory
+FAILED TO WRITE PID
+
+有点坑
+
+```
