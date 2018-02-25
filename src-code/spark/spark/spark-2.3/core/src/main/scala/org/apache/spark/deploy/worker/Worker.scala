@@ -245,11 +245,13 @@ private[deploy] class Worker(
   }
 
   private def tryRegisterAllMasters(): Array[JFuture[_]] = {
+    // 通过线程池向所有的Master进行注册
     masterRpcAddresses.map { masterAddress =>
       registerMasterThreadPool.submit(new Runnable {
         override def run(): Unit = {
           try {
             logInfo("Connecting to master " + masterAddress + "...")
+            // 拿到Master的rpc引用
             val masterEndpoint = rpcEnv.setupEndpointRef(masterAddress, Master.ENDPOINT_NAME)
             sendRegisterMessageToMaster(masterEndpoint)
           } catch {
@@ -360,8 +362,9 @@ private[deploy] class Worker(
     registrationRetryTimer match {
       case None =>
         registered = false
-        registerMasterFutures = tryRegisterAllMasters()
+        registerMasterFutures = tryRegisterAllMasters() //因为Master可能做了HA，所以在Worker向Master进行注册的时候，会向所有的Master进行注册
         connectionAttemptCount = 0
+        // 另外开启一个线程去向Master的rpc发送 "ReregisterWithMaster" 消息
         registrationRetryTimer = Some(forwordMessageScheduler.scheduleAtFixedRate(
           new Runnable {
             override def run(): Unit = Utils.tryLogNonFatalError {
@@ -401,6 +404,7 @@ private[deploy] class Worker(
 
   private def handleRegisterResponse(msg: RegisterWorkerResponse): Unit = synchronized {
     msg match {
+        // 收到maser的消息，说:worker在mater已经注册
       case RegisteredWorker(masterRef, masterWebUiUrl, masterAddress) =>
         if (preferConfiguredMasterAddress) {
           logInfo("Successfully registered with master " + masterAddress.toSparkURL)
@@ -409,12 +413,17 @@ private[deploy] class Worker(
         }
         registered = true
         changeMaster(masterRef, masterWebUiUrl, masterAddress)
+
+        // 一个线程，周期性的触发：发送心跳
         forwordMessageScheduler.scheduleAtFixedRate(new Runnable {
           override def run(): Unit = Utils.tryLogNonFatalError {
             self.send(SendHeartbeat)
           }
         }, 0, HEARTBEAT_MILLIS, TimeUnit.MILLISECONDS)
-        if (CLEANUP_ENABLED) {
+
+
+        // 一个线程，周期性的触发：定时清理work目录
+        if (CLEANUP_ENABLED) {// 默认不会清除 spark.worker.cleanup.enabled=false
           logInfo(
             s"Worker cleanup enabled; old application directories will be deleted in: $workDir")
           forwordMessageScheduler.scheduleAtFixedRate(new Runnable {
@@ -427,6 +436,7 @@ private[deploy] class Worker(
         val execs = executors.values.map { e =>
           new ExecutorDescription(e.appId, e.execId, e.cores, e.state)
         }
+        // 对于Master不能识别的Executor和driver，Master会发送命令给Worker，要求kill掉
         masterRef.send(WorkerLatestState(workerId, execs.toList, drivers.keys.toSeq))
 
       case RegisterWorkerFailed(message) =>
@@ -447,6 +457,7 @@ private[deploy] class Worker(
     case SendHeartbeat =>
       if (connected) { sendToMaster(Heartbeat(workerId, self)) }
 
+      //清除Worker端的work目录（这些work目录是由application运行时产生的，所以需要定时的清理）
     case WorkDirCleanup =>
       // Spin up a separate thread (in a future) to do the dir cleanup; don't tie up worker
       // rpcEndpoint.

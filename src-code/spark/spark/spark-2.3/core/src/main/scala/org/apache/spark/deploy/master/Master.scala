@@ -208,9 +208,12 @@ private[deploy] class Master(
     self.send(RevokedLeadership)
   }
 
+  // rpc 消息接收处理
   override def receive: PartialFunction[Any, Unit] = {
+    //选举leader
     case ElectedLeader =>
       val (storedApps, storedDrivers, storedWorkers) = persistenceEngine.readPersistedData(rpcEnv)
+      // 这里Master因为有HA，所以会有两种状态，alive和standby，还有可能是recovering(恢复中)
       state = if (storedApps.isEmpty && storedDrivers.isEmpty && storedWorkers.isEmpty) {
         RecoveryState.ALIVE
       } else {
@@ -232,6 +235,7 @@ private[deploy] class Master(
       logError("Leadership has been revoked -- master shutting down.")
       System.exit(0)
 
+      // Worker向Master注册
     case RegisterWorker(
       id, workerHost, workerPort, workerRef, cores, memory, workerWebUiUrl, masterAddress) =>
       logInfo("Registering worker %s:%d with %d cores, %s RAM".format(
@@ -243,6 +247,8 @@ private[deploy] class Master(
       } else {
         val worker = new WorkerInfo(id, workerHost, workerPort, cores, memory,
           workerRef, workerWebUiUrl)
+
+        // idToWorker(worker.id) = worker 即：会向idToWorker这个map中添加当前worker
         if (registerWorker(worker)) {
           persistenceEngine.addWorker(worker)
           workerRef.send(RegisteredWorker(self, masterWebUiUrl, masterAddress))
@@ -324,10 +330,11 @@ private[deploy] class Master(
           throw new Exception(s"Received unexpected state update for driver $driverId: $state")
       }
 
+      // 接收来自Worker的心跳
     case Heartbeat(workerId, worker) =>
       idToWorker.get(workerId) match {
         case Some(workerInfo) =>
-          workerInfo.lastHeartbeat = System.currentTimeMillis()
+          workerInfo.lastHeartbeat = System.currentTimeMillis()//需要更新上次心跳的时间
         case None =>
           if (workers.map(_.id).contains(workerId)) {
             logWarning(s"Got heartbeat from unregistered worker $workerId." +
@@ -377,6 +384,7 @@ private[deploy] class Master(
 
       if (canCompleteRecovery) { completeRecovery() }
 
+      // 对于Master不能识别的Executor和driver，Master会发送命令给Worker，要求kill掉
     case WorkerLatestState(workerId, executors, driverIds) =>
       idToWorker.get(workerId) match {
         case Some(worker) =>
