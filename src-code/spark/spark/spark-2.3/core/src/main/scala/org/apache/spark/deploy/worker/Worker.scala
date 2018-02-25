@@ -192,20 +192,30 @@ private[deploy] class Worker(
     }
   }
 
+  //work实例化的时候会执行
   override def onStart() {
     assert(!registered)
     logInfo("Starting Spark worker %s:%d with %d cores, %s RAM".format(
       host, port, cores, Utils.megabytesToString(memory)))
     logInfo(s"Running Spark version ${org.apache.spark.SPARK_VERSION}")
     logInfo("Spark home: " + sparkHome)
+    //创建工作目录，存放application运行时候的jar
     createWorkDir()
+
+
+    //这是一个额外的shuffle服务（动态资源调度的时候使用，默认是没有开启的，参见：https://www.jianshu.com/p/477e7c010745）
     startExternalShuffleService()
+
+    //启动Worker的webUI
     webUi = new WorkerWebUI(this, workDir, webUiPort)
     webUi.bind()
 
     workerWebUiUrl = s"http://$publicAddress:${webUi.boundPort}"
+
+    //向Master注册
     registerWithMaster()
 
+    //启动测量系统
     metricsSystem.registerSource(workerSource)
     metricsSystem.start()
     // Attach the worker metrics servlet handler to the web ui after the metrics system is started.
