@@ -180,3 +180,8 @@ echo mntr | nc localhost 2181
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/bigdata/zookeeper/4_command/13.png)
 
+
+参见：
+
+http://blog.csdn.net/hackerwin7/article/details/43559991
+http://orchome.com/724

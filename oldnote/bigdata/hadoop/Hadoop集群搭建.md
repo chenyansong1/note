@@ -218,6 +218,7 @@ hdp-node-04
 ```
 
 # 5.格式化namenode
+
 这里只是初始化了namenode的工作目录（/home/hadoop/data/name），而datanode的工作目录是在datanode启动后自动初始化的
 注意：namenode的初始化，只需要一次就够了
 ```
