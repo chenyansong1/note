@@ -125,6 +125,7 @@ object SparkSubmit extends CommandLineUtils with Logging {
   }
   // scalastyle:on println
 
+  // 这里是提交一个作业的地方
   override def main(args: Array[String]): Unit = {
     // Initialize logging if it hasn't been done yet. Keep track of whether logging needs to
     // be reset before the application starts.

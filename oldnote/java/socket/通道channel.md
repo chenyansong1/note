@@ -9,7 +9,16 @@ tags: [socket,NIO]
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/java/socket/selector_channel.png)
 
 
+
+channel(通道），他就像自来水管道一样，网络数据通过Channel读取和写入，通道与流不同之处在于通道是双向的，而流只是一个方向上移动（一个流必须是InputStream或者OutpuStream的子类），而通道可以用于读、写或者二者同时进行，事实上通道分为两大类，一类是网络读写的（SelectableChannel），一类是用于文件操作的（FileChannel），我们使用的SocketChannel和ServerSocketChannel都是SelectableChannel的子类
+
+
+
 # 1.Channel的API
+
+
+
+
 ```
 package java.nio.channels;
 public interface Channel{

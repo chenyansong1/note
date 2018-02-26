@@ -9,6 +9,29 @@ tags: [socket,NIO]
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/java/socket/channel_selector_selectkey.png)
 
+
+![](/Users/chenyansong/Desktop/nio_2.png)
+
+
+Selector（多路复用器），他是NIO编程的基础，非常重要，多路复用器提供选择已经就绪的任务的能力，简单说，就是Selector会不断的轮询注册在其上的通道（Channel），如果某个通道发生了读写操作，这个通道就处于就绪状态，会被Selector轮询出来，然后通过SelectorKey可以取得就绪的Channel集合（可能是多个Channel，所以是集合），从而进行后续的IO操作
+
+一个多路复用器（Selector）可以负责成千上万Channel通道，没有上限，这也是JDK替代了传统的Selector实现，获取连接句柄没有限制，也就意味着我们只要一个线程负责Selector的轮询，就可以接入成千上万哥客户端，这是JDK NIO库的巨大进步
+
+Selector线程就类似于一个管理者（Master），管理了成千上万个管道，然后轮询那个管道的数据已经准备好，通知CPU执行IO的读取或者写入操作
+
+Selector模式：当IO事件（管道）注册到选择器以后，Selector会分配给每个管道一个key值，相当于标签，Selector选择器是以轮询的方式进行查找注册的所有IO事件（管道），当我们的IO事件（管道）准备就绪后，Selector就会识别，会通过key值找到相应的管道，进行相关的数据处理操作（从管道里读或者写数据，写到我们的数据缓冲区中）
+
+每个管道都会对选择器进行注册不同的事件状态，以便选择器查找
+
+* SelectorKey.OP_CONNECT
+* SelectorKey.OP_ACCEPT
+* SelectorKey.OP_READ
+* SelectorKey.OP_WRITE
+
+
+
+
+
 # 2.Selector
 ```
 public abstract class Selector{

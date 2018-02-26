@@ -38,11 +38,13 @@ NIO会通过专门的Selector来管理请求，然后可由一个线程来处理
 
 ## 2.1.步骤说明
 步骤1：打开ServerSocketChannel，用于监听客户端的连接，它是所有客户端连接的父通道，代码示例如下：
+
 ```
 ServerSocketChannel acceptorSvr = ServerSocketChannel.open();
 ```
  
 绑定监听端口，设置客户端连接方式为非阻塞模式，示例代码如下
+
 ```
 acceptorSvr.socket().bind(new InetSocketAddress(InetAddress.getByName(“IP”), port));
 acceptorSvr.configureBlocking(false);
@@ -50,15 +52,18 @@ acceptorSvr.configureBlocking(false);
 ```
 
 步骤3：创建Reactor线程，打开多路复用器并启动服务端监听线程，通常情况下，可以采用线程池的方式创建Reactor线程。示例代码如下：
+
 ```
 Selector selector = Selector.open();
 New Thread(new ReactorTask()).start();
 ```
 步骤4：将ServerSocketChannel注册到Reactor线程的多路复用器Selector上，监听ACCEPT状态位，示例代码如下：
+
 ```
 SelectionKey key = acceptorSvr.register( selector, SelectionKey.OP_ACCEPT, ioHandler);
 ```
 步骤5：多路复用器在线程run方法的无限循环体内轮询准备就绪的Key，通常情况下需要设置一个退出状态检测位，用于优雅停机。代码如下：
+
 ```
 int num = selector.select();
 Set selectedKeys = selector.selectedKeys();
@@ -69,19 +74,23 @@ while (it.hasNext()) {
 }
 ```
 步骤6：多路复用器监听到有新的客户端接入，处理新的接入请求，完成TCP三次握手后，与客户端建立物理链路，示例代码如下：
+
 ```
 channel.configureBlocking(false);
 channel.socket().setReuseAddress(true);
 ```
 步骤8：将新接入的客户端连接注册到Reactor线程的多路复用器上，监听读操作位，用来读取客户端发送的网络消息，示例代码如下：
+
 ```
 SelectionKey key = socketChannel.register( selector, SelectionKey.OP_READ, ioHandler);
 ```
 步骤9：异步读取客户端请求消息到服务端缓冲区，示例代码如下：
+
 ```
 int  readNumber =  channel.read(receivedBuffer);
 ```
 步骤10：对ByteBuffer进行解码，如果有半包消息指针Reset，继续读取后续的报文，将解码成功的消息封装成Task，投递到业务线程池中，进行业务逻辑编排，示例代码如下：
+
 ```
 Object message = null;
 while(buffer.hasRemain())
@@ -107,6 +116,7 @@ for(Object messageE : messageList)
 ```
 步骤11：将POJO对象encode成ByteBuffer，调用SocketChannel的异步write接口，将消息异步发送给客户端，
 示例代码如下：如果发送区TCP缓冲区满，会导致写半包，此时，需要注册监听写操作位，循环写，直到整包消息写入TCP缓冲区。
+
 ```
 socketChannel.write(buffer);
 ```
@@ -357,6 +367,13 @@ public class NIOClient {
 		}
 	}
 }
+
+```
+
+另外一种简单的代码如下：
+
+```
+/Users/chenyansong/Documents/note/oldnote/java/socket/NIO代码_other_version
 
 ```
  
