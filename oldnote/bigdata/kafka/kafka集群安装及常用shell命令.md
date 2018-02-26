@@ -70,10 +70,15 @@ sh kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list localhost:9092 -t
 
 用ConsumerGroupCommand工具，我们可以使用list，describe，或delete消费者组（注意，删除只有在分组元数据存储在zookeeper的才可用）。当使用新消费者API（broker协调处理分区和重新平衡），当该组的最后一个提交的偏移到期时，该组被删除。 例如，要列出所有主题中的所有用户组：
 
- bin/kafka-consumer-groups.sh --bootstrap-server broker1:9092 --list
+```
+#查看所有的消费者组
+bin/kafka-consumer-groups.sh --bootstrap-server broker1:9092 --list
 
-  test-consumer-group
-
+monitorwebsitegroup
+syslog
+ntaflowgroup
+aptgroup
+```
 
 To view offsets as in the previous example with the ConsumerOffsetChecker, we "describe" the consumer group like this:
 要使用ConsumerOffsetChecker查看上一个示例中消费者组的偏移量，我们按如下所示“describe”消费者组：
