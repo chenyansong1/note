@@ -74,6 +74,8 @@ sh kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list localhost:9092 -t
 #查看所有的消费者组
 bin/kafka-consumer-groups.sh --bootstrap-server broker1:9092 --list
 
+Note: This will only show information about consumers that use the Java consumer API (non-ZooKeeper-based consumers).
+
 monitorwebsitegroup
 syslog
 ntaflowgroup
@@ -82,7 +84,7 @@ aptgroup
 
 To view offsets as in the previous example with the ConsumerOffsetChecker, we "describe" the consumer group like this:
 要使用ConsumerOffsetChecker查看上一个示例中消费者组的偏移量，我们按如下所示“describe”消费者组：
-  > bin/kafka-consumer-groups.sh --bootstrap-server broker1:9092 --describe --group test-consumer-group
+bin/kafka-consumer-groups.sh --bootstrap-server broker1:9092 --describe --group test-consumer-group
 
   GROUP                          TOPIC                          PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             OWNER
   test-consumer-group            test-foo                       0          1               3               2               consumer-1_/127.0.0.1
@@ -98,7 +100,7 @@ If you are using the old high-level consumer and storing the group metadata in Z
 更多的脚本参见：
 http://www.cnblogs.com/fxjwind/p/3794495.html
 https://www.iteblog.com/archives/1605.html
- 
+http://www.cnblogs.com/tonychai/p/4626567.html
 
 # 3.报错和解决
 ```
