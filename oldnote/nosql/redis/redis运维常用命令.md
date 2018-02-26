@@ -354,7 +354,13 @@ config set requirepass [passw0rd]
 # 14.验证密码
 ```
  auth passw0rd
+
+#登录执行shell
+echo -en  "auth 123456\r\nping\r\n"|nc 172.16.14.26 6379
+echo -en  "auth 123456\r\ninfo\r\n"|nc 172.16.14.26 6379
 ```
+
+
 # 15.性能测试命令
 ```
  redis-benchmark -n 100000
@@ -389,6 +395,14 @@ config set requirepass [passw0rd]
 ```
 # 18.Redis-cli命令行其他操作
 ```
+
+在远程服务上执行命令
+$ redis-cli -h host -p port -a password
+$ redis-cli -h 127.0.0.1 -p 6379 -a "mypass"
+redis 127.0.0.1:6379>
+redis 127.0.0.1:6379> PING
+PONG
+
 1. echo ：在命令行打印一些内容
  
 redis 127.0.0.1:6379> echo HongWan
