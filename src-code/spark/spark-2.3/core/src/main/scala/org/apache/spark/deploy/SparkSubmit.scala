@@ -66,6 +66,10 @@ private[deploy] object SparkSubmitAction extends Enumeration {
  *
  * This program handles setting up the classpath with relevant Spark dependencies and provides
  * a layer over the different cluster managers and deploy modes that Spark supports.
+  *
+  * aparkSubmit是提交应用的类，在这里他做了两件事
+  * 1.获取配置参数
+  * 2.通过配置参数，然后以反射的方式将用户提交的类，进行运行，即：运行用户提交的类的Main方法，接下来我们只需要看对应的用户自己写的程序即可
  */
 object SparkSubmit extends CommandLineUtils with Logging {
 
