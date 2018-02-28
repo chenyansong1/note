@@ -302,6 +302,18 @@ TypeError:cannot concatenate 'str' and 'int' object
 ["i'm", 'a', 'boy']
 
 ```
+
+# 去掉字符串中的多个空格和换行符
+
+```
+>>> s='###Cores in use:39 Total,\n                26 Used###'
+>>> print " ".join(s.split())
+###Cores in use:39 Total, 26 Used###
+>>> 
+
+```
+
+
 ## 8.3.rstrip 清除每行末尾空白
 ```
 >>line = "the knigts who say Ni!\n"

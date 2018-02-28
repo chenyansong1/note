@@ -13,8 +13,10 @@ tags: [spark]
 
 运行中的作业以及history server中的历史作业，都可以获取到信息
 
-1、如果是要获取运行中的作业的信息，可以通过http://host:4040/api/v1/...的方式来获取
+1、如果是要获取运行中的作业的信息，可以通过http://host:4040/api/v1/...的方式来获取(4040可能是4041，或者4042)
 2、如果是要获取历史作业的信息，可以通过http://host:18080/api/v1/...的方式来获取
+
+
 
 比如说，http://192.168.0.103:18080/api/v1/applications，就可以获取到所有历史作业的基本信息
 
@@ -34,6 +36,12 @@ tags: [spark]
 /applications/[app-id]/storage/rdd/[rdd-id]										指定持久化rdd的信息
 /applications/[app-id]/logs														下载指定作业的所有日志的压缩包
 /applications/[app-id]/[attempt-id]/logs										下载指定作业的某次attempt的所有日志的压缩包
+
+#添加过滤条件
+?status=[complete|succeeded|failed]
+curl http://soc31:4042/api/v1/applications/app-20180227093402-1824/jobs?status=succeeded
+
+
 ```
 
 
