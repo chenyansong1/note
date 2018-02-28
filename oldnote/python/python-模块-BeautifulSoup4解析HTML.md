@@ -25,8 +25,4 @@ beautifulsoup4官方文档：
 
 https://www.crummy.com/software/BeautifulSoup/bs4/doc/index.zh.html
 
-http://blog.csdn.net/DoJintian/article/details/51382615
-
-
-
-
+http://blog.csdn.net/idiot_xue/article/details/72626332
