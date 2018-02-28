@@ -58,6 +58,7 @@ private[spark] class StandaloneAppClient(
   private val appId = new AtomicReference[String]
   private val registered = new AtomicBoolean(false)
 
+  // StandaloneAppClient 相当于driver的功能
   private class ClientEndpoint(override val rpcEnv: RpcEnv) extends ThreadSafeRpcEndpoint
     with Logging {
 
@@ -81,6 +82,7 @@ private[spark] class StandaloneAppClient(
     private val registrationRetryThread =
       ThreadUtils.newDaemonSingleThreadScheduledExecutor("appclient-registration-retry-thread")
 
+    // 这里driver（也就是StandaloneAppClient）会向Master注册
     override def onStart(): Unit = {
       try {
         registerWithMaster(1)
@@ -104,6 +106,7 @@ private[spark] class StandaloneAppClient(
             }
             logInfo("Connecting to master " + masterAddress.toSparkURL + "...")
             val masterRef = rpcEnv.setupEndpointRef(masterAddress, Master.ENDPOINT_NAME)
+            //向Master注册application
             masterRef.send(RegisterApplication(appDescription, self))
           } catch {
             case ie: InterruptedException => // Cancelled
@@ -273,6 +276,7 @@ private[spark] class StandaloneAppClient(
 
   def start() {
     // Just launch an rpcEndpoint; it will call back into the listener.
+    // 这里在初始化ClientEndpoint的时候，会向maser注册driver
     endpoint.set(rpcEnv.setupEndpoint("AppClient", new ClientEndpoint(rpcEnv)))
   }
 

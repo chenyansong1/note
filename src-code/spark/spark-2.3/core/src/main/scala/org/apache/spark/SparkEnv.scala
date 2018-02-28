@@ -179,7 +179,7 @@ object SparkEnv extends Logging {
     }
     create(
       conf,
-      SparkContext.DRIVER_IDENTIFIER,
+      SparkContext.DRIVER_IDENTIFIER,// driver
       bindAddress,
       advertiseAddress,
       Option(port),
@@ -222,7 +222,7 @@ object SparkEnv extends Logging {
    */
   private def create(
       conf: SparkConf,
-      executorId: String,
+      executorId: String, // driver
       bindAddress: String,
       advertiseAddress: String,
       port: Option[Int],

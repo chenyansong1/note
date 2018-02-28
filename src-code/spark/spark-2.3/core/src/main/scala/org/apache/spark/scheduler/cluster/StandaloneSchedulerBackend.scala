@@ -58,6 +58,7 @@ private[spark] class StandaloneSchedulerBackend(
   private val totalExpectedCores = maxCores.getOrElse(0)
 
   override def start() {
+    // 拿到driver的引用了
     super.start()
 
     // SPARK-21159. The scheduler backend should only try to connect to the launcher when in client
@@ -113,6 +114,7 @@ private[spark] class StandaloneSchedulerBackend(
       }
     val appDesc = ApplicationDescription(sc.appName, maxCores, sc.executorMemory, command,
       webUrl, sc.eventLogDir, sc.eventLogCodec, coresPerExecutor, initialExecutorLimit)
+    // StandaloneAppClient 就像当于driver
     client = new StandaloneAppClient(sc.env.rpcEnv, masters, appDesc, this, conf)
     client.start()
     launcherBackend.setState(SparkAppHandle.State.SUBMITTED)

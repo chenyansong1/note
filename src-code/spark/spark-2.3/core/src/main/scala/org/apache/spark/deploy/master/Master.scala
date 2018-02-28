@@ -262,6 +262,7 @@ private[deploy] class Master(
         }
       }
 
+      // standaloneAppClient 请求注册应用
     case RegisterApplication(description, driver) =>
       // TODO Prevent repeated registrations from some driver
       if (state == RecoveryState.STANDBY) {
@@ -273,6 +274,8 @@ private[deploy] class Master(
         logInfo("Registered app " + description.name + " with ID " + app.id)
         persistenceEngine.addApplication(app)
         driver.send(RegisteredApplication(app.id, self))
+
+        // 在worker上会去启动Executor
         schedule()
       }
 

@@ -448,6 +448,7 @@ class SparkContext(config: SparkConf) extends Logging {
       }
     // Bind the UI before starting the task scheduler to communicate
     // the bound port to the cluster manager properly
+    // 这里会开启jetty服务
     _ui.foreach(_.bind())
 
     _hadoopConfiguration = SparkHadoopUtil.get.newConfiguration(_conf)
@@ -497,7 +498,7 @@ class SparkContext(config: SparkConf) extends Logging {
 
     // start TaskScheduler after taskScheduler sets DAGScheduler reference in DAGScheduler's
     // constructor
-    _taskScheduler.start()
+    _taskScheduler.start() // _taskScheduler 里面有一个backend，这个backend启动会去启动 driver，并让driver向Master注册
 
     _applicationId = _taskScheduler.applicationId()
     _applicationAttemptId = taskScheduler.applicationAttemptId()
@@ -2495,6 +2496,7 @@ object SparkContext extends Logging {
     }
   }
 
+
   /**
    * This function may be used to get or instantiate a SparkContext and register it as a
    * singleton object. Because we can only have one active SparkContext per JVM,
@@ -2706,6 +2708,7 @@ object SparkContext extends Logging {
         scheduler.initialize(backend)
         (backend, scheduler)
 
+        // 会调用这个
       case SPARK_REGEX(sparkUrl) =>
         val scheduler = new TaskSchedulerImpl(sc)
         val masterUrls = sparkUrl.split(",").map("spark://" + _)
