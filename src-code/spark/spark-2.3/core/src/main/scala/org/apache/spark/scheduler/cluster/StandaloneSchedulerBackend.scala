@@ -116,6 +116,7 @@ private[spark] class StandaloneSchedulerBackend(
       webUrl, sc.eventLogDir, sc.eventLogCodec, coresPerExecutor, initialExecutorLimit)
     // StandaloneAppClient 就像当于driver
     client = new StandaloneAppClient(sc.env.rpcEnv, masters, appDesc, this, conf)
+    // 向Master注册应用
     client.start()
     launcherBackend.setState(SparkAppHandle.State.SUBMITTED)
     waitForRegistration()
