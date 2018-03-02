@@ -21,7 +21,16 @@ requests 模块
 ```
 pip install requests
 
+r = requests.get(url)
+
+#返回json数据
+json_data = r.json()
+
+# 返回普通的文本数据
+data = r.text
+
 ```
+
 
 
 官网：
