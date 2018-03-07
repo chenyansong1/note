@@ -64,7 +64,8 @@ tags: [python]
 >>['Ni'] * 4
 ['Ni', 'Ni', 'Ni', 'Ni']
 
->>res = [c * 4 for c in 'spam']
+>>res = [c * 4 for c in 's
+>pam']
 >>res 
 ['ssss', 'pppp', 'aaaa', 'mmmm']
 #等价于
