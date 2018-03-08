@@ -1,0 +1,59 @@
+所有的机器配置表
+
+```
+
+CREATE TABLE "public"."t_monitor_host_config" (
+"id" varchar(32) COLLATE "default" NOT NULL,
+"ip" varchar(32) COLLATE "default",
+"user_name" varchar(32) COLLATE "default",
+"pwd" varchar(64) COLLATE "default",
+"desc" varchar(64) COLLATE "default",
+"port" varchar(8) COLLATE "default",
+CONSTRAINT "t_monitor_host_config_pkey" PRIMARY KEY ("id")
+)
+WITH (OIDS=FALSE)
+;
+
+ALTER TABLE "public"."t_monitor_host_config" OWNER TO "postgres";
+
+COMMENT ON COLUMN "public"."t_monitor_host_config"."ip" IS '主机ip';
+
+COMMENT ON COLUMN "public"."t_monitor_host_config"."user_name" IS '用户名';
+
+COMMENT ON COLUMN "public"."t_monitor_host_config"."pwd" IS '主机密码';
+
+COMMENT ON COLUMN "public"."t_monitor_host_config"."desc" IS '主机描述';
+
+COMMENT ON COLUMN "public"."t_monitor_host_config"."port" IS '访问的端口，默认是22';
+
+```
+
+
+
+
+```
+CREATE TABLE "public"."t_monitor_host_baseinfo" (
+"id" varchar(32) COLLATE "default" NOT NULL,
+"ip" varchar(32) COLLATE "default",
+"cpu" varchar(64) COLLATE "default",
+"memory" varchar(64) COLLATE "default",
+"disks" varchar(128) COLLATE "default",
+"status" varchar(2) COLLATE "default",
+CONSTRAINT "t_monitor_host_baseinfo_pkey" PRIMARY KEY ("id")
+)
+WITH (OIDS=FALSE)
+;
+
+ALTER TABLE "public"."t_monitor_host_baseinfo" OWNER TO "postgres";
+
+COMMENT ON COLUMN "public"."t_monitor_host_baseinfo"."ip" IS '主机ip';
+
+COMMENT ON COLUMN "public"."t_monitor_host_baseinfo"."cpu" IS 'CPU占用率：{"sys_cpu_percent":"","user_cpu_percent":""}';
+
+COMMENT ON COLUMN "public"."t_monitor_host_baseinfo"."memory" IS '内存使用情况：{"total_memory":"","used_memory":""}';
+
+COMMENT ON COLUMN "public"."t_monitor_host_baseinfo"."disks" IS '磁盘使用情况：[{"file_system_name":"","total_volume":"","used_volume":"","free_volume":"","used_pecent":"","mount_point":""}]';
+
+COMMENT ON COLUMN "public"."t_monitor_host_baseinfo"."status" IS 'ping的状态：1 可以ping通；0 不能ping通';
+
+```
