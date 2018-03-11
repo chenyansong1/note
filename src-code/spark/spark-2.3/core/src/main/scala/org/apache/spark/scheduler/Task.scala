@@ -106,6 +106,7 @@ private[spark] abstract class Task[T](
       Option(attemptNumber)).setCurrentContext()
 
     try {
+      // 调用具体的实现 ShuffleMapTask或者是ReduceTask 的方法
       runTask(context)
     } catch {
       case e: Throwable =>

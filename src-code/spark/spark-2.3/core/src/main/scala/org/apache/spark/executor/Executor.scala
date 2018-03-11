@@ -292,6 +292,7 @@ private[spark] class Executor(
       threadId = Thread.currentThread.getId
       Thread.currentThread.setName(threadName)
       val threadMXBean = ManagementFactory.getThreadMXBean
+      // task的内存管理器
       val taskMemoryManager = new TaskMemoryManager(env.memoryManager, taskId)
       val deserializeStartTime = System.currentTimeMillis()
       val deserializeStartCpuTime = if (threadMXBean.isCurrentThreadCpuTimeSupported) {
@@ -300,6 +301,8 @@ private[spark] class Executor(
       Thread.currentThread.setContextClassLoader(replClassLoader)
       val ser = env.closureSerializer.newInstance()
       logInfo(s"Running $taskName (TID $taskId)")
+
+      // 通过Executor向Driver发送task的消息
       execBackend.statusUpdate(taskId, TaskState.RUNNING, EMPTY_BYTE_BUFFER)
       var taskStart: Long = 0
       var taskStartCpu: Long = 0
@@ -309,16 +312,20 @@ private[spark] class Executor(
         // Must be set before updateDependencies() is called, in case fetching dependencies
         // requires access to properties contained within (e.g. for access control).
         Executor.taskDeserializationProps.set(taskDescription.properties)
-        // 更新依赖
+        //更新依赖
         updateDependencies(taskDescription.addedFiles, taskDescription.addedJars)
+
+        // 这里会反射出具体的子类，可以是ShuffleMapTask或者是ReduceTask来实现的
         task = ser.deserialize[Task[Any]](
           taskDescription.serializedTask, Thread.currentThread.getContextClassLoader)
+
         task.localProperties = taskDescription.properties
         task.setTaskMemoryManager(taskMemoryManager)
 
         // If this task has been killed before we deserialized it, let's quit now. Otherwise,
         // continue executing the task.
         val killReason = reasonIfKilled
+        // 任务在反序列化之前被kill，则抛出异常
         if (killReason.isDefined) {
           // Throw an exception rather than returning, because returning within a try{} block
           // causes a NonLocalReturnControl exception to be thrown. The NonLocalReturnControl
@@ -343,6 +350,7 @@ private[spark] class Executor(
         } else 0L
         var threwException = true
         val value = try {
+          // 因为这里的task可能是ShuffleMapTask或者是ReduceTask，所以要看具体的实现
           val res = task.run(
             taskAttemptId = taskId,
             attemptNumber = taskDescription.attemptNumber,
@@ -391,6 +399,7 @@ private[spark] class Executor(
 
         val resultSer = env.serializer.newInstance()
         val beforeSerialization = System.currentTimeMillis()
+
         val valueBytes = resultSer.serialize(value)
         val afterSerialization = System.currentTimeMillis()
 
@@ -457,21 +466,22 @@ private[spark] class Executor(
 
         // directSend = sending directly back to the driver
         val serializedResult: ByteBuffer = {
-          if (maxResultSize > 0 && resultSize > maxResultSize) {
+          // spark.driver.maxResultSize=1g
+          if (maxResultSize > 0 && resultSize > maxResultSize) {//resultSize>1G
             logWarning(s"Finished $taskName (TID $taskId). Result is larger than maxResultSize " +
               s"(${Utils.bytesToString(resultSize)} > ${Utils.bytesToString(maxResultSize)}), " +
               s"dropping it.")
             ser.serialize(new IndirectTaskResult[Any](TaskResultBlockId(taskId), resultSize))
-          } else if (resultSize > maxDirectResultSize) {
+          } else if (resultSize > maxDirectResultSize) {// 128M
             val blockId = TaskResultBlockId(taskId)
             env.blockManager.putBytes(
               blockId,
               new ChunkedByteBuffer(serializedDirectResult.duplicate()),
               StorageLevel.MEMORY_AND_DISK_SER)
-            logInfo(
+            logInfo(//发送taskid到driver，task计算的结果放在了BlockManager中
               s"Finished $taskName (TID $taskId). $resultSize bytes result sent via BlockManager)")
             ser.serialize(new IndirectTaskResult[Any](blockId, resultSize))
-          } else {
+          } else {// 小于128M,通过nettry直接发送结果
             logInfo(s"Finished $taskName (TID $taskId). $resultSize bytes result sent to driver")
             serializedDirectResult
           }

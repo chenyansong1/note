@@ -74,6 +74,7 @@ private[spark] class ShuffleMapTask(
     if (locs == null) Nil else locs.toSet.toSeq
   }
 
+  // task真正执行的方法，最后会返回MapStatus
   override def runTask(context: TaskContext): MapStatus = {
     // Deserialize the RDD using the broadcast variable.
     val threadMXBean = ManagementFactory.getThreadMXBean
@@ -84,6 +85,7 @@ private[spark] class ShuffleMapTask(
     val ser = SparkEnv.get.closureSerializer.newInstance()
     val (rdd, dep) = ser.deserialize[(RDD[_], ShuffleDependency[_, _, _])](
       ByteBuffer.wrap(taskBinary.value), Thread.currentThread.getContextClassLoader)
+
     _executorDeserializeTime = System.currentTimeMillis() - deserializeStartTime
     _executorDeserializeCpuTime = if (threadMXBean.isCurrentThreadCpuTimeSupported) {
       threadMXBean.getCurrentThreadCpuTime - deserializeStartCpuTime
@@ -93,6 +95,13 @@ private[spark] class ShuffleMapTask(
     try {
       val manager = SparkEnv.get.shuffleManager
       writer = manager.getWriter[Any, Any](dep.shuffleHandle, partitionId, context)
+      /*
+       计算结果会写到BlockManager之中，最终返回MapStatus给DAGScheduler，MapStatus中存放的是本次task的计算结果存储在BlockManager
+       的信息，而不是计算结果本身
+
+      调用rdd.iterator，如果该rdd已经被cache或者checkpoint，那么直接读取结果，
+      否则计算，计算结果保存在本地系统的BlockManager中
+       */
       writer.write(rdd.iterator(partition, context).asInstanceOf[Iterator[_ <: Product2[Any, Any]]])
       writer.stop(success = true).get
     } catch {
