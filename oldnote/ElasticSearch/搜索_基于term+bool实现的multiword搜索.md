@@ -81,3 +81,32 @@ bool should，指定多个搜索词，同时使用term query
 上一讲，为啥要讲解两种实现multi-value搜索的方式呢？实际上，就是给这一讲进行铺垫的。match query --> bool + term。
 
 
+搜索 term的同时，进行范围过滤
+
+```
+{
+	"query":{
+		"bool":{
+			"must":[
+				{"term":{"dstip":"223.252.199.69"}},	
+				{"term":{"srcip":"172.16.115.35"}},
+				{
+					"range":{
+						"starttime": {
+							"gte":  1521136429
+						}
+					}
+				},
+				{
+					"range":{
+						"endtime": {
+							"lt":   1521136439
+						}
+					}
+				}
+			]
+		}
+	}
+}
+
+```
