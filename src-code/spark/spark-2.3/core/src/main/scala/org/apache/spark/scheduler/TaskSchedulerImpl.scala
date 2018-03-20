@@ -321,7 +321,7 @@ private[spark] class TaskSchedulerImpl(
    * sets for tasks in order of priority. We fill each node with tasks in a round-robin manner so
    * that tasks are balanced across the cluster.
    */
-  // todo list 未做注释
+  // 提供已经排序的taskSetManager
   def resourceOffers(offers: IndexedSeq[WorkerOffer]): Seq[Seq[TaskDescription]] = synchronized {
     // Mark each slave as alive and remember its hostname
     // Also track if new executor is added
@@ -358,7 +358,10 @@ private[spark] class TaskSchedulerImpl(
     // Build a list of tasks to assign to each worker.
     val tasks = shuffledOffers.map(o => new ArrayBuffer[TaskDescription](o.cores / CPUS_PER_TASK))
     val availableCpus = shuffledOffers.map(o => o.cores).toArray
+
+    // 获取已经排好序的taskSetManager
     val sortedTaskSets = rootPool.getSortedTaskSetQueue
+
     for (taskSet <- sortedTaskSets) {
       logDebug("parentName: %s, name: %s, runningTasks: %s".format(
         taskSet.parent.name, taskSet.name, taskSet.runningTasks))

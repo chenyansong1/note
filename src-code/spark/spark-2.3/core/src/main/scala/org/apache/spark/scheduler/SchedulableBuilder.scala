@@ -49,7 +49,7 @@ private[spark] class FIFOSchedulableBuilder(val rootPool: Pool)
     // nothing
   }
 
-  //
+  // 对于FIFO调度策略，是将manager管理器加入到rootPool中
   override def addTaskSetManager(manager: Schedulable, properties: Properties) {
     rootPool.addSchedulable(manager)
   }
@@ -191,6 +191,7 @@ private[spark] class FairSchedulableBuilder(val rootPool: Pool, conf: SparkConf)
       } else {
         DEFAULT_POOL_NAME
       }
+    // 从根调度池中获取到构建调度池时添加的默认的调度池，然后将manager添加到这个默认的调度池中
     var parentPool = rootPool.getSchedulableByName(poolName)
     if (parentPool == null) {
       // we will create a new pool that user has configured in app
