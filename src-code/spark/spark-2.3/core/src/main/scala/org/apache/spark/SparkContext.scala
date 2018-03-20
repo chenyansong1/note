@@ -462,6 +462,7 @@ class SparkContext(config: SparkConf) extends Logging {
       files.foreach(addFile)
     }
 
+    // 获取executor所需要的内存，如果没有配置，默认1024
     _executorMemory = _conf.getOption("spark.executor.memory")
       .orElse(Option(System.getenv("SPARK_EXECUTOR_MEMORY")))
       .orElse(Option(System.getenv("SPARK_MEM"))
@@ -486,19 +487,26 @@ class SparkContext(config: SparkConf) extends Logging {
 
     // We need to register "HeartbeatReceiver" before "createTaskScheduler" because Executor will
     // retrieve "HeartbeatReceiver" in the constructor. (SPARK-6640)
+    // 创建TaskScheduler之前需要注册HeartbeatReceiver心跳接收器，因为executor需要取HeartbeatReceiver
     _heartbeatReceiver = env.rpcEnv.setupEndpoint(
       HeartbeatReceiver.ENDPOINT_NAME, new HeartbeatReceiver(this))
 
     // Create and start the scheduler
+    // 创建和开始TaskScheduler
     val (sched, ts) = SparkContext.createTaskScheduler(this, master, deployMode)
+    // 初始化SchedulerBackend
     _schedulerBackend = sched
+    // 构造TaskScheduler
     _taskScheduler = ts
+    // 初始化DAGScheduler
     _dagScheduler = new DAGScheduler(this)
     _heartbeatReceiver.ask[Boolean](TaskSchedulerIsSet)
 
     // start TaskScheduler after taskScheduler sets DAGScheduler reference in DAGScheduler's
     // constructor
+    // 启动TaskScheduler
     _taskScheduler.start() // _taskScheduler 里面有一个backend，这个backend启动会去启动 driver，并让driver向Master注册
+
 
     _applicationId = _taskScheduler.applicationId()
     _applicationAttemptId = taskScheduler.applicationAttemptId()
@@ -1475,6 +1483,7 @@ class SparkContext(config: SparkConf) extends Logging {
    *
    * @param value value to broadcast to the Spark nodes
    * @return `Broadcast` object, a read-only variable cached on each machine
+    * 将一个只读广播变量发送给集群中每一个节点，该变量只给集群发送一次
    */
   def broadcast[T: ClassTag](value: T): Broadcast[T] = {
     assertNotStopped()

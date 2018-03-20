@@ -44,10 +44,12 @@ private[spark] trait SchedulableBuilder {
 private[spark] class FIFOSchedulableBuilder(val rootPool: Pool)
   extends SchedulableBuilder with Logging {
 
+  // 在FIFO中，由于该方法为空，所以在rootPool下 没有下级调度池，所以加入到调度池的taskSetManager是直接放在了根调度池下
   override def buildPools() {
     // nothing
   }
 
+  //
   override def addTaskSetManager(manager: Schedulable, properties: Properties) {
     rootPool.addSchedulable(manager)
   }
@@ -69,6 +71,7 @@ private[spark] class FairSchedulableBuilder(val rootPool: Pool, conf: SparkConf)
   val DEFAULT_SCHEDULING_MODE = SchedulingMode.FIFO
   val DEFAULT_MINIMUM_SHARE = 0
   val DEFAULT_WEIGHT = 1
+
 
   override def buildPools() {
     var fileData: Option[(InputStream, String)] = None
@@ -103,9 +106,11 @@ private[spark] class FairSchedulableBuilder(val rootPool: Pool, conf: SparkConf)
     }
 
     // finally create "default" pool
+    // 这里会在根调度池下，创建一个默认的调度池，这样就会和根调度池存在层级关系
     buildDefaultPool()
   }
 
+  // 在根调度池rootPool中添加了下级调度池，下级调度池Pool 包含了一组taskSetManager
   private def buildDefaultPool() {
     if (rootPool.getSchedulableByName(DEFAULT_POOL_NAME) == null) {
       val pool = new Pool(DEFAULT_POOL_NAME, DEFAULT_SCHEDULING_MODE,

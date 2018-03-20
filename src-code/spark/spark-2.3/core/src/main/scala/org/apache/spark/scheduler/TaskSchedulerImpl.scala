@@ -133,6 +133,7 @@ private[spark] class TaskSchedulerImpl(
         throw new SparkException(s"Unrecognized $SCHEDULER_MODE_PROPERTY: $schedulingModeConf")
     }
 
+  // 根调度池
   val rootPool: Pool = new Pool("", schedulingMode, 0, 0)
 
   // This is a var so that we can reset it for testing purposes.
@@ -144,8 +145,9 @@ private[spark] class TaskSchedulerImpl(
 
   def initialize(backend: SchedulerBackend) {
     this.backend = backend
+
+    // 会根据调度模式，选择是 FIFO 还是Fair 的调度模式
     schedulableBuilder = {
-      // 会根据调度模式，选择是 FIFO 还是Fair 的调度模式
       schedulingMode match {
         case SchedulingMode.FIFO =>
           new FIFOSchedulableBuilder(rootPool)
@@ -156,6 +158,7 @@ private[spark] class TaskSchedulerImpl(
           s"$schedulingMode")
       }
     }
+    // 使用具体的一种调度器，在根调度池rootPool 下创建调度池
     schedulableBuilder.buildPools()
   }
 
@@ -179,11 +182,12 @@ private[spark] class TaskSchedulerImpl(
     waitBackendReady()
   }
 
+  // 提交一批task
   override def submitTasks(taskSet: TaskSet) {
     val tasks = taskSet.tasks
     logInfo("Adding task set " + taskSet.id + " with " + tasks.length + " tasks")
     this.synchronized {
-      // 创建taskSet管理器
+      // 创建taskSet管理器，用于管理taskSet的生命周期
       val manager = createTaskSetManager(taskSet, maxTaskFailures)
       val stage = taskSet.stageId
       val stageTaskSets =
@@ -196,8 +200,9 @@ private[spark] class TaskSchedulerImpl(
         throw new IllegalStateException(s"more than one active taskSet for stage $stage:" +
           s" ${stageTaskSets.toSeq.map{_._2.taskSet.id}.mkString(",")}")
       }
-      // 将TaskSetManager加到Schedulable tree等待被调度执行
+      // 将TaskSetManager加到 调度池 中等待被调度执行，调度器有：FIFOSchedulableBuilder， FairSchedulableBuilder 两种
       schedulableBuilder.addTaskSetManager(manager, manager.taskSet.properties)
+
 
       if (!isLocal && !hasReceivedTask) {
         starvationTimer.scheduleAtFixedRate(new TimerTask() {
@@ -316,6 +321,7 @@ private[spark] class TaskSchedulerImpl(
    * sets for tasks in order of priority. We fill each node with tasks in a round-robin manner so
    * that tasks are balanced across the cluster.
    */
+  // todo list 未做注释
   def resourceOffers(offers: IndexedSeq[WorkerOffer]): Seq[Seq[TaskDescription]] = synchronized {
     // Mark each slave as alive and remember its hostname
     // Also track if new executor is added
