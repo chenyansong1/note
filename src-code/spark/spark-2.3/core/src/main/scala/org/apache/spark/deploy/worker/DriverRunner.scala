@@ -78,6 +78,7 @@ private[deploy] class DriverRunner(
   }
 
   /** Starts a thread to run and manage the driver. */
+  // 开启一个线程去运行和管理driver
   private[worker] def start() = {
     new Thread("DriverRunner for " + driverId) {
       override def run() {

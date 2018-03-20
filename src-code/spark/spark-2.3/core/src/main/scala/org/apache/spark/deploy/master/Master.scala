@@ -610,13 +610,22 @@ private[deploy] class Master(
       app: ApplicationInfo,
       usableWorkers: Array[WorkerInfo],
       spreadOutApps: Boolean): Array[Int] = {
+    // 在app中设定的为每个Executor分配的core
     val coresPerExecutor = app.desc.coresPerExecutor
+    // 如果用户没有指定，那么默认是为每个Executor分配1个core
     val minCoresPerExecutor = coresPerExecutor.getOrElse(1)
+
     val oneExecutorPerWorker = coresPerExecutor.isEmpty
+    // 为每个Executor分配的memory
     val memoryPerExecutor = app.desc.memoryPerExecutorMB
+
     val numUsable = usableWorkers.length
+    // 给定的List<worker>上的 可用的core的数量 ===> List< Int<cores> >
     val assignedCores = new Array[Int](numUsable) // Number of cores to give to each worker
+    // 每个worker上即将启动的Executor的数量
     val assignedExecutors = new Array[Int](numUsable) // Number of new executors on each worker
+
+    // 总共有多少个core去 用于分配
     var coresToAssign = math.min(app.coresLeft, usableWorkers.map(_.coresFree).sum)
 
     /** Return whether the specified worker can launch an executor for this app. */
@@ -678,7 +687,7 @@ private[deploy] class Master(
   private def startExecutorsOnWorkers(): Unit = {
     // Right now this is a very simple FIFO scheduler. We keep trying to fit in the first app in the queue, then the second app, etc.
     // 这里是采用FIFO的调度策略，为每一个APP分配对应的executor
-    for (app <- waitingApps) {
+    for (app <- waitingApps) {// 这里为每个正在waiting的application启动Executor
       // 默认每个executor是分配一个core
       val coresPerExecutor = app.desc.coresPerExecutor.getOrElse(1)
       // If the cores left is less than the coresPerExecutor,the cores left will not be allocated
@@ -690,11 +699,14 @@ private[deploy] class Master(
             worker.coresFree >= coresPerExecutor)
           .sortBy(_.coresFree).reverse
         // spreadOutApps：让app分布到尽可能多的worker上去
+        // 这里拿到的是 usableWorkers 的 可以使用的cores ,他是一个list
         val assignedCores = scheduleExecutorsOnWorkers(app, usableWorkers, spreadOutApps)
 
         // Now that we've decided how many cores to allocate on each worker, let's allocate them
         for (pos <- 0 until usableWorkers.length if assignedCores(pos) > 0) {
           // 分配资源到executor上，然后调用 rpc 去worker上启动executor
+          // 这个app，在这个Worker上（usableWorkers(pos)）， 分配的总的core数量（assignedCores(pos)），
+          // 这个worker上每个Executor分配的core的数量（app.desc.coresPerExecutor） ，这个就可以得出 对于这个app，在这个worker上启动的Executor的数量
           allocateWorkerResourceToExecutors(
             app, assignedCores(pos), app.desc.coresPerExecutor, usableWorkers(pos))
         }
@@ -739,16 +751,19 @@ private[deploy] class Master(
       return
     }
     // Drivers take strict precedence over executors
-    // 将活跃的worker随机打乱，放在一个List中
+    // 将活跃的worker随机打乱，放在一个List中,
+    // 对Worker节点进行随机排序，能够使Driver更加均衡分布在集群中
     val shuffledAliveWorkers = Random.shuffle(workers.toSeq.filter(_.state == WorkerState.ALIVE))
     val numWorkersAlive = shuffledAliveWorkers.size
     var curPos = 0
+    // 循环遍历所有等待提交的driver
     for (driver <- waitingDrivers.toList) { // iterate over a copy of waitingDrivers
       // We assign workers to each waiting driver in a round-robin fashion. For each driver, we
       // start from the last worker that was assigned a driver, and continue onwards until we have
       // explored all alive workers.
       var launched = false
       var numWorkersVisited = 0
+      // 循环遍历所有的活跃的worker  && 当前driver没有启动
       while (numWorkersVisited < numWorkersAlive && !launched) {
         val worker = shuffledAliveWorkers(curPos)
         numWorkersVisited += 1
