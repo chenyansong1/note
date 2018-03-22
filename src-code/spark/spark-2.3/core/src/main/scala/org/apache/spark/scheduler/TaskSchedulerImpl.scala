@@ -354,6 +354,7 @@ private[spark] class TaskSchedulerImpl(
       }
     }.getOrElse(offers)
 
+    // 随机打乱可用worker
     val shuffledOffers = shuffleOffers(filteredOffers)
     // Build a list of tasks to assign to each worker.
     val tasks = shuffledOffers.map(o => new ArrayBuffer[TaskDescription](o.cores / CPUS_PER_TASK))
@@ -373,8 +374,10 @@ private[spark] class TaskSchedulerImpl(
     // Take each TaskSet in our scheduling order, and then offer it each node in increasing order
     // of locality levels so that it gets a chance to launch local tasks on all of them.
     // NOTE: the preferredLocality order: PROCESS_LOCAL, NODE_LOCAL, NO_PREF, RACK_LOCAL, ANY
+    // 这里会计算数据的本地化级别
     for (taskSet <- sortedTaskSets) {
       var launchedAnyTask = false
+      // task的最大本地化级别
       var launchedTaskAtCurrentMaxLocality = false
       for (currentMaxLocality <- taskSet.myLocalityLevels) {
         do {
