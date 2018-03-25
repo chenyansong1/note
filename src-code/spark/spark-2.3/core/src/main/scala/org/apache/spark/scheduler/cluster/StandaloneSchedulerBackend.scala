@@ -112,6 +112,8 @@ private[spark] class StandaloneSchedulerBackend(
       } else {
         None
       }
+
+    // 这个是application的描述信息
     val appDesc = ApplicationDescription(sc.appName, maxCores, sc.executorMemory, command,
       webUrl, sc.eventLogDir, sc.eventLogCodec, coresPerExecutor, initialExecutorLimit)
     // StandaloneAppClient 就像当于driver

@@ -336,7 +336,8 @@ private[spark] class TaskSchedulerImpl(
     // NOTE: the preferredLocality order: PROCESS_LOCAL, NODE_LOCAL, NO_PREF, RACK_LOCAL, ANY
     // 这里既是任务分配算法的核心了
     // 双重for循环,遍历所有taskSet,以及每一种本地化级别
-    // 本地化级别:有几种:PROCESS_LOCAL (进程本地化),rdd的partition和task进入一个executor内,那么速度当然快
+    // 本地化级别:有几种:
+    // PROCESS_LOCAL (进程本地化),rdd的partition和task进入一个executor内,那么速度当然快
     // NODE_LOCAL :也就是说,rdd的partition和task不再一个executor中,不再一个进程,但是在一个worker节点上
     // NO_PREF:无,没有所谓的本地化级别
     // RACK_LOCAL:机架本地化,至少rdd的partition和task在一个机架上
