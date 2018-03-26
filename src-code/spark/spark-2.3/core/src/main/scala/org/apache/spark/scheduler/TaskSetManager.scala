@@ -207,6 +207,7 @@ private[spark] class TaskSetManager(
   private[scheduler] var emittedTaskSizeWarning = false
 
   /** Add a task to all the pending-task lists that it should be on. */
+  // todo list
   private[spark] def addPendingTask(index: Int) {
     for (loc <- tasks(index).preferredLocations) {
       loc match {
