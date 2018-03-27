@@ -301,6 +301,7 @@ private def startExecutorsOnWorkers(): Unit = {
 ```
 
 allocateWorkerResourceToExecutors方法如下:在指定的worker上用分配的核数去启动一个或多个Executor
+
 ```
 private def allocateWorkerResourceToExecutors(
     app: ApplicationInfo,
@@ -353,6 +354,7 @@ spread out调度算法的举例
 
 
 launchExecutor方法如下
+
 ```
 private def launchExecutor(worker: WorkerInfo, exec: ExecutorDesc): Unit = {
   logInfo("Launching executor " + exec.fullId + " on worker " + worker.id)
@@ -372,6 +374,7 @@ private def launchExecutor(worker: WorkerInfo, exec: ExecutorDesc): Unit = {
 **spread out和非spread out的不同**
 
 scheduleExecutorsOnWorkers方法源码
+
 ```
 
 
