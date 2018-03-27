@@ -493,7 +493,13 @@ class SparkContext(config: SparkConf) extends Logging {
       HeartbeatReceiver.ENDPOINT_NAME, new HeartbeatReceiver(this))
 
     // Create and start the scheduler
-    // 创建和开始TaskScheduler
+    /*
+     创建和开始TaskScheduler,这里会尽心的操作如下：
+    1.创建一个后台进程： StandaloneSchedulerBackend
+        1.1.这个后台进程，在new的时候会内部维护一个 StandaloneAppClient ，就是用StandaloneAppClient 向master进行注册application的
+        (但是这个注册的启动，是由_taskScheduler.start() 触发的，在taskScheduler中维护着一个backend，在taskScheduler.start()的时候，会调用内部的backend.start() )
+    2.这个方法中还会调用TaskSchedulerImpl.initialize(backend)  去创建 根调度池（为taskSet的调度做准备），这里创建根调度池的方法有两种策略：FIFO, FAIR
+      */
     val (sched, ts) = SparkContext.createTaskScheduler(this, master, deployMode)
     // 初始化SchedulerBackend
     _schedulerBackend = sched
@@ -2719,7 +2725,7 @@ object SparkContext extends Logging {
         scheduler.initialize(backend)
         (backend, scheduler)
 
-        // 会调用这个
+        // 会调用这个:SPARK_REGEX = """spark://(.*)"""
       case SPARK_REGEX(sparkUrl) =>
         val scheduler = new TaskSchedulerImpl(sc)
         val masterUrls = sparkUrl.split(",").map("spark://" + _)

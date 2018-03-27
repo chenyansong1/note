@@ -398,7 +398,7 @@ private[spark] class TaskSchedulerImpl(
           launchedAnyTask |= launchedTaskAtCurrentMaxLocality
         } while (launchedTaskAtCurrentMaxLocality)
       }
-      if (!launchedAnyTask) {
+      if (!launchedAnyTask) {+
         taskSet.abortIfCompletelyBlacklisted(hostToExecutors)
       }
     }
