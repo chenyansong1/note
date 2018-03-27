@@ -73,6 +73,7 @@ private[spark] class StandaloneSchedulerBackend(
       sc.conf.get("spark.driver.host"),
       sc.conf.get("spark.driver.port").toInt,
       CoarseGrainedSchedulerBackend.ENDPOINT_NAME).toString
+
     val args = Seq(
       "--driver-url", driverUrl,
       "--executor-id", "{{EXECUTOR_ID}}",
@@ -80,6 +81,7 @@ private[spark] class StandaloneSchedulerBackend(
       "--cores", "{{CORES}}",
       "--app-id", "{{APP_ID}}",
       "--worker-url", "{{WORKER_URL}}")
+
     val extraJavaOpts = sc.conf.getOption("spark.executor.extraJavaOptions")
       .map(Utils.splitCommandString).getOrElse(Seq.empty)
     val classPathEntries = sc.conf.getOption("spark.executor.extraClassPath")
@@ -100,6 +102,7 @@ private[spark] class StandaloneSchedulerBackend(
     // Start executors with a few necessary configs for registering with the scheduler
     val sparkJavaOpts = Utils.sparkJavaOpts(conf, SparkConf.isExecutorStartupConf)
     val javaOpts = sparkJavaOpts ++ extraJavaOpts
+    // 会使用该command在Executor上启动一个backend
     val command = Command("org.apache.spark.executor.CoarseGrainedExecutorBackend",
       args, sc.executorEnvs, classPathEntries ++ testingClassPath, libraryPathEntries, javaOpts)
     val webUrl = sc.ui.map(_.webUrl).getOrElse("")
@@ -113,9 +116,19 @@ private[spark] class StandaloneSchedulerBackend(
         None
       }
 
-    // 这个是application的描述信息
-    val appDesc = ApplicationDescription(sc.appName, maxCores, sc.executorMemory, command,
-      webUrl, sc.eventLogDir, sc.eventLogCodec, coresPerExecutor, initialExecutorLimit)
+    // 这个是application的描述信息（这些描述信息，会成为启动应用的配置信息），这个类很重要
+    val appDesc = ApplicationDescription(
+        sc.appName, // 应用程序的名字
+        maxCores,   // 最大的cores
+        sc.executorMemory,// executor的memory
+        command,    // 这个就是上面的command，
+        webUrl,     // ui
+        sc.eventLogDir,
+        sc.eventLogCodec,
+        coresPerExecutor,
+        initialExecutorLimit
+    )
+
     // StandaloneAppClient 就像当于driver
     client = new StandaloneAppClient(sc.env.rpcEnv, masters, appDesc, this, conf)
     // 向Master注册应用

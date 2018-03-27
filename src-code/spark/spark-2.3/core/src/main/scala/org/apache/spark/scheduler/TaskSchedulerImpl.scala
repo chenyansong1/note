@@ -35,8 +35,17 @@ import org.apache.spark.scheduler.TaskLocality.TaskLocality
 import org.apache.spark.storage.BlockManagerId
 import org.apache.spark.util.{AccumulatorV2, ThreadUtils, Utils}
 
+/*
+1.底层通过操作一个SchedulerBackend，针对不同种类的cluster（sstandalone，yarn，mesos),来调度task
+2.他也可以通过使用一个localBackend,并且将isLocal=true,来在本地模式下工作
+3.负责一些通用的逻辑:决定多个job的调度顺序（有一个调度池的概念）；可以启动推测任务执行
+4.通过通过调用start方法来会启动backend，而在backend中会有一个APPclient向Master注册application；
+ 调用他的initialize，构建调度池（FIFO, FAIR 两种调度策略）;
+ submitTasks 去提交一批task（taskSet）
+ */
 /**
  * Schedules tasks for multiple types of clusters by acting through a SchedulerBackend.
+  * 不同类型的cluster，会有不同的SchedulerBackend 来调度task，所以SchedulerBackend是TaskSchedulerImpl的核心
  * It can also work with a local setup by using a `LocalSchedulerBackend` and setting
  * isLocal to true. It handles common logic, like determining a scheduling order across jobs, waking
  * up to launch speculative tasks, etc.
@@ -144,14 +153,17 @@ private[spark] class TaskSchedulerImpl(
   }
 
   def initialize(backend: SchedulerBackend) {
+    // 给自身赋值一个backend
     this.backend = backend
 
     // 会根据调度模式，选择是 FIFO 还是Fair 的调度模式
     schedulableBuilder = {
       schedulingMode match {
         case SchedulingMode.FIFO =>
+          // 该模式下只会有一个根调度池
           new FIFOSchedulableBuilder(rootPool)
         case SchedulingMode.FAIR =>
+          // 在该模式下在给定的rootPool之外，在创建一个调度池，并将该调度池加入到rootPool
           new FairSchedulableBuilder(rootPool, conf)
         case _ =>
           throw new IllegalArgumentException(s"Unsupported $SCHEDULER_MODE_PROPERTY: " +

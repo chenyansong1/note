@@ -151,6 +151,7 @@ private[spark] abstract class SparkUITab(parent: SparkUI, prefix: String)
 }
 
 private[spark] object SparkUI {
+  // 默认绑定4040端口
   val DEFAULT_PORT = 4040
   val STATIC_RESOURCE_DIR = "org/apache/spark/ui/static"
   val DEFAULT_POOL_NAME = "default"

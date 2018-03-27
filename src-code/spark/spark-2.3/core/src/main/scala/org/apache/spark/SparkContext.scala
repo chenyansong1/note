@@ -438,6 +438,7 @@ class SparkContext(config: SparkConf) extends Logging {
         None
       }
 
+    // 创建spark UI
     _ui =
       if (conf.getBoolean("spark.ui.enabled", true)) {
         Some(SparkUI.create(Some(this), _statusStore, _conf, _env.securityManager, appName, "",
@@ -2723,6 +2724,7 @@ object SparkContext extends Logging {
         val scheduler = new TaskSchedulerImpl(sc)
         val masterUrls = sparkUrl.split(",").map("spark://" + _)
         val backend = new StandaloneSchedulerBackend(scheduler, sc, masterUrls)
+        // 创建调度池
         scheduler.initialize(backend)
         (backend, scheduler)
 
@@ -2746,6 +2748,7 @@ object SparkContext extends Logging {
         }
         (backend, scheduler)
 
+      // 如果使用yarn提交，应该是这种模式的了
       case masterUrl =>
         val cm = getClusterManager(masterUrl) match {
           case Some(clusterMgr) => clusterMgr

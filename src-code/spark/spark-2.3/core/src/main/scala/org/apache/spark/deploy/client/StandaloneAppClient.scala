@@ -58,7 +58,7 @@ private[spark] class StandaloneAppClient(
   private val appId = new AtomicReference[String]
   private val registered = new AtomicBoolean(false)
 
-  // StandaloneAppClient 相当于driver的功能
+  // ClientEndpoint 作为 driver（StandaloneAppClient）中的一个netty的一方，用于netty通信使用， 看他的receive方法
   private class ClientEndpoint(override val rpcEnv: RpcEnv) extends ThreadSafeRpcEndpoint
     with Logging {
 
@@ -98,6 +98,7 @@ private[spark] class StandaloneAppClient(
      *  Register with all masters asynchronously and returns an array `Future`s for cancellation.
      */
     private def tryRegisterAllMasters(): Array[JFuture[_]] = {
+      // 可能存在多个Master，因为Master之间可能存在HA
       for (masterAddress <- masterRpcAddresses) yield {
         registerMasterThreadPool.submit(new Runnable {
           override def run(): Unit = try {
@@ -276,7 +277,7 @@ private[spark] class StandaloneAppClient(
 
   def start() {
     // Just launch an rpcEndpoint; it will call back into the listener.
-    // 这里在初始化ClientEndpoint的时候，会向maser注册driver
+    // 这里在初始化ClientEndpoint的时候，会向maser注册 application
     endpoint.set(rpcEnv.setupEndpoint("AppClient", new ClientEndpoint(rpcEnv)))
   }
 

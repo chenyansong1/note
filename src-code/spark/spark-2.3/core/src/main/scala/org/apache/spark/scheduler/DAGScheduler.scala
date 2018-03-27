@@ -46,6 +46,12 @@ import org.apache.spark.storage.BlockManagerMessages.BlockManagerHeartbeat
 import org.apache.spark.util._
 
 /**
+  * 1.将job划分为不同的stage，然后将一个一个的stage作为taskSet提交到底层的taskscheduler,
+  * 2.同时他还负责决定运行每个task的最佳位置，基于当前的缓存状态，将这些最佳位置提交给底层的taskScheduler
+  * 3.还会处理由于shuffle文件丢失导致的失败，在这种情况下，旧的stage可能会被重新提交，
+  *   但是如果一个stage不是由于shuffle文件丢失导致（OOM），那么会被taskscheduler处理，taskscheduler会重试每一个task，
+  *   重试超过一定的次数，会取消本次application
+  *
  * The high-level scheduling layer that implements stage-oriented scheduling. It computes a DAG of
  * stages for each job, keeps track of which RDDs and stage outputs are materialized, and finds a
  * minimal schedule to run the job. It then submits stages as TaskSets to an underlying
@@ -207,6 +213,7 @@ class DAGScheduler(
   private val messageScheduler =
     ThreadUtils.newDaemonSingleThreadScheduledExecutor("dag-scheduler-message")
 
+  // dagScheduler底层基于此组件进行通信
   private[scheduler] val eventProcessLoop = new DAGSchedulerEventProcessLoop(this)
   taskScheduler.setDAGScheduler(this)
 
