@@ -550,14 +550,17 @@ private[deploy] class Master(
     }
   }
 
+  // 1.从内存缓存中移除；2.从相关的组件的内存缓存中移除；3.从持久化存储中移除
   private def completeRecovery() {
     // Ensure "only-once" recovery semantics using a short synchronization period.
     if (state != RecoveryState.RECOVERING) { return }
     state = RecoveryState.COMPLETING_RECOVERY
 
     // Kill off any workers and apps that didn't respond to us.
+    // 对于没有响应的worker和application，将他们kill掉
     workers.filter(_.state == WorkerState.UNKNOWN).foreach(
       removeWorker(_, "Not responding for recovery"))
+
     apps.filter(_.state == ApplicationState.UNKNOWN).foreach(finishApplication)
 
     // Update the state of recovered apps to RUNNING
@@ -826,6 +829,7 @@ private[deploy] class Master(
     addressToWorker -= worker.endpoint.address
 
     for (exec <- worker.executors.values) {
+      // 向application发送消息，告诉application，有些Executor已经lost
       logInfo("Telling app of lost executor: " + exec.id)
       exec.application.driver.send(ExecutorUpdated(
         exec.id, ExecutorState.LOST, Some("worker lost"), None, workerLost = true))
@@ -833,7 +837,7 @@ private[deploy] class Master(
       exec.application.removeExecutor(exec)
     }
     for (driver <- worker.drivers.values) {
-      if (driver.desc.supervise) {
+      if (driver.desc.supervise) {// 如果配置了这个属性supervise，那么会重新启动driver
         logInfo(s"Re-launching ${driver.id}")
         relaunchDriver(driver)
       } else {
