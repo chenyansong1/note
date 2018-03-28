@@ -266,13 +266,21 @@ private[deploy] class Master(
     case RegisterApplication(description, driver) =>
       // TODO Prevent repeated registrations from some driver
       if (state == RecoveryState.STANDBY) {
+        // 如果请求发送到了状态为standby的Master，那么do nothing
         // ignore, don't send response
       } else {
         logInfo("Registering app " + description.name)
+        // 拿到application的封装信息
         val app = createApplication(description, driver)
+
+        // 这里其实就是将app加入到缓存中，将app加入到等待的buffer中，然后在schedule方法中取出等待的app，开始为这些APP去启动Executor
         registerApplication(app)
         logInfo("Registered app " + description.name + " with ID " + app.id)
+
+        // 使用持久化引擎，将application持久化（文件系统的持久化引擎或者zookeeper的持久化引擎）
         persistenceEngine.addApplication(app)
+
+        // 向standaloneSchedulerbankend 中的APPClient发送APP已经注册的消息
         driver.send(RegisteredApplication(app.id, self))
 
         // 在worker上会去启动Executor
@@ -283,6 +291,7 @@ private[deploy] class Master(
       val execOption = idToApp.get(appId).flatMap(app => app.executors.get(execId))
       execOption match {
         case Some(exec) =>
+          // 拿到application 信息
           val appInfo = idToApp(appId)
           val oldState = exec.state
           exec.state = state
@@ -293,16 +302,20 @@ private[deploy] class Master(
             appInfo.resetRetryCount()
           }
 
+          // 向driver同步发送ExecutorUpdated
           exec.application.driver.send(ExecutorUpdated(execId, state, message, exitStatus, false))
 
+          // 判断：如果Executor完成了
           if (ExecutorState.isFinished(state)) {
             // Remove this executor from the worker and app
+            // 从worker和Executor中移除Executor
             logInfo(s"Removing executor ${exec.fullId} because it is $state")
             // If an application has already finished, preserve its
             // state to display its information properly on the UI
-            if (!appInfo.isFinished) {
+            if (!appInfo.isFinished) {// 如果application还没有完成，那么将Executor从application中移除
               appInfo.removeExecutor(exec)
             }
+            // 将Executor从worker中移除
             exec.worker.removeExecutor(exec)
 
             val normalExit = exitStatus == Some(0)
@@ -780,7 +793,7 @@ private[deploy] class Master(
       }
     }
 
-    //在work上启动executor
+    //在work上启动executor（其实为在等待中的application去启动Executor）
     startExecutorsOnWorkers()
   }
 
@@ -873,12 +886,15 @@ private[deploy] class Master(
       ApplicationInfo = {
     val now = System.currentTimeMillis()
     val date = new Date(now)
+    // app-yyyyMMddHHmmss-1111
     val appId = newApplicationId(date)
+    // 这里的desc是对application的描述，这是在driver的backend注册application之前就需要封装好的
     new ApplicationInfo(now, appId, desc, date, driver, defaultCores)
   }
 
   private def registerApplication(app: ApplicationInfo): Unit = {
     val appAddress = app.driver.address
+    // 如果driver的地址存在，那么就返回
     if (addressToApp.contains(appAddress)) {
       logInfo("Attempted to re-register application at same address: " + appAddress)
       return
@@ -886,9 +902,14 @@ private[deploy] class Master(
 
     applicationMetricsSystem.registerSource(app.appSource)
     apps += app
+    // app.id和app的映射关系
     idToApp(app.id) = app
+    // driver 和app的映射关系
     endpointToApp(app.driver) = app
+    // appAddress和app的映射关系
     addressToApp(appAddress) = app
+
+    // 将APP加入等待的buffer中，在schedule()方法调用的时候，就会启动等待的app需要的Executor
     waitingApps += app
   }
 
@@ -1062,19 +1083,28 @@ private[deploy] class Master(
       driverId: String,
       finalState: DriverState,
       exception: Option[Exception]) {
+    // 从drivers中找到对应的driver，然后
     drivers.find(d => d.id == driverId) match {
       case Some(driver) =>
         logInfo(s"Removing driver: $driverId")
+        // 从内存中移除
         drivers -= driver
-        if (completedDrivers.size >= RETAINED_DRIVERS) {
-          val toRemove = math.max(RETAINED_DRIVERS / 10, 1)
+
+        // 如果已经完成的driver的数量是>= RETAINED_DRIVERS(保留的driver数量的大小)
+        if (completedDrivers.size >= RETAINED_DRIVERS) {// ====>200
+          val toRemove = math.max(RETAINED_DRIVERS / 10, 1)// ====> 20
+          // 这里应该是：当completedDrivers的大小（size)超过200，就移除其中的前20个，trimStart应该就是这个意思，待验证
           completedDrivers.trimStart(toRemove)
         }
+        // 添加到已经完成的内存中
         completedDrivers += driver
+        // 持久化引擎中移除
         persistenceEngine.removeDriver(driver)
         driver.state = finalState
         driver.exception = exception
+        // 从worker中移除driver
         driver.worker.foreach(w => w.removeDriver(driver))
+        // 再次调度
         schedule()
       case None =>
         logWarning(s"Asked to remove unknown driver: $driverId")

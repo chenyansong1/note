@@ -245,6 +245,7 @@ private[deploy] class Master(
     case RegisterApplication(description, driver) => {
       // TODO Prevent repeated registrations from some driver
       if (state == RecoveryState.STANDBY) {
+        // 如果application请求的Master为standby状态的，那么将什么也不做
         // ignore, don't send response
       } else {
         logInfo("Registering app " + description.name)
@@ -383,6 +384,7 @@ private[deploy] class Master(
       Option(appIdToUI.get(appId)).foreach { ui => webUi.attachSparkUI(ui) }
   }
 
+  // 这里会 涉及到worker的注册，drive的注册
   override def receiveAndReply(context: RpcCallContext): PartialFunction[Any, Unit] = {
     case RegisterWorker(
         id, workerHost, workerPort, workerRef, cores, memory, workerUiPort, publicAddress) => {
@@ -418,6 +420,7 @@ private[deploy] class Master(
         logInfo("Driver submitted " + description.command.mainClass)
         val driver = createDriver(description)
         persistenceEngine.addDriver(driver)
+        // 将driver加入到等待的driver缓存中
         waitingDrivers += driver
         drivers.add(driver)
         schedule()
@@ -803,7 +806,9 @@ private[deploy] class Master(
       ApplicationInfo = {
     val now = System.currentTimeMillis()
     val date = new Date(now)
+    // app-yyyyMMddHHmmss-1111
     val appId = newApplicationId(date)
+    // 这里的desc是对application的描述，这是在driver的backend注册application之前就需要封装好的
     new ApplicationInfo(now, appId, desc, date, driver, defaultCores)
   }
 
@@ -1030,6 +1035,7 @@ private[deploy] class Master(
 
   /** Generate a new app ID given a app's submission date */
   private def newApplicationId(submitDate: Date): String = {
+    // app-yyyyMMddHHmmss-1111
     val appId = "app-%s-%04d".format(createDateFormat.format(submitDate), nextAppNumber)
     nextAppNumber += 1
     appId
