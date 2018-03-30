@@ -35,6 +35,10 @@ scp -rp ./kafka hdp-node-03:/home/hadoop/app/
 #依次在各节点上启动kafka
 bin/kafka-server-start.sh  config/server.properties
 
+#or
+
+/usr/hadoop/kafka_2.11-0.10.2.0/bin/kafka-server-start.sh -daemon /usr/hadoop/kafka_2.11-0.10.2.0/config/server.properties
+
 #后台启动
 kafka-server-start.sh config/server.properties &
 
@@ -42,6 +46,7 @@ kafka-server-start.sh config/server.properties &
 
 
 # 2.Kafka常用操作命令
+
 1. 查看当前服务器中的所有topic
 bin/kafka-topics.sh --list --zookeeper  zk01:2181
 2. 创建topic
