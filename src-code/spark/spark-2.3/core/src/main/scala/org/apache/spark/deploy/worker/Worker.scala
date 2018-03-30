@@ -550,6 +550,7 @@ private[deploy] class Worker(
             workerUri,
             conf,
             appLocalDirs, ExecutorState.RUNNING)
+
           executors(appId + "/" + execId) = manager
           manager.start()
           coresUsed += cores_
@@ -584,20 +585,26 @@ private[deploy] class Worker(
         }
       }
 
+    // 其实只有yarn-cluster模式，才会有启动driver这么一说，因为standalone模式直接在本地启动driver
     case LaunchDriver(driverId, driverDesc) =>
       logInfo(s"Asked to launch driver $driverId")
       val driver = new DriverRunner(
         conf,
         driverId,
-        workDir,
+        workDir,  // 在work启动的时候，创建的work目录，spark-home/work
         sparkHome,
         driverDesc.copy(command = Worker.maybeUpdateSSLSettings(driverDesc.command, conf)),
         self,
         workerUri,
         securityMgr)
+
+      // 在Worker内部也是维护了一个drive的HashMap
       drivers(driverId) = driver
+
+      // 启动driver
       driver.start()
 
+      // worker上减去 启动driver需要的core和memory
       coresUsed += driverDesc.cores
       memoryUsed += driverDesc.mem
 

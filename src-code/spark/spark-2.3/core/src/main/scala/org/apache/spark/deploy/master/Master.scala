@@ -679,6 +679,7 @@ private[deploy] class Master(
         var keepScheduling = true
         while (keepScheduling && canLaunchExecutor(pos)) {
           coresToAssign -= minCoresPerExecutor
+          // 当前worker上，加上此次需要添加的core
           assignedCores(pos) += minCoresPerExecutor
 
           // If we are launching one executor per worker, then every iteration assigns 1 core
@@ -695,13 +696,17 @@ private[deploy] class Master(
           // many workers as possible. If we are not spreading out, then we should keep
           // scheduling executors on this worker until we use all of its resources.
           // Otherwise, just move on to the next worker.
+          // 如果没有设置 spreadOutApps=true，那么将会在一个worker上循环多遍，直到用尽该Worker上的CPU core
+          // 但是如果设置的spreadOutApps=true，那么在一个Worker上的循环，就只会一次，那么总的来说，就会将core分配到尽可能多的Worker上去
           if (spreadOutApps) {
             keepScheduling = false
           }
         }
       }
+      // 这里需要再次过滤一遍，看剩余那些worker能够使用
       freeWorkers = freeWorkers.filter(canLaunchExecutor)
     }
+    // 返回每个worker上的给当前application分配的CPU core
     assignedCores
   }
 
@@ -730,12 +735,17 @@ private[deploy] class Master(
         val assignedCores = scheduleExecutorsOnWorkers(app, usableWorkers, spreadOutApps)
 
         // Now that we've decided how many cores to allocate on each worker, let's allocate them
-        for (pos <- 0 until usableWorkers.length if assignedCores(pos) > 0) {
+        for (pos <- 0 until usableWorkers.length if assignedCores(pos) > 0) {// 这里循环遍历所有可用的worker，assignedCores(pos) > 0 是当前worker上的分配到了CPU core
           // 分配资源到executor上，然后调用 rpc 去worker上启动executor
           // 这个app，在这个Worker上（usableWorkers(pos)）， 分配的总的core数量（assignedCores(pos)），
           // 这个worker上每个Executor分配的core的数量（app.desc.coresPerExecutor） ，这个就可以得出 对于这个app，在这个worker上启动的Executor的数量
           allocateWorkerResourceToExecutors(
-            app, assignedCores(pos), app.desc.coresPerExecutor, usableWorkers(pos))
+            app, // 这个application
+            assignedCores(pos),         // 分配了多少个core
+            app.desc.coresPerExecutor, // 每个Executor上分配多少个core
+            usableWorkers(pos)        // 在哪个worker上
+          )
+
         }
       }
     }
@@ -756,13 +766,25 @@ private[deploy] class Master(
     // If the number of cores per executor is specified, we divide the cores assigned
     // to this worker evenly among the executors with no remainder.
     // Otherwise, we launch a single executor that grabs all the assignedCores on this worker.
+
+    // 通过分配的总的core，每个Executor的core，算出有多少个Executor
     val numExecutors = coresPerExecutor.map { assignedCores / _ }.getOrElse(1)
+    /*
+    在spark-submit脚本中，可以指定多少个executor，每个executor有多少个core，每个executor的内存，这是我们在启动的时候的配置？
+    但是Executor的实际的数量，以及每个Executor的core，可能与配置的不一致，因为在代码中，我们可以看到，spark是基于总的core，
+    和每个Executor的core 去计算需要启动的Executor的数量，
+    */
+
     //每个executor的cores
-    // 有多少个executor
     val coresToAssign = coresPerExecutor.getOrElse(assignedCores)
     for (i <- 1 to numExecutors) {
+      // 这个worker上启动一个Executor，并指定这个Executor上的分配的core的数量
       val exec = app.addExecutor(worker, coresToAssign)
+
+      // 启动Executor
       launchExecutor(worker, exec)
+
+      // 改变application的状态为running
       app.state = ApplicationState.RUNNING
     }
   }
@@ -831,12 +853,19 @@ private[deploy] class Master(
 
   //通过rpc去worker上启动executor
   private def launchExecutor(worker: WorkerInfo, exec: ExecutorDesc): Unit = {
+
     logInfo("Launching executor " + exec.fullId + " on worker " + worker.id)
+    // 将Executor加入Worker内部的缓存，（在worker内部，会有coresUsed，memoryUsed 会相应加上该Executor的消耗的部分）
     worker.addExecutor(exec)
+
+    // 发送请求，告诉worker启动Executor
     worker.endpoint.send(LaunchExecutor(masterUrl,
       exec.application.id, exec.id, exec.application.desc, exec.cores, exec.memory))
+
+    // 告诉driver，已经启动了一个Executor
     exec.application.driver.send(
       ExecutorAdded(exec.id, worker.id, worker.hostPort, exec.cores, exec.memory))
+
   }
 
   private def registerWorker(worker: WorkerInfo): Boolean = {

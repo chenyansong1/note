@@ -83,9 +83,20 @@ private[spark] class ApplicationInfo(
       worker: WorkerInfo,
       cores: Int,
       useID: Option[Int] = None): ExecutorDesc = {
-    val exec = new ExecutorDesc(newExecutorId(useID), this, worker, cores, desc.memoryPerExecutorMB)
+    // 封装一个Executor的描述
+    val exec = new ExecutorDesc(
+      newExecutorId(useID), // 生成一个Executor的ID
+      this, // 这个application
+      worker, // executor所在的worker
+      cores, // executor上分配的CPU core
+      desc.memoryPerExecutorMB // executor上分配的memory
+    )
+
+    // application内部维护的关于这个application所拥有的executor
     executors(exec.id) = exec
+    // application所有的core
     coresGranted += cores
+    // 返回这个Executor
     exec
   }
 

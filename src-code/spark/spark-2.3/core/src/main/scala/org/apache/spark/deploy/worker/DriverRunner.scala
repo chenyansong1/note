@@ -137,6 +137,7 @@ private[deploy] class DriverRunner(
    * Will throw an exception if there are errors preparing the directory.
    */
   private def createWorkingDirectory(): File = {
+    // 创建driver需要的工作目录, 在spark-home/work/driverId/ 目录下面
     val driverDir = new File(workDir, driverId)
     if (!driverDir.exists() && !driverDir.mkdirs()) {
       throw new IOException("Failed to create directory " + driverDir)
@@ -170,7 +171,10 @@ private[deploy] class DriverRunner(
   }
 
   private[worker] def prepareAndRunDriver(): Int = {
+    // 创建driver的工作目录
     val driverDir = createWorkingDirectory()
+
+    // 下载用户上传的jar（application） 到工作目录中
     val localJarFilename = downloadUserJar(driverDir)
 
     def substituteVariables(argument: String): String = argument match {
