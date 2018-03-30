@@ -312,23 +312,27 @@ private[deploy] class Master(
             logInfo(s"Removing executor ${exec.fullId} because it is $state")
             // If an application has already finished, preserve its
             // state to display its information properly on the UI
-            if (!appInfo.isFinished) {// 如果application还没有完成，那么将Executor从application中移除
+            if (!appInfo.isFinished) {
+              // 如果application还没有完成，那么将Executor从application中移除
               appInfo.removeExecutor(exec)
             }
-            // 将Executor从worker中移除
+            // 将Executor从worker中移除（内存缓存的移除）
             exec.worker.removeExecutor(exec)
 
+            //  如果Executor的退出状态是否正常的
             val normalExit = exitStatus == Some(0)
             // Only retry certain number of times so we don't go into an infinite loop.
             // Important note: this code path is not exercised by tests, so be very careful when
             // changing this `if` condition.
-            if (!normalExit
-                && appInfo.incrementRetryCount() >= MAX_EXECUTOR_RETRIES  //超过重试次数，将remove APP
+            // 如果Executor反复调度失败，那么认为application也就失败了，所以此时要将application remove
+            if (!normalExit// 当前的退出状态是非正常的
+                && appInfo.incrementRetryCount() >= MAX_EXECUTOR_RETRIES  //超过重试次数，将remove APP，最大重试次数是10
                 && MAX_EXECUTOR_RETRIES >= 0) { // < 0 disables this application-killing path
               val execs = appInfo.executors.values
               if (!execs.exists(_.state == ExecutorState.RUNNING)) {
                 logError(s"Application ${appInfo.desc.name} with ID ${appInfo.id} failed " +
                   s"${appInfo.retryCount} times; removing it")
+                // 移除当前还在运行的 application
                 removeApplication(appInfo, ApplicationState.FAILED)
               }
             }
@@ -631,17 +635,20 @@ private[deploy] class Master(
     // 如果用户没有指定，那么默认是为每个Executor分配1个core
     val minCoresPerExecutor = coresPerExecutor.getOrElse(1)
 
+    // 如果没有指定每个Executor的CPU 的core的数量，那么就是说，每个Executor是一个core，然后又却确定每个worker上一个Executor
     val oneExecutorPerWorker = coresPerExecutor.isEmpty
+
     // 为每个Executor分配的memory
     val memoryPerExecutor = app.desc.memoryPerExecutorMB
 
     val numUsable = usableWorkers.length
     // 给定的List<worker>上的 可用的core的数量 ===> List< Int<cores> >
+    // 创建一个空数组，存储了要分配给每个worker的cpu core的数量
     val assignedCores = new Array[Int](numUsable) // Number of cores to give to each worker
     // 每个worker上即将启动的Executor的数量
     val assignedExecutors = new Array[Int](numUsable) // Number of new executors on each worker
 
-    // 总共有多少个core去 用于分配
+    // 总共有多少个core去 用于分配（获取到底要分配多少CPU core， 取app剩余要分配的CPU core的数量和worker总共可用对的CPU core的数量的最小值）
     var coresToAssign = math.min(app.coresLeft, usableWorkers.map(_.coresFree).sum)
 
     /** Return whether the specified worker can launch an executor for this app. */
@@ -677,8 +684,10 @@ private[deploy] class Master(
           // If we are launching one executor per worker, then every iteration assigns 1 core
           // to the executor. Otherwise, every iteration assigns cores to a new executor.
           if (oneExecutorPerWorker) {
+            // 如果是每个worker上是一个Executor，那么就指定，这个worker上的Executor数量是1
             assignedExecutors(pos) = 1
           } else {
+            // 如果每个worker上设置的Executor的数量不是1，那么就在原来的基础上加1，此时的数量就是当前这个worker上Executor的数量
             assignedExecutors(pos) += 1
           }
 
@@ -709,11 +718,13 @@ private[deploy] class Master(
       // If the cores left is less than the coresPerExecutor,the cores left will not be allocated
       if (app.coresLeft >= coresPerExecutor) {
         // Filter out workers that don't have enough resources to launch an executor
-        // 将那些没有足够资源去启动executor的worker过滤掉（即：worker上有足够的core和足够的memory）
-        val usableWorkers = workers.toArray.filter(_.state == WorkerState.ALIVE)
-          .filter(worker => worker.memoryFree >= app.desc.memoryPerExecutorMB &&
-            worker.coresFree >= coresPerExecutor)
-          .sortBy(_.coresFree).reverse
+        // 拿到那些可用的Worker
+        val usableWorkers = workers.toArray
+          .filter(_.state == WorkerState.ALIVE)// 过滤出是alive的Executor
+          .filter(worker => worker.memoryFree >= app.desc.memoryPerExecutorMB && worker.coresFree >= coresPerExecutor)// memory 和 core能过满足启动Executor的条件
+          .sortBy(_.coresFree).reverse// 按照core的大小倒叙排列
+
+
         // spreadOutApps：让app分布到尽可能多的worker上去
         // 这里拿到的是 usableWorkers 的 可以使用的cores ,他是一个list
         val assignedCores = scheduleExecutorsOnWorkers(app, usableWorkers, spreadOutApps)
@@ -762,38 +773,59 @@ private[deploy] class Master(
     * 这里首先只会根据worker的CPU cores进行schedule, 而不会考虑其他的资源, 可用考虑让app尽可能分布在更多或更少的workers上,
     * 最后向worker actor发送LaunchExecutor, 真正启动ExecutorBackend
    */
+  /*
+  schedule方法首先会启动driver，然后启动对应的Executor
+   */
   private def schedule(): Unit = {
     if (state != RecoveryState.ALIVE) {
+      // 如果是standby模式的Master，那么直接返回
       return
     }
     // Drivers take strict precedence over executors
     // 将活跃的worker随机打乱，放在一个List中,
-    // 对Worker节点进行随机排序，能够使Driver更加均衡分布在集群中
-    val shuffledAliveWorkers = Random.shuffle(workers.toSeq.filter(_.state == WorkerState.ALIVE))
+    // 对Worker节点进行随机排序，能够使Driver更加均衡分布在集群中，这里的workers是在worker注册的时候，会加入到workers中
+    val shuffledAliveWorkers = Random.shuffle(
+        workers.toSeq.filter(_.state == WorkerState.ALIVE)// 过滤出状态为ALIVE的worker
+    )// 然后随机的打乱
+
+    // 当前可用worker的数量
     val numWorkersAlive = shuffledAliveWorkers.size
+
     var curPos = 0
     // 循环遍历所有等待提交的driver
+    /*
+    这里为什么要调度driver呢？
+    什么情况下，会注册driver，并且会导致driver被调度呢？
+    其实，只有用yarn-cluster模式提交的时候，才会注册driver，因为standalone和yarn-client模式，都会在本地直接启动driver
+    ，而不会来注册driver，就更不可能让Master来调度driver了
+     */
     for (driver <- waitingDrivers.toList) { // iterate over a copy of waitingDrivers
       // We assign workers to each waiting driver in a round-robin fashion. For each driver, we
       // start from the last worker that was assigned a driver, and continue onwards until we have
       // explored all alive workers.
       var launched = false
       var numWorkersVisited = 0
-      // 循环遍历所有的活跃的worker  && 当前driver没有启动
+
+      // 只要还有alive的worker没有遍历到，那么就接着遍历  && 当前driver没有启动
       while (numWorkersVisited < numWorkersAlive && !launched) {
+
         val worker = shuffledAliveWorkers(curPos)
-        numWorkersVisited += 1
+        numWorkersVisited += 1 // 对于已经遍历的worker数加1
+
+        // 如果当前worker的内存和core的数量 满足 当前启动driver的条件，那么就去启动driver
         if (worker.memoryFree >= driver.desc.mem && worker.coresFree >= driver.desc.cores) {
           // 在指定的worker上启动Driver
           launchDriver(worker, driver)
-          waitingDrivers -= driver  //去掉启动的Driver
+
+          waitingDrivers -= driver  //从缓存中去掉该driver
           launched = true
         }
-        curPos = (curPos + 1) % numWorkersAlive//下一次需要启动的executor所在的worker
+        //下一次需要启动的executor所在的worker(  将指针指向下一个worker)
+        curPos = (curPos + 1) % numWorkersAlive
       }
     }
 
-    //在work上启动executor（其实为在等待中的application去启动Executor）
+    //在work上启动executor（其实为在等待中的application去启动Executor），这里也可以说成是application的调度机制
     startExecutorsOnWorkers()
   }
 
@@ -829,6 +861,7 @@ private[deploy] class Master(
       }
     }
 
+    //将worker加入到内存中
     workers += worker
     idToWorker(worker.id) = worker
     addressToWorker(workerAddress) = worker
@@ -1070,12 +1103,19 @@ private[deploy] class Master(
     new DriverInfo(now, newDriverId(date), desc, date)
   }
 
-  // 启动Driver
+  // 在某一个worker上启动Driver
   private def launchDriver(worker: WorkerInfo, driver: DriverInfo) {
     logInfo("Launching driver " + driver.id + " on worker " + worker.id)
-    worker.addDriver(driver)
+
+    // worker内部会维护一个driver的Map<driver.id, driver>
+    worker.addDriver(driver)// 这个方法还会做的事情是：加上内存和CPU的core的数量
+
+    // 在driver内部也会维护一个worker，表示这个driver从属于哪一个worker
     driver.worker = Some(worker)
+    // 向这个worker发送启动Driver的请求
     worker.endpoint.send(LaunchDriver(driver.id, driver.desc))
+
+    // 设置driver的状态设置为running
     driver.state = DriverState.RUNNING
   }
 

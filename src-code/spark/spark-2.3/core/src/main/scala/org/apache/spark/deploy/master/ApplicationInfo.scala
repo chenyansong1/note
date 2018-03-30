@@ -89,6 +89,7 @@ private[spark] class ApplicationInfo(
     exec
   }
 
+  // 从APP中移除对应的Executor
   private[master] def removeExecutor(exec: ExecutorDesc) {
     if (executors.contains(exec.id)) {
       removedExecutors += executors(exec.id)
