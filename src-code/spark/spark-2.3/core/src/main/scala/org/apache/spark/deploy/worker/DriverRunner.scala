@@ -80,6 +80,7 @@ private[deploy] class DriverRunner(
   /** Starts a thread to run and manage the driver. */
   // 开启一个线程去运行和管理driver
   private[worker] def start() = {
+
     new Thread("DriverRunner for " + driverId) {
       override def run() {
         var shutdownHook: AnyRef = null
@@ -90,9 +91,12 @@ private[deploy] class DriverRunner(
           }
 
           // prepare driver jars and run driver
+          // 1.创建driver的工作目录；2.下载application的jar到工作目录中；3.启动driver
           val exitCode = prepareAndRunDriver()
+          // 这个方法是去启动driver，但是启动之后，会有一个状态
 
           // set final state depending on if forcibly killed and process exit code
+          // finalState表示driver的最终的状态，他是由：killed和driver的退出状态码 决定的
           finalState = if (exitCode == 0) {
             Some(DriverState.FINISHED)
           } else if (killed) {
@@ -112,6 +116,7 @@ private[deploy] class DriverRunner(
         }
 
         // notify worker of final driver state, possible exception
+        // 向worker发送Driver的状态改变，这个状态可能是：正常退出，异常退出的，或者是被kill的,在worker中会对这个状态进行进一步的处理
         worker.send(DriverStateChanged(driverId, finalState.get, finalException))
       }
     }.start()
@@ -150,18 +155,24 @@ private[deploy] class DriverRunner(
    * Will throw an exception if there are errors downloading the jar.
    */
   private def downloadUserJar(driverDir: File): String = {
+
+    // 获取jar的文件名
     val jarFileName = new URI(driverDesc.jarUrl).getPath.split("/").last
+
     val localJarFile = new File(driverDir, jarFileName)
+
     if (!localJarFile.exists()) { // May already exist if running multiple workers on one node
       logInfo(s"Copying user jar ${driverDesc.jarUrl} to $localJarFile")
+
       Utils.fetchFile(
-        driverDesc.jarUrl,
-        driverDir,
+        driverDesc.jarUrl,  // 源文件的路径
+        driverDir,          // 目标目录
         conf,
         securityManager,
         SparkHadoopUtil.get.newConfiguration(conf),
         System.currentTimeMillis(),
         useCache = false)
+
       if (!localJarFile.exists()) { // Verify copy succeeded
         throw new IOException(
           s"Can not find expected jar $jarFileName which should have been loaded in $driverDir")
@@ -184,17 +195,26 @@ private[deploy] class DriverRunner(
     }
 
     // TODO: If we add ability to submit multiple jars they should also be added here
-    val builder = CommandUtils.buildProcessBuilder(driverDesc.command, securityManager,
-      driverDesc.mem, sparkHome.getAbsolutePath, substituteVariables)
+    // 构建ProcessBuiler , 用于driver的进程启动
+    val builder = CommandUtils.buildProcessBuilder(
+      driverDesc.command,     // drivr 的启动命令
+      securityManager,
+      driverDesc.mem,        // driver需要的内存大小
+      sparkHome.getAbsolutePath,  // spark-home的路径
+      substituteVariables)
 
+    // 启动driver，并且会返回一个driver的退出状态，来表示driver是否正常退出
     runDriver(builder, driverDir, driverDesc.supervise)
   }
 
   private def runDriver(builder: ProcessBuilder, baseDir: File, supervise: Boolean): Int = {
+    // baseDir 是driver的工作目录
     builder.directory(baseDir)
+
+    // 重定向 stdout和stderr到文件中
     def initialize(process: Process): Unit = {
       // Redirect stdout and stderr to files
-      val stdout = new File(baseDir, "stdout")
+      val stdout = new File(baseDir, "stdout")// 也就是说，输出目录为：spark-home/work/driver/stdout
       CommandUtils.redirectStream(process.getInputStream, stdout)
 
       val stderr = new File(baseDir, "stderr")
@@ -203,6 +223,8 @@ private[deploy] class DriverRunner(
       Files.append(header, stderr, StandardCharsets.UTF_8)
       CommandUtils.redirectStream(process.getErrorStream, stderr)
     }
+
+    // 正式启动driver，会返回一个driver的退出状态，来表示driver是否正常退出
     runCommandWithRetry(ProcessBuilderLike(builder), initialize, supervise)
   }
 
@@ -220,11 +242,15 @@ private[deploy] class DriverRunner(
 
       synchronized {
         if (killed) { return exitCode }
+        // 启动builder
         process = Some(command.start())
+
+        // 将进程的输出日志（stdout,stderr)，重定向到文件中
         initialize(process.get)
       }
 
       val processStart = clock.getTimeMillis()
+      // 等待进程的退出
       exitCode = process.get.waitFor()
 
       // check if attempting another run

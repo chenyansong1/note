@@ -287,8 +287,10 @@ private[deploy] class Master(
         schedule()
       }
 
+      // worker发送过来的Executor状态改变
     case ExecutorStateChanged(appId, execId, state, message, exitStatus) =>
       val execOption = idToApp.get(appId).flatMap(app => app.executors.get(execId))
+
       execOption match {
         case Some(exec) =>
           // 拿到application 信息
@@ -306,7 +308,7 @@ private[deploy] class Master(
           exec.application.driver.send(ExecutorUpdated(execId, state, message, exitStatus, false))
 
           // 判断：如果Executor完成了
-          if (ExecutorState.isFinished(state)) {
+          if (ExecutorState.isFinished(state)) {//KILLED, FAILED, LOST, EXITED
             // Remove this executor from the worker and app
             // 从worker和Executor中移除Executor
             logInfo(s"Removing executor ${exec.fullId} because it is $state")
@@ -319,7 +321,7 @@ private[deploy] class Master(
             // 将Executor从worker中移除（内存缓存的移除）
             exec.worker.removeExecutor(exec)
 
-            //  如果Executor的退出状态是否正常的
+            //  如果Executor的退出状态是否正常的, 那么在重试之后无果，还会移除application
             val normalExit = exitStatus == Some(0)
             // Only retry certain number of times so we don't go into an infinite loop.
             // Important note: this code path is not exercised by tests, so be very careful when
@@ -337,14 +339,18 @@ private[deploy] class Master(
               }
             }
           }
+
+          // 再次进行资源的调度，给等待的application分配Driver和启动Executor
           schedule()
         case None =>
           logWarning(s"Got status update for unknown executor $appId/$execId")
       }
 
+      // 接收到Worker发送的 Driver状态改变 的信息
     case DriverStateChanged(driverId, state, exception) =>
       state match {
         case DriverState.ERROR | DriverState.FINISHED | DriverState.KILLED | DriverState.FAILED =>
+          // 从Master的内存缓存中移除当前driver的信息，最后会调用schedule方法（由于移除Driver释放了一些资源，所以可以再次调度，给其他等待的application分配资源）
           removeDriver(driverId, state, exception)
         case _ =>
           throw new Exception(s"Received unexpected state update for driver $driverId: $state")
@@ -1173,7 +1179,7 @@ private[deploy] class Master(
         driver.exception = exception
         // 从worker中移除driver
         driver.worker.foreach(w => w.removeDriver(driver))
-        // 再次调度
+        // 再次调度， 由于移除Driver释放了一些资源，所以可以再次调度，给其他等待的application分配资源
         schedule()
       case None =>
         logWarning(s"Asked to remove unknown driver: $driverId")

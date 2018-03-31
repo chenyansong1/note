@@ -142,11 +142,12 @@ private[deploy] class ExecutorRunner(
    */
   private def fetchAndRunExecutor() {
     try {
-      //调用ProcessBuilder, 使用进程执行command
+      //调用ProcessBuilder, 使用进程执行command， 启动Executor的进程实际上就是启动一个CoarseGrainedExecutorBackend， 而在这个类的内部，会调用RegisterExecutor，来向driver进行注册
       // Launch the process
       val builder = CommandUtils.buildProcessBuilder(appDesc.command, new SecurityManager(conf),
         memory, sparkHome.getAbsolutePath, substituteVariables)
       val command = builder.command()
+
       val formattedCommand = command.asScala.mkString("\"", "\" \"", "\"")
       // 这里是启动的命令，如下：
 
@@ -167,6 +168,7 @@ private[deploy] class ExecutorRunner(
 
       logInfo(s"Launch command: $formattedCommand")
 
+      // 这里是设置builder的信息（如工作目录，环境变量，builder的stdout,stderr）
       builder.directory(executorDir)
       builder.environment.put("SPARK_EXECUTOR_DIRS", appLocalDirs.mkString(File.pathSeparator))
       // In case we are running this from within the Spark Shell, avoid creating a "scala"
@@ -183,12 +185,14 @@ private[deploy] class ExecutorRunner(
       builder.environment.put("SPARK_LOG_URL_STDERR", s"${baseUrl}stderr")
       builder.environment.put("SPARK_LOG_URL_STDOUT", s"${baseUrl}stdout")
 
+
+      // 启动Executor
       process = builder.start()
       val header = "Spark Executor Command: %s\n%s\n\n".format(
         formattedCommand, "=" * 40)
 
       // Redirect its stdout and stderr to files
-      // 重定向他的输出和错误输出流
+      // 重定向他的输出和错误输出流 到文件中（这里其实和Driver启动的时候是一样一样的）:对应的目录：spark-home/work/appId/execId/stdou,stderr
       val stdout = new File(executorDir, "stdout")
       stdoutAppender = FileAppender(process.getInputStream, stdout, conf)
 
@@ -196,12 +200,15 @@ private[deploy] class ExecutorRunner(
       Files.write(header, stderr, StandardCharsets.UTF_8)
       stderrAppender = FileAppender(process.getErrorStream, stderr, conf)
 
+
       // Wait for it to exit; executor may exit with code 0 (when driver instructs it to shutdown)
       // or with nonzero exit code
       val exitCode = process.waitFor()
       state = ExecutorState.EXITED
       val message = "Command exited with code " + exitCode
+      // 也是向worker发送Executor状态改变的信息
       worker.send(ExecutorStateChanged(appId, execId, state, Some(message), Some(exitCode)))
+
     } catch {
       case interrupted: InterruptedException =>
         logInfo("Runner thread for executor " + fullId + " interrupted")

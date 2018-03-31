@@ -60,7 +60,10 @@ private[spark] class CoarseGrainedExecutorBackend(
     rpcEnv.asyncSetupEndpointRefByURI(driverUrl).flatMap { ref =>
       // This is a very fast action so we can use "ThreadUtils.sameThread"
       driver = Some(ref)
-      ref.ask[Boolean](RegisterExecutor(executorId, self, hostname, cores, extractLogUrls)) // 向driver注册executor
+
+      // 向driver注册executor,因为StandaloneSchedulerBackend继承了CoarseGrainedSchedulerBackend ，而在CoarseGrainedSchedulerBackend.receiveAndReply方法中接收对RegisterExecutor的处理
+      ref.ask[Boolean](RegisterExecutor(executorId, self, hostname, cores, extractLogUrls))
+
     }(ThreadUtils.sameThread).onComplete {
       // This is a very fast action so we can use "ThreadUtils.sameThread"
       case Success(msg) =>

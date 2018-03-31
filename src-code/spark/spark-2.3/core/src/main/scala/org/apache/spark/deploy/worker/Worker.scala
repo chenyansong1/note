@@ -506,6 +506,7 @@ private[deploy] class Worker(
           logInfo("Asked to launch executor %s/%d for %s".format(appId, execId, appDesc.name))
 
           // Create the executor's working directory
+          // 创建启动Executor的工作目录（spark-home/work/appId/execId)
           val executorDir = new File(workDir, appId + "/" + execId)
           if (!executorDir.mkdirs()) {
             throw new IOException("Failed to create directory " + executorDir)
@@ -514,6 +515,7 @@ private[deploy] class Worker(
           // Create local dirs for the executor. These are passed to the executor via the
           // SPARK_EXECUTOR_DIRS environment variable, and deleted by the Worker when the
           // application finishes.
+          // 这个目录在application完成的时候将被删除
           val appLocalDirs = appDirectories.getOrElse(appId, {
             val localRootDirs = Utils.getOrCreateLocalRootDirs(conf)
             val dirs = localRootDirs.flatMap { dir =>
@@ -533,7 +535,11 @@ private[deploy] class Worker(
             }
             dirs
           })
+
+
           appDirectories(appId) = appLocalDirs
+
+          // 这里是一个启动Executor的线程
           val manager = new ExecutorRunner(
             appId,
             execId,
@@ -551,11 +557,19 @@ private[deploy] class Worker(
             conf,
             appLocalDirs, ExecutorState.RUNNING)
 
+          // 加入本地缓存
           executors(appId + "/" + execId) = manager
+
+          // 启动
           manager.start()
+
+          // 在Worker上减去对应Executor消耗的部分
           coresUsed += cores_
           memoryUsed += memory_
+
+          // 向Master发送Executor状态改变的消息
           sendToMaster(ExecutorStateChanged(appId, execId, manager.state, None, None))
+
         } catch {
           case e: Exception =>
             logError(s"Failed to launch executor $appId/$execId for ${appDesc.name}.", e)
@@ -568,6 +582,7 @@ private[deploy] class Worker(
         }
       }
 
+      // 在Executor完成的时候，会发送Executor状态改变的信息到worker
     case executorStateChanged @ ExecutorStateChanged(appId, execId, state, message, exitStatus) =>
       handleExecutorStateChanged(executorStateChanged)
 
@@ -588,6 +603,7 @@ private[deploy] class Worker(
     // 其实只有yarn-cluster模式，才会有启动driver这么一说，因为standalone模式直接在本地启动driver
     case LaunchDriver(driverId, driverDesc) =>
       logInfo(s"Asked to launch driver $driverId")
+
       val driver = new DriverRunner(
         conf,
         driverId,
@@ -617,6 +633,7 @@ private[deploy] class Worker(
           logError(s"Asked to kill unknown driver $driverId")
       }
 
+    // 接收driver发送过来的状态改变
     case driverStateChanged @ DriverStateChanged(driverId, state, exception) =>
       handleDriverStateChanged(driverStateChanged)
 
@@ -651,7 +668,10 @@ private[deploy] class Worker(
   }
 
   private def maybeCleanupApplication(id: String): Unit = {
+
     val shouldCleanup = finishedApps.contains(id) && !executors.values.exists(_.appId == id)
+
+    // 移除在Executor创建的是新建的目录
     if (shouldCleanup) {
       finishedApps -= id
       appDirectories.remove(id).foreach { dirList =>
@@ -664,6 +684,8 @@ private[deploy] class Worker(
           logError(s"Clean up app dir $dirList failed: ${e.getMessage}", e)
         )(cleanupThreadExecutor)
       }
+
+      // 会移除该application的block信息
       shuffleService.applicationRemoved(id)
     }
   }
@@ -718,10 +740,14 @@ private[deploy] class Worker(
     }
   }
 
+  // 对driver状态改变，worker所做的处理
   private[worker] def handleDriverStateChanged(driverStateChanged: DriverStateChanged): Unit = {
+
     val driverId = driverStateChanged.driverId
     val exception = driverStateChanged.exception
     val state = driverStateChanged.state
+
+    // 在worker端打印Driver的结束状态
     state match {
       case DriverState.ERROR =>
         logWarning(s"Driver $driverId failed with unrecoverable exception: ${exception.get}")
@@ -734,7 +760,11 @@ private[deploy] class Worker(
       case _ =>
         logDebug(s"Driver $driverId changed state to $state")
     }
+
+    // 向Master发送Driver的状态改变 信息
     sendToMaster(driverStateChanged)
+
+    // 将Driver的信息从worker的缓存中移除
     val driver = drivers.remove(driverId).get
     finishedDrivers(driverId) = driver
     trimFinishedDriversIfNecessary()
@@ -742,20 +772,27 @@ private[deploy] class Worker(
     coresUsed -= driver.driverDesc.cores
   }
 
+  // 处理Executor状态改变
   private[worker] def handleExecutorStateChanged(executorStateChanged: ExecutorStateChanged):
     Unit = {
+    // 向Master发送Executor状态改变
     sendToMaster(executorStateChanged)
+
     val state = executorStateChanged.state
-    if (ExecutorState.isFinished(state)) {
+    if (ExecutorState.isFinished(state)) {// KILLED, FAILED, LOST, EXITED
       val appId = executorStateChanged.appId
       val fullId = appId + "/" + executorStateChanged.execId
       val message = executorStateChanged.message
+      // executor进程的退出状态
       val exitStatus = executorStateChanged.exitStatus
+
       executors.get(fullId) match {
         case Some(executor) =>
           logInfo("Executor " + fullId + " finished with state " + state +
             message.map(" message " + _).getOrElse("") +
             exitStatus.map(" exitStatus " + _).getOrElse(""))
+
+          // 从worker的缓存中移除该Executor的信息
           executors -= fullId
           finishedExecutors(fullId) = executor
           trimFinishedExecutorsIfNecessary()
@@ -766,6 +803,8 @@ private[deploy] class Worker(
             message.map(" message " + _).getOrElse("") +
             exitStatus.map(" exitStatus " + _).getOrElse(""))
       }
+
+      // worker可能会清理application
       maybeCleanupApplication(appId)
     }
   }

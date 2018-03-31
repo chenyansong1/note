@@ -445,6 +445,11 @@ private[spark] object Utils extends Logging {
    * Throws SparkException if the target file already exists and has different contents than
    * the requested file.
    */
+    /*
+    下载一个文件或者目录到一个指定的目录中，
+    支持下载的文件形式有：http, hadoop兼容的文件系统，在标准文件系统上的多个文件，
+    支持下载的目录：只支持下载Hadoop兼容的文件系统
+     */
   def fetchFile(
       url: String,
       targetDir: File,
@@ -453,6 +458,7 @@ private[spark] object Utils extends Logging {
       hadoopConf: Configuration,
       timestamp: Long,
       useCache: Boolean): File = {
+
     val fileName = decodeFileNameInURI(new URI(url))
     val targetFile = new File(targetDir, fileName)
     val fetchCacheEnabled = conf.getBoolean("spark.files.useFetchCache", defaultValue = true)
