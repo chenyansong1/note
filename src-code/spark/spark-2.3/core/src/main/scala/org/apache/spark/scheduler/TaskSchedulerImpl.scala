@@ -200,21 +200,28 @@ private[spark] class TaskSchedulerImpl(
     logInfo("Adding task set " + taskSet.id + " with " + tasks.length + " tasks")
     this.synchronized {
       // 创建taskSet管理器，用于管理taskSet的生命周期
+      // 1.对一个单独的taskSet进行调度，负责追踪每一个task，如果task失败的话，负责重试task，直到超过重试的次数限制；
+      // 2.会通过延迟调度为taskSet处理本地化调度机制
+      // 他的主要接口是resouceOffer,在这个接口中，taskSet会希望在一个节点上运行一个task，并且接受任务状态改变的消息，来知道他负责的task的状态改变了
       val manager = createTaskSetManager(taskSet, maxTaskFailures)
+
       val stage = taskSet.stageId
-      val stageTaskSets =
-        taskSetsByStageIdAndAttempt.getOrElseUpdate(stage, new HashMap[Int, TaskSetManager])
+      val stageTaskSets = taskSetsByStageIdAndAttempt.getOrElseUpdate(stage, new HashMap[Int, TaskSetManager])
+
+      //
       stageTaskSets(taskSet.stageAttemptId) = manager
+
       val conflictingTaskSet = stageTaskSets.exists { case (_, ts) =>
         ts.taskSet != taskSet && !ts.isZombie
       }
+
       if (conflictingTaskSet) {
         throw new IllegalStateException(s"more than one active taskSet for stage $stage:" +
           s" ${stageTaskSets.toSeq.map{_._2.taskSet.id}.mkString(",")}")
       }
       // 将TaskSetManager加到 调度池 中等待被调度执行，调度器有：FIFOSchedulableBuilder， FairSchedulableBuilder 两种
       schedulableBuilder.addTaskSetManager(manager, manager.taskSet.properties)
-
+      // 在后面的处理中，会对调度池中的taskSetManager进行排序
 
       if (!isLocal && !hasReceivedTask) {
         starvationTimer.scheduleAtFixedRate(new TimerTask() {
@@ -306,7 +313,9 @@ private[spark] class TaskSchedulerImpl(
       val host = shuffledOffers(i).host
       if (availableCpus(i) >= CPUS_PER_TASK) {
         try {
+          // resourceOffer 这里的很重要：找到这个Executor上，对于指定的本地化级别，这个taskSet中的哪些task可以启动
           for (task <- taskSet.resourceOffer(execId, host, maxLocality)) {
+            // 将可以启动的task加入到缓存信息中，tasks(i)是每个Executor上启动的一批task
             tasks(i) += task
             val tid = task.taskId
             taskIdToTaskSetManager(tid) = taskSet
@@ -333,7 +342,7 @@ private[spark] class TaskSchedulerImpl(
    * sets for tasks in order of priority. We fill each node with tasks in a round-robin manner so
    * that tasks are balanced across the cluster.
    */
-  // 提供已经排序的taskSetManager
+  // 提供已经排序的taskSetManager， 这里的WorkerOffer是由Executor封装得到的
   def resourceOffers(offers: IndexedSeq[WorkerOffer]): Seq[Seq[TaskDescription]] = synchronized {
     // Mark each slave as alive and remember its hostname
     // Also track if new executor is added
@@ -368,16 +377,27 @@ private[spark] class TaskSchedulerImpl(
 
     // 随机打乱可用worker
     val shuffledOffers = shuffleOffers(filteredOffers)
-    // Build a list of tasks to assign to each worker.
+    /*
+     Build a list of tasks to assign to each worker.
+     分配给每个Executor的task的数量：（默认CPUS_PER_TASK=1，所以分配给每个Executor的task的数量是该Executor上的CPU core的数量）
+     [
+       {ArrayBuffer[TaskDescription](2)},
+       {ArrayBuffer[TaskDescription](3)},
+       {ArrayBuffer[TaskDescription](2)}
+     ]
+      */
     val tasks = shuffledOffers.map(o => new ArrayBuffer[TaskDescription](o.cores / CPUS_PER_TASK))
+
+    // 每个Executor上分配到的CPU core的数量： [2,3,2]
     val availableCpus = shuffledOffers.map(o => o.cores).toArray
 
-    // 获取已经排好序的taskSetManager
+    // 获取已经排好序的taskSetManager，rootPool是在taskSchedulerImpl 初始化的时候调用initialize方法创建的
     val sortedTaskSets = rootPool.getSortedTaskSetQueue
 
     for (taskSet <- sortedTaskSets) {
-      logDebug("parentName: %s, name: %s, runningTasks: %s".format(
-        taskSet.parent.name, taskSet.name, taskSet.runningTasks))
+
+      logDebug("parentName: %s, name: %s, runningTasks: %s".format(taskSet.parent.name, taskSet.name, taskSet.runningTasks))
+
       if (newExecAvail) {
         taskSet.executorAdded()
       }
@@ -386,18 +406,28 @@ private[spark] class TaskSchedulerImpl(
     // Take each TaskSet in our scheduling order, and then offer it each node in increasing order
     // of locality levels so that it gets a chance to launch local tasks on all of them.
     // NOTE: the preferredLocality order: PROCESS_LOCAL, NODE_LOCAL, NO_PREF, RACK_LOCAL, ANY
-    // 这里会计算数据的本地化级别
-    for (taskSet <- sortedTaskSets) {
+    /*
+    这里会计算数据的本地化级别
+    PROCESS_LOCAL, 进程本地化，RDD的partition和task进入到一个Executor中，速度快
+    NODE_LOCAL,   RDD的partition和task不在一个进程中，但是在一个worker节点上
+    NO_PREF,      没有本地化级别
+    RACK_LOCAL,   机架本地化，RDD的partition和task在某一个机架上
+    ANY           任意的本地化级别
+     */
+    for (taskSet <- sortedTaskSets) {// 遍历每一个taskSet，尝试使用最好的本地化级别去启动taskSet中的一批task
       var launchedAnyTask = false
       // task的最大本地化级别
       var launchedTaskAtCurrentMaxLocality = false
+      // 从最好的本地化级别开始遍历
       for (currentMaxLocality <- taskSet.myLocalityLevels) {
         do {
-          launchedTaskAtCurrentMaxLocality = resourceOfferSingleTaskSet(
-            taskSet, currentMaxLocality, shuffledOffers, availableCpus, tasks)
+          // 尝试使用最好的本地化级别，在Executor上去启动，launchedTaskAtCurrentMaxLocality 就是返回的是否能够启动的结果（true or false)
+          launchedTaskAtCurrentMaxLocality = resourceOfferSingleTaskSet(taskSet, currentMaxLocality, shuffledOffers, availableCpus, tasks)
+
           launchedAnyTask |= launchedTaskAtCurrentMaxLocality
-        } while (launchedTaskAtCurrentMaxLocality)
+        } while (launchedTaskAtCurrentMaxLocality) // 如果当前的task在 当前的本地化级别上启动不了，那么就跳出while循环，进入下一个本地化级别，再次尝试在Executor启动task
       }
+
       if (!launchedAnyTask) {+
         taskSet.abortIfCompletelyBlacklisted(hostToExecutors)
       }

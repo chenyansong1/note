@@ -134,6 +134,7 @@ class CoarseGrainedSchedulerBackend(scheduler: TaskSchedulerImpl, val rpcEnv: Rp
         }
 
       case ReviveOffers =>
+        // 真正的submitTasks
         makeOffers()
 
       case KillTask(taskId, executorId, interruptThread, reason) =>
@@ -238,16 +239,35 @@ class CoarseGrainedSchedulerBackend(scheduler: TaskSchedulerImpl, val rpcEnv: Rp
     // Make fake resource offers on all executors
     // 为所有的executor提供fake资源
     private def makeOffers() {
+      /*
+      这里有两步操作：
+      1.调用taskScheduler.resourceOffers方法，执行任务分配算法，将各个task分配到Executor上去
+      2.调用launchTasks方法，到对应的Executor上去启动并执行task
+       */
       // Make sure no executor is killed while some task is launching on it
       val taskDescs = CoarseGrainedSchedulerBackend.this.synchronized {
         // Filter out executors under killing
+        // executorDataMap是一个Executor的Map集合，在Executor向Driver注册的时候添加上去
         val activeExecutors = executorDataMap.filterKeys(executorIsAlive)
+
+        // 拿到的是一个Seq<WorkerOffer> , 这里是将Executor封装成为WorkerOffer，每个WorkerOffer里面封装了Executor的可用CPU core
         val workOffers = activeExecutors.map {
           case (id, executorData) =>
             new WorkerOffer(id, executorData.executorHost, executorData.freeCores)
         }.toIndexedSeq
+
+        /*
+        很重要，resourceOffers返回的是：
+        [
+          {ArrayBuffer[TaskDescription](2)},
+          {ArrayBuffer[TaskDescription](3)},
+          {ArrayBuffer[TaskDescription](2)}
+          ]
+         */
         scheduler.resourceOffers(workOffers)
       }
+
+
       if (!taskDescs.isEmpty) {
         // 真正去启动task在executor上
         launchTasks(taskDescs)
@@ -289,7 +309,8 @@ class CoarseGrainedSchedulerBackend(scheduler: TaskSchedulerImpl, val rpcEnv: Rp
     // Launch tasks returned by a set of resource offers
     private def launchTasks(tasks: Seq[Seq[TaskDescription]]) {
       //去提交一批task
-      for (task <- tasks.flatten) {
+      for (task <- tasks.flatten) {//tasks.flatten 将Seq[Seq[TaskDescription]] 中的Seq[TaskDescription]拿出来，这样 Seq[Seq[TaskDescription]]  ---> Seq[TaskDescription]
+
         val serializedTask = TaskDescription.encode(task)
         if (serializedTask.limit() >= maxRpcMessageSize) {
           scheduler.taskIdToTaskSetManager.get(task.taskId).foreach { taskSetMgr =>
@@ -305,7 +326,9 @@ class CoarseGrainedSchedulerBackend(scheduler: TaskSchedulerImpl, val rpcEnv: Rp
           }
         }
         else {
+          // 拿到当前Executor
           val executorData = executorDataMap(task.executorId)
+          // 将当前Executor减去task的消耗
           executorData.freeCores -= scheduler.CPUS_PER_TASK
 
           logDebug(s"Launching task ${task.taskId} on executor id: ${task.executorId} hostname: " +
@@ -449,6 +472,7 @@ class CoarseGrainedSchedulerBackend(scheduler: TaskSchedulerImpl, val rpcEnv: Rp
   }
 
   override def reviveOffers() {
+    // 在这个类的内部有一个receive方法，case ReviveOffers
     driverEndpoint.send(ReviveOffers)
   }
 

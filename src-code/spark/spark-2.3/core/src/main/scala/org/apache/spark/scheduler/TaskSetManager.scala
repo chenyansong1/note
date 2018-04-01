@@ -435,6 +435,8 @@ private[spark] class TaskSetManager(
    * @param execId the executor Id of the offered resource
    * @param host  the host Id of the offered resource
    * @param maxLocality the maximum locality we want to schedule the tasks at
+    *
+    * 会判断这个Executor在这个本地化级别，之前的等待时间是多少，如果说，本地化的级别的等待时间在一定的时间范围内，那么久认定该task可以使用该本地化级别在 该Executor启动
    */
   @throws[TaskNotSerializableException]
   def resourceOffer(
@@ -516,6 +518,7 @@ private[spark] class TaskSetManager(
           addedJars,
           task.localProperties,
           serializedTask)
+
       }
     } else {
       None

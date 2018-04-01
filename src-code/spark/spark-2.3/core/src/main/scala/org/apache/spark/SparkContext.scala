@@ -2064,6 +2064,7 @@ class SparkContext(config: SparkConf) extends Logging {
     dagScheduler.runJob(rdd, cleanedFunc, partitions, callSite, resultHandler, localProperties.get)
 
     progressBar.foreach(_.finishAll())
+    // 这里为什么会checkpoint？？？
     rdd.doCheckpoint()
   }
 

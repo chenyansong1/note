@@ -230,7 +230,7 @@ private[spark] class Executor(
     ManagementFactory.getGarbageCollectorMXBeans.asScala.map(_.getCollectionTime).sum
   }
 
-  class TaskRunner(
+  class TaskRunner从(
       execBackend: ExecutorBackend,
       private val taskDescription: TaskDescription)
     extends Runnable {

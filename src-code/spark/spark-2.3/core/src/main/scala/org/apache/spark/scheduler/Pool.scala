@@ -98,10 +98,11 @@ private[spark] class Pool(
 
   override def getSortedTaskSetQueue: ArrayBuffer[TaskSetManager] = {
     val sortedTaskSetQueue = new ArrayBuffer[TaskSetManager]
-    val sortedSchedulableQueue =
-      schedulableQueue.asScala.toSeq.sortWith(taskSetSchedulingAlgorithm.comparator)
+    // taskSetSchedulingAlgorithm 会根据不同的调度算法，进行不同的排序， 具体参见：taskSetSchedulingAlgorithm
+    val sortedSchedulableQueue = schedulableQueue.asScala.toSeq.sortWith(taskSetSchedulingAlgorithm.comparator)
+
     for (schedulable <- sortedSchedulableQueue) {
-      sortedTaskSetQueue ++= schedulable.getSortedTaskSetQueue
+      sortedTaskSetQueue ++= schedulable.getSortedTaskSetQueue// schedulable.getSortedTaskSetQueue 是为什么？？？
     }
     sortedTaskSetQueue
   }
