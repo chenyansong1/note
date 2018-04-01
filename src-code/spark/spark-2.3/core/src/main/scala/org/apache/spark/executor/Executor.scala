@@ -171,6 +171,9 @@ private[spark] class Executor(
 
   private[executor] def numRunningTasks: Int = runningTasks.size()
 
+  /*
+  在new executor的时候，会有一个线程池，我们将task封装成为一个TaskRunner，丢到线程池中运行
+   */
   def launchTask(context: ExecutorBackend, taskDescription: TaskDescription): Unit = {
     val tr = new TaskRunner(context, taskDescription)
     // 将task封装成一个TaskRunner（实现了Runnable），然后丢到线程池中进行执行
@@ -230,7 +233,7 @@ private[spark] class Executor(
     ManagementFactory.getGarbageCollectorMXBeans.asScala.map(_.getCollectionTime).sum
   }
 
-  class TaskRunner从(
+  class TaskRunner(
       execBackend: ExecutorBackend,
       private val taskDescription: TaskDescription)
     extends Runnable {
@@ -311,13 +314,13 @@ private[spark] class Executor(
       try {
         // Must be set before updateDependencies() is called, in case fetching dependencies
         // requires access to properties contained within (e.g. for access control).
+        // 首先将taskDescription 反序列化
         Executor.taskDeserializationProps.set(taskDescription.properties)
-        //更新依赖
+        //更新依赖（通过网络通信，将需要的文件，jar拷贝过来）
         updateDependencies(taskDescription.addedFiles, taskDescription.addedJars)
 
         // 这里会反射出具体的子类，可以是ShuffleMapTask或者是ReduceTask来实现的
-        task = ser.deserialize[Task[Any]](
-          taskDescription.serializedTask, Thread.currentThread.getContextClassLoader)
+        task = ser.deserialize[Task[Any]](taskDescription.serializedTask, Thread.currentThread.getContextClassLoader)
 
         task.localProperties = taskDescription.properties
         task.setTaskMemoryManager(taskMemoryManager)
@@ -344,18 +347,22 @@ private[spark] class Executor(
         }
 
         // Run the actual task and measure its runtime.
+        // 记录task的开始时间和开始时的CPU
         taskStart = System.currentTimeMillis()
         taskStartCpu = if (threadMXBean.isCurrentThreadCpuTimeSupported) {
           threadMXBean.getCurrentThreadCpuTime
         } else 0L
+
         var threwException = true
         val value = try {
-          // 因为这里的task可能是ShuffleMapTask或者是ReduceTask，所以要看具体的实现
+          // 因为这里的task可能是ShuffleMapTask或者是ReduceTask，所以要看具体的实现，这里很重要
           val res = task.run(
             taskAttemptId = taskId,
             attemptNumber = taskDescription.attemptNumber,
             metricsSystem = env.metricsSystem)
+
           threwException = false
+          //返回结果，他是一个MapStatus，里面封装了ShuffleMapTask的计算结果的位置信息
           res
         } finally {
           val releasedLocks = env.blockManager.releaseAllLocksForTask(taskId)
@@ -389,6 +396,8 @@ private[spark] class Executor(
             s"unrecoverable fetch failures!  Most likely this means user code is incorrectly " +
             s"swallowing Spark's internal ${classOf[FetchFailedException]}", fetchFailure)
         }
+
+        // task的结束时间和结束时的CPU
         val taskFinish = System.currentTimeMillis()
         val taskFinishCpu = if (threadMXBean.isCurrentThreadCpuTimeSupported) {
           threadMXBean.getCurrentThreadCpuTime
@@ -488,6 +497,7 @@ private[spark] class Executor(
         }
 
         setTaskFinishedAndClearInterruptStatus()
+
         // 将任务完成和taskresult,通过statusUpdate报告给driver
         execBackend.statusUpdate(taskId, TaskState.FINISHED, serializedResult)
 
@@ -749,13 +759,17 @@ private[spark] class Executor(
     lazy val hadoopConf = SparkHadoopUtil.get.newConfiguration(conf)
     synchronized {
       // Fetch missing dependencies
+      // 遍历依赖的文件，通过Utils拉取
       for ((name, timestamp) <- newFiles if currentFiles.getOrElse(name, -1L) < timestamp) {
         logInfo("Fetching " + name + " with timestamp " + timestamp)
         // Fetch file with useCache mode, close cache for local mode.
         Utils.fetchFile(name, new File(SparkFiles.getRootDirectory()), conf,
           env.securityManager, hadoopConf, timestamp, useCache = !isLocal)
+        //
         currentFiles(name) = timestamp
       }
+
+      // 拉取jar文件
       for ((name, timestamp) <- newJars) {
         val localName = new URI(name).getPath.split("/").last
         val currentTimeStamp = currentJars.get(name)
@@ -775,6 +789,7 @@ private[spark] class Executor(
           }
         }
       }
+
     }
   }
 

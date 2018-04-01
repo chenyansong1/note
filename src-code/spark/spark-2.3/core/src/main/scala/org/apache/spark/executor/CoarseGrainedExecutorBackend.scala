@@ -55,6 +55,7 @@ private[spark] class CoarseGrainedExecutorBackend(
   // to be changed so that we don't share the serializer instance across threads
   private[this] val ser: SerializerInstance = env.closureSerializer.newInstance()
 
+  // 在Executor启动的时候，会向Driver进行反向注册
   override def onStart() {
     logInfo("Connecting to driver: " + driverUrl)
     rpcEnv.asyncSetupEndpointRefByURI(driverUrl).flatMap { ref =>
@@ -84,6 +85,9 @@ private[spark] class CoarseGrainedExecutorBackend(
       logInfo("Successfully registered with driver")
       try {
         // 当注册成功后, 创建Executor
+        // driver注册Executor成功之后，会发送回来RegisteredExecutor消息
+        // 此时在CoarseGrainedExecutorBackend中就会创建Executor对象，作为执行句柄
+        // 其实他的大部分功能是通过此时创建的Executor实现的
         executor = new Executor(executorId, hostname, env, userClassPath, isLocal = false)
       } catch {
         case NonFatal(e) =>
@@ -93,12 +97,15 @@ private[spark] class CoarseGrainedExecutorBackend(
     case RegisterExecutorFailed(message) =>
       exitExecutor(1, "Slave registration failed: " + message)
 
+      // 启动task
     case LaunchTask(data) =>
       if (executor == null) {
         exitExecutor(1, "Received LaunchTask command but executor was null")
       } else {
+        // 将发送过来的task进行反序列化
         val taskDesc = TaskDescription.decode(data.value)
         logInfo("Got assigned task " + taskDesc.taskId)
+        // 然后用内部的执行句柄executor，来启动task
         executor.launchTask(this, taskDesc) // 调用executor.launchTask,启动task
       }
 

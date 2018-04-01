@@ -30,6 +30,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.shuffle.ShuffleWriter
 
 /**
+  * 一个ShuffleMapTask会将一个RDD的元素，切分为多个bucket
  * A ShuffleMapTask divides the elements of an RDD into multiple buckets (based on a partitioner
  * specified in the ShuffleDependency).
  *
@@ -77,12 +78,14 @@ private[spark] class ShuffleMapTask(
   // task真正执行的方法，最后会返回MapStatus
   override def runTask(context: TaskContext): MapStatus = {
     // Deserialize the RDD using the broadcast variable.
+    // 这里的注释说：使用广播变量拿到RDD，但是为什么呢？？？？
     val threadMXBean = ManagementFactory.getThreadMXBean
     val deserializeStartTime = System.currentTimeMillis()
     val deserializeStartCpuTime = if (threadMXBean.isCurrentThreadCpuTimeSupported) {
       threadMXBean.getCurrentThreadCpuTime
     } else 0L
     val ser = SparkEnv.get.closureSerializer.newInstance()
+
     val (rdd, dep) = ser.deserialize[(RDD[_], ShuffleDependency[_, _, _])](
       ByteBuffer.wrap(taskBinary.value), Thread.currentThread.getContextClassLoader)
 
@@ -93,17 +96,19 @@ private[spark] class ShuffleMapTask(
 
     var writer: ShuffleWriter[Any, Any] = null
     try {
+      // 获取shuffleManger，进一步得到writer
       val manager = SparkEnv.get.shuffleManager
       writer = manager.getWriter[Any, Any](dep.shuffleHandle, partitionId, context)
       /*
-       计算结果会写到BlockManager之中，最终返回MapStatus给DAGScheduler，MapStatus中存放的是本次task的计算结果存储在BlockManager
+       1.计算结果会写到BlockManager之中，最终返回MapStatus给DAGScheduler，MapStatus中存放的是本次task的计算结果存储在BlockManager
        的信息，而不是计算结果本身
 
-      调用rdd.iterator，如果该rdd已经被cache或者checkpoint，那么直接读取结果，
-      否则计算，计算结果保存在本地系统的BlockManager中
+      2.调用rdd.iterator，如果该rdd已经被cache或者checkpoint，那么直接读取结果，否则计算，计算结果保存在本地系统的BlockManager中
        */
       writer.write(rdd.iterator(partition, context).asInstanceOf[Iterator[_ <: Product2[Any, Any]]])
+      // 3.最后返回结果：MapStatus
       writer.stop(success = true).get
+
     } catch {
       case e: Exception =>
         try {

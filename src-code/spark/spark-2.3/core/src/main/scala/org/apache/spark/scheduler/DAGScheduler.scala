@@ -1366,6 +1366,7 @@ class DAGScheduler(
                 logInfo("Ignoring result from " + rt + " because its job has finished")
             }
 
+            // 如果返回的是ShuffleMapTask，那么
           case smt: ShuffleMapTask =>
             val shuffleStage = stage.asInstanceOf[ShuffleMapStage]
             val status = event.result.asInstanceOf[MapStatus]
@@ -1386,6 +1387,7 @@ class DAGScheduler(
               // The epoch of the task is acceptable (i.e., the task was launched after the most
               // recent failure we're aware of for the executor), so mark the task's output as
               // available.
+              // 这里很重要，会将task的计算结果（计算产生的分区，所在的位置），放入mapOutputTracker中
               mapOutputTracker.registerMapOutput(
                 shuffleStage.shuffleDep.shuffleId, smt.partitionId, status)
               // Remove the task's partition from pending partitions. This may have already been

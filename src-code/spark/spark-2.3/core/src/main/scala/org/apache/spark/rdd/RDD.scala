@@ -113,6 +113,7 @@ abstract class RDD[T: ClassTag](
    * :: DeveloperApi ::
    * Implemented by subclasses to compute a given partition.
    */
+  // 每一个具体的RDD实现，都有自己的compute方法，需要进入到具体的RDD的compute方法中，比如我们可以看 MapPartitionsRDD
   @DeveloperApi
   def compute(split: Partition, context: TaskContext): Iterator[T]
 

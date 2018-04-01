@@ -76,7 +76,9 @@ private[spark] abstract class Task[T](
       taskAttemptId: Long,
       attemptNumber: Int,
       metricsSystem: MetricsSystem): T = {
+
     SparkEnv.get.blockManager.registerTask(taskAttemptId)
+    // 创建task的执行上下文，里面记录是task执行的一些全局的东西：task重试次数；task属于哪个Stage；task要处理的RDD属于哪个partition
     context = new TaskContextImpl(
       stageId,
       stageAttemptId, // stageAttemptId and stageAttemptNumber are semantically equal
@@ -87,6 +89,7 @@ private[spark] abstract class Task[T](
       localProperties,
       metricsSystem,
       metrics)//TaskMetrics封装了task执行时一些指标和数据
+
     TaskContext.setTaskContext(context)
     taskThread = Thread.currentThread()
 
@@ -106,8 +109,9 @@ private[spark] abstract class Task[T](
       Option(attemptNumber)).setCurrentContext()
 
     try {
-      // 调用具体的实现 ShuffleMapTask或者是ReduceTask 的方法
+      // 调用具体的实现 ShuffleMapTask或者是ReduceTask 的方法，很重要
       runTask(context)
+
     } catch {
       case e: Throwable =>
         // Catch all errors; run task failure callbacks, and rethrow the exception.
