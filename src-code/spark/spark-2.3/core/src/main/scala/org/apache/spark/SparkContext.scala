@@ -838,8 +838,16 @@ class SparkContext(config: SparkConf) extends Logging {
       minPartitions: Int = defaultMinPartitions): RDD[String] = withScope {
     assertNotStopped()
 
-    hadoopFile(path, classOf[TextInputFormat], classOf[LongWritable], classOf[Text],
-      minPartitions).map(pair => pair._2.toString).setName(path)
+    hadoopFile( // 返回的是一个HadoopRDD,返回的是key-value，key=每一行的offset,value=每一行的文本
+      path,
+      classOf[TextInputFormat], // 输入的文件类型
+      classOf[LongWritable], // 文件的每一行的key 类型
+      classOf[Text],        // 每一行的value的类型
+      minPartitions
+    ).map(// map是在RDD中定义的，他返回的是MapPartitionsRDD
+      pair => pair._2.toString // 只是拿到的每一行的value，即：文本的内容
+    ).setName(path)
+
   }
 
   /**
@@ -1043,8 +1051,11 @@ class SparkContext(config: SparkConf) extends Logging {
     FileSystem.getLocal(hadoopConfiguration)
 
     // A Hadoop configuration can be about 10 KB, which is pretty big, so broadcast it.
+    // 广播Hadoop的配置文件:这样每个worker上就会存在一份，而不是在每个task上创建一份
     val confBroadcast = broadcast(new SerializableConfiguration(hadoopConfiguration))
+    // 这是一个匿名函数
     val setInputPathsFunc = (jobConf: JobConf) => FileInputFormat.setInputPaths(jobConf, path)
+
     new HadoopRDD(
       this,
       confBroadcast,
@@ -1053,6 +1064,7 @@ class SparkContext(config: SparkConf) extends Logging {
       keyClass,
       valueClass,
       minPartitions).setName(path)
+
   }
 
   /**
@@ -2034,17 +2046,23 @@ class SparkContext(config: SparkConf) extends Logging {
       func: (TaskContext, Iterator[T]) => U,//action的逻辑,比如count逻辑
       partitions: Seq[Int],  //partition的个数
       resultHandler: (Int, U) => Unit): Unit = {  //会在JobWaiter的taskSucceeded中用于处理task result
+
     if (stopped.get()) {
       throw new IllegalStateException("SparkContext has been shutdown")
     }
+
     val callSite = getCallSite
+
     val cleanedFunc = clean(func)
     logInfo("Starting job: " + callSite.shortForm)
+
     if (conf.getBoolean("spark.logLineage", false)) {
       logInfo("RDD's recursive dependencies:\n" + rdd.toDebugString)
     }
-    // dagScheduler调用runJob进行处理
+
+    // dagScheduler调用runJob进行处理（dagscheduler是在sparkContext初始化的创建的），这里的rdd是最后执行action的rdd
     dagScheduler.runJob(rdd, cleanedFunc, partitions, callSite, resultHandler, localProperties.get)
+
     progressBar.foreach(_.finishAll())
     rdd.doCheckpoint()
   }
@@ -2064,8 +2082,11 @@ class SparkContext(config: SparkConf) extends Logging {
       rdd: RDD[T],
       func: (TaskContext, Iterator[T]) => U,
       partitions: Seq[Int]): Array[U] = {
+
     val results = new Array[U](partitions.size)
+
     runJob[T, U](rdd, func, partitions, (index, res) => results(index) = res)
+
     results
   }
 

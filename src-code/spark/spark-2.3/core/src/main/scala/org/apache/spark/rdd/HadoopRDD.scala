@@ -112,6 +112,7 @@ class HadoopRDD[K, V](
       keyClass: Class[K],
       valueClass: Class[V],
       minPartitions: Int) = {
+
     this(
       sc,
       sc.broadcast(new SerializableConfiguration(conf))
@@ -121,6 +122,8 @@ class HadoopRDD[K, V](
       keyClass,
       valueClass,
       minPartitions)
+
+
   }
 
   protected val jobConfCacheKey: String = "rdd_%d_job_conf".format(id)
