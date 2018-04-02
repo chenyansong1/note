@@ -113,6 +113,7 @@ private[spark] class SortShuffleWriter[K, V, C](
 }
 
 private[spark] object SortShuffleWriter {
+  // 不需要在map端聚合，并且分区数量<bypassMergeThreshold(200)
   def shouldBypassMergeSort(conf: SparkConf, dep: ShuffleDependency[_, _, _]): Boolean = {
     // We cannot bypass sorting if we need to do map-side aggregation.
     // 如果需要map端聚合，则不能使用BypassMergeSort

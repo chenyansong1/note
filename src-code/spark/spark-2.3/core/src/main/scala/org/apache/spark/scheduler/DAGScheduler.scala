@@ -1120,6 +1120,7 @@ class DAGScheduler(
           JavaUtils.bufferToArray(closureSerializer.serialize((stage.rdd, stage.func): AnyRef))
       }
 
+      // 广播 stage.rdd 和 stage.shuffleDep,后面会用到该广播变量
       taskBinary = sc.broadcast(taskBinaryBytes)
     } catch {
       // In the case of a failure during serialization, abort the stage.

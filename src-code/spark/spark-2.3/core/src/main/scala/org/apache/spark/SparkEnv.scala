@@ -325,10 +325,11 @@ object SparkEnv extends Logging {
     val shortShuffleMgrNames = Map(
       "sort" -> classOf[org.apache.spark.shuffle.sort.SortShuffleManager].getName,
       "tungsten-sort" -> classOf[org.apache.spark.shuffle.sort.SortShuffleManager].getName)
+
     // 默认使用 SortShuffleManager
     val shuffleMgrName = conf.get("spark.shuffle.manager", "sort")
-    val shuffleMgrClass =
-      shortShuffleMgrNames.getOrElse(shuffleMgrName.toLowerCase(Locale.ROOT), shuffleMgrName)
+    val shuffleMgrClass = shortShuffleMgrNames.getOrElse(shuffleMgrName.toLowerCase(Locale.ROOT), shuffleMgrName)
+    // 创建shuffleManger实例
     val shuffleManager = instantiateClass[ShuffleManager](shuffleMgrClass)
 
     val useLegacyMemoryManager = conf.getBoolean("spark.memory.useLegacyMode", false)

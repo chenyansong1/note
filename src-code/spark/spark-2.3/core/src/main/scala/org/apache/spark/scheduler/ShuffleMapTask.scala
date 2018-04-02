@@ -86,6 +86,7 @@ private[spark] class ShuffleMapTask(
     } else 0L
     val ser = SparkEnv.get.closureSerializer.newInstance()
 
+    // 在dagScheduler.submitMissingTasks方法中有广播这个
     val (rdd, dep) = ser.deserialize[(RDD[_], ShuffleDependency[_, _, _])](
       ByteBuffer.wrap(taskBinary.value), Thread.currentThread.getContextClassLoader)
 
@@ -96,7 +97,7 @@ private[spark] class ShuffleMapTask(
 
     var writer: ShuffleWriter[Any, Any] = null
     try {
-      // 获取shuffleManger，进一步得到writer
+      // 获取shuffleManger,shuffleManager是在sparkEnv实例化的时候创建的（会根据配置文件创建几种类型的shuffleManager）
       val manager = SparkEnv.get.shuffleManager
         // 这里去获取特定类型的writer  在ShuffleDependency中会设置shuffleHandle
         writer = manager.getWriter[Any, Any](dep.shuffleHandle, partitionId, context)
