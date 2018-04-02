@@ -98,6 +98,7 @@ private[spark] class ShuffleMapTask(
     try {
       // 获取shuffleManger，进一步得到writer
       val manager = SparkEnv.get.shuffleManager
+      // 在ShuffleDependency中会设置shuffleHandle
       writer = manager.getWriter[Any, Any](dep.shuffleHandle, partitionId, context)
       /*
        1.计算结果会写到BlockManager之中，最终返回MapStatus给DAGScheduler，MapStatus中存放的是本次task的计算结果存储在BlockManager

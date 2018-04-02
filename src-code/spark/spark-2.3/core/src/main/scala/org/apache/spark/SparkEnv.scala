@@ -321,9 +321,11 @@ object SparkEnv extends Logging {
         rpcEnv, mapOutputTracker.asInstanceOf[MapOutputTrackerMaster], conf))
 
     // Let the user specify short names for shuffle managers
+    // 这里是对shuffleManager的定义：在spark2.0之后，有两种shuffleManager可以选择，如下，在spark2.0之后，hashShuffle已经被去掉了
     val shortShuffleMgrNames = Map(
       "sort" -> classOf[org.apache.spark.shuffle.sort.SortShuffleManager].getName,
       "tungsten-sort" -> classOf[org.apache.spark.shuffle.sort.SortShuffleManager].getName)
+    // 默认使用 SortShuffleManager
     val shuffleMgrName = conf.get("spark.shuffle.manager", "sort")
     val shuffleMgrClass =
       shortShuffleMgrNames.getOrElse(shuffleMgrName.toLowerCase(Locale.ROOT), shuffleMgrName)
