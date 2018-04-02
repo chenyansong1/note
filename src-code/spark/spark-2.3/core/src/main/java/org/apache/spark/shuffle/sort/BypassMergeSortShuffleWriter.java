@@ -69,6 +69,7 @@ import org.apache.spark.util.Utils;
  * refactored into its own class in order to reduce code complexity; see SPARK-7855 for details.
  * <p>
  * There have been proposals to completely remove this code path; see SPARK-6026 for details.
+ * 绕过 MergeSort
  */
 final class BypassMergeSortShuffleWriter<K, V> extends ShuffleWriter<K, V> {
 
@@ -122,24 +123,30 @@ final class BypassMergeSortShuffleWriter<K, V> extends ShuffleWriter<K, V> {
   @Override
   public void write(Iterator<Product2<K, V>> records) throws IOException {
     assert (partitionWriters == null);
+    // 没有数据，直接返回
     if (!records.hasNext()) {
       partitionLengths = new long[numPartitions];
       shuffleBlockResolver.writeIndexFileAndCommit(shuffleId, mapId, partitionLengths, null);
       mapStatus = MapStatus$.MODULE$.apply(blockManager.shuffleServerId(), partitionLengths);
       return;
     }
+
+
     final SerializerInstance serInstance = serializer.newInstance();
     final long openStartTime = System.nanoTime();
+
+    // 这里是所有的shuffle的写文件数组
     partitionWriters = new DiskBlockObjectWriter[numPartitions];
+    // 在一个shuffle文件中，会有每个partition的segment
     partitionWriterSegments = new FileSegment[numPartitions];
+
     for (int i = 0; i < numPartitions; i++) {
-      final Tuple2<TempShuffleBlockId, File> tempShuffleBlockIdPlusFile =
-        blockManager.diskBlockManager().createTempShuffleBlock();
+      final Tuple2<TempShuffleBlockId, File> tempShuffleBlockIdPlusFile = blockManager.diskBlockManager().createTempShuffleBlock();
       final File file = tempShuffleBlockIdPlusFile._2();
       final BlockId blockId = tempShuffleBlockIdPlusFile._1();
-      partitionWriters[i] =
-        blockManager.getDiskWriter(blockId, file, serInstance, fileBufferSize, writeMetrics);
+      partitionWriters[i] = blockManager.getDiskWriter(blockId, file, serInstance, fileBufferSize, writeMetrics);
     }
+
     // Creating the file to write to and creating a disk writer both involve interacting with
     // the disk, and can take a long time in aggregate when we open many files, so should be
     // included in the shuffle write time.
@@ -153,6 +160,7 @@ final class BypassMergeSortShuffleWriter<K, V> extends ShuffleWriter<K, V> {
 
     for (int i = 0; i < numPartitions; i++) {
       final DiskBlockObjectWriter writer = partitionWriters[i];
+      // 将为每个分区写入的数据放入到对应的Segment中
       partitionWriterSegments[i] = writer.commitAndGet();
       writer.close();
     }
@@ -163,6 +171,7 @@ final class BypassMergeSortShuffleWriter<K, V> extends ShuffleWriter<K, V> {
       partitionLengths = writePartitionedFile(tmp);
       shuffleBlockResolver.writeIndexFileAndCommit(shuffleId, mapId, partitionLengths, tmp);
     } finally {
+      // 写完成之后，需要删除临时文件
       if (tmp.exists() && !tmp.delete()) {
         logger.error("Error while deleting temp file {}", tmp.getAbsolutePath());
       }
