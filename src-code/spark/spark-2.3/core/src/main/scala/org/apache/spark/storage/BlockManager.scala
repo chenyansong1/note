@@ -1204,6 +1204,8 @@ private[spark] class BlockManager(
         }
         addUpdatedBlockStatusToTaskMetrics(blockId, putBlockStatus)
         logDebug("Put block %s locally took %s".format(blockId, Utils.getUsedTimeMs(startTimeMs)))
+
+        // 这里如果replica大于1，那么还需要存入副本数量
         if (level.replication > 1) {
           val remoteStartTime = System.currentTimeMillis
           val bytesToReplicate = doGetLocalBytes(blockId, info)
@@ -1216,6 +1218,7 @@ private[spark] class BlockManager(
             classTag
           }
           try {
+
             replicate(blockId, bytesToReplicate, level, remoteClassTag)
           } finally {
             bytesToReplicate.dispose()
@@ -1404,6 +1407,9 @@ private[spark] class BlockManager(
       try {
         val onePeerStartTime = System.nanoTime
         logTrace(s"Trying to replicate $blockId of ${data.size} bytes to $peer")
+
+
+        // 异步将数据写入到其他的数据节点
         blockTransferService.uploadBlockSync(
           peer.host,
           peer.port,
@@ -1412,6 +1418,8 @@ private[spark] class BlockManager(
           new BlockManagerManagedBuffer(blockInfoManager, blockId, data, false),
           tLevel,
           classTag)
+
+
         logTrace(s"Replicated $blockId of ${data.size} bytes to $peer" +
           s" in ${(System.nanoTime - onePeerStartTime).toDouble / 1e6} ms")
         peersForReplication = peersForReplication.tail

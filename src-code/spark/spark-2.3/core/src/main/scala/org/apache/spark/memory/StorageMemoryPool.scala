@@ -89,7 +89,7 @@ private[memory] class StorageMemoryPool(
     assert(numBytesToFree >= 0)
     assert(memoryUsed <= poolSize)
     if (numBytesToFree > 0) {
-      //
+      // 判断内存是否够用，如果不够用，那么删除部分数据，尝试将数据写入到磁盘，但是如果持久化级别不支持磁盘，那么丢失数据
       memoryStore.evictBlocksToFreeSpace(Some(blockId), numBytesToFree, memoryMode)
     }
     // NOTE: If the memory store evicts blocks, then those evictions will synchronously call
