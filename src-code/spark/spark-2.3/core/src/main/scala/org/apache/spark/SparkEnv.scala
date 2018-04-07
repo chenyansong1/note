@@ -351,10 +351,14 @@ object SparkEnv extends Logging {
         blockManagerPort, numUsableCores)
 
     // registerOrLookup表示只有在master上创建Actor对象, slave上只是创建ref
-    val blockManagerMaster = new BlockManagerMaster(registerOrLookupEndpoint(
-      BlockManagerMaster.DRIVER_ENDPOINT_NAME,
-      new BlockManagerMasterEndpoint(rpcEnv, isLocal, conf, listenerBus)),
-      conf, isDriver)
+    val blockManagerMaster = new BlockManagerMaster(
+      registerOrLookupEndpoint(
+          BlockManagerMaster.DRIVER_ENDPOINT_NAME,
+          new BlockManagerMasterEndpoint(rpcEnv, isLocal, conf, listenerBus)
+      ),
+      conf,
+      isDriver
+    )
 
     // NB: blockManager is not valid until initialize() is called later.
     val blockManager = new BlockManager(executorId, rpcEnv, blockManagerMaster,

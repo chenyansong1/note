@@ -88,6 +88,7 @@ private[spark] class MemoryStore(
   // Note: all changes to memory allocations, notably putting blocks, evicting blocks, and
   // acquiring or releasing unroll memory, must be synchronized on `memoryManager`!
 
+  // entries 就是每个blockid和block数据之间的映射
   private val entries = new LinkedHashMap[BlockId, MemoryEntry[_]](32, 0.75f, true)
 
   // A mapping from taskAttemptId to amount of memory used for unrolling a block (in bytes)
@@ -218,7 +219,9 @@ private[spark] class MemoryStore(
 
     // Unroll this block safely, checking whether we have exceeded our threshold periodically
     while (values.hasNext && keepUnrolling) {
+
       valuesHolder.storeValue(values.next())
+
       if (elementsUnrolled % memoryCheckPeriod == 0) {
         val currentSize = valuesHolder.estimatedSize()
         // If our vector's size has exceeded the threshold, request more memory
@@ -362,6 +365,7 @@ private[spark] class MemoryStore(
     }
   }
 
+  // getBytes返回的是字节（序列化的数据），
   def getBytes(blockId: BlockId): Option[ChunkedByteBuffer] = {
     val entry = entries.synchronized { entries.get(blockId) }
     entry match {
@@ -372,12 +376,15 @@ private[spark] class MemoryStore(
     }
   }
 
+  // 返回的是object,非序列化数据，和上面的方法相对应
   def getValues(blockId: BlockId): Option[Iterator[_]] = {
     val entry = entries.synchronized { entries.get(blockId) }
     entry match {
       case null => None
+      // 如果是序列化的数据，那么抛出异常，因为getValues返回的是非序列化数据
       case e: SerializedMemoryEntry[_] =>
         throw new IllegalArgumentException("should only call getValues on deserialized blocks")
+        // 如果数据是非序列化，那么直接返回数据
       case DeserializedMemoryEntry(values, _, _) =>
         val x = Some(values)
         x.map(_.iterator)
