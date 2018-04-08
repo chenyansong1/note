@@ -333,11 +333,14 @@ abstract class RDD[T: ClassTag](
    * Gets or computes an RDD partition. Used by RDD.iterator() when an RDD is cached.
    */
   private[spark] def getOrCompute(partition: Partition, context: TaskContext): Iterator[T] = {
+
     val blockId = RDDBlockId(id, partition.index)
     var readCachedBlock = true
     // This method is called on executors, so we need call SparkEnv.get instead of sc.env.
+    // 直接获取数据，如果获取到了直接返回即可，但是如果没有获取到 那么调用computeOrReadCheckpoint()方法
     SparkEnv.get.blockManager.getOrElseUpdate(blockId, storageLevel, elementClassTag, () => {
       readCachedBlock = false
+      // 如果没有获取到数据，那么会执行下面的方法
       computeOrReadCheckpoint(partition, context)
     }) match {
       case Left(blockResult) =>

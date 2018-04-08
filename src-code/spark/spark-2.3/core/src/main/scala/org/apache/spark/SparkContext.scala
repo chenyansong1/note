@@ -2340,6 +2340,7 @@ class SparkContext(config: SparkConf) extends Logging {
    * Set the directory under which RDDs are going to be checkpointed.
    * @param directory path to the directory where checkpoint files will be stored
    * (must be HDFS path if running in cluster)
+    * 如果运行在集群中，必须是HDFS路径
    */
   def setCheckpointDir(directory: String) {
 
