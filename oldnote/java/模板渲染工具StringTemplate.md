@@ -46,3 +46,23 @@ System.out.println(hello.render());
 
 
 ```
+
+
+# if else 
+
+```
+      "must":[
+        <if(isSrcIpList)>
+            {"terms":{"srcip":[<ipList>]}}
+        <else>
+            {"terms":{"dstip":[<ipList>]}}
+        <endif>
+
+        <if(srcip)>
+            ,{"term":{"srcip":"<srcip>"}}
+        <else>
+            ,{"term":{"dstip":"<dstip>"}}
+        <endif>
+      ]
+
+```

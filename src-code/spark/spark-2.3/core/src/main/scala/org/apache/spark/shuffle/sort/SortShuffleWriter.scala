@@ -65,16 +65,20 @@ private[spark] class SortShuffleWriter[K, V, C](
 
     }
 
+    // 写内存缓冲区，超过阈值则溢写到磁盘文件
     sorter.insertAll(records)
 
     // Don't bother including the time to open the merged output file in the shuffle write time,
     // because it just opens a single file, so is typically too fast to measure accurately
     // (see SPARK-3570).
+    // 获取该task的最终输出文件
     val output = shuffleBlockResolver.getDataFile(dep.shuffleId, mapId)
     val tmp = Utils.tempFileWith(output)
     try {
       val blockId = ShuffleBlockId(dep.shuffleId, mapId, IndexShuffleBlockResolver.NOOP_REDUCE_ID)
+      // merge后写到data文件
       val partitionLengths = sorter.writePartitionedFile(blockId, tmp)
+      // 写index文件
       shuffleBlockResolver.writeIndexFileAndCommit(dep.shuffleId, mapId, partitionLengths, tmp)
 
       // 将写入后的数据位置信息放入MapStatus中
