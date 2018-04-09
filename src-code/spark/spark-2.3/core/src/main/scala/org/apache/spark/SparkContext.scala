@@ -2064,7 +2064,8 @@ class SparkContext(config: SparkConf) extends Logging {
     dagScheduler.runJob(rdd, cleanedFunc, partitions, callSite, resultHandler, localProperties.get)
 
     progressBar.foreach(_.finishAll())
-    // 这里为什么会checkpoint？？？
+    // 如果这个RDD被checkpoint了，那么doCheckpoint方法会对前面标记了的RDD的checkpoint
+    // 我们可以看到在执行完job后会执行 rdd.doCheckpoint()
     rdd.doCheckpoint()
   }
 

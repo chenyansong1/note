@@ -234,6 +234,7 @@ abstract class RDD[T: ClassTag](
   /**
    * Get the list of dependencies of this RDD, taking into account whether the
    * RDD is checkpointed or not.
+    * 获取RDD的依赖时，会先尝试从checkpointRDD中获取依赖，若成功则返回被OneToOneDependency包装过的ReliableCheckpointRDD对象，否则获取真正的依赖。
    */
   final def dependencies: Seq[Dependency[_]] = {
     checkpointRDD.map(r => List(new OneToOneDependency(r))).getOrElse {
@@ -319,9 +320,11 @@ abstract class RDD[T: ClassTag](
 
   /**
    * Compute an RDD partition or read it from a checkpoint if the RDD is checkpointing.
+    * 在cache中没有读到数据时再判断该RDD是否被checkpoint过，isCheckpointedAndMaterialized就是在checkpoint成功时的一个状态标记：cpState = Checkpointed
    */
   private[spark] def computeOrReadCheckpoint(split: Partition, context: TaskContext): Iterator[T] =
   {
+    // 当该RDD被成功checkpoint了，直接使用parent rdd 的 iterator() 也就是 CheckpointRDD.iterator()，否则直接调用该RDD的compute方法
     if (isCheckpointedAndMaterialized) {
       firstParent[T].iterator(split, context)
     } else {
@@ -1557,6 +1560,7 @@ abstract class RDD[T: ClassTag](
     // NOTE: we use a global lock here due to complexities downstream with ensuring
     // children RDD partitions point to the correct parent partitions. In the future
     // we should revisit this consideration.
+    // 先判断是否设置了checkpointDir，再判断checkpointData.isEmpty是否成立
     if (context.checkpointDir.isEmpty) {
       throw new SparkException("Checkpoint directory has not been set in the SparkContext")
     } else if (checkpointData.isEmpty) {
@@ -1746,6 +1750,7 @@ abstract class RDD[T: ClassTag](
           }
           checkpointData.get.checkpoint()
         } else {
+          // 向上寻找，是否有其他的RDD，需要checkpoint
           dependencies.foreach(_.rdd.doCheckpoint())
         }
       }
@@ -1757,6 +1762,7 @@ abstract class RDD[T: ClassTag](
    * created from the checkpoint file, and forget its old dependencies and partitions.
    */
   private[spark] def markCheckpointed(): Unit = {
+    // 清除RDD的所有依赖
     clearDependencies()
     partitions_ = null
     deps = null    // Forget the constructor argument for dependencies too

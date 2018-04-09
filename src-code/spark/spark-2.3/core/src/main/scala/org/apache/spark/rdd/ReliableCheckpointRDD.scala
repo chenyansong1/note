@@ -133,12 +133,11 @@ private[spark] object ReliableCheckpointRDD extends Logging {
       throw new SparkException(s"Failed to create checkpoint path $checkpointDirPath")
     }
 
-    // Save to file, and reload it as an RDD
-    val broadcastedConf = sc.broadcast(
-      new SerializableConfiguration(sc.hadoopConfiguration))
+    // 获取一些配置信息广播输出等操作
+    val broadcastedConf = sc.broadcast(new SerializableConfiguration(sc.hadoopConfiguration))
     // TODO: This is expensive because it computes the RDD again unnecessarily (SPARK-8582)
-    sc.runJob(originalRDD,
-      writePartitionToCheckpointFile[T](checkpointDirPath.toString, broadcastedConf) _)
+    // 然后启动一个Job去写Checkpint文件
+    sc.runJob(originalRDD, writePartitionToCheckpointFile[T](checkpointDirPath.toString, broadcastedConf) _)
 
     if (originalRDD.partitioner.nonEmpty) {
       writePartitionerToCheckpointDir(sc, originalRDD.partitioner.get, checkpointDirPath)
@@ -148,8 +147,9 @@ private[spark] object ReliableCheckpointRDD extends Logging {
       TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - checkpointStartTimeNs)
     logInfo(s"Checkpointing took $checkpointDurationMs ms.")
 
-    val newRDD = new ReliableCheckpointRDD[T](
-      sc, checkpointDirPath.toString, originalRDD.partitioner)
+    // 写完checkpoint后new一个ReliableCheckpointRDD实例返回
+    val newRDD = new ReliableCheckpointRDD[T](sc, checkpointDirPath.toString, originalRDD.partitioner)
+
     if (newRDD.partitions.length != originalRDD.partitions.length) {
       throw new SparkException(
         "Checkpoint RDD has a different number of partitions from original RDD. Original " +
@@ -162,6 +162,7 @@ private[spark] object ReliableCheckpointRDD extends Logging {
 
   /**
    * Write an RDD partition's data to a checkpoint file.
+    * 这里的代码就是普通的对HDFS写文件的操作，将一个RDD partition的数据写到checkpoint目录下
    */
   def writePartitionToCheckpointFile[T: ClassTag](
       path: String,
@@ -193,6 +194,7 @@ private[spark] object ReliableCheckpointRDD extends Logging {
     val serializer = env.serializer.newInstance()
     val serializeStream = serializer.serializeStream(fileOutputStream)
     Utils.tryWithSafeFinally {
+      // 写文件到hdfs
       serializeStream.writeAll(iterator)
     } {
       serializeStream.close()
