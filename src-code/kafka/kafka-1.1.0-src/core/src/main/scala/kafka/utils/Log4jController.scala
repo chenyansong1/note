@@ -31,6 +31,7 @@ import org.apache.log4j.{Level, LogManager, Logger}
  */
 private class Log4jController extends Log4jControllerMBean {
 
+  // 返回当前的一组logger(也包括root logger)，每个元素都是logger名称=日志级别这样的格式
   def getLoggers = {
     val lst = new util.ArrayList[String]()
     lst.add("root=" + existingLogger("root").getLevel.toString)
@@ -46,18 +47,21 @@ private class Log4jController extends Log4jControllerMBean {
   }
 
 
+  //创建一个日志器logger，可能是root logger，更可能是普通的logger
   private def newLogger(loggerName: String) =
     if (loggerName == "root")
       LogManager.getRootLogger
     else LogManager.getLogger(loggerName)
 
 
+  // 根据loggerName返回对应的logger
   private def existingLogger(loggerName: String) =
     if (loggerName == "root")
       LogManager.getRootLogger
     else LogManager.exists(loggerName)
 
 
+  // 根据给定的logger name获取对应的日志级别
   def getLogLevel(loggerName: String) = {
     val log = existingLogger(loggerName)
     if (log != null) {
@@ -70,6 +74,7 @@ private class Log4jController extends Log4jControllerMBean {
   }
 
 
+  // 设定日志级别。值得注意的是，如果loggerName为空或日志级别为空，返回false表明设置不成功
   def setLogLevel(loggerName: String, level: String) = {
     val log = newLogger(loggerName)
     if (!loggerName.trim.isEmpty && !level.trim.isEmpty && log != null) {
@@ -82,6 +87,11 @@ private class Log4jController extends Log4jControllerMBean {
 }
 
 
+/*
+1. getLoggers: 返回一个日志器名称的列表List[String]
+2. getLogLevel: 获取日志级别
+3. setLogLevel: 设置日志级别。不过与普通的setter方法不同的是，该方法返回一个boolean，原因后面在其实现类里面说。
+*/
 private trait Log4jControllerMBean {
   def getLoggers: java.util.List[String]
   def getLogLevel(logger: String): String
