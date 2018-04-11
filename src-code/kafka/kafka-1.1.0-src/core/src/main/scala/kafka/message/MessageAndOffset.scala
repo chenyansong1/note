@@ -47,6 +47,7 @@ case class MessageAndOffset(message: Message, offset: Long) {
   
   /**
    * Compute the offset of the next message in the log
+    * 计算下一条message的offset
    */
   def nextOffset: Long = offset + 1
 

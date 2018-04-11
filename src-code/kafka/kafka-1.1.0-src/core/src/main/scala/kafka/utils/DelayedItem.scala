@@ -23,8 +23,11 @@ import org.apache.kafka.common.utils.Time
 
 import scala.math._
 
+// 延迟项：用于标记那些在给定延迟时间之后执行的对象
 class DelayedItem(delayMs: Long) extends Delayed with Logging {
+  // delayMs:一个延迟时间
 
+  // 当前毫秒值+延迟的毫秒数 ， 得到 应有的毫秒数
   private val dueMs = Time.SYSTEM.milliseconds + delayMs
 
   def this(delay: Long, unit: TimeUnit) = this(unit.toMillis(delay))
@@ -32,10 +35,11 @@ class DelayedItem(delayMs: Long) extends Delayed with Logging {
   /**
    * The remaining delay time
    */
-  def getDelay(unit: TimeUnit): Long = {
+  def getDelay(unit: TimeUnit): Long = {// 延迟时间的单位
     unit.convert(max(dueMs - Time.SYSTEM.milliseconds, 0), TimeUnit.MILLISECONDS)
   }
 
+  // 比较两个 DelayedItem 之间的延迟的大小
   def compareTo(d: Delayed): Int = {
     val other = d.asInstanceOf[DelayedItem]
     java.lang.Long.compare(dueMs, other.dueMs)

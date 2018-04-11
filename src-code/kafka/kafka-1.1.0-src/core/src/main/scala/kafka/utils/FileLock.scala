@@ -24,17 +24,26 @@ import java.nio.file.{FileAlreadyExistsException, Files}
  * A file lock a la flock/funlock
  * 
  * The given path will be created and opened if it doesn't exist.
+  *
+  * 顾名思义，FileLock就是一个文件锁，它的构造函数接收一个文件对象，并总是先尝试创建这个文件(如果不存在的话)，
  */
 class FileLock(val file: File) extends Logging {
 
-  try Files.createFile(file.toPath) // create the file if it doesn't exist
-  catch { case _: FileAlreadyExistsException => }
+  try {
+    // create the file if it doesn't exist
+    Files.createFile(file.toPath)
+  }catch {
+    case _: FileAlreadyExistsException =>
+  }
 
+  // 创建一个FileChannel对象对该文件进行随机读写操作
   private val channel = new RandomAccessFile(file, "rw").getChannel()
+  // 创建一个java.nio.channel.FlieLock文件锁对象用于实现下面的方法
   private var flock: java.nio.channels.FileLock = null
 
   /**
    * Lock the file or throw an exception if the lock is already held
+    * 对文件加锁，如果该文件上已有锁抛出异常
    */
   def lock() {
     this synchronized {
@@ -45,6 +54,7 @@ class FileLock(val file: File) extends Logging {
 
   /**
    * Try to lock the file and return true if the locking succeeds
+    * 尝试对文件加锁，如果成功返回true，否则返回false
    */
   def tryLock(): Boolean = {
     this synchronized {
@@ -63,6 +73,7 @@ class FileLock(val file: File) extends Logging {
 
   /**
    * Unlock the lock if it is held
+    * 如果持有锁使用FileLock.release方法释放锁
    */
   def unlock() {
     this synchronized {
@@ -74,6 +85,7 @@ class FileLock(val file: File) extends Logging {
 
   /**
    * Destroy this lock, closing the associated FileChannel
+    * 先释放锁然后调用FileChannel的close方法销毁该channel
    */
   def destroy() = {
     this synchronized {

@@ -31,11 +31,16 @@ object Message {
 
   /**
    * The current offset and size for all the fixed-length fields
+    * 因为使用的是bytebuffer作为存储Message的结构
+    * 这里就是指定了offset 和 length两种类型，通过offset确定字段的起始位置，通过length确定字段的长度，这样就能唯一的确定一个字段，从而在bytebuffer中读取到该字段
    */
+  // 第一个字段是crc
   val CrcOffset = 0
   val CrcLength = 4
+  // 第二个字段是magic
   val MagicOffset = CrcOffset + CrcLength
   val MagicLength = 1
+
   val AttributesOffset = MagicOffset + MagicLength
   val AttributesLength = 1
   // Only message format version 1 has the timestamp field.
@@ -106,7 +111,7 @@ object Message {
 
 /**
  * A message. The format of an N byte message is the following:
- *
+ * 下面是对每个字段的详细说明
  * 1. 4 byte CRC32 of the message
  * 2. 1 byte "magic" identifier to allow format changes, value is 0 or 1
  * 3. 1 byte "attributes" identifier to allow annotations on the message independent of the version
@@ -121,9 +126,9 @@ object Message {
  *    bit 4 ~ 7 : reserved
  * 4. (Optional) 8 byte timestamp only if "magic" identifier is greater than 0
  * 5. 4 byte key length, containing length K
- * 6. K byte key
+ * 6. K byte key : key 的字节
  * 7. 4 byte payload length, containing length V
- * 8. V byte payload
+ * 8. V byte payload ： value的字节
  *
  * Default constructor wraps an existing ByteBuffer with the Message object with no change to the contents.
  * @param buffer the byte buffer of this message.

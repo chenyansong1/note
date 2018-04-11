@@ -7,6 +7,7 @@ tag: [kafka]
 
 
 # 1.集群安装
+
 ```
 #解压，创建软链接
 cd /home/hadoop/app/
