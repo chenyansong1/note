@@ -394,6 +394,7 @@ echo -en  "auth 123456\r\ninfo\r\n"|nc 172.16.14.26 6379
  日志位置在/redis/log下，redis.log为redis主日志，sentinel.log为sentinel监控日志。
 ```
 # 18.Redis-cli命令行其他操作
+
 ```
 
 在远程服务上执行命令

@@ -8,14 +8,17 @@ tags: [Linux基础命令]
 
 
 # 1.定时任务crond介绍
+
 &emsp;crond是linux系统中用来定期执行命令或指定程序任务的一种服务或软件
 &emsp;特殊需求：（秒级别）crond服务就无法搞定了，一般工作中写脚本守护进程执行。
+
 ```
 crond    #守护进程    一直运行着
 crontab    #设置命令    -l list     -e edit
 ```
 
 ## 1.1.crond是什么
+
 &emsp;linux系统的定时任务crond,相当于我们平时生活中的闹钟的功能。可以满足周期性执行任务的需求。
 
 
@@ -238,6 +241,7 @@ crontab -l
 ```
 
 ### 3.5.1 有关/dev/null的说明
+
 ```
 # /dev/null为特殊的字符设备文件，表示黑洞设备或空设备。
 [root@angelT ~]# ll /dev/null 
@@ -320,5 +324,28 @@ Mar 26 16:00:01 angelT CROND[3422]: (root) CMD (/usr/sbin/ntpdate  time.windows.
 Mar 26 16:00:01 angelT CROND[3423]: (root) CMD (/usr/lib64/sa/sa1 1 1)
 
 ```
+
+# 注意：
+
+1.crontab 需要加载 环境变量
+ 
+```
+有时我们创建了一个crontab，但是这个任务却无法自动执行，而手动执行这个任务却没有问题，这种情况一般是由于在crontab文件中没有配置环境变量引起的。
+
+#!/bin/sh
+source /etc/profile		# 加载环境变量
+
+start_tomcat=$tomcat_home/bin/startup.sh
+$start_tomcat
+
+```
+
+2.crontab中要写全路径
+
+
+
+
+
+
 
 [整理自:老男孩](http://oldboy.blog.51cto.com/)
