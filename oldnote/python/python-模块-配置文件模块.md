@@ -38,4 +38,21 @@ cf.write(open("test.conf", "w"))    # 把修改写入到文件test.conf中
 
 ```
 
+config_file
+
+```
+[es]
+es_url=http://172.16.14.38:9200
+
+```
+
+读取配置文件
+
+```
+    #读取ES的url配置
+    cf = ConfigParser.ConfigParser()
+    cf.read(config_file)
+    es_url = cf.get('es', 'es_url')
+```
+
 https://www.jianshu.com/p/4202a2051668
