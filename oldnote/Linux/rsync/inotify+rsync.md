@@ -23,6 +23,7 @@ inotify（sersync）工具会实时监控/data的增删改查，然后使用rsyn
 # 3.在nfs上做一个rsync的客户端
 
 ## 3.1创建/etc/rsync.password
+
 ```
 echo chenyansong>/etc/rsync.password
   cat /etc/rsync.password
@@ -33,6 +34,7 @@ chmod 600 /etc/rsync.password
 ```
 
 ## 3.2推送/data数据
+
 ```
 rsync -avz /data  rsync_backup@192.168.0.103::backup --password-file=/etc/rsync.password
 
@@ -60,6 +62,7 @@ b. ls -l /proc/sys/fs/inotify/
 
 
 ## 4.2下载源码包
+
 ```
 wget https://github.com/downloads/rvoicilas/inotify-tools/inotify-tools-3.14.tar.gz
 #如果不行就直接将后面的地址放到浏览器中下载，然后通过win scp 上传即可
