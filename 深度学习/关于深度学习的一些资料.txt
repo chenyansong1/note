@@ -1,0 +1,22 @@
+关于深度学习的一些资料，大家有兴趣的话，可以学习下：
+
+CS231n课程
+http://study.163.com/course/courseLearn.htm?courseId=1003223001#/learn/video?lessonId=1003764380&courseId=1003223001
+
+Michael Nielsen写的电子书《神经网络与深度学习》
+http://www.tensorfly.cn/home/
+
+UFLDL教程
+http://deeplearning.stanford.edu/wiki/index.php/UFLDL%E6%95%99%E7%A8%8B
+
+大牛神博
+http://colah.github.io/
+
+DL数学原理
+https://zybuluo.com/hanbingtao/note/541458
+
+tensorflow官方文档
+https://www.tensorflow.org/api_docs/python/tf/contrib/opt/DropStaleGradientOptimizer
+
+各种资料的整理
+http://blog.csdn.net/oSuBie/article/details/26097715

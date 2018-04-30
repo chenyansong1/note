@@ -25,12 +25,14 @@ case class MessageAndMetadata[K, V](topic: String,
                                     partition: Int,
                                     private val rawMessage: Message,
                                     offset: Long,
-                                    keyDecoder: Decoder[K], valueDecoder: Decoder[V],
+                                    keyDecoder: Decoder[K],// key编码方式
+                                    valueDecoder: Decoder[V],// value的编码方式
                                     timestamp: Long = Message.NoTimestamp,
                                     timestampType: TimestampType = TimestampType.CREATE_TIME) {
 
   /**
    * Return the decoded message key and payload
+    * 这两两个方法：返回key 和 msg
    */
   def key(): K = if(rawMessage.key == null) null.asInstanceOf[K] else keyDecoder.fromBytes(Utils.readBytes(rawMessage.key))
 

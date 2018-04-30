@@ -22,6 +22,14 @@ import kafka.utils.json.JsonValue
 
 import scala.collection._
 
+
+/*
+JSON的一个封装类，用于JSON到String的相互转换，该类不是线程安全的。Scala提供的JSON是将数字型的字符串转化为Double，
+不过该类创建一个简单函数用于将数字型字符串转为换Integer，并指定其为JSON.globalNumberParser。该类只有2个方法：
+1. parseFull: 调用scala JSON的parseFull方法将一个json字符串转化为一个对象，如果出错则抛出异常
+2. legacyEncodeAsString： 将一个对象编码成json字符串。这个对象只能是null，Boolean，String，Number，Map[String, T]，Array[T]或Iterable[T]中的一种，否则会报错
+ */
+
 /**
  * Provides methods for parsing JSON with Jackson and encoding to JSON with a simple and naive custom implementation.
  */

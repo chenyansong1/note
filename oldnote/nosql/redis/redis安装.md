@@ -8,6 +8,7 @@ tags: [redis]
 
 
 # 1.下载
+
 ```
 wget  http://download.redis.io/releases/redis-3.2.4.tar.gz
 或者到官网下载：http://redis.io/download
@@ -76,4 +77,13 @@ cp /usr/local/bin/redis*  /usr/bin/                                #因为/usr/b
 vim  /etc/profile
 export PATH = /usr/local/bin:$PATH
 
+```
+
+# 8.客户端连接
+
+```
+$ redis-cli -h host -p port -a password
+$ redis-cli -h 127.0.0.1 -p 6379 -a "mypass"
+redis 127.0.0.1:6379>
+redis 127.0.0.1:6379> PING
 ```
