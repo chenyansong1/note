@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>客户列表展示</title>
+</head>
+<body>
+<h3>客户列表展示</h3>
+<table border="1" style="width: 500px;">
+	<tr>
+		<td>编号</td>
+		<td>姓名</td>
+		<td>性别</td>
+		<td>手机</td>
+		<td>住址</td>
+		<td>操作</td>
+	</tr>
+	<tr th:each="cust:${list}">
+		<td th:text="${cust.id}"></td>
+		<td th:text="${cust.name}"></td>
+		<td th:text="${cust.gender}"></td>
+		<td th:text="${cust.telephone}"></td>
+		<td th:text="${cust.address}"></td>
+		<td>
+		<a th:href="@{/customer/findById(id=${cust.id})}">修改</a>&nbsp;
+		<a th:href="@{/customer/delete(id=${cust.id})}">删除</a>
+		</td>
+	</tr>
+</table>
+
+</body>
+</html>
