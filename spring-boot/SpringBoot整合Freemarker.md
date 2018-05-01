@@ -35,9 +35,9 @@ public class UserController {
         List<User> userList = new ArrayList<User>();
 
         // 模拟用户数据
-        userList.add(new User(1,"zhangSan",28));
-        userList.add(new User(2,"lisi",26));
-        userList.add(new User(3,"wangwu",22));
+        userList.add(new User(1,"小张",18));
+        userList.add(new User(2,"小徐",20));
+        userList.add(new User(3,"小陈",22));
 
 
         // 把数据存入model
@@ -63,3 +63,4 @@ public class UserController {
 <html> <title>用户列表展示</title> <meta charset="utf-8"/> <body><h3>用户列表展示</h3> <table><tr> <th>编号</th><th>姓名</th><th>年龄</th> </tr>             <#list list as user>             <tr>                 <td>${user.id}</td>                 <td>${user.name}</td>                 <td>${user.age}</td></tr>             </#list>         </table>    </body></html> 
 ```
 
+![](/Users/chenyansong/Documents/note/images/spring-boot/freemakrer1.png)
