@@ -35,9 +35,13 @@ import org.slf4j.event.Level
 
 /**
  * General helper functions!
+ * 最常用的帮助函数
  *
  * This is for general helper functions that aren't specific to Kafka logic. Things that should have been included in
  * the standard library etc.
+  *
+  * 按照这个文件中注释提示的那样，这个文件里面的帮助函数都是最最常用的函数，并不限定为Kafka的逻辑服务。
+  * 因此如果要在这个文件中添加一个函数，一定要确保这个函数有很完善的文档另外还要保证一定不能只在某个特定的领域使用，应该适用于最常见的场景中
  *
  * If you are making a new helper function and want to add it to this class please ensure the following:
  * 1. It has documentation
@@ -57,6 +61,7 @@ object CoreUtils extends Logging {
    * @param fun A function
    * @return A Runnable that just executes the function
    */
+  // 接收一个无返回值的函数封装到一个新建的Java Runnable对象中返回
   def runnable(fun: => Unit): Runnable =
     new Runnable {
       def run() = fun
@@ -70,6 +75,7 @@ object CoreUtils extends Logging {
     * @param fun The function to execute in the thread
     * @return The unstarted thread
     */
+  // 创建新的线程，参数决定线程名称、执行操作以及是否为守护线程
   def newThread(name: String, daemon: Boolean)(fun: => Unit): Thread =
     new KafkaThread(name, runnable(fun), daemon)
 
@@ -80,6 +86,7 @@ object CoreUtils extends Logging {
     * @param logging The logging instance to use for logging the thrown exception.
     * @param logLevel The log level to use for logging.
     */
+  // 执行给定的操作(以函数参数方式传递), 记录下任何异常但绝不抛出异常，而是吞掉异常
   def swallow(action: => Unit, logging: Logging, logLevel: Level = Level.WARN) {
     try {
       action
@@ -134,11 +141,16 @@ object CoreUtils extends Logging {
    * @param name The name to register this mbean with
    * @return true if the registration succeeded
    */
+  /*
+  将给定的mbean注册到平台mbean服务器
+  如果已经注册过会先卸载该mbean再重新注册。该方法不会抛出任何异常，只是简单滴返回false表示注册失败
+   */
   def registerMBean(mbean: Object, name: String): Boolean = {
     try {
       val mbs = ManagementFactory.getPlatformMBeanServer()
       mbs synchronized {
         val objName = new ObjectName(name)
+        // 如果已经注册，先卸载，再注册
         if(mbs.isRegistered(objName))
           mbs.unregisterMBean(objName)
         mbs.registerMBean(mbean, objName)
@@ -156,6 +168,7 @@ object CoreUtils extends Logging {
    * Unregister the mbean with the given name, if there is one registered
    * @param name The mbean name to unregister
    */
+  // 取消mbean的注册。如果没有注册过，就什么都不做
   def unregisterMBean(name: String) {
     val mbs = ManagementFactory.getPlatformMBeanServer()
     mbs synchronized {
@@ -168,6 +181,7 @@ object CoreUtils extends Logging {
   /**
    * Read some bytes into the provided buffer, and return the number of bytes read. If the
    * channel has been closed or we get -1 on the read for any reason, throw an EOFException
+    * 读取给定ReadableByteChannel的buffer到一个ByteBuffer，如果读取失败抛出EOFException异常，否则返回读取的字节数
    */
   def read(channel: ReadableByteChannel, buffer: ByteBuffer): Int = {
     channel.read(buffer) match {
@@ -181,6 +195,10 @@ object CoreUtils extends Logging {
    * key value pairs. the format of allCSVal is key1:val1, key2:val2 ....
    * Also supports strings with multiple ":" such as IpV6 addresses, taking the last occurrence
    * of the ":" in the pair as the split, eg a:b:c:val1, d:e:f:val2 => a:b:c -> val1, d:e:f -> val2
+   */
+  /*
+ 接收一个逗号分隔的key/value对，类似于key1: value1,key2: value2,...
+ 使用正则表达式解析成一个HashMap并返回。该方法还有个形式，是返回成一个字符串序列，即字符串数组
    */
   def parseCsvMap(str: String): Map[String, String] = {
     val map = new mutable.HashMap[String, String]
@@ -207,8 +225,10 @@ object CoreUtils extends Logging {
 
   /**
    * Create an instance of the class with the given class name
+    * 通过反射机制为给定类名表示的类创建一个实例
    */
   def createObject[T <: AnyRef](className: String, args: AnyRef*): T = {
+    // 反射出一个实例对象
     val klass = Class.forName(className, true, Utils.getContextOrKafkaClassLoader()).asInstanceOf[Class[T]]
     val constructor = klass.getConstructor(args.map(_.getClass): _*)
     constructor.newInstance(args: _*)
@@ -224,6 +244,7 @@ object CoreUtils extends Logging {
 
   /**
    * Replace the given string suffix with the new suffix. If the string doesn't end with the given suffix throw an exception.
+    * 替换字符串的后缀，如果无法找到要替换的后缀直接抛出异常
    */
   def replaceSuffix(s: String, oldSuffix: String, newSuffix: String): String = {
     if(!s.endsWith(oldSuffix))
@@ -233,6 +254,7 @@ object CoreUtils extends Logging {
 
   /**
    * Read a big-endian integer from a byte array
+    * 从字节数组中的指定位移处读取一个integer
    */
   def readInt(bytes: Array[Byte], offset: Int): Int = {
     ((bytes(offset) & 0xFF) << 24) |
@@ -243,6 +265,7 @@ object CoreUtils extends Logging {
 
   /**
    * Execute the given function inside the lock
+    * 在加锁的情况下执行一段函数
    */
   def inLock[T](lock: Lock)(fun: => T): T = {
     lock.lock()
@@ -253,12 +276,13 @@ object CoreUtils extends Logging {
     }
   }
 
+  // 使用给定的锁分别获取一个读锁和写锁，然后执行函数体
   def inReadLock[T](lock: ReadWriteLock)(fun: => T): T = inLock[T](lock.readLock)(fun)
-
   def inWriteLock[T](lock: ReadWriteLock)(fun: => T): T = inLock[T](lock.writeLock)(fun)
 
 
   //JSON strings need to be escaped based on ECMA-404 standard http://json.org
+  // 将字符串中的某些字符进行转义，比如\b转成\\b
   def JSONEscapeString (s : String) : String = {
     s.map {
       case '"'  => "\\\""
@@ -284,6 +308,7 @@ object CoreUtils extends Logging {
 
   /**
    * Returns a list of duplicated items
+    * 返回列表中的重复项
    */
   def duplicates[T](s: Traversable[T]): Iterable[T] = {
     s.groupBy(identity)

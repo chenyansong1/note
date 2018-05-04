@@ -24,15 +24,31 @@ import kafka.message.{CompressionCodec, NoCompressionCodec}
 import scala.collection.JavaConverters._
 
 
+// 这个类就是封装了Properties对象，同时维护了一个HashSet表示属性名称集合
+/*
+4. getInt:
+5. getIntInRange:
+6. getShort:
+7. getShortInRange: 返回一个short类型的属性值，但该值必须在 给定的范围内
+8. getLong: 返回一个long类型的属性值
+9. getLongInRange: 返回一个long类型的属性值，但该值必须在给定的范围内
+10. getDouble: 返回一个double类型的属性值
+11. getBoolean: 返回一个boolean类型的属性值
+12. getMap: 从一个属性列表中解析出一个Map[String, String]并返回
+13. getCompressionCodec: 从属性列表中读取处codec信息。该方法同时支持解析codec的序号和名称，并返回对应的codec
+14. verify: 主要就是验证Properties对象中每个属性是否都在属性名称集合中，即使不在也只是打印一个log而已
+ */
 class VerifiableProperties(val props: Properties) extends Logging {
   private val referenceSet = mutable.HashSet[String]()
 
   def this() = this(new Properties)
 
+  // 判断是否包含某个key
   def containsKey(name: String): Boolean = {
     props.containsKey(name)
   }
 
+  // 将属性名加入到属性名称集合，然后从props中获取某个属性值之后返回
   def getProperty(name: String): String = {
     val value = props.getProperty(name)
     referenceSet.add(name)
@@ -41,11 +57,14 @@ class VerifiableProperties(val props: Properties) extends Logging {
 
   /**
    * Read a required integer property value or throw an exception if no such property is found
+    * 获取一个integer类型的属性值
    */
   def getInt(name: String): Int = getString(name).toInt
 
+  // 返回一个integer类型的属性值，但该值必须在给定的范围内
   def getIntInRange(name: String, range: (Int, Int)): Int = {
     require(containsKey(name), "Missing required property '" + name + "'")
+    // 如果没有这个属性，那么返回-1
     getIntInRange(name, -1, range)
   }
 
@@ -58,6 +77,7 @@ class VerifiableProperties(val props: Properties) extends Logging {
   def getInt(name: String, default: Int): Int =
     getIntInRange(name, default, (Int.MinValue, Int.MaxValue))
 
+  // 返回一个short类型的属性值
   def getShort(name: String, default: Short): Short =
     getShortInRange(name, default, (Short.MinValue, Short.MaxValue))
 
@@ -80,6 +100,7 @@ class VerifiableProperties(val props: Properties) extends Logging {
     v
   }
 
+  // 返回一个short类型的属性值，但该值必须在 给定的范围内,没有就返回一个默认的值
  def getShortInRange(name: String, default: Short, range: (Short, Short)): Short = {
     val v =
       if(containsKey(name))
@@ -92,6 +113,7 @@ class VerifiableProperties(val props: Properties) extends Logging {
 
   /**
    * Read a required long property value or throw an exception if no such property is found
+    * 返回一个long类型的属性值
    */
   def getLong(name: String): Long = getString(name).toLong
 
@@ -101,6 +123,7 @@ class VerifiableProperties(val props: Properties) extends Logging {
    * @param default The default value to use if the property is not found
    * @return the long value
    */
+  // 返回一个long类型的属性值,没有改属性就指定一个默认的值
   def getLong(name: String, default: Long): Long =
     getLongInRange(name, default, (Long.MinValue, Long.MaxValue))
 
@@ -112,6 +135,8 @@ class VerifiableProperties(val props: Properties) extends Logging {
    * @param range The range in which the value must fall (inclusive)
    * @throws IllegalArgumentException If the value is not in the given range
    * @return the long value
+    *
+    *  返回一个long类型的属性值，但该值必须在给定的范围内
    */
   def getLongInRange(name: String, default: Long, range: (Long, Long)): Long = {
     val v =
@@ -149,6 +174,7 @@ class VerifiableProperties(val props: Properties) extends Logging {
    * @param default The default value to use if the property is not found
    * @return the boolean value
    */
+  //  返回一个boolean类型的属性值 ,没有该属性，就指定一个默认的值
   def getBoolean(name: String, default: Boolean): Boolean = {
     if(!containsKey(name))
       default
@@ -163,6 +189,7 @@ class VerifiableProperties(val props: Properties) extends Logging {
 
   /**
    * Get a string property, or, if no such property is defined, return the given default value
+    * 先检测是否包含这个属性，没有返回默认值
    */
   def getString(name: String, default: String): String = {
     if(containsKey(name))
@@ -182,8 +209,10 @@ class VerifiableProperties(val props: Properties) extends Logging {
   /**
    * Get a Map[String, String] from a property list in the form k1:v2, k2:v2, ...
    */
+  //  从一个属性列表中解析出一个Map[String, String]并返回
   def getMap(name: String, valid: String => Boolean = _ => true): Map[String, String] = {
     try {
+      // 将字符串 key1: value1,key2: value2 变成 Map类型
       val m = CoreUtils.parseCsvMap(getString(name, ""))
       m.foreach {
         case(key, value) => 
@@ -203,6 +232,7 @@ class VerifiableProperties(val props: Properties) extends Logging {
    * @param default Default compression codec
    * @return compression codec
    */
+  // 从属性列表中读取处codec信息。该方法同时支持解析codec的序号和名称，并返回对应的codec
   def getCompressionCodec(name: String, default: CompressionCodec) = {
     val prop = getString(name, NoCompressionCodec.name)
     try {
@@ -214,6 +244,7 @@ class VerifiableProperties(val props: Properties) extends Logging {
     }
   }
 
+  // 主要就是验证Properties对象中每个属性是否都在属性名称集合中，即使不在也只是打印一个log而已
   def verify() {
     info("Verifying properties")
     val propNames = Collections.list(props.propertyNames).asScala.map(_.toString).sorted

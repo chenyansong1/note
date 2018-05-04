@@ -35,14 +35,19 @@ import scala.math._
  * @param throttleDown: Does throttling increase or decrease our rate?
  * @param time: The time implementation to use
  */
+/*
+主要目的是限制某些操作的执行速度，其实主要用于清理日志时限制IO速度。这个类会接收一个给定的期望速率(单位是 每秒，
+这里的**其实不重要，可以是字节或个数，主要是限制速率)
+ */
 @threadsafe
-class Throttler(desiredRatePerSec: Double,
-                checkIntervalMs: Long = 100L,
-                throttleDown: Boolean = true,
-                metricName: String = "throttler",
-                units: String = "entries",
-                time: Time = Time.SYSTEM) extends Logging with KafkaMetricsGroup {
-  
+class Throttler(desiredRatePerSec: Double,// 期望速率
+                checkIntervalMs: Long = 100L, // 检查间隔，单位ms
+                throttleDown: Boolean = true,// 是否需要往下调节速度，即降低速率
+                metricName: String = "throttler",// 待调节项名称
+                units: String = "entries",// 待调节项单位，默认是字节
+                time: Time = Time.SYSTEM) // 时间字段
+  extends Logging with KafkaMetricsGroup {
+
   private val lock = new Object
   private val meter = newMeter(metricName, units, TimeUnit.SECONDS)
   private val checkIntervalNs = TimeUnit.MILLISECONDS.toNanos(checkIntervalMs)
@@ -53,6 +58,15 @@ class Throttler(desiredRatePerSec: Double,
     val msPerSec = TimeUnit.SECONDS.toMillis(1)
     val nsPerSec = TimeUnit.SECONDS.toNanos(1)
 
+    /*
+    该类还实现了KafkaMetricsGroup trait，你可以认为后者就是构造度量元对象用的(例如通过newMeter)。
+    Throttle类只有一个方法: maybeThrottle。该方法代码写了一大堆，一句一句分析太枯燥，
+
+    我直接举个例子说吧: 假设我们要限制IO速率，单位是字节/秒，每100毫秒查一次。我们想要限制速率为10字节/毫秒。
+    现在我们在500ms内检测到一共发送了6000字节，那么实际速率是6000/500 = 12字节/毫秒，比期望速率要高，因此我们要限制IO速率，
+    此时怎么办呢？很简单，如果是按照期望速率，应该花费6000/10 = 600ms，比实际多花了100ms，
+    因此程序sleep 100ms把那段多花的时间浪费掉就起到了限制速率的效果。简单来说程序就是这么实现的: )
+     */
     meter.mark(observed.toLong)
     lock synchronized {
       observedSoFar += observed

@@ -33,6 +33,7 @@ trait Decoder[T] {
 /**
  * The default implementation does nothing, just returns the same byte array it takes in.
  */
+// DefaultDecoder的fromBytes方法其实什么都没做，只是原封不动地返回了字节数组；
 class DefaultDecoder(props: VerifiableProperties = null) extends Decoder[Array[Byte]] {
   def fromBytes(bytes: Array[Byte]): Array[Byte] = bytes
 }
@@ -41,6 +42,7 @@ class DefaultDecoder(props: VerifiableProperties = null) extends Decoder[Array[B
  * The string decoder translates bytes into strings. It uses UTF8 by default but takes
  * an optional property serializer.encoding to control this.
  */
+// StringDecoder的fromBytes会以UTF-8编码方式将字节数组封装到一个字符串中返回
 class StringDecoder(props: VerifiableProperties = null) extends Decoder[String] {
   val encoding =
     if(props == null)
@@ -48,6 +50,7 @@ class StringDecoder(props: VerifiableProperties = null) extends Decoder[String] 
     else
       props.getString("serializer.encoding", "UTF8")
 
+  // 重写方法
   def fromBytes(bytes: Array[Byte]): String = {
     new String(bytes, encoding)
   }

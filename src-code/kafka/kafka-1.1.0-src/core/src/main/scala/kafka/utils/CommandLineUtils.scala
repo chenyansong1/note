@@ -27,6 +27,7 @@ object CommandLineUtils extends Logging {
 
   /**
    * Check that all the listed options are present
+    * 使用Jopts Simple的API(以下皆同)检查是否缺少必要参数
    */
   def checkRequiredArgs(parser: OptionParser, options: OptionSet, required: OptionSpec[_]*) {
     for (arg <- required) {
@@ -37,6 +38,7 @@ object CommandLineUtils extends Logging {
 
   /**
    * Check that none of the listed options are present
+    * 检查指定的参数是否存在不兼容情况，即哪些参数不能同时使用
    */
   def checkInvalidArgs(parser: OptionParser, options: OptionSet, usedOption: OptionSpec[_], invalidOptions: Set[OptionSpec[_]]) {
     if(options.has(usedOption)) {
@@ -48,7 +50,7 @@ object CommandLineUtils extends Logging {
   }
 
   /**
-   * Print usage and exit
+   * Print usage and exit 打印命令使用方法并终止程序
    */
   def printUsageAndDie(parser: OptionParser, message: String): Nothing = {
     System.err.println(message)
@@ -58,6 +60,7 @@ object CommandLineUtils extends Logging {
 
   /**
    * Parse key-value pairs in the form key=value
+    * 解析key=value格式的参数对，并返回一个Properties对象
    */
   def parseKeyValueArgs(args: Iterable[String], acceptMissingValue: Boolean = true): Properties = {
     val splits = args.map(_ split "=").filterNot(_.length == 0)

@@ -20,9 +20,11 @@ package kafka.utils
 import java.util.concurrent.{CountDownLatch, TimeUnit}
 
 import org.apache.kafka.common.internals.FatalExitError
+/*
+isInterruptible:表明是否允许中断
 
-abstract class ShutdownableThread(val name: String, val isInterruptible: Boolean = true)
-        extends Thread(name) with Logging {
+ */
+abstract class ShutdownableThread(val name: String, val isInterruptible: Boolean = true) extends Thread(name) with Logging {
   this.setDaemon(false)
   this.logIdent = "[" + name + "]: "
   private val shutdownInitiated = new CountDownLatch(1)
@@ -78,7 +80,13 @@ abstract class ShutdownableThread(val name: String, val isInterruptible: Boolean
   override def run(): Unit = {
     info("Starting")
     try {
+      /*
+      该类维护的isRunning类似于一个状态标志，控制着线程何时退出执行操作的循环。
+      每次循环前检测isRunning值，如果一旦发现是false，则退出执行并将shutdownLatch阀门至于关闭状态；
+      如果是true，则调用doWork来执行真正的操作
+       */
       while (isRunning)
+        // 我们只需要重写这个方法即可
         doWork()
     } catch {
       case e: FatalExitError =>
