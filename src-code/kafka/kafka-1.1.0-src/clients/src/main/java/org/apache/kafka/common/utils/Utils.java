@@ -141,6 +141,7 @@ public final class Utils {
      * Get the absolute value of the given number. If the number is Int.MinValue return 0. This is different from
      * java.lang.Math.abs or scala.math.abs in that they return Int.MinValue (!).
      */
+    // 计算某个整数的绝对值。如果是最小整数返回0——与Java的实现不同
     public static int abs(int n) {
         return (n == Integer.MIN_VALUE) ? 0 : Math.abs(n);
     }
@@ -265,6 +266,7 @@ public final class Utils {
      * @return t if it isn't null
      * @throws NullPointerException if t is null.
      */
+    // 带泛型类型的方法，如果给定值是null抛出异常，否则直接返回该值
     public static <T> T notNull(T t) {
         if (t == null)
             throw new NullPointerException();
@@ -507,6 +509,7 @@ public final class Utils {
      */
     public static Properties loadProps(String filename) throws IOException, FileNotFoundException {
         Properties props = new Properties();
+        // 这是个什么写法？？？
         try (InputStream propStream = new FileInputStream(filename)) {
             props.load(propStream);
         }
@@ -538,6 +541,7 @@ public final class Utils {
      * Print an error message and shutdown the JVM
      * @param message The error message
      */
+    // 打印错误消息并关闭JVM
     public static void croak(String message) {
         System.err.println(message);
         Exit.exit(1);
@@ -561,6 +565,7 @@ public final class Utils {
 
     /**
      * Read the given byte buffer into a Byte array
+     * 读取一段给定的ByteBuffer以及给定位移到一个字节数组
      */
     public static byte[] readBytes(ByteBuffer buffer) {
         return Utils.readBytes(buffer, 0, buffer.limit());
@@ -581,6 +586,7 @@ public final class Utils {
 
     }
 
+    //  读取文件内容并作为一个字符串返回
     public static String readFileAsString(String path) throws IOException {
         return Utils.readFileAsString(path, Charset.defaultCharset());
     }

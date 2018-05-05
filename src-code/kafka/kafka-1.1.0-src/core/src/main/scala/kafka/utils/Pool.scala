@@ -23,6 +23,11 @@ import collection.mutable
 import collection.JavaConverters._
 import kafka.common.KafkaException
 
+/*
+名字虽然是Pool(池)，但字段pool的数据结构其实就是一个ConcurrentHashMap，
+更像是对ConcurrentHashMap数据结构做了一层封装，
+所以其提供的很多方法实现起来也都是直接调用ConcurrentHashMap的同名方法。而且也是泛型的——[K, V]。
+ */
 class Pool[K,V](valueFactory: Option[K => V] = None) extends Iterable[(K, V)] {
 
   private val pool: ConcurrentMap[K, V] = new ConcurrentHashMap[K, V]

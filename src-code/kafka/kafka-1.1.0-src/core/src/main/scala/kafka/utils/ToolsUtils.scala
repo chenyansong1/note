@@ -23,6 +23,9 @@ import scala.collection.mutable
 
 object ToolsUtils {
 
+  /*
+  校验  host:port like host1:9091,host2:9092 的格式是否正确
+   */
   def validatePortOrDie(parser: OptionParser, hostPort: String) = {
     val hostPorts: Array[String] = if(hostPort.contains(','))
       hostPort.split(",")

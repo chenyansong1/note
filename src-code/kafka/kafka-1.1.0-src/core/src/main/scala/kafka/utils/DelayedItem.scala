@@ -34,12 +34,14 @@ class DelayedItem(delayMs: Long) extends Delayed with Logging {
 
   /**
    * The remaining delay time
+    * 计算距离触发时间还剩下多长时间
    */
   def getDelay(unit: TimeUnit): Long = {// 延迟时间的单位
     unit.convert(max(dueMs - Time.SYSTEM.milliseconds, 0), TimeUnit.MILLISECONDS)
   }
 
   // 比较两个 DelayedItem 之间的延迟的大小
+  // 比较2个Delayed对象的延迟触发时间
   def compareTo(d: Delayed): Int = {
     val other = d.asInstanceOf[DelayedItem]
     java.lang.Long.compare(dueMs, other.dueMs)

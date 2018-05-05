@@ -115,15 +115,22 @@ object ZkUtils {
 
   /*
    * Get calls that only depend on static paths
+   * 获取topic的zk路径
    */
   def getTopicPath(topic: String): String = {
     ZkUtils.BrokerTopicsPath + "/" + topic
   }
 
+  /*
+  获取topic分区的zk路径
+   */
   def getTopicPartitionsPath(topic: String): String = {
     getTopicPath(topic) + "/partitions"
   }
 
+  /*
+  指定topic的某个partition的路径
+   */
   def getTopicPartitionPath(topic: String, partitionId: Int): String =
     getTopicPartitionsPath(topic) + "/" + partitionId
 
@@ -139,6 +146,9 @@ object ZkUtils {
   def getEntityConfigPath(entityPath: String): String =
     ZkUtils.ConfigPath + "/" + entityPath
 
+  /*
+    DeleteTopicsPath = /admin/delete_topics/
+   */
   def getDeleteTopicPath(topic: String): String =
     DeleteTopicsPath + "/" + topic
 
@@ -220,6 +230,9 @@ class ZkUtils(val zkClient: ZkClient,
 
   def defaultAcls(path: String): java.util.List[ACL] = ZkUtils.defaultAcls(isSecure, path)
 
+  /*
+
+   */
   def getController(): Int = {
     readDataMaybeNull(ControllerPath)._1 match {
       case Some(controller) => parseControllerId(controller)
@@ -645,12 +658,16 @@ class ZkUtils(val zkClient: ZkClient,
   def unsubscribeAll(): Unit =
     zkClient.unsubscribeAll()
 
+  // 读取path节点的数据，返回(数据，状态信息)元组
   def readData(path: String): (String, Stat) = {
     val stat: Stat = new Stat()
     val dataStr: String = zkClient.readData[String](path, stat)
     (dataStr, stat)
   }
 
+  /*
+   返回给定/controller路径下的(controller名，状态)元组，如果无法找到那个zk节点直接返回(None，空Stat)
+    */
   def readDataMaybeNull(path: String): (Option[String], Stat) = {
     val stat = new Stat()
     val dataAndStat = try {
@@ -694,6 +711,9 @@ class ZkUtils(val zkClient: ZkClient,
     pathExists(getDeleteTopicPath(topic))
   }
 
+  /*
+  遍历/brokers/ids下面的所有broker，创建Broker对象之后加入到一个Cluster对象实例(Cluster保存的是当前所有可用的broker)，然后返回cluster
+   */
   def getCluster(): Cluster = {
     val cluster = new Cluster
     val nodes = getChildrenParentMayNotExist(BrokerIdsPath)
@@ -708,9 +728,15 @@ class ZkUtils(val zkClient: ZkClient,
     BrokerIdZNode.decode(id, jsonString.getBytes(StandardCharsets.UTF_8)).broker
   }
 
+
+  /*
+  给定一组TopicAndPartition对象(TopicAndPartition就是一个topic加上一个分区信息)，为每一个查询出对应与这个topic这个分区的LeaderIsrAndControllerEpoch并封装
+  到一个HashMap中返回——简单来说就是就是获取某个topic某个分区的leader信息、isr信息、leaderEpoch信息以及controllerEpoch信息
+   */
   def getPartitionLeaderAndIsrForTopics(topicAndPartitions: Set[TopicAndPartition]): mutable.Map[TopicAndPartition, LeaderIsrAndControllerEpoch] = {
     val ret = new mutable.HashMap[TopicAndPartition, LeaderIsrAndControllerEpoch]
     for(topicAndPartition <- topicAndPartitions) {
+      // 遍历某个topic的某个分区
       getLeaderIsrAndEpochForPartition(topicAndPartition.topic, topicAndPartition.partition).foreach { leaderIsrAndControllerEpoch =>
         ret.put(topicAndPartition, leaderIsrAndControllerEpoch)
       }
@@ -725,6 +751,9 @@ class ZkUtils(val zkClient: ZkClient,
     leaderAndIsrOpt.flatMap(leaderAndIsrStr => parseLeaderAndIsr(leaderAndIsrStr, leaderAndIsrPath, stat))
   }
 
+  /*
+  获取一组topic的所有分区对应的副本broker号
+   */
   def getReplicaAssignmentForTopics(topics: Seq[String]): mutable.Map[TopicAndPartition, Seq[Int]] = {
     val ret = new mutable.HashMap[TopicAndPartition, Seq[Int]]
     topics.foreach { topic =>
@@ -742,6 +771,9 @@ class ZkUtils(val zkClient: ZkClient,
     ret
   }
 
+  /*
+  返回HashMap[topic名称， Map[该topic下每一个分区号，一组副本]]这样形式的map
+   */
   def getPartitionAssignmentForTopics(topics: Seq[String]): mutable.Map[String, collection.Map[Int, Seq[Int]]] = {
     val ret = new mutable.HashMap[String, Map[Int, Seq[Int]]]()
     topics.foreach { topic =>
@@ -948,6 +980,12 @@ class ZkUtils(val zkClient: ZkClient,
   }
 }
 
+/*
+用于序列化/反序列化zookeeper中保存的字节数组。
+提供的两个方法也很直观：
+serialize方法将字符串转化成字节数组；
+deserialize方法将字节数组转换成字符串
+ */
 private object ZKStringSerializer extends ZkSerializer {
 
   @throws(classOf[ZkMarshallingError])
@@ -962,8 +1000,15 @@ private object ZKStringSerializer extends ZkSerializer {
   }
 }
 
+/*
+名字中的group是指kafka的消费组的，
+因为Kafka中的consumer都属于一个consumer group。在这个类中定义了3个方法分别返回消费者的根路径，
+消费者组的路径以及消费者组的id的路径
+ */
+// 这个类 过时了
 @deprecated("This class has been deprecated and will be removed in a future release.", "0.11.0.0")
 class ZKGroupDirs(val group: String) {
+  // ConsumersPath = "/consumers"
   def consumerDir = ZkUtils.ConsumersPath
   def consumerGroupDir = consumerDir + "/" + group
   def consumerRegistryDir = consumerGroupDir + "/ids"
@@ -971,6 +1016,10 @@ class ZKGroupDirs(val group: String) {
   def consumerGroupOwnersDir = consumerGroupDir + "/owners"
 }
 
+/*
+该类继承了ZKGroupDirs类，并提供了2个新的方法用于计算消费者组的位移和拥有者信息
+ */
+// 这个类也过时了
 @deprecated("This class has been deprecated and will be removed in a future release.", "0.11.0.0")
 class ZKGroupTopicDirs(group: String, topic: String) extends ZKGroupDirs(group) {
   def consumerOffsetDir = consumerGroupOffsetsDir + "/" + topic
@@ -978,28 +1027,46 @@ class ZKGroupTopicDirs(group: String, topic: String) extends ZKGroupDirs(group) 
 }
 
 object ZKConfig {
+  // zookeeper.connect=ssa38:2181,ssa37:2181,ssa36:2181
   val ZkConnectProp = "zookeeper.connect"
+
   val ZkSessionTimeoutMsProp = "zookeeper.session.timeout.ms"
+  // zookeeper.connection.timeout.ms=6000
   val ZkConnectionTimeoutMsProp = "zookeeper.connection.timeout.ms"
   val ZkSyncTimeMsProp = "zookeeper.sync.time.ms"
 }
 
+/*
+1. ZKConfig class: 这个类定义了zookeeper配置信息，
+其构造函数接收一个VerifiableProperties对象。
+Kafka维护的zookeeper配置信息包括：
+一个CSV格式的zookeeper连接串、
+最大会话超时时间、
+连接最大超时时间以及
+一个zookeeper follower被允许落后于leader的最大时间间隔，默认是2秒
+
+以上这些配置信心可以 对应的在 config/server.properties
+ */
 class ZKConfig(props: VerifiableProperties) {
   import ZKConfig._
 
-  /** ZK host string */
+  /** ZK host string  连接的主机*/
   val zkConnect = props.getString(ZkConnectProp)
 
-  /** zookeeper session timeout */
+  /** zookeeper session timeout 最大会话超时时间*/
   val zkSessionTimeoutMs = props.getInt(ZkSessionTimeoutMsProp, 6000)
 
-  /** the max time that the client waits to establish a connection to zookeeper */
+  /** 连接最大超时时间 the max time that the client waits to establish a connection to zookeeper */
   val zkConnectionTimeoutMs = props.getInt(ZkConnectionTimeoutMsProp, zkSessionTimeoutMs)
 
-  /** how far a ZK follower can be behind a ZK leader */
+  /** zookeeper follower被允许落后于leader的最大时间间隔 how far a ZK follower can be behind a ZK leader */
   val zkSyncTimeMs = props.getInt(ZkSyncTimeMsProp, 2000)
 }
 
+
+/*
+用于创建 节点路径 使用，可以创建：持久化节点，临时节点
+ */
 class ZkPath(zkClient: ZkClient) {
 
   @volatile private var isNamespacePresent: Boolean = false

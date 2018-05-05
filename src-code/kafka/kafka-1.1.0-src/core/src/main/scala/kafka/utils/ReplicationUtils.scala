@@ -22,6 +22,9 @@ import kafka.controller.LeaderIsrAndControllerEpoch
 import kafka.zk._
 import org.apache.kafka.common.TopicPartition
 
+/*
+Kafka的消息要在集群间做持久化必须提供某种程度的冗余机制——即副本机制
+ */
 object ReplicationUtils extends Logging {
 
   def updateLeaderAndIsr(zkClient: KafkaZkClient, partition: TopicPartition, newLeaderAndIsr: LeaderAndIsr,
@@ -32,6 +35,7 @@ object ReplicationUtils extends Logging {
     // use the epoch of the controller that made the leadership decision, instead of the current controller epoch
     val updatePersistentPath: (Boolean, Int) = zkClient.conditionalUpdatePath(path, newLeaderData,
       newLeaderAndIsr.zkVersion, Some(checkLeaderAndIsrZkData))
+
     updatePersistentPath
   }
 
