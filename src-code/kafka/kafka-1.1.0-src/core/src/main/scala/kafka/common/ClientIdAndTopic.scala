@@ -24,6 +24,7 @@ package kafka.common
 trait ClientIdTopic {
 }
 
+// 一个样例类：保存的是(clientId, topic)的信息——元组对的方式非常有用，因为在后面Stats对象创建时会大量使用它们。
 case class ClientIdAndTopic(clientId: String, topic: String) extends ClientIdTopic {
   override def toString = "%s-%s".format(clientId, topic)
 }

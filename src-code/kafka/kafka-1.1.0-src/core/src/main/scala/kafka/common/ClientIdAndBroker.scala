@@ -24,11 +24,12 @@ package kafka.common
 
 trait ClientIdBroker {
 }
-
+// 保存一个clientId和一个broker
 case class ClientIdAndBroker(clientId: String, brokerHost: String, brokerPort: Int) extends ClientIdBroker {
   override def toString = "%s-%s-%d".format(clientId, brokerHost, brokerPort)
 }
 
+// 给定一个clientId输出clientId-AllBrokers
 case class ClientIdAllBrokers(clientId: String) extends ClientIdBroker {
   override def toString = "%s-%s".format(clientId, "AllBrokers")
 }

@@ -54,9 +54,11 @@ import scala.util.control.ControlThrowable
  */
 class SocketServer(val config: KafkaConfig, val metrics: Metrics, val time: Time, val credentialProvider: CredentialProvider) extends Logging with KafkaMetricsGroup {
 
+  // 队列中最大请求数
   private val maxQueuedRequests = config.queuedMaxRequests
-
+  // 每个IP发起的最大连接数
   private val maxConnectionsPerIp = config.maxConnectionsPerIp
+  // 保存了每个IP的当前连接数，以Map[String, Int]格式保存，比如"127.0.0.1" -> 100
   private val maxConnectionsPerIpOverrides = config.maxConnectionsPerIpOverrides
 
   private val logContext = new LogContext(s"[SocketServer brokerId=${config.brokerId}] ")
@@ -112,11 +114,13 @@ class SocketServer(val config: KafkaConfig, val metrics: Metrics, val time: Time
 
   private def endpoints = config.listeners.map(l => l.listenerName -> l).toMap
 
-  private def createAcceptorAndProcessors(processorsPerListener: Int,
-                                          endpoints: Seq[EndPoint]): Unit = synchronized {
+  private def createAcceptorAndProcessors(processorsPerListener: Int, endpoints: Seq[EndPoint]): Unit = synchronized {
 
+    // 设置SO_SNDBUF值
     val sendBufferSize = config.socketSendBufferBytes
+    // 设置SO_RCVBUF值
     val recvBufferSize = config.socketReceiveBufferBytes
+    // Kafka Broker Id
     val brokerId = config.brokerId
 
     endpoints.foreach { endpoint =>
@@ -235,6 +239,11 @@ class SocketServer(val config: KafkaConfig, val metrics: Metrics, val time: Time
 
 /**
  * A base class with some helper variables and methods
+  *
+ */
+/*
+该类继承自Runnable，同时还是抽象类。前面说的处理者线程和接收者线程都继承了这个抽象类。
+AbstractServerThread是它们的基类，同时提提供了很多有用的变量和方法
  */
 private[kafka] abstract class AbstractServerThread(connectionQuotas: ConnectionQuotas) extends Runnable with Logging {
 
@@ -453,10 +462,10 @@ private[kafka] object Processor {
  */
 private[kafka] class Processor(val id: Int,
                                time: Time,
-                               maxRequestSize: Int,
+                               maxRequestSize: Int, // 一个请求的最大长度(单位：字节)
                                requestChannel: RequestChannel,
                                connectionQuotas: ConnectionQuotas,
-                               connectionsMaxIdleMs: Long,
+                               connectionsMaxIdleMs: Long,  // 每个连接的最大空闲时间(单位：毫秒)
                                listenerName: ListenerName,
                                securityProtocol: SecurityProtocol,
                                config: KafkaConfig,
@@ -806,21 +815,26 @@ private[kafka] class Processor(val id: Int,
 
 }
 
+// 这个类应该是管理连接配额方面的事情
 class ConnectionQuotas(val defaultMax: Int, overrideQuotas: Map[String, Int]) {
 
+  // 含义是[IP地址，该IP当前连接数]
   private val overrides = overrideQuotas.map { case (host, count) => (InetAddress.getByName(host), count) }
+  // counts创建了一个可变Map保存该IP的InetAddress对象 ->连接数的映射
   private val counts = mutable.Map[InetAddress, Int]()
 
+  // 以同步的方式为该IP增加一个连接，只要没有超过为其分配的最大连接数限制即可，当然了，如果超过了的话抛出异常
   def inc(address: InetAddress) {
     counts.synchronized {
       val count = counts.getOrElseUpdate(address, 0)
       counts.put(address, count + 1)
       val max = overrides.getOrElse(address, defaultMax)
-      if (count >= max)
+      if (count >= max) // 超过最大连接数，抛出异常
         throw new TooManyConnectionsException(address, max)
     }
   }
 
+  // 以同步的方式执行与inc相反的操作，减少某个IP的当前连接数1个。如果操作前连接数就是1 ，直接把该ip记录从map中移除
   def dec(address: InetAddress) {
     counts.synchronized {
       val count = counts.getOrElse(address,
