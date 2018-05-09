@@ -27,6 +27,7 @@ import scala.Predef._
 /**
  * A bi-directional mapping between error codes and exceptions
  */
+//为common包中的每个异常做一个序号，并加入到一个Map中，同时提供很多方法可以双向检索——即根据序号返回异常实例或根据异常返回该异常序号
 object ErrorMapping {
   val EmptyByteBuffer = ByteBuffer.allocate(0)
 
@@ -102,6 +103,7 @@ object ErrorMapping {
     ).withDefaultValue(UnknownCode)
 
   /* invert the mapping */
+  // 根据异常号，返回对应的异常：将map的key，value反转，这样新的map就是<code, exception> ，所以就能够根据异常号，返回异常
   private val codeToException =
     (Map[Short, Class[Throwable]]() ++ exceptionToCode.iterator.map(p => (p._2, p._1))).withDefaultValue(classOf[UnknownException])
 

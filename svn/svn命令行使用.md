@@ -136,6 +136,29 @@
              (比如方案名或是主机名称变动)，但是工作副本仍旧对映到同一仓库的同一目录时使用 
              这个命令更新工作副本与仓库的对应关系。 
   
+	在使用switch --relocate之前，可以使用 svn info ,查看当前SVN的root url 和url
+
+```
+E:\bluedon>svn info
+Path: .
+Working Copy Root Path: E:\bluedon
+URL: http://172.16.12.212:9999/svn/bdtsgz/branches/BDSSA/BigDataPlatform
+Repository Root: http://172.16.12.212:9999/svn/bdtsgz
+Repository UUID: 470c384c-0373-4a4a-9069-f636540f8abc
+Revision: 2490
+Node Kind: directory
+Schedule: normal
+Last Changed Author: hjw
+Last Changed Rev: 2482
+Last Changed Date: 2018-05-02 14:41:25 +0800 (周三, 02 五月 2018)
+
+
+# 然后svn switch --relocate (将地址由12变成112)
+
+svn switch --relocate http://172.16.12.212:9999/svn/bdtsgz/branches/BDSSA/BigDataPlatform http://172.16.112.212:9999/svn/bdtsgz/branches/BDSSA/BigDataPlatform
+
+```
+
 17、解决冲突 
  
    svn resolved: 移除工作副本的目录或文件的“冲突”状态。 

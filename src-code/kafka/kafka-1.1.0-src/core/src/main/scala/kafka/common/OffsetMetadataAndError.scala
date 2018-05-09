@@ -24,13 +24,17 @@ case class OffsetMetadata(offset: Long, metadata: String = OffsetMetadata.NoMeta
     .format(offset,
     if (metadata != null && metadata.length > 0) metadata else "NO_METADATA")
 }
-
+/*
+long型的位移信息
+字符串表示的metadata信息
+*/
 object OffsetMetadata {
   val InvalidOffset: Long = -1L
   val NoMetadata: String = ""
 
   val InvalidOffsetMetadata = OffsetMetadata(OffsetMetadata.InvalidOffset, OffsetMetadata.NoMetadata)
 }
+
 
 case class OffsetAndMetadata(offsetMetadata: OffsetMetadata,
                              commitTimestamp: Long = org.apache.kafka.common.requests.OffsetCommitRequest.DEFAULT_TIMESTAMP,
@@ -60,7 +64,15 @@ case class OffsetMetadataAndError(offsetMetadata: OffsetMetadata, error: Errors 
 
   override def toString = "[%s, Error=%s]".format(offsetMetadata, error)
 }
+/*
+NoOffset: 无效位移，无元数据(metadata)，无错误异常
 
+OffsetsLoading: 无效位移，无metadata，位移加载中异常
+
+NotOffsetManagerForGroup: 无效位移，无metadata，consumer无对应coordinator异常
+
+UnknownTopicOrPartition: 无效位移，无metadata，未知topic或分区ID不在有效范围内[0, numPartitions-1]
+ */
 object OffsetMetadataAndError {
   val NoOffset = OffsetMetadataAndError(OffsetMetadata.InvalidOffsetMetadata, Errors.NONE)
   val GroupLoading = OffsetMetadataAndError(OffsetMetadata.InvalidOffsetMetadata, Errors.COORDINATOR_LOAD_IN_PROGRESS)

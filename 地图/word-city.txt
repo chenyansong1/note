@@ -1,0 +1,609 @@
+Abidjan	阿比让	科特迪瓦	5.19	4.01
+Abu Dhabi	阿布扎比	阿联酋	24.27	54.23
+Abuja	阿布贾	尼日利亚	9.12	7.11
+Acapulco	阿卡普尔科	墨西哥	16.51	-99.56
+Accra	阿克拉	加纳	5.33	0.15
+Adak	艾达克岛	美国	51.52	176.39
+Adamstown	亚当斯敦	英国	-25.04	-130.05
+Addis Ababa	亚的斯亚贝巴	埃塞俄比亚	9.03	38.42
+Adelaide	阿得莱德	澳大利亚	-34.56	138.36
+Aden	亚丁	也门	12.5	45.
+Agra	阿格拉	印度	27.09	78.
+Aguascalientes	阿瓜斯卡连特斯	墨西哥	21.51	-102.18
+Ahmedabad	艾哈迈达巴德	印度	23.03	72.4
+Akron	阿科隆	美国	41.04	-81.31
+Al Jizah	吉萨	埃及	30.01	31.12
+Albany	奥尔巴尼	美国	42.4	-73.47
+Albuquerque	阿尔布开克	美国	35.07	-106.4
+Alexandria	亚历山大	埃及	31.13	29.55
+Algiers	阿尔及尔	阿尔及利亚	36.42	3.13
+Almaty	阿拉木图	哈萨克斯坦	43.19	76.55
+Alofi	阿洛菲	纽埃	-19.03	-169.55
+Ambon	安汶	印度尼西亚	-4.5	128.1
+Amman	安曼	约旦	31.57	35.56
+Amsterdam	阿姆斯特丹	荷兰	52.21	4.52
+Anadyr	阿纳德尔	俄罗斯	64.4	177.32
+Anaheim	阿纳海姆	美国	33.5	-117.52
+Anchorage	安克雷奇	美国	61.13	-149.52
+Andorra La Vella	安道尔	安道尔	42.3	1.31
+Ankara	安卡拉	土耳其	40.02	32.54
+Anshan	鞍山	中国	41.05	122.58
+Antananarivo	塔那那利佛	马达加斯加	-18.55	47.31
+Apia	阿皮亚	萨摩亚群岛	-13.48	-171.45
+Aqtau	阿克陶	哈萨克	44.31	50.16
+Aqtobe	阿克托贝	哈萨克	50.17	57.1
+Arlington	阿灵顿	美国	32.41	-97.07
+Ashgabat	阿什哈巴德	土库曼斯坦	37.58	-58.24
+Asmara	阿斯马拉	厄立特里亚	15.2	-38.58
+Astana	阿斯塔纳	哈萨克	51.1	71.3
+Asuncion	亚松森	巴拉圭	-25.15	-57.4
+Athens	雅典	希腊	38.02	23.44
+Atlanta	亚特兰大	美国	33.46	-84.25
+Auckland	奥克兰	新西兰	-36.55	174.45
+Augusta	奥克斯塔	美国	44.19	-69.46
+Aurora	奥罗拉	美国	39.42	-104.43
+Austin	奥斯丁	美国	30.17	-97.44
+Azores	亚速尔群岛	葡萄牙	38.3	-28.
+Baghdad	巴格达	伊拉克	33.14	44.22
+Baku	巴库	阿塞拜疆	40.22	49.53
+Balikpapan	巴厘巴板	印度尼西亚	-1.15	116.5
+Baltimore	巴尔的摩	美国	39.17	-76.37
+Bamako	巴马科	马里	12.4	-7.59
+Bandar Seri Begawan	斯里巴加湾港	文莱	4.56	114.58
+Bandung	万隆	印度尼西亚	-6.57	107.34
+Bangalore	班加罗尔	印度	12.58	77.34
+Bangkok	曼谷	泰国	13.5	100.29
+Bangui	班吉	中非共和国	4.23	18.37
+Banjul	班珠尔	冈比亚	13.28	-16.39
+Baotou	包头	中国	40.38	109.59
+Barcelona	巴塞罗那	西班牙	41.18	2.06
+Barnaul	巴尔瑙尔	俄罗斯	53.21	83.47
+Basel	巴塞尔	瑞士	47.34	7.36
+Basra	巴士拉	伊拉克	30.3	47.49
+Basse-Terre	巴斯特尔	法国	16.14	-61.32
+Basseterre	巴斯特尔	圣斯茨和尼维斯	17.18	-62.43
+Bastia	巴斯蒂亚	法国	42.41	9.26
+Baton Rouge	巴吞鲁日	美国	30.27	-91.08
+Beijing	北京	中国	39.55	116.23
+Beirut	贝鲁特	黎巴嫩	33.52	35.3
+Belfast	贝尔法斯特	英国	54.36	-5.57
+Belgrade	贝尔格莱德	塞尔维亚	44.49	20.28
+Belmopan	贝尔莫潘	伯利兹	17.25	-88.46
+Berlin	柏林	德国	52.31	13.2
+Bern	伯尔尼	瑞士	46.57	7.26
+Bethlehem	伯利恒	西岸	31.42	35.12
+Bhubaneshwar	布巴内斯	印度	20.15	85.5
+Billings	比林斯	美国	45.47	-108.27
+Birmingham	伯明翰	英国	52.3	-1.55
+Birmingham	伯明翰	美国	33.3	-86.55
+Bishkek	比什凯克	吉尔吉斯	42.53	74.46
+Bismarck	俾斯麦酒	美国	46.49	-100.47
+Bissau	比绍	几内亚比绍	11.52	-15.39
+Blanc-Sablon	勃朗峰-萨伯隆	加拿大	51.26	-57.08
+Bogota	波哥大	哥伦比亚	4.38	-74.05
+Boise	博伊西	美国	43.37	-116.13
+Boston	波士顿	美国	42.19	-71.05
+Brades	布雷德斯	英国	16.46	-62.12
+Brampton	布兰普顿	加拿大	43.41	-79.46
+Brasilia	巴西利亚	巴西	-15.45	-47.57
+Bratislava	布拉迪斯拉发	斯洛伐克共和国	48.09	17.07
+Brazzaville	布拉柴维尔	刚果	-4.14	15.14
+Bridgetown	布里奇顿	巴巴多斯	13.06	-59.37
+Brisbane	布里斯班	澳大利亚	-27.28	153.02
+Brussels	布鲁塞尔	比利时	50.51	4.21
+Bucharest	布加勒斯特	罗马尼亚	44.23	26.1
+Budapest	布达佩斯	匈牙利	47.26	19.15
+Buenos Aires	布宜诺斯艾利斯	阿根廷	-34.2	-58.3
+Buffalo	布法罗	美国	42.52	-78.55
+Bujumbura	布琼布拉	布隆迪	-3.22	29.21
+Cairo	开罗	埃及	30.	31.17
+Calgary	卡尔加里	加拿大	51.05	-114.05
+Cali	卡利	哥伦比亚	3.24	-76.3
+Canberra	堪培拉	澳大利亚	-35.18	149.08
+Cancun	坎昆	墨西哥	21.1	-86.51
+Canton	广州	中国	23.2	113.3
+Cape Town	开普敦	南非	-33.55	18.27
+Caracas	加拉加斯	委内瑞拉	10.3	-66.58
+Cardiff	加地夫	英国	51.28	-3.11
+Carson City	卡森城	美国	39.1	-118.46
+Casablanca	卡萨布兰卡	摩洛哥	33.36	-7.37
+Castries	卡斯特里	圣卢西亚	14.01	-60.59
+Cayenne	卡宴	法国	4.55	-52.18
+Cebu City	宿务岛	菲律宾	10.17	123.54
+Changchun	长春	中国	43.5	125.2
+Changsha	长沙	中国	28.1	113.
+Charleston	查尔斯顿	美国	38.23	-81.4
+Charlotte	夏洛特	美国	35.05	-80.5
+Charlottetown	夏洛特敦	加拿大	46.14	-63.09
+Chatham Island	查塔姆岛	新西兰	-44.	-176.35
+Chelyabinsk	车里雅宾斯克	俄罗斯	55.1	61.25
+Chengdu	成都	中国	30.37	104.06
+Chennai	钦奈	印度	13.05	80.18
+Cheyenne	夏延文	美国	41.08	-104.49
+Chicago	芝加哥	美国	41.51	-87.41
+Chihuahua	奇瓦瓦	墨西哥	28.38	-106.05
+Chisinau	基希讷乌	摩尔多瓦	47.	28.5
+Chittagong	吉大港	孟加拉国	22.2	91.48
+Choibalsan	乔巴山	蒙古	48.04	114.3
+Chongqing	重庆	中国	29.31	106.35
+Christchurch	基督城	新西兰	-43.32	172.37
+Cincinnati	辛辛那提	美国	39.1	-84.3
+Cleveland	克利夫兰	美国	41.3	-81.41
+Colombo	科伦坡	斯里兰卡	6.55	79.52
+Columbia	哥伦比亚	美国	34.01	-81.
+Columbus	哥伦布	美国	39.59	-82.59
+Conakry	科纳克里	几内亚	9.3	-13.43
+Concord	康科特	美国	43.13	-71.32
+Copenhagen	哥本哈根	丹麦	55.43	12.34
+Cordoba	科尔多瓦	西班牙	37.53	-4.46
+Dakar	达喀尔	塞内加尔	14.38	-17.27
+dalian	大连	中国	38.53	121.37
+Dallas	达拉斯	美国	32.47	-96.47
+Damascus	大马士革	叙利亚	33.3	36.19
+Dar es Salaam	达累斯萨拉姆	坦桑尼亚	-6.51	39.18
+Darwin	达尔文	澳大利亚	-12.28	130.51
+Delhi	德令哈	印度	28.4	77.14
+Denpasar	登巴萨	印度尼西亚	-8.4	115.14
+Denver	丹佛	美国	39.43	-104.59
+Des Moines	得梅因	美国	41.36	-93.38
+Detroit	底特律	美国	42.23	-83.05
+Dhaka	达卡	孟加拉国	23.51	90.24
+Dili	帝力	东帝汶	-8.35	125.35
+Djibouti	吉布提	吉布提	12.	42.5
+Dodoma	多多马	坦桑尼亚	-6.1	35.4
+Doha	多哈	卡塔尔	25.15	51.34
+Dover	多佛尔	美国	39.1	-75.32
+Dubai	迪拜	阿联酋	25.13	55.17
+Dublin	都柏林	爱尔兰	53.26	-6.15
+Durban	德班	南非	-29.53	31.03
+Dushanbe	杜尚别	塔吉克斯坦	38.38	68.51
+Dusseldorf	杜塞尔多夫	德国	51.13	6.47
+Easter Island	复活节岛	智利	-27.05	-109.2
+Edinburgh	爱丁堡	英国	55.57	-3.13
+Edmonton	埃德蒙顿	加拿大	53.34	-113.25
+El Aaiun	阿尤恩	西撒哈拉	27.09	-13.12
+El Paso	埃尔帕索	美国	31.45	-106.29
+Endeh	英德	印度尼西亚	-8.51	121.4
+Esfahan	伊斯法罕	伊朗	32.42	51.4
+Fairbanks	费尔班克斯	美国	64.5	-147.43
+Faisalabad	费萨拉巴德	巴基斯坦	31.25	73.09
+Fernando de Noronha	费尔南多-迪诺罗尼亚	巴西	-3.54	-32.25
+Foochow	福州	中国	26.01	119.2
+Fort-de-France	法兰西堡	法国	14.36	-61.05
+Fort Worth	福特沃斯	美国	32.45	-97.2
+Frankfort	法兰克福	美国	38.12	-84.52
+Frankfurt	法兰克福	德国	50.02	8.34
+Freetown	费里敦	塞拉利昂	8.3	-13.17
+Fresno	弗雷斯诺	美国	36.45	-119.45
+Fukuoka	福冈	日本	33.39	130.21
+Funafuti	福纳佛提	图瓦卢	-8.31	179.13
+Funchal	丰沙尔	葡萄牙	32.38	-16.54
+Fushun	抚顺	中国	41.51	123.53
+Gaborone	哈博罗内	博茨瓦纳	-24.45	25.55
+Galapagos Islands	加拉帕戈斯群岛	厄瓜多尔	-0.54	-89.36
+Gambier Islands	甘比尔群岛	法国	-23.08	-134.57
+Gatineau	加蒂诺	加拿大	45.29	-75.4
+Gaza	加沙	加沙地带	31.3	34.28
+Gdansk	格但斯克	波兰	54.22	18.38
+Geneva	日内瓦	瑞士	46.14	6.04
+Georgetown	乔治敦	圭亚那	6.46	-58.1
+Georgetown	乔治敦	英国	19.2	-81.23
+Gibraltar	直布罗陀	英国	36.07	-5.22
+Glasgow	格拉斯哥	英国	55.52	-4.15
+Guadalajara	瓜达拉哈拉	墨西哥	20.4	-103.21
+Guam	关岛	美国	13.3	144.4
+Guatemala	危地马拉	危地马拉	14.38	-90.22
+Guayaquil	瓜亚基尔	厄瓜多尔	-2.13	-79.54
+Guiyang	桂阳	中国	26.35	106.4
+Halifax	哈利法克斯	加拿大	44.38	-63.35
+Hamburg	汉堡	德国	53.33	10.
+Hamilton	汉密尔顿	百慕大群岛	32.18	-64.47
+Hamilton	汉密尔顿	加拿大	43.15	-79.51
+Hangzhou	杭州	中国	30.1	120.07
+Hanoi	河内	越南	21.01	105.53
+Harare	哈拉雷	津巴布韦	-17.49	31.04
+Harbin	哈尔滨	中国	45.45	126.41
+Harrisburg	哈里斯堡	美国	40.16	-76.53
+Hartford	哈特福德	美国	41.46	-72.41
+Havana	哈瓦那	古巴	23.08	-82.23
+Helena	赫勒拿	美国	46.35	-112.02
+Helsinki	赫尔辛基	芬兰	60.1	24.53
+Hiroshima	广岛	日本	34.23	132.27
+Ho Chi Minh	胡志明	越南	10.46	106.43
+Hobart	荷伯特	澳大利亚	-42.54	147.18
+Hong Kong	香港	中国	22.17	114.08
+Honiara	霍尼亚拉	所罗门群岛	-9.32	160.12
+Honolulu	檀香山	美国	21.19	-157.5
+Houston	休斯顿	美国	29.45	-95.23
+Hovd	科布多	蒙古	46.4	90.45
+Hyderabad	海得拉巴	印度	17.22	78.26
+Incheon	仁川	韩国	37.3	126.38
+Indianapolis	印第安纳波利斯	美国	39.47	-86.08
+Indore	印多尔	印度	22.42	75.54
+Iqaluit	伊卡瑞特	加拿大	63.45	-68.3
+Islamabad	伊斯兰堡	巴基斯坦	33.4	73.08
+Istanbul	伊斯坦布尔	土耳其	41.02	28.58
+Izmir	伊兹密尔	土耳其	38.24	27.09
+Jackson	杰克逊	美国	32.2	-90.11
+Jacksonville	杰克逊维尔	美国	30.2	-81.4
+Jaipur	斋浦尔	印度	26.53	75.5
+Jakarta	雅加达	印度尼西亚	-6.08	106.45
+Jayapura	查亚普拉	印度尼西亚	-2.28	140.38
+Jeddah	吉达	沙特阿拉伯	21.3	39.1
+Jefferson City	杰斐逊城	美国	38.34	-92.11
+Jersey City	泽西城	美国	40.42	-74.03
+Jerusalem	耶路撒冷	以色列	31.47	35.13
+Jilin	吉林	中国	43.53	126.35
+Jinan	济南	中国	36.5	117.
+Jinzhou	锦州	中国	41.07	121.06
+Johannesburg	约翰内斯堡	南非	-26.08	27.54
+Juneau	朱诺	美国	58.18	-134.25
+Kabul	喀布尔	阿富汗	34.3	69.1
+Kaliningrad	加里宁格勒	俄罗斯	54.43	20.3
+Kamchatka	堪察加	俄罗斯	53.01	158.39
+Kampala	坎帕拉	乌干达	0.19	32.35
+Kano Nigeria	尼日利亚卡诺	尼日利亚	12.	8.31
+Kanpur	坎普尔	印度	26.27	80.14
+Kansas City	堪萨斯城	美国	39.02	-94.33
+Kaohsiung	高雄	中国	23.03	120.27
+Karachi	卡拉奇	巴基斯坦	24.51	67.02
+Kathmandu	加德满都餐厅	尼泊尔	27.42	85.19
+Kaunas	考纳斯	立陶宛	54.54	23.54
+Kawasaki	川崎	日本	35.32	139.43
+Kazan	喀山	俄罗斯	55.45	49.1
+Khartoum	喀士穆	苏丹	15.34	32.36
+Khon Kaen	孔敬	泰国	16.25	102.5
+Khulna	库尔纳	孟加拉国	22.49	89.34
+Kigali	基加利	卢旺达	-1.59	30.05
+Kingston	京斯敦	澳大利亚	-29.03	167.58
+Kingston	京斯敦	牙买加	17.58	-76.48
+Kingstown	金斯敦	圣文森特和格林纳丁斯	13.12	-61.14
+Kinshasa	金沙萨	刚果民主共和国	-4.18	15.18
+Kiritimati	圣诞岛	基里巴斯	1.52	-157.2
+Kitakyushu	北九州	日本	33.52	130.49
+Knoxville	诺克斯维尔	美国	35.58	-83.56
+Kobe	神户	日本	34.41	135.1
+Kolkata	加尔各答	印度	22.34	88.2
+Koror	科罗尔	帕劳	7.3	134.3
+Kowloon	九龙	中国	22.2	114.15
+Krakow	克拉科夫	波兰	50.03	19.55
+Krasnoyarsk	克拉斯诺亚尔斯克	俄罗斯	56.05	92.46
+Kuala Lumpur	吉隆坡	马来西亚	3.08	101.42
+Kunming	昆明	中国	25.04	102.41
+Kupang	古邦	印度尼西亚	-10.23	123.38
+Kuwait City	科威特省	科威特	29.2	48.
+Kyiv	基辅	乌克兰	50.28	30.29
+Kyoto	京都	日本	35.	135.45
+La Coruna	拉柯鲁尼亚	西班牙	43.22	-8.24
+La Paz	拉巴斯	玻利维亚	-16.3	-68.09
+La Plata	拉普拉塔	阿根廷	-34.55	-57.57
+Lagos	拉各斯	尼日利亚	6.35	3.02
+Lahore	拉合尔	巴基斯坦	31.34	74.22
+Lanchow	兰州	中国	36.01	103.45
+Las Palmas	拉斯帕尔马斯	西班牙	28.08	-15.27
+Las Vegas	拉斯维加斯	美国	36.1	-115.1
+Lausanne	洛桑	瑞士	46.32	6.39
+Laval	拉瓦尔	加拿大	45.35	-73.45
+Leon	莱昂	墨西哥	21.1	-101.42
+Lexington-Fayette	法耶特	美国	38.02	-84.27
+Lhasa	拉萨	中国	29.41	91.1
+Libreville	利伯维尔	加蓬	0.3	9.25
+Lilongwe	利隆圭	马拉维	-13.58	33.49
+Lima	利马	秘鲁	-12.06	-76.55
+Lincoln	林肯	美国	40.49	-96.4
+Lisbon	里斯本	葡萄牙	38.42	-9.05
+Little Rock	小石城	美国	34.44	-92.19
+Liverpool	利物浦	英国	53.25	-3.
+Ljubljana	卢布尔雅那	斯洛文尼亚	46.03	14.31
+Lodz	罗兹	波兰	51.49	19.28
+Lome	洛美	多哥	6.1	1.21
+London	伦敦	加拿大	42.59	-81.14
+London	伦敦	英国	51.3	-0.07
+Long Beach	长滩	美国	33.47	-118.09
+Longueuil	隆格伊	加拿大	45.32	-73.3
+Lord Howe Island	豪勋爵岛	澳大利亚	-33.3	159.
+Los Angeles	洛杉矶	美国	34.05	-118.22
+Louisville	路易斯维尔	美国	38.13	-85.48
+Luanda	罗安达	安哥拉	-8.5	13.2
+Lubumbashi	卢本巴希	刚果民主共和国	-11.44	27.29
+Lucknow	勒克瑙	印度	26.5	80.54
+Ludhiana	鲁得希阿那	印度	30.56	75.52
+Luoyang	洛阳	中国	34.48	112.25
+Lusaka	卢萨卡	赞比亚	-15.2	28.14
+Luxembourg	卢森堡	卢森堡	49.37	6.08
+Macau	澳门	中国	22.11	113.33
+Madison	麦迪逊	美国	43.05	-89.23
+Madrid	马德里	西班牙	40.26	-3.42
+Madurai	马杜赖	印度	9.55	78.07
+Majuro	马朱罗	马绍尔群岛	7.09	171.12
+Makkah	麦加	沙特阿拉伯	21.26	39.49
+Malabo	马拉博	赤道几内亚	3.45	8.48
+Malang	马朗	印度尼西亚	-7.59	112.45
+Male	马累	马尔代夫	4.1	73.28
+Mamoutzou	马穆楚	法国	-12.47	45.14
+Manado	美娜多	印度尼西亚	1.3	124.58
+Managua	马那瓜	尼加拉瓜	12.06	-86.18
+Manama	麦纳麦	巴林	26.12	50.36
+Manaus	马瑙斯	巴西	-3.06	-60.
+Manila	马尼拉	菲律宾	14.37	121.
+Maputo	马普托	莫桑比克	-25.58	32.35
+Mar del Plata	马德普拉塔	阿根廷	-38.	-57.32
+Markham	马卡姆	加拿大	43.49	-79.19
+Maseru	马塞卢	莱索托	-29.18	27.28
+Mataram	马塔兰	印度尼西亚	-8.36	116.07
+Mazatlan	马萨特兰	墨西哥	23.13	-106.25
+Mbabane	姆巴巴纳	斯威士兰	-26.19	31.08
+Medan	棉兰	印度尼西亚	3.35	98.39
+Medellin	麦德林	哥伦比亚	6.15	-75.36
+Melbourne	墨尔本	澳大利亚	-37.49	144.58
+Memphis	孟菲斯	美国	35.05	-90.
+Mendoza	门多萨	阿根廷	-32.54	-68.5
+Merida	梅里达	墨西哥	20.58	-89.37
+Mesa	梅萨	美国	33.25	-111.44
+Mexicali	墨西卡利	墨西哥	32.38	-115.27
+Mexico City	墨西哥城	墨西哥	19.28	-99.09
+Miami	迈阿密	美国	25.47	-80.13
+Midland	米德兰	美国	32.	-102.05
+Midway	中途岛	美国	28.13	-177.22
+Milan	米兰	意大利	45.28	9.1
+Milwaukee	密尔沃基雄鹿	美国	43.03	-87.57
+Minneapolis	明尼阿波利斯	美国	45	-93.15
+Minsk	明斯克	白俄罗斯	53.51	27.3
+Mississauga	米西索加	加拿大	43.41	-79.36
+Mobile	莫比尔	美国	30.4	-88.05
+Mogadishu	摩加迪沙	索马里	2.02	45.21
+Monaco	摩纳哥	摩纳哥	43.4	7.25
+Monrovia	蒙罗维亚	利比里亚	6.2	-10.46
+Monterrey	蒙特雷	墨西哥	25.4	-100.2
+Montevideo	蒙得维的亚	乌拉圭	-34.53	-56.11
+Montgomery	蒙哥马利	美国	32.22	-86.2
+Montpelier	蒙彼利埃	美国	44.16	-72.34
+Montreal	蒙特利尔	加拿大	45.3	-73.35
+Moroni	莫罗尼	科摩罗	-11.4	43.19
+Moscow	莫斯科	俄罗斯	55.45	37.37
+Mumbai	孟买	印度	18.56	72.51
+Munich	慕尼黑	德国	48.08	11.35
+Murmansk	摩尔曼斯克	俄罗斯	68.59	33.08
+Muscat	马斯喀特	阿曼	23.36	58.37
+Nagoya	名古屋	日本	35.1	136.55
+Nagpur	那格浦尔	印度	21.1	79.12
+Nairobi	内罗毕	肯尼亚	-1.17	36.49
+Nanchang	南昌	中国	28.38	115.56
+Naples	那不勒斯	意大利	40.5	14.14
+Nashville	纳什维尔	美国	36.1	-86.46
+Nassau	拿骚	巴哈马	25.03	-77.2
+Ndjamena	恩贾梅纳	乍得	12.1	14.59
+Neuquen	内乌肯	阿根廷	-38.57	-68.04
+New Delhi	新德里	印度	28.37	77.13
+New Orleans	新奥尔良	美国	29.58	-90.05
+New York	纽约	美国	40.44	-73.55
+Newark	纽瓦克	美国	40.43	-74.1
+Niamey	尼亚美	尼日尔	13.32	2.05
+Nice	尼斯	法国	43.42	7.16
+Nicosia	尼科西亚	塞浦路斯	35.11	33.23
+Nizhny Novgorod	下诺夫哥罗德	俄罗斯	56.2	44.01
+Nome	诺姆	美国	64.32	-165.24
+Norfolk	诺福克	美国	36.54	-76.18
+Nouakchott	努瓦克肖特	毛里塔尼亚	18.09	-15.58
+Noumea	努美阿	法国	-22.16	166.27
+Novgorod	诺夫哥罗德	俄罗斯	58.3	31.2
+Novosibirsk	新西伯利亚	俄罗斯	55.04	82.55
+Nukualofa	努库阿洛法	汤加	-21.07	-175.12
+Nuuk	努克	丹麦	64.1	-51.4
+Oakland	奥克兰	美国	37.47	-122.13
+Odesa	敖德萨	乌克兰	46.3	30.46
+Okayama	冈山	日本	34.4	133.54
+Oklahoma City	俄克拉何马城	美国	35.29	-97.32
+Omsk	鄂木斯克	俄罗斯	55.	73.22
+Oranjestad	奥拉涅斯塔克	荷兰	12.3	-69.58
+Orlando	奥兰多	美国	28.3	-81.22
+Osaka	大阪	日本	34.4	135.3
+Oslo	奥斯陆	挪威	59.56	10.41
+Ottawa	渥太华	加拿大	45.25	-75.43
+Ouagadougou	瓦加杜古	布基纳法索	12.2	-1.4
+Pago Pago	帕果帕果	美国	-14.16	-170.42
+Palembang	巨港	印度尼西亚	-2.59	104.5
+Palikir	波赫恩	密克罗尼西亚	6.55	158.1
+palma	帕尔马	西班牙	39.26	2.39
+Panama	巴拿马	巴拿马	8.57	-79.3
+Papeete	帕皮提	法国	-17.32	-149.34
+Paramaribo	帕拉马里博	苏里南	5.52	-55.14
+paris	巴黎	法国	48.51	2.2
+Patna	巴特那	印度	25.37	85.12
+Pensacola	彭沙科拉	美国	30.3	87.12
+Perm	彼尔姆	联邦政府	58.01	56.1
+Perth	珀斯	澳大利亚	-31.58	115.49
+Peshawar	白沙瓦	巴基斯坦	34.01	71.4
+Philadelphia	费拉德尔菲亚	美国	40.	-75.09
+Phnom Penh	金边	柬埔寨	11.35	104.55
+Phoenix	菲尼克斯	美国	33.3	-112.05
+Pierre	皮尔	美国	44.22	-100.2
+Pittsburgh	匹兹堡	美国	40.26	-80
+Podgorica	波德戈里察	门的内哥罗	42.27	19.28
+Port-au-Prince	太子港	海地	18.32	-72.2
+Port-aux-Francais	法兰西港	法国	-49.21	70.13
+Port Elizabeth	伊丽莎白港	南非	-33.57	25.36
+Port Louis	路易港	毛里求斯	-20.09	57.29
+Port Moresby	莫尔兹比港	巴布亚新几内亚	-9.3	147.07
+Port of Spain	西班牙港	特立尼达和多巴哥	10.38	-61.31
+Port Vila	维拉港	瓦努阿图	-17.44	168.19
+Portland	波特兰	美国	45.31	-122.39
+Porto	波尔图	葡萄牙	41.09	-8.37
+Porto Alegre	阿雷格里港	巴西	-30.02	-51.14
+Porto Novo	波多诺伏	贝宁	6.3	2.47
+Poznan	波兹南	波兰	52.25	16.53
+Prague	布拉格	捷克	50.05	14.25
+Praia	普拉亚	佛得角	14.55	-23.31
+Pretoria	比勒陀利亚	南非	-25.43	28.11
+Pristina	普里什蒂纳	科索沃	42.39	21.1
+Providence	普罗维登斯	美国	41.49	-71.25
+Pune	浦那	印度	18.34	73.58
+Pusan	釜山	韩国	35.05	129.02
+Pyongyang	平壤	朝鲜	39.	125.47
+Qiqihar	齐齐哈尔	中国	47.23	124
+Quebec	魁北克	加拿大	46.5	-71.15
+Quito	基多	厄瓜多尔	-0.14	-78.3
+Raba	拉巴	印度尼西亚	-8.27	118.45
+Rabat	拉巴特	摩洛哥	34.02	-6.51
+Raleigh	瑞丽	美国	35.47	-78.39
+Rapid City	拉皮德城	美国	44.05	-103.13
+Rarotonga	拉罗汤加岛	库克群岛	-21.2	-160.16
+Rawaki	拉瓦基	基里巴斯	-3.08	-171.05
+Recife	累西腓	巴西	-8.06	-34.53
+Regina	里贾那	加拿大	50.3	-104.38
+Reykjavik	雷克雅未克	冰岛	64.09	-21.58
+Richmond	里士满	美国	37.32	-77.28
+Riga	里加	拉脱维亚	56.53	24.05
+Rio Branco	里奥布兰科	巴西	-9.59	-67.49
+Rio de Janeiro	里约热内卢	巴西	-22.54	-43.15
+Riverside	河滨市	美国	33.56	-117.23
+Riyadh	利雅得	沙特阿拉伯	24.39	46.44
+Road Town	罗德城	英国	18.3	-64.3
+Rochester	罗彻斯特	美国	43.12	-77.37
+Rome	罗马	意大利	41.52	12.37
+Rosario	罗萨里奥	阿根廷	-32.57	-60.4
+Roseau	罗索	多米尼克	15.18	-61.23
+Rotterdam	鹿特丹	荷兰	51.55	4.29
+Ryazan	梁赞	俄罗斯	54.37	39.45
+Sacramento	萨克拉门托	美国	38.34	-121.28
+Saint-Denis	圣蒂尼斯	法国	-20.52	55.28
+Saint Georges	圣乔治	格林纳达	12.04	-61.44
+Saint Helier	圣赫利尔	英国	49.11	-2.07
+Saint John	圣约翰	加拿大	45.16	-66.03
+Saint Johns	圣约翰	安提瓜和巴布达	17.07	-61.51
+Saint-Petersburg	圣彼得堡	俄罗斯	59.55	30.25
+Saipan	塞班岛	美国	15.12	145.45
+Salem	塞伦	美国	44.56	-123.02
+Salt Lake City	盐湖城	美国	40.46	-111.52
+Salta	萨尔塔	阿根廷	-24.47	-65.24
+Salvador	萨尔瓦多	巴西	-12.58	-38.29
+Salzburg	萨尔茨保	奥地利	47.54	13.03
+Samara	萨马拉	俄罗斯	53.1	50.15
+San Antonio	圣安东尼奥	美国	29.25	-98.3
+San Bernardino	圣博娜迪诺	美国	34.06	-117.17
+San Diego	圣地亚哥	美国	32.43	-117.09
+San Francisco	旧金山	美国	37.46	-122.26
+San Jose	圣何塞	哥斯达黎加	9.59	-84.04
+San Jose	圣何塞	美国	37.2	-121.53
+San Juan	圣胡安	波多黎各	18.29	-66.08
+San Luis Potosi	圣路易波托西	墨西哥	22.09	-100.59
+San Marino	圣马力诺	圣马力诺	43.55	12.28
+San Salvador	圣萨尔瓦多	萨尔瓦多	13.4	-89.1
+Sana	萨那	也门	15.23	44.14
+Santa Ana	圣安那	萨尔瓦多	14.	-89.31
+Santa Fe	圣达菲	美国	35.4	-105.57
+Santiago	圣地亚哥	智利	-33.26	-70.4
+Santo Domingo	圣多明各	多米尼加	18.3	-69.57
+Sao Paulo	圣保罗	巴西	-23.34	-46.38
+Sao Tome	圣多美	圣多美和普林西比	0.2	6.44
+Sapporo	扎幌	日本	43.05	141.21
+Sarajevo	萨拉热窝	波黑	43.52	18.26
+Saskatoon	萨斯卡通	加拿大	52.1	-106.4
+Seattle	西雅图	美国	47.38	-122.2
+Semarang	三宝垄	印度尼西亚	-6.58	110.29
+Sendai	仙台	日本	38.16	140.52
+Seoul	首尔	韩国	37.35	127.03
+Shanghai	上海	中国	31.14	121.27
+Shenzhen	深圳	中国	22.39	114.13
+Shijiazhuang	石家庄	中国	38.04	114.28
+Sialkot	锡亚尔科特	巴基斯坦	32.29	74.35
+Sian	西安	中国	34.16	108.54
+Singapore	新加坡	新加坡	1.22	103.45
+Singaraja	新卡拉雅	印度尼西亚	-8.06	115.07
+Sioux Falls	苏福尔斯	美国	43.34	-96.42
+Skopje	斯科普里	马其顿	41.35	21.3
+Sofia	索非亚	保加利亚	42.43	23.2
+St.Johns	圣约翰	加拿大	47.34	-52.41
+St.Louis	圣路易斯	美国	38.4	-90.15
+St.Paul	圣保罗	美国	45.	-93.1
+St.Petersburg	圣彼得堡	美国	27.45	-82.38
+Stanley	斯坦利	美国	-51.42	-57.52
+Stockholm	斯德哥尔摩	瑞典	59.23	18.
+Stockton	斯托克顿	美国	37.58	-121.18
+Sucre	苏克雷	玻利维亚	-19.02	-65.16
+Surabaya	苏腊巴亚	印度尼西亚	-7.14	112.45
+Surakarta	苏腊卡尔塔	印度尼西亚	-7.32	110.5
+Surat	苏拉特	印度	21.1	72.54
+Surrey	萨里	加拿大	49.11	-122.51
+Suva	苏瓦	斐济	-18.08	178.25
+Sydney	悉尼	澳大利亚	-33.55	151.17
+Szczecin	什切青	波兰	53.25	14.32
+Taegu	大丘	韩国	35.52	128.36
+Taiohae	泰奥海伊	法国	-9.	-139.3
+Taipei	台北	中国	25.02	121.38
+Taiyuan	太原	中国	37.5	112.3
+Tallinn	塔林	爱沙尼亚	59.22	24.48
+Tampa	坦帕	美国	27.58	-82.38
+Tangier	丹吉尔	摩洛哥	35.48	-5.45
+Tangshan	唐山	中国	39.37	118.05
+Tarawa	塔拉瓦	基里巴斯	1.25	173.
+Tashkent	塔什干	乌兹别克	41.16	69.13
+Tbilisi	第比利斯	乔治亚州	41.43	44.48
+Tegucigalpa	特古西加尔巴	洪都拉斯	14.05	-87.14
+Tehran	德黑兰	伊朗	35.45	51.3
+Tel Aviv	特拉维夫	以色列	32.05	34.46
+Ternate	特尔纳特	印度尼西亚	0.48	127.23
+The Settlement	新村	澳大利亚	-10.3	105.4
+TheValley	瓦利	安圭拉岛	-18.13	-63.04
+Thimphu	廷布	不丹	-27.29	89.4
+Thiruvananthapuram	特里凡得琅	印度	8.3	76.57
+Tianjin	天津	中国	39.08	117.12
+Tijuana	提华纳	墨西哥	32.32	-117.01
+Tirane	地拉那	阿尔巴尼亚	41.2	19.48
+Tokyo	东京	日本	35.41	139.44
+Toledo	托莱多	美国	41.4	-83.35
+Topeka	托皮卡	美国	39.02	-95.41
+Toronto	多伦多	加拿大	43.4	-79.22
+Torshavn	托沙芬	丹麦	62.01	-6.46
+Trenton	特伦顿	美国	40.13	-74.46
+Tripoli	的黎波里	利比亚	32.58	13.12
+Tsingtao	青岛	中国	36.04	120.22
+Tucson	图森	美国	32.13	-110.58
+Tucuman	图库曼	阿根廷	-26.3	-65.2
+Tunis	突尼斯	突尼斯	36.47	10.1
+Turin	都灵	意大利	45.04	7.4
+Tyumen	秋明	俄罗斯	57.09	65.32
+Ufa	乌法	俄罗斯	54.45	55.58
+Ulaanbaatar	乌兰巴托	蒙古	47.55	106.53
+Unalaska	安那拉斯加	美国	53.51	-166.43
+Vadodara	巴罗达	印度	22.19	73.14
+Vaduz	瓦杜兹	列支敦士登	47.09	9.31
+Valletta	瓦莱塔	马耳他	35.53	14.31
+Vancouver	温哥华	加拿大	49.13	-123.06
+Varanasi	瓦腊纳西	印度	25.2	83.
+Vatican City	梵蒂冈城	梵蒂冈	41.54	12.27
+Venice	威尼斯	意大利	45.26	12.2
+Veracruz	韦拉克鲁斯	墨西哥	19.11	-96.1
+Victoria	维多利亚	加拿大	48.25	-123.21
+Victoria	维多利亚	塞舌尔	-4.4	55.28
+Vienna	维也纳	奥地利	48.13	16.22
+Vientiane	万象	老挝	18.01	102.48
+Vilnius	维尔纽斯	立陶宛	54.4	25.19
+Virginia Beach	弗吉尼亚海滨市	美国	36.44	-76.02
+Visakhapatnam	维萨卡帕特南	印度	17.42	83.24
+Vladivostok	符拉迪沃斯托克	俄罗斯	43.09	131.53
+Warsaw	华沙	波兰	52.15	21.
+Washington DC	华盛顿市	美国	38.53	-77.02
+Wellington	惠灵顿	新西兰	-41.17	174.47
+Whitehorse	怀特霍斯	加拿大	60.41	-135.08
+Wichita	卫奇塔	美国	37.43	-97.2
+Willemstad	威廉斯塔德	荷兰	12.12	-68.56
+Windhoek	温得和克	纳米比亚	-22.34	17.06
+Windsor	温泽	加拿大	42.18	-83.01
+Winnipeg	温尼伯	加拿大	49.53	-97.1
+Wroclaw	弗罗茨瓦夫	波兰	51.05	17.
+Wuhan	武汉	中国	30.35	114.19
+Yakutsk	雅库茨克	俄罗斯	62.1	129.51
+Yamoussoukro	亚穆苏克罗	科特迪瓦	6.51	-5.18
+Yangon	仰光	缅甸	16.46	96.09
+Yaounde	雅温得	喀麦隆	3.51	11.31
+Yaren	亚伦	瑙鲁	-0.32	166.55
+Yekaterinburg	叶卡捷琳堡	俄罗斯	56.52	60.35
+Yellowknife	耶洛奈夫	加拿大	62.3	-114.29
+Yerevan	耶烈万	亚美尼亚共	40.1	44.31
+Yokohama	横滨	日本	35.27	139.39
+Yuzhno-Sakhalinsk	南萨哈林斯克	俄罗斯	46.58	142.44
+Zagreb	萨格勒布	克罗地亚	45.49	15.58
+Zhengzhou	郑州	中国	34.35	113.38
+Zibo	淄博	中国	36.5	118.
+Zurich	苏黎世	瑞士	47.22	8.32

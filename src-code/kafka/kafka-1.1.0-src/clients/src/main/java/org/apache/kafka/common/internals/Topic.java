@@ -24,15 +24,23 @@ import java.util.Set;
 
 public class Topic {
 
+    /*
+     这里有2个默认的topic： __consumer_offsets 和 __transaction_state ，其实通过zookeeper，可以看到这个topic的存在
+     [zk: ssa38:2181(CONNECTED) 1] ls /brokers/topics
+     [syslog64, syslog32, flow-topic, log-topic, netflow-topic, __consumer_offsets]
+      */
+
     public static final String GROUP_METADATA_TOPIC_NAME = "__consumer_offsets";
     public static final String TRANSACTION_STATE_TOPIC_NAME = "__transaction_state";
-    public static final String LEGAL_CHARS = "[a-zA-Z0-9._-]";
+    public static final String LEGAL_CHARS = "[a-zA-Z0-9._-]"; // 首先Topic的合法字符依然是字母、数字、句号
 
+    // 将两个默认的topic加入到Set中
     private static final Set<String> INTERNAL_TOPICS = Collections.unmodifiableSet(
             Utils.mkSet(GROUP_METADATA_TOPIC_NAME, TRANSACTION_STATE_TOPIC_NAME));
 
-    private static final int MAX_NAME_LENGTH = 249;
+    private static final int MAX_NAME_LENGTH = 249; // topic最大长度不能超过249个字符
 
+    // 为给定的topic名做合法性检验
     public static void validate(String topic) {
         if (topic.isEmpty())
             throw new InvalidTopicException("Topic name is illegal, it can't be empty");

@@ -20,6 +20,11 @@ package kafka.common
 import util.matching.Regex
 import kafka.utils.Logging
 
+/*
+代码不复杂，就只是一个简单的trait，里面只有一个无返回值的方法：
+validateChars——目的也很简单就是验证给定的属性值里面有没有非法字符。目前只允许字母，数字，句点(.)，下划线(_)以及横线(-)。
+其他字符都视为非法字符，一旦发现存储非法字符立即抛出异常。Producer和Consumer都有对应的config实现了这个Config trait。
+ */
 trait Config extends Logging {
 
   def validateChars(prop: String, value: String) {
