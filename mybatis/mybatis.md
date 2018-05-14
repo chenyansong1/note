@@ -44,7 +44,7 @@ public List<XXXBean> getXXXBeanList(@Param("id")String id, @Param("code")String 
 
 　　select t.* from tableName where id = #{id} and name = #{code}  
 
-</select>  
+</select>
 ```
 
 由于是多参数那么就不能使用parameterType， 这里用@Param来指定哪一个
@@ -59,7 +59,7 @@ public List<XXXBean> getXXXBeanList(HashMap map);
 
 　　select 字段... from XXX where id=#{xxId} code = #{xxCode}  
 
-</select>  
+</select>
 
 
 ```
