@@ -617,3 +617,84 @@
 
 
 
+## 6.组件传值
+
+### 6.1.父组件向子组件
+
+#### 6.1.1.父组件向子组件传值（data）
+
+子组件默认是无法访问父组件中的data数据和methods中的方法的，如果我们想要子组件拿到父组件的数据，父组件可以通过 属性绑定的形式 向子组件传值
+
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <!--1.导入Vue的包-->
+    <script src="./lib/vue-2.4.0.js"></script>
+    <!--vue-resource 依赖于Vue， 所以注意导入的先后顺序-->
+    <script src="./lib/vue-resource-1.3.4.js"></script>
+</head>
+
+
+<body>
+
+    <div id="app">
+
+        <com1 v-bind:parentmsg="msg"></com1>
+    </div>
+
+    <script>
+        
+        var vm = new Vue({
+            el: '#app', 
+            data:{
+                msg:'xxxxx'
+            },
+            methods:{
+          
+            },
+            components:{
+                com1:{
+                    // 此处的data中的数据是子组件私有的，子组件通过ajax请求回来的数据，都可以放到data身上
+                    // 此处data山的数据是可读可写的，但是props上的数据都是只读的
+                    data:function(){
+
+                        return {
+                            title:'yyyyy',
+                            content:'ssss'
+
+                        }
+                    },
+                    template:'<h1>这是子组件--拿到父组件中的值为=={{ parentmsg }}</h1>',
+                    // 组件中的所有props中的数据，都是通过父组件传递给子组件的
+                    props:['parentmsg']
+                }
+            }
+
+        })
+
+
+    </script>
+</body>
+</html>
+```
+
+
+
+#### 6.1.2.父组件向子组件传方法
+
+
+
+### 6.2.子组件向父组件传值
+
+
+
+
+
+
+
