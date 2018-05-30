@@ -125,6 +125,7 @@ private[deploy] class Master(
   private var restServer: Option[StandaloneRestServer] = None
   private var restServerBoundPort: Option[Int] = None
 
+  // master是一个Endpoint，这里是其一个生命周期方法
   override def onStart(): Unit = {
     logInfo("Starting Spark master at " + masterUrl)
     logInfo(s"Running Spark version ${org.apache.spark.SPARK_VERSION}")
@@ -236,8 +237,7 @@ private[deploy] class Master(
       System.exit(0)
 
       // Worker向Master注册
-    case RegisterWorker(
-      id, workerHost, workerPort, workerRef, cores, memory, workerWebUiUrl, masterAddress) =>
+    case RegisterWorker(id, workerHost, workerPort, workerRef, cores, memory, workerWebUiUrl, masterAddress) =>
       logInfo("Registering worker %s:%d with %d cores, %s RAM".format(
         workerHost, workerPort, cores, Utils.megabytesToString(memory)))
       if (state == RecoveryState.STANDBY) {

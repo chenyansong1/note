@@ -390,6 +390,7 @@ private[deploy] class Worker(
     }
   }
 
+  // 向master注册
   private def sendRegisterMessageToMaster(masterEndpoint: RpcEndpointRef): Unit = {
     masterEndpoint.send(RegisterWorker(
       workerId,
