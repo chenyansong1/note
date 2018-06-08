@@ -5,7 +5,7 @@ toc: true
 tags: [shell]
 ---
 
-
+[TOC]
 
 
 # 1.条件测试
@@ -180,12 +180,12 @@ FILE1 -ot FILE2
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/shell/1.png)
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/shell/2.png)
- 
- 
+
+
 > 双分支结构
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/shell/3.png)
- 
+
 
 > 多分支结构
 
@@ -198,14 +198,24 @@ FILE1 -ot FILE2
 ### 2.1.2.书写格式
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/shell/5.png)
- 
+
+
+
+### 2.1.3.example
+```
+# 判断字符串是否为空
+if [ $log_dir"x"="x" ];then
+	echo "true"
+fi
+```
+
 
 ## 2.2.case
 
 ### 2.2.1.语法
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/shell/6.png)
- 
+
 
 ### 2.2.2.书写格式
 
@@ -222,7 +232,7 @@ FILE1 -ot FILE2
 ### 2.3.2.书写格式
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/shell/9.png)
- 
+
 
 ### 2.3.3.通过while读文件的方式
 
@@ -254,7 +264,7 @@ done
 ```
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/shell/10.png)
- 
+
 
 
 
@@ -265,7 +275,7 @@ done
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/shell/11.png)
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/shell/12.png)
- 
+
 
 
 
