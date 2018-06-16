@@ -72,6 +72,29 @@ echo $?         # print return result
 
 
 
+# 注意
+
+* 1.对于有空格的传参的解决方式
+
+```shell
+cmd="ls /tmp"
+sshUtils $cmd
+
+function sshUtils(){
+	cmd=${@:1}
+	echo "execute==== "$cmd
+}
+
+```
+
+
+
+
+
+
+
+
+
 
 
 

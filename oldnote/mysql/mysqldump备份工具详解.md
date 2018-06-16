@@ -108,3 +108,21 @@ mysqldump [OPTIONS] --all-databases [OPTIONS]
 
 
 
+#### Example
+
+
+
+```
+1.导出所有数据库
+
+该命令会导出包括系统数据库在内的所有数据库
+
+mysqldump -uroot -proot --all-databases >/tmp/all.sql
+2.导出db1、db2两个数据库的所有数据
+
+    mysqldump -uroot -proot --databases db1 db2 >/tmp/user.sql
+
+```
+
+
+
