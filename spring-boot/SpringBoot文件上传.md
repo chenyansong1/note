@@ -125,3 +125,11 @@ spring.http.multipart.maxRequestSize=200MB
 ```
 
 
+
+# 4.文件上传中遇到的问题
+
+```Java
+org.springframework.web.HttpMediaTypeNotSupportedException: Content type 'multipart/form-data;boundary=----WebKitFormBoundaryRAYPKeHKTYSNdzc1;charset=UTF-8' not supported
+```
+
+参考：https://www.cnblogs.com/yueli/p/7552888.html
