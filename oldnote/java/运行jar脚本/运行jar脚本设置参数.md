@@ -4,6 +4,10 @@ categories: java
 tags: [java]
 ---
 
+[TOC]
+
+
+
 Java在运行已编译完成的类时，是通过java虚拟机来装载和执行的，java虚拟机通过操作系统命令JAVA_HOME"bin"java –option 来启动，-option为虚拟机参数，JAVA_HOME为JDK安装路径，通过这些参数可对虚拟机的运行状态进行调整，掌握参数的含义可对虚拟机的运行模式有更深入理解。
 
 虚拟机的参数分为两类：
@@ -127,6 +131,21 @@ chenyansongdeMacBook-Pro:bin chenyansong$ java -X
 
 ```
 
+# 3.替换class文件
+
+
+
+1、把X.jar包中的class用jd-gui、luyten反编译得到源码xxx.java
+
+2、javac -cp A.jar;B.jar;C.jar xxx.java 得到修改后的xxx.class文件 (其中A、B、C是依赖jar包，一般直接依赖一个原始解压的X.jar包即可)
+
+3、建立目录结构，把xxx.class放在原始目录层下，具体是哪个层下可以用jar tf X.jar | find "LicenseV"查看X.jar的目录结构。也可以直接解压X.jar并替换那个xxx.class
+
+4、jar -uvf  X.jar com/p1/p2/p3/xxx.class
+
+
+
+
 
 
 # Example
@@ -194,7 +213,7 @@ java -Djava.ext.dirs=./lib Test
 java  [-Xms128m -Xmx512m]   -jar   *.jar   参数1   参数2 ……      
 //[ ]中内容可有可无
 ```
- 
+
 下面是一个完整的例子
 
 ```
@@ -216,7 +235,7 @@ java -Xmx1g -Xms512m -Xmn128m \
      com.aipai.solr.indexing.MyPostData applicationContext_${APP_NAME}.xml $@ 1>logs/ok.log 2>logs/error.log &
 
 ```
- 
+
 
 ## 增加虚拟机可以使用的最大内存
 
