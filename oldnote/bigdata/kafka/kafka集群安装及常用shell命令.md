@@ -40,6 +40,7 @@ bin/kafka-server-start.sh  config/server.properties
 
 /usr/hadoop/kafka_2.11-0.10.2.0/bin/kafka-server-start.sh -daemon /usr/hadoop/kafka_2.11-0.10.2.0/config/server.properties
 
+/usr/local/workspace/kafka_2.11-0.10.2.0/bin/kafka-server-start.sh -daemon 
 #后台启动
 kafka-server-start.sh config/server.properties &
 
