@@ -110,9 +110,10 @@ public class TypeAliasRegistry {
       // issue #748
       String key = string.toLowerCase(Locale.ENGLISH);
       Class<T> value;
-      if (TYPE_ALIASES.containsKey(key)) {
+
+      if (TYPE_ALIASES.containsKey(key)) {// 1.首先从别名中拿
         value = (Class<T>) TYPE_ALIASES.get(key);
-      } else {
+      } else { // 如果别名中没有，那么 直接实例化一个返回
         value = (Class<T>) Resources.classForName(string);
       }
       return value;
@@ -141,7 +142,7 @@ public class TypeAliasRegistry {
   public void registerAlias(Class<?> type) {
     String alias = type.getSimpleName();
     Alias aliasAnnotation = type.getAnnotation(Alias.class);
-    if (aliasAnnotation != null) {
+    if (aliasAnnotation != null) {// 如果在注解上使用了别名，那么使用注解的别名
       alias = aliasAnnotation.value();
     } 
     registerAlias(alias, type);
