@@ -39,6 +39,7 @@ public class TypeAliasRegistry {
 
   private final Map<String, Class<?>> TYPE_ALIASES = new HashMap<String, Class<?>>();
 
+  // 初始化类的时候默认配置了一些基础的类型转换
   public TypeAliasRegistry() {
     registerAlias("string", String.class);
 
@@ -153,7 +154,9 @@ public class TypeAliasRegistry {
       throw new TypeException("The parameter alias cannot be null");
     }
     // issue #748
+    // 别名小写
     String key = alias.toLowerCase(Locale.ENGLISH);
+    // 如果配置当前有同样的Key（alias）但是存储的类型不一样则会抛出异常
     if (TYPE_ALIASES.containsKey(key) && TYPE_ALIASES.get(key) != null && !TYPE_ALIASES.get(key).equals(value)) {
       throw new TypeException("The alias '" + alias + "' is already mapped to the value '" + TYPE_ALIASES.get(key).getName() + "'.");
     }

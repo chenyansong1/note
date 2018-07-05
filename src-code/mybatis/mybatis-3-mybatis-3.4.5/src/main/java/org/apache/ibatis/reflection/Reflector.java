@@ -57,6 +57,7 @@ public class Reflector {
 
   private Map<String, String> caseInsensitivePropertyMap = new HashMap<String, String>();
 
+  // Configuratoin.class
   public Reflector(Class<?> clazz) {
     type = clazz;
     addDefaultConstructor(clazz);
