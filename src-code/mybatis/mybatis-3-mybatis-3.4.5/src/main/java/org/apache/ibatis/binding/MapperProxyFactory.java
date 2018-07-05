@@ -47,7 +47,9 @@ public class MapperProxyFactory<T> {
     return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[] { mapperInterface }, mapperProxy);
   }
 
+  // 这里构建：代理对象，没有对接口实现，但是任然是动态代理
   public T newInstance(SqlSession sqlSession) {
+    // 创建代理对象
     final MapperProxy<T> mapperProxy = new MapperProxy<T>(sqlSession, mapperInterface, methodCache);
     return newInstance(mapperProxy);
   }
