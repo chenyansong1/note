@@ -31,8 +31,17 @@ Mapper的xml或者注解的方式配置SQL，这两种方式可以退同时存�
 #### config文件部分解读
 
 * environment:配置数据源，事物管理器等
+
 * typeHandler:就是MySQL字段类型和Java类型的映射，mybatis有许多默认的TypeHandler
   * 1.自定义的TypeHandler
     * 继承BaseTypeHandler
     * 去配置文件中注册：setTypeHandler
-* 
+
+* Plugins
+
+  例如：分页就是使用的插件，他就是一个拦截器，只能拦截下面的东西
+
+  
+
+  ![image-20180619223304382](/Users/chenyansong/Documents/note/images/mybatis/plugins.png)
+
