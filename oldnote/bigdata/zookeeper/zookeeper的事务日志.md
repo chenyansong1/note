@@ -22,9 +22,12 @@ tags: [zookeeper]
 
 # 日志格式
 * zk提供了工具类org.apache.zookeeper.server. LogFormatter解析日志的内容
+
 * 第一行是日志格式信息
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/bigdata/zookeeper/log/2.png)
+
+
 
 
 # 日志写入

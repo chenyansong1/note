@@ -7,7 +7,7 @@ tags: [zookeeper]
 
 
 # 1.创建zk实例
-```
+```java
 ZooKeeper(String connectString, int sessionTimeout, Watcher watcher)
 ZooKeeper(String connectString, int sessionTimeout, Watcher watcher, boolean canBeReadOnly)
 ZooKeeper(String connectString, int sessionTimeout, Watcher watcher, long sessionId, byte[] sessionPasswd)
@@ -45,7 +45,7 @@ void create(String path, byte[] data, List<ACL> acl, CreateMode createMode,
 ```
 * 无论是上面的同步或者异步都不支持递归创建节点
 * 当创建的节点存在时，抛出异常NodeExistsException
- 
+
 > Zk create api参数说明
 
 参数名|说明
@@ -65,7 +65,7 @@ ctx|用于传递一个对象，可以在回调方法执行的时候用，通常�
 	* READ_ACL_UNSAFE：相当于world:anyone:r，即所有人拥有读权限
 * 2.自己定义,比如:
 
-```
+```java
 public List<ACL> getDigestAcl(){
 	List<ACL> acls = new ArrayList<ACL>();
 	Id digestId = new Id("digest", "javaclient2:CGf2ydfsfdsjfsldfsdfsdfs=");
@@ -218,7 +218,7 @@ ctx	|传递上下文信息，即操作之前的信息传递到操作之后的异
 
 # 9.代码实现（*重要*）
 
-```
+```java
 package it.com.zk;
 import java.io.IOException;
 import java.util.List;
@@ -452,3 +452,4 @@ public class WatchExample implements Watcher{
     }
 }
 ```
+

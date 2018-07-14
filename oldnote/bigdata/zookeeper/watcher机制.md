@@ -4,7 +4,12 @@ categories: hadoop
 tags: [zookeeper]
 ---
 
+[TOC]
+
+
+
 # watcher
+
 * 问题
 
  1. 集群中有多个机器,当某个通用的配置发生变化后,怎么让所有服务器的配置都统一生效?
@@ -13,13 +18,27 @@ tags: [zookeeper]
 
 
 * watcher组成
-![](http://ols7leonh.bkt.clouddn.com//assert/img/bigdata/zookeeper/watcher/1.png)
-	* 客户端
-	* 客户端watcherManager
-	* zk服务器
+  ![](http://ols7leonh.bkt.clouddn.com//assert/img/bigdata/zookeeper/watcher/1.png)
+  * 客户端
+  * 客户端watcherManager
+  * zk服务器
 * watcher机制
-	1. 客户端向zk服务器注册watcher的同时,会将watcher对象存储在客户端的watcherManager
-	2. zk服务器触发watcher事件后,回向客户端发送通知,客户端线程从watcherManager中调取watcher执行 
+  1. 客户端向zk服务器注册watcher的同时,会将watcher对象存储在客户端的watcherManager
+  2. zk服务器触发watcher事件后,回向客户端发送通知,客户端线程从watcherManager中调取watcher执行 
+
+
+
+
+
+
+Watcher 监听机制是 Zookeeper 中非常重要的特性，我们 基于 zookeeper 上创建的节点，可以对这些节点绑定监听 事件，比如可以监听节点数据变更、节点删除、子节点状 态变更等事件，通过这个事件机制，可以基于 zookeeper 实现分布式锁、集群管理等功能 
+
+watcher 特性:当数据发生变化的时候， zookeeper 会产 生一个 watcher 事件，并且会发送到客户端。但是**客户端只会收到一次通知**。如果后续这个节点再次发生变化，那 么之前设置 watcher 的客户端不会再次收到消息。 (watcher 是一次性的操作)。 可以通过循环监听去达到 永久监听效果 
+
+
+
+
+
 
 * watcher接口
 
@@ -90,7 +109,7 @@ numChildren = 0
 
 * watcher注册
 	* 创建zk客户端对象实例时注册
-```
+```java
 public ZooKeeper(String connectString, int sessionTimeout, Watcher watcher)
 public ZooKeeper(String connectString, int sessionTimeout, Watcher watcher, boolean canBeReadOnly)
 public ZooKeeper(String connectString, int sessionTimeout, Watcher watcher, long sessionId, byte[] sessionPasswd)
@@ -101,7 +120,7 @@ public ZooKeeper(String connectString, int sessionTimeout, Watcher watcher, long
 */
 ```
 	* 其他注册API
-```
+```java
 getChildren(String path, Watcher watcher)
 
 getChildren(String path, boolean watch)	
@@ -121,10 +140,24 @@ exists(String path, boolean watch)
 exists(String path, Watcher watcher)
 
 ```
+
+
+# 事件的实现原理 
+
+
+
+![image-20180711213506467](/Users/chenyansong/Documents/note/images/bigdata/zookeeper/watcher1.png)
+
+
+
+![image-20180711213543007](/Users/chenyansong/Documents/note/images/bigdata/zookeeper/watcher2.png)
+
+
+
 watcher设置后,一旦触发一次即会失效,如果需要一直监听,就需要再注册(很重要)
 
 下面用代码来说明:
-```
+```java
 #Watcher
 
 public class WatcherExample1 implements Watcher {
@@ -194,7 +227,7 @@ eventType=NodeDataChanged
 
 
 下面是触发一次watcher之后,重新注册的例子
-```
+```java
 #watcher
 public class WatcherExample1 implements Watcher {
 	private ZooKeeper  zk = null;

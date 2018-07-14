@@ -7,7 +7,7 @@ tags: [zookeeper]
 
 
 # 1.集群角色（Leader、Follower、Observer）
-1. Leader：为客户端提供读写服务
+1. Leader：为客户端提供读写服务，提供事物请求（增删改），只有leader会提供同步的服务
 2. Follower：仅提供读服务，所有写服务都需要转交给Leader角色，另外参与选举
 3. Observer：仅提供读服务，不参与选举，一般是为了增强zk集群的读请求并发能力
 
@@ -16,6 +16,16 @@ tags: [zookeeper]
 2. 通过心跳检测保持客户端连接的存活
 3. 接收来自服务端的watch事件通知
 4. 可以设置超时时间
+
+
+
+会话状态
+
+![image-20180709200937276](/Users/chenyansong/Documents/note/images/bigdata/zookeeper/session-status.png )
+
+
+
+
 
 
 # 3.数据节点（znode)
@@ -35,6 +45,8 @@ tags: [zookeeper]
 # 5.Watcher
 1. 作用于znode的节点上
 2. 多种事件通知，数据更新、子节点状态等会触发
+
+
 
 
 
