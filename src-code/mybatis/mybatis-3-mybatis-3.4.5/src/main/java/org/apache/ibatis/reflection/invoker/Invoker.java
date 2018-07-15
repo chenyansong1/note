@@ -20,6 +20,10 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * @author Clinton Begin
  */
+/*
+GetFieldInvoker/SetFieldInvoker通过field字段封装了对应的Field对象，两者的invoke()方法是通过调用Field.get()/set()方法实现的
+而MethodInvoker，的invoke()方法是通过Method.invoke()方法实现的
+ */
 public interface Invoker {
   Object invoke(Object target, Object[] args) throws IllegalAccessException, InvocationTargetException;
 

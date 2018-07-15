@@ -19,7 +19,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class DefaultReflectorFactory implements ReflectorFactory {
+
+  // 是否缓存Reflector对象，true说明缓存
   private boolean classCacheEnabled = true;
+
+  // 使用ConcurrentMap 这种map来缓存 Reflector对象
   private final ConcurrentMap<Class<?>, Reflector> reflectorMap = new ConcurrentHashMap<Class<?>, Reflector>();
 
   public DefaultReflectorFactory() {
@@ -40,13 +44,13 @@ public class DefaultReflectorFactory implements ReflectorFactory {
     if (classCacheEnabled) {
             // synchronized (type) removed see issue #461
       Reflector cached = reflectorMap.get(type);
-      if (cached == null) {
+      if (cached == null) {// 如果为空，添加Reflector对象到缓存中，然后返回
         cached = new Reflector(type);
         reflectorMap.put(type, cached);
       }
       return cached;
     } else {
-      return new Reflector(type);
+      return new Reflector(type);// 如果未开启缓存，那么直接创建并返回Reflector对象
     }
   }
 

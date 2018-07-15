@@ -16,3 +16,4 @@ mvn install:install-file -Dfile=proxool-cglib.jar -DgroupId=proxool -DartifactId
 </dependency>
 
 ```
+

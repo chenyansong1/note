@@ -5,6 +5,11 @@ tags: [zookeeper]
 ---
 
 
+
+[TOC]
+
+
+
 # 排他锁
 
 
@@ -29,3 +34,12 @@ tags: [zookeeper]
 	* 获得写锁:只有自己创建的节点序列化最小,才能获得写锁,否则,进入等待,直到有锁资源被释放,然后再判断是否有机会得到锁
 	* 释放锁:删除节点或者会话失效
 	![](http://ols7leonh.bkt.clouddn.com//assert/img/bigdata/zookeeper/lock/2.png)
+
+
+
+惊群效应
+
+有序节点的特性
+
+只是监听比自己小一个值的节点
+

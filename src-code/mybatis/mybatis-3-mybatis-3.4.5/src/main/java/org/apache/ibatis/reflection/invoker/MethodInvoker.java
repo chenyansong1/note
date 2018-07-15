@@ -29,10 +29,11 @@ public class MethodInvoker implements Invoker {
   public MethodInvoker(Method method) {
     this.method = method;
 
+    // 这里的invoke有可能是set(那么此时parameter.size=1), 也有可能是get
     if (method.getParameterTypes().length == 1) {
-      type = method.getParameterTypes()[0];
+      type = method.getParameterTypes()[0];// 参数类型
     } else {
-      type = method.getReturnType();
+      type = method.getReturnType();// 返回值类型
     }
   }
 
