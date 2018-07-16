@@ -17,9 +17,8 @@ http://www.mybatis.org/mybatis-3/zh/dynamic-sql.html
 * 在spring中使用mybatis
 * 如果单独的使用是programming ，如果和spring进行整合那就是managed
 
-+blog:
-+
-+https://blog.csdn.net/column/details/18982.html
-+
-+
+
+
+blog:https://blog.csdn.net/column/details/18982.html
+
 

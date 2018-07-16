@@ -24,9 +24,24 @@ import java.util.List;
 public class PoolState {
 
   protected PooledDataSource dataSource;
-
+  /*
+   PooledDataSource将java.sql.Connection对象包裹成PooledConnection对象放到了PoolState类型的容器中维护。
+   MyBatis将连接池中的PooledConnection分为两种状态： 空闲状态（idle）和活动状态(active)，
+   这两种状态的PooledConnection对象分别被存储到PoolState容器内的idleConnections和activeConnections两个List集合中
+   */
   protected final List<PooledConnection> idleConnections = new ArrayList<PooledConnection>();
   protected final List<PooledConnection> activeConnections = new ArrayList<PooledConnection>();
+
+  /*
+  idleConnections:空闲(idle)状态PooledConnection对象被放置到此集合中，表示当前闲置的没有被使用的PooledConnection集合，
+  调用PooledDataSource的getConnection()方法时，会优先从此集合中取PooledConnection对象。
+  当用完一个java.sql.Connection对象时，MyBatis会将其包裹成PooledConnection对象放到此集合中。
+
+  activeConnections:活动(active)状态的PooledConnection对象被放置到名为activeConnections的ArrayList中，
+  表示当前正在被使用的PooledConnection集合，调用PooledDataSource的getConnection()方法时，
+  会优先从idleConnections集合中取PooledConnection对象,如果没有，则看此集合是否已满，
+  如果未满，PooledDataSource会创建出一个PooledConnection，添加到此集合中，并返回。
+   */
   protected long requestCount = 0;
   protected long accumulatedRequestTime = 0;
   protected long accumulatedCheckoutTime = 0;
