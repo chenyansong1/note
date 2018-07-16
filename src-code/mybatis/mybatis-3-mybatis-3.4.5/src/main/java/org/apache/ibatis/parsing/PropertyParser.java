@@ -43,13 +43,18 @@ public class PropertyParser {
    */
   public static final String KEY_DEFAULT_VALUE_SEPARATOR = KEY_PREFIX + "default-value-separator";
 
+  // 是否启用默认的值
   private static final String ENABLE_DEFAULT_VALUE = "false";
+  // 默认的值分隔符：默认是“分号”
   private static final String DEFAULT_VALUE_SEPARATOR = ":";
 
   private PropertyParser() {
     // Prevent Instantiation
   }
 
+  /*
+
+   */
   public static String parse(String string, Properties variables) {
     VariableTokenHandler handler = new VariableTokenHandler(variables);
     GenericTokenParser parser = new GenericTokenParser("${", "}", handler);
@@ -57,6 +62,7 @@ public class PropertyParser {
   }
 
   private static class VariableTokenHandler implements TokenHandler {
+    // 存放属性Properties
     private final Properties variables;
     private final boolean enableDefaultValue;
     private final String defaultValueSeparator;
@@ -75,16 +81,21 @@ public class PropertyParser {
     public String handleToken(String content) {
       if (variables != null) {
         String key = content;
+        // 启用默认值
         if (enableDefaultValue) {
+          // 找到 默认的分隔符 的index
           final int separatorIndex = content.indexOf(defaultValueSeparator);
           String defaultValue = null;
+
           if (separatorIndex >= 0) {
+            // content=username:zhangsan
             key = content.substring(0, separatorIndex);
             defaultValue = content.substring(separatorIndex + defaultValueSeparator.length());
           }
           if (defaultValue != null) {
             return variables.getProperty(key, defaultValue);
           }
+
         }
         if (variables.containsKey(key)) {
           return variables.getProperty(key);

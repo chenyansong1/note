@@ -45,6 +45,7 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
   @SuppressWarnings("unchecked")
   @Override
   public <T> T create(Class<T> type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
+    // 解析接口
     Class<?> classToCreate = resolveInterface(type);
     // we know types are assignable
     return (T) instantiateClass(classToCreate, constructorArgTypes, constructorArgs);
@@ -55,9 +56,11 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
     // no props for default
   }
 
+  // 实例化对象
   <T> T instantiateClass(Class<T> type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
     try {
       Constructor<T> constructor;
+      // 如果构造参数为空，那么直接构造对象
       if (constructorArgTypes == null || constructorArgs == null) {
         constructor = type.getDeclaredConstructor();
         if (!constructor.isAccessible()) {
@@ -69,6 +72,7 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
       if (!constructor.isAccessible()) {
         constructor.setAccessible(true);
       }
+      // 如果构造参数不为空，那么使用构造参数来实例化对象
       return constructor.newInstance(constructorArgs.toArray(new Object[constructorArgs.size()]));
     } catch (Exception e) {
       StringBuilder argTypes = new StringBuilder();
@@ -101,7 +105,7 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
       classToCreate = TreeSet.class;
     } else if (type == Set.class) {
       classToCreate = HashSet.class;
-    } else {
+    } else {// 普通对象类型
       classToCreate = type;
     }
     return classToCreate;

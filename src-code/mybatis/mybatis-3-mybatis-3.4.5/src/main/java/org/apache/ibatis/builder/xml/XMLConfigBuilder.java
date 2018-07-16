@@ -119,6 +119,8 @@ public class XMLConfigBuilder extends BaseBuilder {
       databaseIdProviderElement(root.evalNode("databaseIdProvider"));
 
       typeHandlerElement(root.evalNode("typeHandlers"));
+
+      //  mybatis-config.xml映射文件 mappers 元素解析
       mapperElement(root.evalNode("mappers"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);
@@ -278,10 +280,19 @@ public class XMLConfigBuilder extends BaseBuilder {
   private void environmentsElement(XNode context) throws Exception {
     if (context != null) {
       if (environment == null) {
+        // 获得默认的jdbc环境
         environment = context.getStringAttribute("default");
       }
+
+
       for (XNode child : context.getChildren()) {
+        /*
+         原来是通过id属性在不同的时候去匹配多个环境,一次可以把开发环境，
+         测试环境,灰度环境配置信息都写好，部署的时候直接修改Id匹配相应的default属性选择对应的environments
+          */
+
         String id = child.getStringAttribute("id");
+        // 接着第8行的代码判断当前的<environment>是不是默认的JDBC环境
         if (isSpecifiedEnvironment(id)) {// 匹配默认的环境
           TransactionFactory txFactory = transactionManagerElement(child.evalNode("transactionManager"));// 事物管理，数据源
           DataSourceFactory dsFactory = dataSourceElement(child.evalNode("dataSource"));
@@ -292,6 +303,10 @@ public class XMLConfigBuilder extends BaseBuilder {
               .dataSource(dataSource);
           configuration.setEnvironment(environmentBuilder.build());
         }
+        /*
+        1.判断即不是默认<environment>的场景做判断，因此可以得到一个结论：<environments>标签下的default属性是一个必填属性
+        2.即使配置再多的<environment>标签，MyBatis只会加载其中的一个<environment>
+       */
       }
     }
   }
@@ -364,32 +379,50 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
   }
 
+  /*
+  mybatis-config.xml映射文件 mappers 元素解析： mapperElement(root.evalNode("mappers"))
+  */
   private void mapperElement(XNode parent) throws Exception {
     if (parent != null) {
       for (XNode child : parent.getChildren()) {
-        if ("package".equals(child.getName())) {
+        /*
+        看到<mappers>下可以定义<mapper>和<package>两种子标签，
+        它们同样是二选一的关系，即只能定义其中一种，这里先看package分支的内容即根据类路径加载Mapper就不看了，基本不用的，
+        就看else分支里面的内容，即根据<mapper>标签解析sql映射
+         */
+
+        if ("package".equals(child.getName())) {// 定义的是package下的所有的 XXXMapper.xml文件
           String mapperPackage = child.getStringAttribute("name");
           configuration.addMappers(mapperPackage);
         } else {
+          // 这里有3种解析方式：resource， url, class
           String resource = child.getStringAttribute("resource");
           String url = child.getStringAttribute("url");
           String mapperClass = child.getStringAttribute("class");
-          if (resource != null && url == null && mapperClass == null) {
+
+          if (resource != null && url == null && mapperClass == null) {// resource方式解析
             ErrorContext.instance().resource(resource);
+            // 加载resource=resource="org/mybatis/builder/AuthorMapper.xml 这个xml
             InputStream inputStream = Resources.getResourceAsStream(resource);
             XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, resource, configuration.getSqlFragments());
             mapperParser.parse();
-          } else if (resource == null && url != null && mapperClass == null) {
+
+          } else if (resource == null && url != null && mapperClass == null) {// url的方式解析
             ErrorContext.instance().resource(url);
             InputStream inputStream = Resources.getUrlAsStream(url);
             XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, url, configuration.getSqlFragments());
             mapperParser.parse();
-          } else if (resource == null && url == null && mapperClass != null) {
+
+          } else if (resource == null && url == null && mapperClass != null) {// class的方式解析
             Class<?> mapperInterface = Resources.classForName(mapperClass);
             configuration.addMapper(mapperInterface);
           } else {
             throw new BuilderException("A mapper element may only specify a url, resource or class, but not more than one.");
           }
+          /*
+          这告诉我们了resource、url、mapperClass三个属性只能定义其中的一个
+           */
+
         }
       }
     }
