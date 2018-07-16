@@ -383,6 +383,7 @@ public class PooledDataSource implements DataSource {
     }
   }
 
+  // 参见：https://blog.csdn.net/luanlouis/article/details/37671851 这篇文章，非常好
   private PooledConnection popConnection(String username, String password) throws SQLException {
     boolean countedWait = false;
     PooledConnection conn = null;
@@ -445,7 +446,7 @@ public class PooledDataSource implements DataSource {
                 log.debug("Claimed overdue connection " + conn.getRealHashCode() + ".");
               }
             } else {// 如果连最老的connection都没有过期，那么只能wait
-              // Must wait
+              // Must wait 线程等待， 循环while
               try {
                 if (!countedWait) {
                   state.hadToWaitCount++;
@@ -463,6 +464,8 @@ public class PooledDataSource implements DataSource {
             }
           }
         }
+
+        // 如果获取PooledConnection成功，则更新其信息
         if (conn != null) {
           // ping to server and check the connection is valid or not
           if (conn.isValid()) {
