@@ -70,6 +70,9 @@ public enum JdbcType {
   public final int TYPE_CODE;
   private static Map<Integer,JdbcType> codeLookup = new HashMap<Integer,JdbcType>();
 
+  /*
+  通过一个静态集合 codeLookup ( HashMap<Integer,JdbcType＞类型〉维护了常量编码与JdbcType 之间的对应关系
+   */
   static {
     for (JdbcType type : JdbcType.values()) {
       codeLookup.put(type.TYPE_CODE, type);

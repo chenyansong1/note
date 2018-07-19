@@ -34,9 +34,11 @@ import org.apache.ibatis.io.Resources;
 
 /**
  * @author Clinton Begin
+ * 别名的管理和注册
  */
 public class TypeAliasRegistry {
 
+  // 别名和Java类型之间的映射关系
   private final Map<String, Class<?>> TYPE_ALIASES = new HashMap<String, Class<?>>();
 
   // 初始化类的时候默认配置了一些基础的类型转换
@@ -127,6 +129,7 @@ public class TypeAliasRegistry {
     registerAliases(packageName, Object.class);
   }
 
+  // 重载会扫描指定包下所有的类, 并为指定类的子类添加别名
   public void registerAliases(String packageName, Class<?> superType){
     ResolverUtil<Class<?>> resolverUtil = new ResolverUtil<Class<?>>();
     resolverUtil.find(new ResolverUtil.IsA(superType), packageName);
@@ -141,13 +144,17 @@ public class TypeAliasRegistry {
   }
 
   public void registerAlias(Class<?> type) {
-    String alias = type.getSimpleName();
+    // 类的简单名称（不包含包名 ）
+    String alias = type.getSimpleName();// 这里是通过简单的类名，设置为别名
+    // 会尝试读取 @Alias 注解
     Alias aliasAnnotation = type.getAnnotation(Alias.class);
     if (aliasAnnotation != null) {// 如果在注解上使用了别名，那么使用注解的别名
       alias = aliasAnnotation.value();
-    } 
+    }
+    // 检测此别名不存在后，会将其记录到 TYPE ALIASES 集合中
     registerAlias(alias, type);
   }
+
 
   public void registerAlias(String alias, Class<?> value) {
     if (alias == null) {
@@ -160,6 +167,7 @@ public class TypeAliasRegistry {
     if (TYPE_ALIASES.containsKey(key) && TYPE_ALIASES.get(key) != null && !TYPE_ALIASES.get(key).equals(value)) {
       throw new TypeException("The alias '" + alias + "' is already mapped to the value '" + TYPE_ALIASES.get(key).getName() + "'.");
     }
+    // 注册别名
     TYPE_ALIASES.put(key, value);
   }
 
