@@ -19,6 +19,7 @@ import java.lang.reflect.Field;
 
 /**
  * @author Clinton Begin
+ * 实现相同类型的两个对象之间的属性值拷贝
  */
 public final class PropertyCopier {
 
@@ -33,6 +34,8 @@ public final class PropertyCopier {
       for(Field field : fields) {
         try {
           field.setAccessible(true);
+
+          // 关键：将sourceBean对象中的属性值设置到destinationBean对象中
           field.set(destinationBean, field.get(sourceBean));
         } catch (Exception e) {
           // Nothing useful to do, will only fail on final fields, which will be ignored.

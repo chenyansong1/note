@@ -27,22 +27,28 @@ import java.util.Arrays;
 
 /**
  * @author Iwao AVE!
+ * 这是一个工具类
  */
 public class TypeParameterResolver {
 
   /**
    * @return The field type as {@link Type}. If it has type parameters in the declaration,<br>
    *         they will be resolved to the actual runtime {@link Type}s.
+   *  解析字段类型
    */
   public static Type resolveFieldType(Field field, Type srcType) {
+    // 获取字段的声明类型
     Type fieldType = field.getGenericType();
+    // 获取字段定义所在的类的Class对象
     Class<?> declaringClass = field.getDeclaringClass();
+    // 统一调用resolveType 进行处理
     return resolveType(fieldType, srcType, declaringClass);
   }
 
   /**
    * @return The return type of the method as {@link Type}. If it has type parameters in the declaration,<br>
    *         they will be resolved to the actual runtime {@link Type}s.
+   *  机械返回值类型
    */
   public static Type resolveReturnType(Method method, Type srcType) {
     Type returnType = method.getGenericReturnType();
@@ -53,6 +59,7 @@ public class TypeParameterResolver {
   /**
    * @return The parameter types of the method as an array of {@link Type}s. If they have type parameters in the declaration,<br>
    *         they will be resolved to the actual runtime {@link Type}s.
+   *  解析参数列表中的各个参数的类型
    */
   public static Type[] resolveParamTypes(Method method, Type srcType) {
     Type[] paramTypes = method.getGenericParameterTypes();

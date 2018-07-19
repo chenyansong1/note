@@ -31,14 +31,19 @@ import org.apache.ibatis.reflection.property.PropertyTokenizer;
  */
 public class MetaClass {
 
+  // 缓存Reflector对象
   private final ReflectorFactory reflectorFactory;
+
+  // 创建MetaClass时，会指定一个类，该Reflector对象会用于记录该类相关的元数据
   private final Reflector reflector;
 
+  // 注意这里是private修饰的，所以是不能new的
   private MetaClass(Class<?> type, ReflectorFactory reflectorFactory) {
     this.reflectorFactory = reflectorFactory;
     this.reflector = reflectorFactory.findForClass(type);
   }
 
+  // new实例
   public static MetaClass forClass(Class<?> type, ReflectorFactory reflectorFactory) {
     return new MetaClass(type, reflectorFactory);
   }
@@ -48,7 +53,9 @@ public class MetaClass {
     return MetaClass.forClass(propType, reflectorFactory);
   }
 
+  // orders[0].items[0].name --> odrers.items.name
   public String findProperty(String name) {
+    // 委托给buildProperty()方法实现
     StringBuilder prop = buildProperty(name, new StringBuilder());
     return prop.length() > 0 ? prop.toString() : null;
   }

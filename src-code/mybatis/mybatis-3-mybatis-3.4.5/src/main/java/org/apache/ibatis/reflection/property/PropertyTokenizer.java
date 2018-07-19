@@ -19,14 +19,16 @@ import java.util.Iterator;
 
 /**
  * @author Clinton Begin
+ *
+ * 对这样的 fullname=oders[0].items[0].name 进行解析
  */
 public class PropertyTokenizer implements Iterator<PropertyTokenizer> {
-  private String name;
-  private final String indexedName;
-  private String index;
-  private final String children;
+  private String name; // 当前表达式的名称
+  private final String indexedName; // 当前表达式的索引名
+  private String index;// 索引下标
+  private final String children;// 子表达式
 
-  public PropertyTokenizer(String fullname) {
+  public PropertyTokenizer(String fullname) {// fullname=oders[0].items[0].name
     int delim = fullname.indexOf('.');
     if (delim > -1) {
       name = fullname.substring(0, delim);
@@ -66,6 +68,7 @@ public class PropertyTokenizer implements Iterator<PropertyTokenizer> {
 
   @Override
   public PropertyTokenizer next() {
+    // 从children中解析
     return new PropertyTokenizer(children);
   }
 
