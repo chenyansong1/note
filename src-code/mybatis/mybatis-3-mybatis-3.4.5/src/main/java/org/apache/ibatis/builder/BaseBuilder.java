@@ -32,8 +32,12 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
  * @author Clinton Begin
  */
 public abstract class BaseBuilder {
+  // 所有的配置文件都在这个类中，“All-In-One”
   protected final Configuration configuration;
+
+  // 别名标签
   protected final TypeAliasRegistry typeAliasRegistry;
+
   protected final TypeHandlerRegistry typeHandlerRegistry;
 
   public BaseBuilder(Configuration configuration) {

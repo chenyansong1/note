@@ -27,6 +27,11 @@ public interface TypeHandler<T> {
 
   void setParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType) throws SQLException;
 
+  /*
+ setParameter（）: 方法负责将数据 由 JdbcType 类型转换成 Java
+ getResult（）方法及其重载负责将数据由 Java 类型转换成 JdbcType 类型。
+   */
+
   T getResult(ResultSet rs, String columnName) throws SQLException;
 
   T getResult(ResultSet rs, int columnIndex) throws SQLException;

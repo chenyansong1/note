@@ -21,4 +21,11 @@ http://www.mybatis.org/mybatis-3/zh/dynamic-sql.html
 
 blog:https://blog.csdn.net/column/details/18982.html
 
+https://blog.csdn.net/luanlouis/article/details/40422941、
+
+
+
+https://my.oschina.net/zudajun/blog/665956
+
+
 
