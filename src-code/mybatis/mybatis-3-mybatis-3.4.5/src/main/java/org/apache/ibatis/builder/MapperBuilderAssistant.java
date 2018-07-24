@@ -180,34 +180,48 @@ public class MapperBuilderAssistant extends BaseBuilder {
       Discriminator discriminator,
       List<ResultMapping> resultMappings,
       Boolean autoMapping) {
+
+    // ResultMap的完整的id是 "namespace.id" 的格式
     id = applyCurrentNamespace(id, false);
+    // 获取被继承的ResultMap的完整的id，也就是父ResultMap对象的完整ID
     extend = applyCurrentNamespace(extend, true);
 
     if (extend != null) {
-      if (!configuration.hasResultMap(extend)) {
+      // 检测Configuration.resultMaps集合中是否存在被继承的ResultMap对象
+      if (!configuration.hasResultMap(extend)) {// 如果没有找到直接抛异常
         throw new IncompleteElementException("Could not find a parent resultmap with id '" + extend + "'");
       }
+      // 获取需要被继承的ResultMap对象，也就是父ResultMap对象
       ResultMap resultMap = configuration.getResultMap(extend);
+      // 获取父ResultMap对象中记录的ResultMapping集合
       List<ResultMapping> extendedResultMappings = new ArrayList<ResultMapping>(resultMap.getResultMappings());
+      // 删除需要覆盖的ResultMapping集合
       extendedResultMappings.removeAll(resultMappings);
+
       // Remove parent constructor if this resultMap declares a constructor.
+      /*
+      如果当前<resultMap>节点中定义了<constructor>节点，则不需要使用父ResultMap中记录的相应<constructor>节点，则将其对应的ResultMapping对象删除
+       */
       boolean declaresConstructor = false;
-      for (ResultMapping resultMapping : resultMappings) {
+      for (ResultMapping resultMapping : resultMappings) {// 找当前节点中是否存在<constructor>节点
         if (resultMapping.getFlags().contains(ResultFlag.CONSTRUCTOR)) {
           declaresConstructor = true;
           break;
         }
       }
-      if (declaresConstructor) {
+      if (declaresConstructor) {// 当前ResultMapping有<constructor>节点
         Iterator<ResultMapping> extendedResultMappingsIter = extendedResultMappings.iterator();
         while (extendedResultMappingsIter.hasNext()) {
           if (extendedResultMappingsIter.next().getFlags().contains(ResultFlag.CONSTRUCTOR)) {
-            extendedResultMappingsIter.remove();
+            extendedResultMappingsIter.remove();// 将父类的 <constructor>节点 删除
           }
         }
       }
+      // 添加需要被继承下来的ResultMapping对象集合
       resultMappings.addAll(extendedResultMappings);
     }
+
+    // 创建ResultMap对象， 并添加到Configuration.resultMaps集合中
     ResultMap resultMap = new ResultMap.Builder(configuration, id, type, resultMappings, autoMapping)
         .discriminator(discriminator)
         .build();
@@ -373,8 +387,13 @@ public class MapperBuilderAssistant extends BaseBuilder {
       String resultSet,
       String foreignColumn,
       boolean lazy) {
+    // 解析<resultType> 节点指定的 property属性 的类型
     Class<?> javaTypeClass = resolveResultJavaType(resultType, property, javaType);
+
+    // 获取typeHandler指定的TypeHandler对象，底层依赖于typeHandlerRegistry
     TypeHandler<?> typeHandlerInstance = resolveTypeHandler(javaTypeClass, typeHandler);
+
+    // 解析 column属性值，当column是{prop1=col1, prop2=col2}时，会解析成ResultMapping对象集合，column的这种形式主要用于嵌套查询的参数传递
     List<ResultMapping> composites = parseCompositeColumnName(column);
     return new ResultMapping.Builder(configuration, property, column, javaTypeClass)
         .jdbcType(jdbcType)

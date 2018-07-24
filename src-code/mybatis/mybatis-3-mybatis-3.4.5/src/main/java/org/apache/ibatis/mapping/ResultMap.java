@@ -49,8 +49,8 @@ public class ResultMap {
   private Set<String> mappedProperties;
   private Discriminator discriminator;
   private boolean hasNestedResultMaps;
-  private boolean hasNestedQueries;
-  private Boolean autoMapping;
+  private boolean hasNestedQueries;// 是否有嵌套查询，如果某个属性映射存在select属性，则为true
+  private Boolean autoMapping;// 是否开启自动映射
 
   private ResultMap() {
   }
