@@ -50,12 +50,16 @@ import org.apache.ibatis.type.TypeHandler;
 /**
  * @author Clinton Begin
  * @author Kazuki Shimizu
+ * 主要负责解析 mybatis-config.xml 配置文件
  */
 public class XMLConfigBuilder extends BaseBuilder {
 
+  // 标识是否已经解析过 mybatis-config.xml 配置丈件
   private boolean parsed;
   private final XPathParser parser;
+  // 标识＜ environment＞配置的名称，默认读取＜ environment ＞标签的 default 属性
   private String environment;
+  // ReflectorFactory 负责创建和缓存 Reflector 对象
   private final ReflectorFactory localReflectorFactory = new DefaultReflectorFactory();
 
   public XMLConfigBuilder(Reader reader) {
@@ -91,11 +95,17 @@ public class XMLConfigBuilder extends BaseBuilder {
     this.parser = parser;
   }
 
+  /*
+  XMLConfigBuilder.parse（）方法是解析 mybatis-config.xml 配置文件的入口，
+  它通过调用XMLConfigBuilder.parseConfiguration（）方法实现整个解析过程
+   */
   public Configuration parse() {
+    // 根据 parsed 变量的值，判断是否已经完成了对 mybatis-config.xml 配置文件的解析
     if (parsed) {
       throw new BuilderException("Each XMLConfigBuilder can only be used once.");
     }
     parsed = true;
+    // 在 mybatis-config.xml 配置文件中查找＜ configuration ＞节点，并开始解析
     parseConfiguration(parser.evalNode("/configuration"));
     return configuration;
   }
@@ -108,11 +118,14 @@ public class XMLConfigBuilder extends BaseBuilder {
       loadCustomVfs(settings);
       //
       typeAliasesElement(root.evalNode("typeAliases")); // HashMap<alias, 类的全限定名> ，会将默认的java类型放入其中
+
       pluginElement(root.evalNode("plugins"));
 
       objectFactoryElement(root.evalNode("objectFactory"));
       objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
       reflectorFactoryElement(root.evalNode("reflectorFactory"));
+
+      // 将setting中的参数设置到Configuration中对应的属性中
       settingsElement(settings);
       // read it after objectFactory and objectWrapperFactory issue #631
       environmentsElement(root.evalNode("environments"));
@@ -127,6 +140,11 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
   }
 
+  /*
+  配置是 MyBatis 全局性的配置,它们会改变 MyBatis 的运行时行为
+  在 MyBatis 初始化时，这些全局配置信息都会被记录到 Configuration 对象的对应属性中
+  在 Configuration 中存在一个同名的相应字段，和setting中的设置对应
+   */
   private Properties settingsAsProperties(XNode context) {
     if (context == null) {
       return new Properties();
@@ -157,6 +175,9 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
   }
 
+  /*
+  负责解析＜typeAliases＞节点及其子节点，并通过 TypeAliasRegistry 完成别名的注册
+   */
   private void typeAliasesElement(XNode parent) {
     if (parent != null) {
       for (XNode child : parent.getChildren()) {
@@ -181,12 +202,16 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
   }
 
+
   private void pluginElement(XNode parent) throws Exception {
     if (parent != null) {
       for (XNode child : parent.getChildren()) {
+        // 获取＜plugin ＞节点的 interceptor 属性的值
         String interceptor = child.getStringAttribute("interceptor");
+        // 获取＜plugin ＞节点下＜properties ＞配置的信息，并形成 Properties 对象
         Properties properties = child.getChildrenAsProperties();
         // 从别名注册中 找到对应的 拦截器的全限定名， 然后 实例化（newInstance)
+        // 通过TypeAliasRegistry 解析别名之后，实例化 Interceptor 对象
         Interceptor interceptorInstance = (Interceptor) resolveClass(interceptor).newInstance();
         interceptorInstance.setProperties(properties);
         // 在配置类中 加入拦截器
@@ -202,6 +227,7 @@ public class XMLConfigBuilder extends BaseBuilder {
       //
       ObjectFactory factory = (ObjectFactory) resolveClass(type).newInstance();
       factory.setProperties(properties);
+      // 将自定义的 ObjectFactory 对象记录到 Configuration, 同ectFactory 字段中
       configuration.setObjectFactory(factory);
     }
   }
@@ -222,6 +248,11 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
   }
 
+  /*
+  解析 mybatis-config.xml 配置 文件中的<properties＞节点并形成 java. util.Properties 对象，
+  之后将该 Properties 对象设置到 XPathParser 和Configuration 的 variables 字段中。
+  在后面的解析过程中，会使用该 Properties 对象中的信息替换占位符。
+   */
   private void propertiesElement(XNode context) throws Exception {
     if (context != null) {
       Properties defaults = context.getChildrenAsProperties();
@@ -237,8 +268,10 @@ public class XMLConfigBuilder extends BaseBuilder {
       }
       Properties vars = configuration.getVariables();
       if (vars != null) {
+        //与 Configuration 对象中 的 variables 集合合并
         defaults.putAll(vars);
       }
+      // parser和configuration中都设置一份
       parser.setVariables(defaults);
       configuration.setVariables(defaults);
     }
@@ -280,17 +313,15 @@ public class XMLConfigBuilder extends BaseBuilder {
   private void environmentsElement(XNode context) throws Exception {
     if (context != null) {
       if (environment == null) {
-        // 获得默认的jdbc环境
+        // 获得默认的jdbc环境:根据指定的默认的配置设置：DataSourceFactory和TransactionFactory
         environment = context.getStringAttribute("default");
       }
-
 
       for (XNode child : context.getChildren()) {
         /*
          原来是通过id属性在不同的时候去匹配多个环境,一次可以把开发环境，
          测试环境,灰度环境配置信息都写好，部署的时候直接修改Id匹配相应的default属性选择对应的environments
           */
-
         String id = child.getStringAttribute("id");
         // 接着第8行的代码判断当前的<environment>是不是默认的JDBC环境
         if (isSpecifiedEnvironment(id)) {// 匹配默认的环境
