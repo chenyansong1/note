@@ -874,9 +874,10 @@ public class Configuration {
 
     @SuppressWarnings("unchecked")
     public V put(String key, V value) {
-      if (containsKey(key)) {
+      if (containsKey(key)) {// 如果已经包含了该 key ，则直接返回异常
         throw new IllegalArgumentException(name + " already contains value for " + key);
       }
+      // 按照”·”将 key 切分成数量且，并将数组的最后一项作为 shortKey
       if (key.contains(".")) {
         final String shortKey = getShortName(key);
         if (super.get(shortKey) == null) {

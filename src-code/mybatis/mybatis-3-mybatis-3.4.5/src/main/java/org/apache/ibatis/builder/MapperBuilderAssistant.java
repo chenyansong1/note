@@ -129,16 +129,19 @@ public class MapperBuilderAssistant extends BaseBuilder {
       boolean blocking,
       Properties props) {
     Cache cache = new CacheBuilder(currentNamespace)
-        .implementation(valueOrDefault(typeClass, PerpetualCache.class))
-        .addDecorator(valueOrDefault(evictionClass, LruCache.class))
+        .implementation(valueOrDefault(typeClass, PerpetualCache.class))// 这里设置默认的cache
+        .addDecorator(valueOrDefault(evictionClass, LruCache.class))// 这里设置默认的evictionClass
         .clearInterval(flushInterval)
         .size(size)
         .readWrite(readWrite)
         .blocking(blocking)
         .properties(props)
         .build();
+    /*
+    将 Cache 对象添加到 Configuration.caches 集合中保存，其中会将 Cache 的 id 作为 key,Cache 对象本身作为 value
+     */
     configuration.addCache(cache);
-    currentCache = cache;
+    currentCache = cache; // 记录当前命名空间使用的 cache 对象
     return cache;
   }
 

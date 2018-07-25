@@ -88,14 +88,22 @@ public class XMLMapperBuilder extends BaseBuilder {
   }
 
   public void parse() {
+    // 判断是否已经加载过该映射文件
     if (!configuration.isResourceLoaded(resource)) {
       configurationElement(parser.evalNode("/mapper"));
+      // 将 resource 添加到 Configuration.loadedResources 集合中保存 ，
+      // 它是 HashSet<String>类型的集合，其中记录了已经加载过的映射文件
       configuration.addLoadedResource(resource);
+
+      // 注册 Mapper 接 口
       bindMapperForNamespace();
     }
 
+    // 处理 configurationElement （）方法 中 解析失败的＜ resultMap ＞节点
     parsePendingResultMaps();
+    // 处理 configurationElement （）方法中 解析失败的＜cache-ref＞节点
     parsePendingCacheRefs();
+    // 处理 configurationElement （）方 法中解析失败的 SQL 语句节点
     parsePendingStatements();
   }
 
@@ -106,11 +114,12 @@ public class XMLMapperBuilder extends BaseBuilder {
   private void configurationElement(XNode context) {
     try {
       String namespace = context.getStringAttribute("namespace");
-      if (namespace == null || namespace.equals("")) {
+      if (namespace == null || namespace.equals("")) {// 如采 namespace 属性为 空，则抛 出 异常
         throw new BuilderException("Mapper's namespace cannot be empty");
       }
 
-      // 这里是解析mapper.xml中的配置：mapper.xml中默认的配置元素有下面几种，参见：https://blog.csdn.net/qq_35807136/article/details/79085804
+      // 这里是解析mapper.xml中的配置：mapper.xml中默认的配置元素有下面几种，参见：https://blog.csdn.net/qq_35807136/article/details/79085804\
+      // 设置 MapperBuilderAssistant 的 currentNamespace 字段，记录当前命名空间
       builderAssistant.setCurrentNamespace(namespace);
       cacheRefElement(context.evalNode("cache-ref"));
       cacheElement(context.evalNode("cache"));
@@ -199,17 +208,25 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
+  /*
+  MyBatis 拥有非常强大的二级缓存功能， 该功能可以非常方便地进行配置， MyBatis 默认情况下没有开启二级缓存，如果要为某命名空间开启 二级缓存功能，
+  则需要在相应映射配置文件中添加＜cache＞节点，还可以通过配置＜cache＞节点的相关属性，为二级缓存配置相应的特性 （本质上就是添加相应的装饰器〉
+   */
   private void cacheElement(XNode context) throws Exception {
     if (context != null) {
-      String type = context.getStringAttribute("type", "PERPETUAL");
+      String type = context.getStringAttribute("type", "PERPETUAL");// perpetual
       Class<? extends Cache> typeClass = typeAliasRegistry.resolveAlias(type);
-      String eviction = context.getStringAttribute("eviction", "LRU");
+
+      String eviction = context.getStringAttribute("eviction", "LRU");// 策略
+      // 解析 eviction 属性指定的 Cache 装饰器类型
       Class<? extends Cache> evictionClass = typeAliasRegistry.resolveAlias(eviction);
       Long flushInterval = context.getLongAttribute("flushInterval");
       Integer size = context.getIntAttribute("size");
       boolean readWrite = !context.getBooleanAttribute("readOnly", false);
       boolean blocking = context.getBooleanAttribute("blocking", false);
+      // 获取＜cache＞节点下的子节点，将用于初始化二级缓存
       Properties props = context.getChildrenAsProperties();
+      // 通过 MapperBuilderAssistant 创建 Cache 对象，并添加到 Configuration.caches 集合中保存
       builderAssistant.useNewCache(typeClass, evictionClass, flushInterval, size, readWrite, blocking, props);
     }
   }

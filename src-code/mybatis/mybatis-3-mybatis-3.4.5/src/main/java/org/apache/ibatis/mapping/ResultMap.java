@@ -35,18 +35,33 @@ import org.apache.ibatis.session.Configuration;
 
 /**
  * @author Clinton Begin
+ * 每个＜resultMap＞节点都会被解析成一个 ResultMap 对象，
+ * 其中每个节点所定义的映射关系 ，则使用 ResultMapping 对象表示
  */
 public class ResultMap {
   private Configuration configuration;
 
-  private String id;
-  private Class<?> type;
-  private List<ResultMapping> resultMappings;
+  /*
+  <resultMap id="authorResult" type="Author"> <!-- id和type 放入ResultMap 对应的id和type 属性中-->
+    <constructor>
+      <idArg column="blog_id" javaType="int"/>
+    </constructor>
+    <id property="id" column="author_id"/>  <!--这个会放入 idResultMappings -->
+    <result property="username" column="author_username"/> <!-- 这个会放入 resultMappings -->
+  </resultMap>
+   */
+
+  private String id;// < resultMap＞节点的 id 属性
+  private Class<?> type;// <resultMap＞的 type 属性
+  private List<ResultMapping> resultMappings;// 记录了除 ＜ discriminator ＞节点之外的其他映射关系（即 ResultMapping 对象集合）
+  // 记录了映射关系中带有 ID 标志的映射关系，例如 ＜ id ＞ 节点和 ＜ constructor ＞ 节点的＜ idArg ＞子节点
   private List<ResultMapping> idResultMappings;
+  // 记录了映射关系中带有 Constructor 标志的映射关系，例如 ＜ constructor ＞所有子元素
   private List<ResultMapping> constructorResultMappings;
+  // 记录了映射关系中不带有 Constructor 标志的映射关系
   private List<ResultMapping> propertyResultMappings;
-  private Set<String> mappedColumns;
-  private Set<String> mappedProperties;
+  private Set<String> mappedColumns;// 录所有映射关系中涉及的 column 属性的集合
+  private Set<String> mappedProperties; //
   private Discriminator discriminator;
   private boolean hasNestedResultMaps;
   private boolean hasNestedQueries;

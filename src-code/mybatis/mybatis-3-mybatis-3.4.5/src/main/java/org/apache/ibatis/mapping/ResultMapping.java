@@ -27,28 +27,43 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
  * @author Clinton Begin
+ * 对象记录了结果集中的一列与 JavaBean 中 一个属性之间的映射关系
  */
 public class ResultMapping {
 
   private Configuration configuration;
-  private String property;
-  private String column;
-  private Class<?> javaType;
-  private JdbcType jdbcType;
-  private TypeHandler<?> typeHandler;
+  private String property;// 对应节点的 property 属性，表示的是与该列进行映射的属性
+  private String column;// 对应节点的 column 属性，表示的是从数据库中得到的列名或是列名的别名
+  private Class<?> javaType;// 对应节点的 javaType 属性，表示的是一个 JavaBean的完全限定名，或一个类型别名
+  private JdbcType jdbcType;// 对应节点的jdbcType 属性，表示的是进行映射的列的 JDBC 类型
+  private TypeHandler<?> typeHandler;// 对应节点的 typeHandler 属性，表示的是类型处理器，它会覆盖默认的类型处理器
+  /*
+  对应节点的 resultMap 属性，该属性通过 id 引用了另一个＜ resultMap＞节点定义，
+  它负责将结果集中的一部分列 映射成其他关联的结果对象。
+  这样我们就可以通过 join 方式进行关联查询，然后直接映射成多个对象，并同时设置这些对象之间的组合关系
+   */
   private String nestedResultMapId;
+  /*
+  对应节点的 select 属性，该属性通过工id引用了另一个＜select＞节点定义，
+  它会把指定的列的值传入select 属性指定的 select 语句中作为参数进行查询。
+  使用 select 属性可能会导致 N+l 问题
+   */
   private String nestedQueryId;
-  private Set<String> notNullColumns;
-  private String columnPrefix;
-  private List<ResultFlag> flags;
-  private List<ResultMapping> composites;
-  private String resultSet;
-  private String foreignColumn;
-  private boolean lazy;
+
+  private Set<String> notNullColumns;// 对应节点的 notNullColumn 属性拆分后的结果
+  private String columnPrefix;// 对应节点的 columnPrefix 属性
+  private List<ResultFlag> flags;// 处理后的标志，标志共两个： id 和 constructor
+  private List<ResultMapping> composites;// 对应节点的 column 属性拆分后生成的结果， composites.size()>0 会使 column 为 null
+  private String resultSet;// 对应节点的 resultSet 属性
+  private String foreignColumn;// 对应节点的 foreignColumn 属性
+  private boolean lazy;// 是否延迟加载，对应节点的 fetchType 属性
 
   ResultMapping() {
   }
 
+  /*
+  这是一个内部类，该 Builder 类主要用于数据整理和数据校验校验
+   */
   public static class Builder {
     private ResultMapping resultMapping = new ResultMapping();
 

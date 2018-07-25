@@ -38,14 +38,17 @@ import org.apache.ibatis.reflection.SystemMetaObject;
  * @author Clinton Begin
  */
 public class CacheBuilder {
+  // Cache 对象的唯一标识， 一般情况下对应映射文件中的配置 namespace
   private final String id;
+  // Cache 接口的真正实现类，默认位是前面介绍的 PerpetualCache
   private Class<? extends Cache> implementation;
+  // 装饰器集合，默认只包含 LruCache.class
   private final List<Class<? extends Cache>> decorators;
-  private Integer size;
-  private Long clearInterval;
-  private boolean readWrite;
-  private Properties properties;
-  private boolean blocking;
+  private Integer size;// Cache 大小
+  private Long clearInterval;// 清理时间周期
+  private boolean readWrite;// 是否可读写
+  private Properties properties;// 其他配置信息
+  private boolean blocking;// 是否阻塞
 
   public CacheBuilder(String id) {
     this.id = id;
@@ -89,23 +92,50 @@ public class CacheBuilder {
     return this;
   }
 
+  /*
+  该方法根据 CacheBuilder 中上述字段的值，创建 Cache 对象并添加合适的装饰器
+   */
   public Cache build() {
+    /*
+    如果implementation 字段和 decorators集合为空，则为其设立默认佳，
+    implementation 默认位是 PerpetualCache.class,
+    decorators 集合，默认只包含 LruCache.class
+     */
     setDefaultImplementations();
+
+    /*
+    根据 implementation 指定的类型 ， 通过反射获取参数为 String 类型的构造方法，并通过该构造方法创建 Cache 对象
+     */
     Cache cache = newBaseCacheInstance(implementation, id);
+
+    // 根据＜cache＞节点下自己置的＜property＞信息，初始化 Cache 对象
     setCacheProperties(cache);
+
     // issue #352, do not apply decorators to custom caches
+    /*
+    检测 cache 对象的 类型，
+    如果是 PerpetualCache 类型，则为其添加 decorators 集合中的装饰器；
+    如采是自定义类型的 Cache 接 口 实现，则不添加 decorators 集合中的装饰
+    */
     if (PerpetualCache.class.equals(cache.getClass())) {
       for (Class<? extends Cache> decorator : decorators) {
+        // 包装之后的cache
+        // 通过反射获取参数为 Cache 类型的构造方法，并通过该构造方法创建装饰器
         cache = newCacheDecoratorInstance(decorator, cache);
         setCacheProperties(cache);
       }
+      // 添加 MyBatis 中提供的标准装饰器
       cache = setStandardDecorators(cache);
     } else if (!LoggingCache.class.isAssignableFrom(cache.getClass())) {
+      // 只是添加日志Cache
       cache = new LoggingCache(cache);
     }
     return cache;
   }
 
+  /*
+  设置cache的实现类，设置LRUCache的策略
+   */
   private void setDefaultImplementations() {
     if (implementation == null) {
       implementation = PerpetualCache.class;
@@ -207,6 +237,7 @@ public class CacheBuilder {
   private Cache newCacheDecoratorInstance(Class<? extends Cache> cacheClass, Cache base) {
     Constructor<? extends Cache> cacheConstructor = getCacheDecoratorConstructor(cacheClass);
     try {
+      // 将需要装饰的cache放入进去
       return cacheConstructor.newInstance(base);
     } catch (Exception e) {
       throw new CacheException("Could not instantiate cache decorator (" + cacheClass + "). Cause: " + e, e);
