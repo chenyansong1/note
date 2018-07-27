@@ -47,12 +47,12 @@ public class XMLIncludeTransformer {
   替换成真实的参数，该解析过程是在 XMLincludeTransformer.applylncludes（）方法中实现的 ：
    */
   public void applyIncludes(Node source) {
-    // 获取 mybatis-config.xml 中 ＜properties ＞节点下定义的变量集合
+    // 获取 mybatis-config.xml 中 ＜properties＞节点下定义的变量集合
     Properties variablesContext = new Properties();
     Properties configurationVariables = configuration.getVariables();
     if (configurationVariables != null) {
       variablesContext.putAll(configurationVariables);
-    }
+  }
     // 处理 ＜include＞ 子节点
     applyIncludes(source, variablesContext, false);
   }
@@ -64,6 +64,7 @@ public class XMLIncludeTransformer {
    */
   private void applyIncludes(Node source, final Properties variablesContext, boolean included) {
     if (source.getNodeName().equals("include")) {
+      // 查找 refid属性指向的 ＜sql＞节点，返回的是其深克隆的 Node 对象
       Node toInclude = findSqlFragment(getStringAttribute(source, "refid"), variablesContext);
       Properties toIncludeContext = getVariablesContext(source, variablesContext);
       applyIncludes(toInclude, toIncludeContext, true);
