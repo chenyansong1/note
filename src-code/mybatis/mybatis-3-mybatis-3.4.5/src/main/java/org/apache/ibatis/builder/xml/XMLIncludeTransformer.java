@@ -41,12 +41,19 @@ public class XMLIncludeTransformer {
     this.builderAssistant = builderAssistant;
   }
 
+  /*
+  在解析 SQL 节点之前，首先通过 XMLincludeTransformer 解析 SQL 语句中的＜include＞节点 ，
+  该过程会将＜include＞节点替换成＜sql＞节点中定义的 SQL 片段，并将其中的“ ${xxx｝”占位符
+  替换成真实的参数，该解析过程是在 XMLincludeTransformer.applylncludes（）方法中实现的 ：
+   */
   public void applyIncludes(Node source) {
+    // 获取 mybatis-config.xml 中 ＜properties ＞节点下定义的变量集合
     Properties variablesContext = new Properties();
     Properties configurationVariables = configuration.getVariables();
     if (configurationVariables != null) {
       variablesContext.putAll(configurationVariables);
     }
+    // 处理 ＜include＞ 子节点
     applyIncludes(source, variablesContext, false);
   }
 

@@ -53,14 +53,26 @@ public class XMLStatementBuilder extends BaseBuilder {
     this.requiredDatabaseId = databaseId;
   }
 
+  /*
+  解析 SQL 节点的入口函数
+   */
   public void parseStatementNode() {
     String id = context.getStringAttribute("id");
     String databaseId = context.getStringAttribute("databaseId");
 
+    /*
+    获取 SQL 节点的 id 以及 databaseId 属性 ，若其 databaseid~性值与当前使用的数据库不匹配，
+    则不加载该 SQL 节点；若存在相同 id 且 databaseid 不为空的 SQL 节点，则不再加载该 SQL 节点
+     */
     if (!databaseIdMatchesCurrent(id, databaseId, this.requiredDatabaseId)) {
       return;
     }
 
+    /*
+    获取 SQL 节点的多种属性值 ，
+    例如： fetchSize 、 timeout、 parameterType 、 parameterMap 、 resultMap 、
+    resultType 、 lang 、 resultSetType 、 flushCache 、 useCache 等
+     */
     Integer fetchSize = context.getIntAttribute("fetchSize");
     Integer timeout = context.getIntAttribute("timeout");
     String parameterMap = context.getStringAttribute("parameterMap");
@@ -76,15 +88,21 @@ public class XMLStatementBuilder extends BaseBuilder {
     StatementType statementType = StatementType.valueOf(context.getStringAttribute("statementType", StatementType.PREPARED.toString()));
     ResultSetType resultSetTypeEnum = resolveResultSetType(resultSetType);
 
+    // 根据 SQL 节点的名称决定其 SqlCommandType
     String nodeName = context.getNode().getNodeName();
     SqlCommandType sqlCommandType = SqlCommandType.valueOf(nodeName.toUpperCase(Locale.ENGLISH));
+
     boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
     boolean flushCache = context.getBooleanAttribute("flushCache", !isSelect);
     boolean useCache = context.getBooleanAttribute("useCache", isSelect);
     boolean resultOrdered = context.getBooleanAttribute("resultOrdered", false);
 
     // Include Fragments before parsing
+    /*
+    在解析 SQL 语句之前，先处理其中的＜ include ＞节点
+     */
     XMLIncludeTransformer includeParser = new XMLIncludeTransformer(configuration, builderAssistant);
+    // 参见applyIncludes()方法
     includeParser.applyIncludes(context.getNode());
 
     // Parse selectKey after includes and remove them.

@@ -30,24 +30,25 @@ import org.apache.ibatis.session.Configuration;
 
 /**
  * @author Clinton Begin
+ * 表示映射配置文件中定义的 SQL 节点(就是 select, update, insert, delete节点)
  */
 public final class MappedStatement {
 
-  private String resource;
+  private String resource;// 节点中的 id~性（包括命名空间前缀）
   private Configuration configuration;
   private String id;
   private Integer fetchSize;
   private Integer timeout;
   private StatementType statementType;
   private ResultSetType resultSetType;
-  private SqlSource sqlSource;
+  private SqlSource sqlSource;// SqlSource 对象，对应一条 SQL 语句
   private Cache cache;
   private ParameterMap parameterMap;
   private List<ResultMap> resultMaps;
   private boolean flushCacheRequired;
   private boolean useCache;
   private boolean resultOrdered;
-  private SqlCommandType sqlCommandType;
+  private SqlCommandType sqlCommandType;// SQL 的类型：INSERT 、 UPDATE 、 DELETE、 SELECT 或 FLUSH
   private KeyGenerator keyGenerator;
   private String[] keyProperties;
   private String[] keyColumns;
