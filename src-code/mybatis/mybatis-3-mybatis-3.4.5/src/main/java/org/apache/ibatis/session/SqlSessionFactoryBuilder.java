@@ -44,7 +44,7 @@ public class SqlSessionFactoryBuilder {
     return build(reader, null, properties);
   }
 
-  // 入口方法
+
   public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
     try {
       XMLConfigBuilder parser = new XMLConfigBuilder(reader, environment, properties);
@@ -73,7 +73,7 @@ public class SqlSessionFactoryBuilder {
     return build(inputStream, null, properties);
   }
 
-  // 具体的实现，是这个方法完成
+  // 具体的实现，是这个方法完成 ： 入口方法
   public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
     try {
       // 读取配置文件

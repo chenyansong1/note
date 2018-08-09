@@ -89,6 +89,7 @@ public class XMLConfigBuilder extends BaseBuilder {
   private XMLConfigBuilder(XPathParser parser, String environment, Properties props) {
     super(new Configuration());
     ErrorContext.instance().resource("SQL Mapper Configuration");
+    // 通过程序设定的属性，而不是在配置文件中设定的
     this.configuration.setVariables(props);
     this.parsed = false;
     this.environment = environment;
@@ -177,19 +178,21 @@ public class XMLConfigBuilder extends BaseBuilder {
 
   /*
   负责解析＜typeAliases＞节点及其子节点，并通过 TypeAliasRegistry 完成别名的注册
+  可以配置别名的方式：1：在配置文件中指定typeAlias属性；2：在配置文件中指定package属性； 3：通过注解的方式指定
    */
   private void typeAliasesElement(XNode parent) {
     if (parent != null) {
       for (XNode child : parent.getChildren()) {
         if ("package".equals(child.getName())) {// 指定一个包名
           String typeAliasPackage = child.getStringAttribute("name");
+          // 扫描指定包下的所有的类，如果有注解，那么使用注解作为别名，否则使用类的简单名称作为别名
           configuration.getTypeAliasRegistry().registerAliases(typeAliasPackage);
-        } else {
+        } else {// 处理＜ typeAlias ＞节点
           String alias = child.getStringAttribute("alias");
           String type = child.getStringAttribute("type");
           try {
             Class<?> clazz = Resources.classForName(type);
-            if (alias == null) {
+            if (alias == null) {// 有指定别名，就使用指定的别名；没有就使用类的简单名称
               typeAliasRegistry.registerAlias(clazz);
             } else {
               typeAliasRegistry.registerAlias(alias, clazz);
@@ -203,6 +206,7 @@ public class XMLConfigBuilder extends BaseBuilder {
   }
 
 
+  // 插件的加载和管理
   private void pluginElement(XNode parent) throws Exception {
     if (parent != null) {
       for (XNode child : parent.getChildren()) {
@@ -213,8 +217,9 @@ public class XMLConfigBuilder extends BaseBuilder {
         // 从别名注册中 找到对应的 拦截器的全限定名， 然后 实例化（newInstance)
         // 通过TypeAliasRegistry 解析别名之后，实例化 Interceptor 对象
         Interceptor interceptorInstance = (Interceptor) resolveClass(interceptor).newInstance();
+        // 设置插件的属性
         interceptorInstance.setProperties(properties);
-        // 在配置类中 加入拦截器
+        // 在配置类中 加入拦截器（其实是加入到了拦截器链中）
         configuration.addInterceptor(interceptorInstance);
       }
     }
@@ -271,6 +276,9 @@ public class XMLConfigBuilder extends BaseBuilder {
         //与 Configuration 对象中 的 variables 集合合并
         defaults.putAll(vars);
       }
+
+      // 综上，配置文件的覆盖顺序是：配置文件中的property, 配置文件中的resource， 配置文件中url， 程序中设定的property
+
       // parser和configuration中都设置一份
       parser.setVariables(defaults);
       configuration.setVariables(defaults);
