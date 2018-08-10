@@ -429,7 +429,6 @@ public class XMLConfigBuilder extends BaseBuilder {
         它们同样是二选一的关系，即只能定义其中一种，这里先看package分支的内容即根据类路径加载Mapper就不看了，基本不用的，
         就看else分支里面的内容，即根据<mapper>标签解析sql映射
          */
-
         if ("package".equals(child.getName())) {// 定义的是package下的所有的 XXXMapper.xml文件
           String mapperPackage = child.getStringAttribute("name");
           configuration.addMappers(mapperPackage);
@@ -441,7 +440,7 @@ public class XMLConfigBuilder extends BaseBuilder {
 
           if (resource != null && url == null && mapperClass == null) {// resource方式解析
             ErrorContext.instance().resource(resource);
-            // 加载resource=resource="org/mybatis/builder/AuthorMapper.xml 这个xml
+            // 加载resource="org/mybatis/builder/AuthorMapper.xml 这个xml
             InputStream inputStream = Resources.getResourceAsStream(resource);
             XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, resource, configuration.getSqlFragments());
             mapperParser.parse();

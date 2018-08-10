@@ -90,6 +90,7 @@ public class XMLMapperBuilder extends BaseBuilder {
   public void parse() {
     // 判断是否已经加载过该映射文件
     if (!configuration.isResourceLoaded(resource)) {
+      // mapper.xml中的内容解析出来
       configurationElement(parser.evalNode("/mapper"));
       // 将 resource 添加到 Configuration.loadedResources 集合中保存 ，
       // 它是 HashSet<String>类型的集合，其中记录了已经加载过的映射文件
