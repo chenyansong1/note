@@ -39,7 +39,7 @@ import org.apache.ibatis.session.Configuration;
 public class XMLStatementBuilder extends BaseBuilder {
 
   private final MapperBuilderAssistant builderAssistant;
-  private final XNode context;
+  private final XNode context;// 表示一个sql node
   private final String requiredDatabaseId;
 
   public XMLStatementBuilder(Configuration configuration, MapperBuilderAssistant builderAssistant, XNode context) {
@@ -54,7 +54,7 @@ public class XMLStatementBuilder extends BaseBuilder {
   }
 
   /*
-  解析 SQL 节点的入口函数
+  解析 SQL 节点的入口函数（select|insert|update|delete 这些节点）
    */
   public void parseStatementNode() {
     String id = context.getStringAttribute("id");

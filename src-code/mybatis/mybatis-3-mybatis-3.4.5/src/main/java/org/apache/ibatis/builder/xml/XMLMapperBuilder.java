@@ -380,6 +380,7 @@ public class XMLMapperBuilder extends BaseBuilder {
       // 为id添加命名空间
       id = builderAssistant.applyCurrentNamespace(id, false);
 
+      // 检测＜ sql ＞的 databaseId 与当前 Configuration 中记录的 databaseId 是否一致
       if (databaseIdMatchesCurrent(id, databaseId, requiredDatabaseId)) {
         /*
         记录到 XMLMapperBuilder.sqlFragments（Map<String, XNode>）中保存，在 XMLMapperBuilder的构造函数中，
