@@ -40,9 +40,12 @@ public class SqlSourceBuilder extends BaseBuilder {
   }
 
   public SqlSource parse(String originalSql, Class<?> parameterType, Map<String, Object> additionalParameters) {
+    // 创建 ParameterMappingTokenHandler 对象，它是解析 ” #{} ”占 位符 中的参数属性以及替换占位符的核心
     ParameterMappingTokenHandler handler = new ParameterMappingTokenHandler(configuration, parameterType, additionalParameters);
+    // 使用 GenericTokenParser 与 ParameterMappingTokenHandler 配合解析 ” #{} ”占位符
     GenericTokenParser parser = new GenericTokenParser("#{", "}", handler);
     String sql = parser.parse(originalSql);
+    // 创建 StaticSqlSource ，其中封装了占位符被替换成 ” ？ ”的 SQL 语句以及参数对应的 Parame terMapping集合
     return new StaticSqlSource(configuration, sql, handler.getParameterMappings());
   }
 
@@ -65,7 +68,7 @@ public class SqlSourceBuilder extends BaseBuilder {
     @Override
     public String handleToken(String content) {
       parameterMappings.add(buildParameterMapping(content));
-      return "?";
+      return "?";// 返回问号 占位符
     }
 
     private ParameterMapping buildParameterMapping(String content) {
@@ -120,6 +123,10 @@ public class SqlSourceBuilder extends BaseBuilder {
       if (typeHandlerAlias != null) {
         builder.typeHandler(resolveTypeHandler(javaType, typeHandlerAlias));
       }
+      /*
+      创建 ParameterMapping 对象，注意，如果没有指定 TypeHandler, 则会在这里的 build() 方法中 ，
+      根据 javaType 和 jdbcType 从 TypeHandlerRegistry 中获取对应的 TypeHandler 对象
+       */
       return builder.build();
     }
 

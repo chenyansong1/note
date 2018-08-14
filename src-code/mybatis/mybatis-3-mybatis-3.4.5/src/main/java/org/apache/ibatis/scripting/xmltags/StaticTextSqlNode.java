@@ -25,6 +25,10 @@ public class StaticTextSqlNode implements SqlNode {
     this.text = text;
   }
 
+  /*
+  StaticTextSqlNode 中使用 text 字段(String 类型）记录了对应的非动态 SQL 语句节点，
+   其apply（）方法直接将 text 宇段追加到 DynamicContext.sqlBuilder 字段中
+   */
   @Override
   public boolean apply(DynamicContext context) {
     context.appendSql(text);

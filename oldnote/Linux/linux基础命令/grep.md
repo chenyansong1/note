@@ -75,6 +75,10 @@ mysql           3306/udp                        # MySQL
 ncube-lm        1521/tcp                # nCube License Manager
 ncube-lm        1521/udp                # nCube License Manager
 
+# 获取数字开头的行
+grep "^[0-9]" test.log
+
+
 ```
 
 # 6.改匹配到的字符串添加颜色标识

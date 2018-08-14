@@ -33,7 +33,7 @@ public class ParameterMapping {
   private ParameterMode mode;
   private Class<?> javaType = Object.class;
   private JdbcType jdbcType;
-  private Integer numericScale;
+  private Integer numericScale;// 浮点参数的精度
   private TypeHandler<?> typeHandler;
   private String resultMapId;
   private String jdbcTypeName;
