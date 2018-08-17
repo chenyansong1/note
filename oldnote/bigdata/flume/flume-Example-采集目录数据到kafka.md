@@ -2,9 +2,15 @@
 
 
 
+[TOC]
+
 
 
 **可以配置的字段参见：flume源码中的 SpoolDirectorySourceConfigurationConstants.java**
+
+
+
+# 配置文件
 
 
 
@@ -64,6 +70,62 @@ a1.sinks.k1.channel = c1
 ```
 
 
+
+# 可能报错的情况
+
+
+
+
+
+**如果监控的目录下有重复的文件名称，那么此时会报下面的错误：**
+
+```shell
+2014-06-02 12:01:04,070 (pool-6-thread-1) [ERROR - org.apache.flume.source.SpoolDirectorySource$SpoolDirectoryRunnable.run(SpoolDirectorySource.java:256)] FATAL: Spool Directory source source1: { spoolDir: /usr/aboutyunlog }: Uncaught exception in SpoolDirectorySource thread. Restart or reconfigure Flume to continue processing. java.lang.IllegalStateException: File name has been re-used with different files. Spooling assumptions violated for /usr/aboutyunlog/test1.COMPLETED at org.apache.flume.client.avro.ReliableSpoolingFileEventReader.rollCurrentFile(ReliableSpoolingFileEventReader.java:362) 
+```
+
+
+
+他的错是因为flume监控目录下有重复文件名称了， 
+
+
+
+> 解决的方式：
+>
+> 将目录遍历的策略变成：遍历删除：a1.sources.r1.deletePolicy = immediate
+>
+> 这样就不会有重复的文件名问题了
+
+
+
+参见：http://www.aboutyun.com/blog-61-218.html
+
+
+
+
+
+
+
+**修改了正在正在读取的文件时间 or 修改了文件的大小**
+
+报错如下：
+
+```
+ File has been modified since being read
+ or
+ File has changed size since being read
+```
+
+
+
+原因：是文件太大，或者由于网络的原因文件传输没有完成，而此时flume就开始在读取文件，那么就会报上面的错误
+
+
+
+解决方式1：将上传的文件放到一个临时的目录下面，待文件全部上传完成之后，再移动到flume监控的目录下
+
+解决方式2：修改flume的源码如下：
+
+参见：https://www.cnblogs.com/pingjie/p/4146727.html
 
 
 

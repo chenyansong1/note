@@ -63,7 +63,6 @@ zookeeper.connect=hadoop01199:41810,hadoop01200:41810,hadoop01201:41810,hadoop01
 重启相关的应用程序，就可以从设置的offset开始读数据了。 
 
 
-
 参考：http://www.cnblogs.com/hd-zg/p/5831219.html
 
 
