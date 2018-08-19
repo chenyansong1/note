@@ -6,7 +6,13 @@ tags: [Linux基础命令]
 ---
 
 
+
+[TOC]
+
+
+
 # 1.find语法
+
 ```
 find [搜索范围] [匹配条件]
 ```
@@ -150,6 +156,38 @@ file10
 -mtime n　　查找系统中最后n*24小时被改变文件数据的文件
 
 ```
+
+# 11.正则查找
+
+```Shell
+
+# 找到以 .txt结尾的文件
+#find  /Users/chenyansong/Desktop/test-dir  -type f -regex  ".*\.\(txt\)" 
+/Users/chenyansong/Desktop/test-dir/1.txt
+
+
+```
+
+
+
+# 12.找到指定文件并拷贝到指定的目录下
+
+
+
+```shell
+
+chenyansongdeMacBook-Pro:test-dir chenyansong$ pwd
+/Users/chenyansong/Desktop/test-dir
+
+# 找到以 .txt结尾的文件
+#find  /Users/chenyansong/Desktop/test-dir  -type f -regex  ".*\.\(txt\)" 
+/Users/chenyansong/Desktop/test-dir/1.txt
+
+# 将以 .log 结尾的文件 copy到 /Users/chenyansong/Desktop/test-dir/1/ 目录下
+#find  /Users/chenyansong/Desktop/test-dir  -type f -regex  ".*\.\(txt\)" -exec cp -rp {} /Users/chenyansong/Desktop/test-dir/1/  \;
+
+```
+
 
 参见:
 

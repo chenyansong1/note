@@ -1354,6 +1354,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		if (pvs != null) {
+			// 属性注入
 			applyPropertyValues(beanName, mbd, bw, pvs);
 		}
 	}
