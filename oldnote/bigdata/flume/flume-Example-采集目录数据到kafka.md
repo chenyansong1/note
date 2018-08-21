@@ -123,7 +123,11 @@ a1.sinks.k1.channel = c1
 
 解决方式1：将上传的文件放到一个临时的目录下面，待文件全部上传完成之后，再移动到flume监控的目录下
 
-解决方式2：修改flume的源码如下：
+解决方式2：将上传到flume监控的目录下的文件（正在写的文件），命名为xx.tmp， 待上传完成之后再改名为xx
+
+参见：https://www.jianshu.com/p/6ca0e308b139
+
+解决方式3：修改flume的源码如下：
 
 参见：https://www.cnblogs.com/pingjie/p/4146727.html
 
