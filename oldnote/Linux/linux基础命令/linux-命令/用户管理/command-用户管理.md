@@ -296,3 +296,72 @@ printf   "this is good day。\nMoney is good day too.\n"
 
 
 whatis ls
+
+
+
+
+
+## install
+
+和cp 的用法一样
+
+
+
+install -d /tmp/{dir1, dir2}		#用于创建目录
+
+
+
+install复制之后有执行权限：
+
+![image-20180821195120705](/Users/chenyansong/Documents/note/images/linux/command/install.png)
+
+
+
+# 文本操作
+
+
+
+## cat
+
+连接并显示
+
+cat /etc/issue   /etc/fstab
+
+cat -n /etc/issue		#显示行号
+
+cat -E /etc/issue		#显示每一行的结束符
+
+![image-20180821205259668](/Users/chenyansong/Documents/note/images/linux/command/cat.png)
+
+> linux中行结束符为$, 而Windows中行结束符为 \$\n
+
+
+
+## tac
+
+反向显示文本
+
+
+
+## more,less
+
+可以分页查看
+
+
+
+## head, tail
+
+-n 指定显示多少行
+
+tail -5 /etc/inittab
+
+head -5  /etc/inittab
+
+tail -f /etc/log.log 	  #动态显示
+
+
+
+## cut
+
+
+

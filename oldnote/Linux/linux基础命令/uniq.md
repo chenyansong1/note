@@ -26,7 +26,7 @@ tags: [Linux基础命令]
 ```
 
 # 实例
-```
+```Shell
 #只对相邻的行去重
 [root@lamp01 chenyansong]cat test_cc.txt
 10.0.0.1.txt

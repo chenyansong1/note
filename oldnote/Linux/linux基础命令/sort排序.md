@@ -9,7 +9,7 @@ tags: [Linux基础命令]
 
 
 # 1.语法
-```
+```Shell
 
 #以行为单位对文件进行排序
 
@@ -156,7 +156,7 @@ sort [参数] [<文件>...]
 
 > 面试题:
 
-```
+```shell
 #将文件test_sort_2.log中的域名取出并更具域名进行计数排序处理
 
 [root@lamp01 chenyansong]# awk -F / '{print $3}' test_sort_2.log
@@ -188,3 +188,4 @@ www.baidu.com
 
 
 ```
+
