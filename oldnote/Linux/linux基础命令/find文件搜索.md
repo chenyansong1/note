@@ -189,6 +189,27 @@ chenyansongdeMacBook-Pro:test-dir chenyansong$ pwd
 ```
 
 
+
+# 13.执行额外的命令
+
+```shell
+find / -name "*test.log" -exec ls -l {} \;
+```
+
+
+
+![](E:\note\images\linux\command\find.png)
+
+
+
+该范例中特殊的地方有 {} 以及 \; 还有 -exec 这个关键字，这些东西的意义为： 
+
+{} 代表的是“由 find 找到的内容”，如上图所示，find 的结果会被放置到 {} 位置中； 
+
+-exec 一直到 \; 是关键字，代表 find 额外动作的开始 （-exec） 到结束 （\;） ，在这中 间的就是 find 指令内的额外动作。 在本例中就是“ ls -l {} ”啰！ 
+
+因为“ ; ”在 bash 环境下是有特殊意义的，因此利用反斜线来跳脱。    
+
 参见:
 
 https://javawind.net/p132
