@@ -19,6 +19,8 @@ test condition
 #或 
 [ condition ]     #注意中括号（［］）、参数之间必须有一个空格
 
+#或
+[[ condition ]]
 ```
 
 
@@ -139,7 +141,7 @@ $echo $?
 #2种格式
 “number” numberic_operator “number”
 # 或    
-[ “number” numberic_operator “number”]
+[ “number” numberic_operator “number” ]
 
 #Numberic_operator 算术比较
 -eq    #数值相等（equal）
