@@ -105,3 +105,251 @@
 | :set nu       | 设置行号       |
 | :set nonu     | 取消设置的行号 |
 
+
+
+
+
+# 区块选择
+
+
+
+## 字符选择
+
+
+
+| 按键                                         | 意义                                                      |
+| -------------------------------------------- | --------------------------------------------------------- |
+| v（小写）                                    | 字符选择，会将光标经过的地方反白选择（可以使用hjkl 选择） |
+| V（大写）                                    | 行选择，会将光标经过的行反白选择                          |
+| [Ctrl]+v｜块选择，可以用长方形的方式选择数据 |                                                           |
+
+
+
+## 选择之后的操作
+
+ 
+
+| 按键 | 意义             |
+| ---- | ---------------- |
+| y    | 将反白的地主复制 |
+| d    | 将反折的地方删除 |
+
+
+
+
+
+## 举例
+
+
+
+下面实际进行我们需要的操作。就是将host再加到每一行的最后面，我们可以这样作：
+
+1. 将光标移动到第一行的host那个h上头，然后按下[Ctrl]+v，左下角出现块示意 
+
+
+
+![](E:\note\images\vim\block1.png)
+
+
+
+2. 将光标移动到最底部，此时光标移动过的区域会反白  
+
+![](E:\note\images\vim\block2.png)
+
+3. 此时可以按下”y”来进行复制，当你按下y之后，反白的块就会消失不见。
+4. 最后，将光标移到到第一行的最右边，并且再用编辑模式向右按两个空格键，回到一般模式后，再按”p”后，你会发现很有趣 
+
+![](E:\note\images\vim\block3.png)
+
+
+
+转自：https://blog.csdn.net/weixin_36210698/article/details/72895910
+
+
+
+# 多文件编辑
+
+
+
+## 打开窗口
+
+* 同时打开多个窗口（多文件）
+  * 这个是实现多个文件间的数据操作
+* 同时打开多个窗口（同一文件）
+  * 这个是实现：同一个文件之间的对比
+
+```
+# 先打开文件
+vim test.py
+
+# 再输入指令，打开同一个文件
+:sp
+```
+
+
+
+
+
+| 操作                       | 说明                 |
+| -------------------------- | -------------------- |
+| vim -O test1.log test2.log | 同时垂直打开多个文件 |
+
+
+
+## 列出所有打开的文件
+
+
+
+| 操作   | 说明 |
+| ------ | ---- |
+| :files |      |
+
+
+
+```
+:files
+  1 %a   "hosts"                        第 10 行
+  2  a   "ip2"                          第 0 行
+```
+
+
+
+
+
+## 切换窗口
+
+
+
+
+| 操作   | 说明                                       |
+| ------ | ------------------------------------------ |
+| ctrl+w | 实现多个文件之间的切换（需要按ctrl+w两次） |
+
+
+
+
+
+文件间切换（一个窗口，但是打开了多个文件）
+
+| 操作   | 说明       |
+| ------ | ---------- |
+| Ctrl+6 | 下一个文件 |
+| :bn    | 下一个文件 |
+| :bp    | 上一个文件 |
+
+
+
+* 同时打开了多个窗口切换
+
+对于用(v)split在多个窗格中打开的文件，这种方法只会在当前窗格中切换不同的文件。
+
+| 操作           | 说明                         |
+| -------------- | ---------------------------- |
+| Ctrl+w+方向键  | 切换到前／下／上／后一个窗格 |
+| Ctrl+w+h/j/k/l | 同上                         |
+| Ctrl+ww        | 依次向后切换到下一个窗格中   |
+
+
+
+
+
+
+
+
+
+## 保存退出
+
+
+
+| 操作 | 说明               |
+| ---- | ------------------ |
+| :qa  | 退出所有的编辑窗口 |
+| :q   | 退出当前窗口       |
+
+
+
+
+
+参见：https://harttle.land/2015/11/14/vim-window.html
+
+https://blog.csdn.net/orangleliu/article/details/41745975
+
+
+
+
+
+# 自动补全
+
+
+
+这里使用的是一个插件：YouCompleteMe
+
+
+
+https://blog.csdn.net/freeking101/article/details/78539005
+
+
+
+
+
+# 其他问题
+
+
+
+有时，我们在Windows和linux中的同一个脚本在Windows是可以执行的，但是放到linux中时不能执行，此时可能的原因：
+
+* 字符编码的问题，在dos中的换行是^M$    ，而在linux中的换行为$，我们可以使用 cat -A test.sh查看是否存在这样的问题
+
+  
+
+
+解决的方式：
+
+
+
+```
+# 安装
+rpm -ivh /mnt/Packages/dos2unix-*   
+
+
+[dmtsai@study ~]$ dos2unix [-kn] file [newfile]
+[dmtsai@study ~]$ unix2dos [-kn] file [newfile]
+选项与参数：
+-k ：保留该文件原本的 mtime 时间格式 （不更新文件上次内容经过修订的时间）
+-n ：保留原本的旧文件，将转换后的内容输出到新文件，如： dos2unix -n old new
+
+范例一：将 /etc/man_db.conf 重新复制到 /tmp/vitest/ 下面，并将其修改成为 dos 断行
+[dmtsai@study ~]# cd /tmp/vitest
+[dmtsai@study vitest]$ cp -a /etc/man_db.conf .
+[dmtsai@study vitest]$ ll man_db.conf
+-rw-r--r--. 1 root root 5171 Jun 10 2014 man_db.conf
+[dmtsai@study vitest]$ unix2dos -k man_db.conf
+unix2dos: converting file man_db.conf to DOS format ...
+# 屏幕会显示上述的讯息，说明断行转为 DOS 格式了！
+[dmtsai@study vitest]$ ll man_db.conf
+-rw-r--r--. 1 dmtsai dmtsai 5302 Jun 10 2014 man_db.conf
+# 断行字符多了 ^M ，所以容量增加了！
+
+
+范例二：将上述的 man_db.conf 转成 Linux 断行字符，并保留旧文件，新文件放于 man_db.conf.linux
+[dmtsai@study vitest]$ dos2unix -k -n man_db.conf man_db.conf.linux
+dos2unix: converting file man_db.conf to file man_db.conf.linux in Unix format ...
+[dmtsai@study vitest]$ ll man_db.conf*
+-rw-r--r--. 1 dmtsai dmtsai 5302 Jun 10 2014 man_db.conf
+-rw-r--r--. 1 dmtsai dmtsai 5171 Jun 10 2014 man_db.conf.linux
+[dmtsai@study vitest]$ file man_db.conf*
+man_db.conf: ASCII text, with CRLF line terminators # 很清楚说明是 CRLF 断行！
+man_db.conf.linux: ASCII text
+
+```
+
+
+
+ 
+
+
+
+
+
+
+
