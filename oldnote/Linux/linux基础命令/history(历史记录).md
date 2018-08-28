@@ -94,6 +94,9 @@ history -w
 
 
 # 叹号(历史命令)
+
+
+
 |命令|描述|
 |-|-|
 |!+字母|表示调出最近一次以此字母开头的命令|
@@ -114,6 +117,5 @@ total 0
 drwx------  3 chenyansong  wheel  102  8 22 19:55 com.apple.launchd.cJoAEvmX2y
 drwx------  3 chenyansong  wheel  102  8 22 19:55 com.apple.launchd.rsMp2jPFwO
 chenyansongdeMacBook-Pro:linux基础命令 chenyansong$ 
-
 ```
 
