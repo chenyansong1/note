@@ -98,6 +98,10 @@ PUT /_template/my_logs
 # 查看
 
 
+
+
+
+
 # 删除
 
 ```
