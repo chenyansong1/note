@@ -6,7 +6,13 @@ tags: [shell]
 ---
 
 
+
+[TOC]
+
+
+
 # 1.判断读取字符串值
+
 ```
 ${var}	    #变量var的值, 与$var相同 
 ${var-DEFAULT}	    #如果var没有被声明, 那么就以$DEFAULT作为其值 * 

@@ -105,8 +105,9 @@ test “str1” str_operator “str2”
 [ string string_operator string2 ]    #操作符两边有空格：[ “aaa” = “cccc” ]   不要： [ “aaa”=“cccc” ]
 
 #string_operator有如下的形式
-=    #两字符串相等
+=    #两字符串相等,== 也是一样；记住等号两端要有空格，否则会当做变量的赋值
 !=    #两字符串不等
+
 -z    #空串 [zero]
 -n    #非空串 [nozero]
 
@@ -124,13 +125,12 @@ $echo $?
 #3.如果操作符两边没有空格的结果
 [root@MySQL shell]# [ "a" = "a" ]&&echo 1||echo 0
 1
-[root@MySQL shell]# [ "a" = "aa" ]&&echo 1||echo 0
-0
 [root@MySQL shell]# [ "a"="a" ]&&echo 1||echo 0  
 1
+[root@MySQL shell]# [ "a" = "aa" ]&&echo 1||echo 0
+0
 [root@MySQL shell]# [ "a"="aa" ]&&echo 1||echo 0
 1
-[root@MySQL shell]#
  
 ```
 
