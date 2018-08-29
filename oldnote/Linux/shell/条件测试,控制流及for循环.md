@@ -281,9 +281,67 @@ done
 
 
 
+
+
 ## 3.2.书写格式
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/shell/13.png)
+
+
+
+* 生成列表的方式
+
+```shell
+# 方式1
+{1..100}
+
+
+# 方式2
+`seq [起始数] [步进长度] 结束数`
+
+
+# 方式3
+`ls /etc`
+
+```
+
+
+
+* seq
+
+```
+chenyansongdeMacBook-Pro:shell chenyansong$ seq 10
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+chenyansongdeMacBook-Pro:shell chenyansong$ seq 5 10
+5
+6
+7
+8
+9
+10
+chenyansongdeMacBook-Pro:shell chenyansong$ seq 2 2 10
+2
+4
+6
+8
+10
+chenyansongdeMacBook-Pro:shell chenyansong$ 
+
+
+```
+
+
+
+
 
 # 退出break、continue、exit、return
 

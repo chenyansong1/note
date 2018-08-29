@@ -169,3 +169,21 @@ bc也可以进行非交互式的运算，方法是与echo一起使用。
 ```
 
 
+
+# declare
+
+
+
+```Shell
+#!/bin/bash
+
+# 申明SUM为integer
+declare -i SUM=0
+
+for I in {0..10} ;do
+	let SUM=$[$SUM+$I]
+done
+
+echo "The sum is :$SUM"
+```
+
