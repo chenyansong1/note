@@ -1,0 +1,4 @@
+```
+rpm -ivh xxx.rpm
+```
+
