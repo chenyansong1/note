@@ -9,12 +9,95 @@ tags: [Linux基础命令]
 
 [TOC]
 
+# 1.locate(查询文件所在路径)
 
+```
+#功能描述：在文件资料库中查找文件
+语法：locate 文件名
+ 
+#范例1：
+[root@linux-study cys_test]# ll
+total 4
+-rw-r--r--. 1 root root 51 Jul 12 20:02 people.txt
+[root@linux-study cys_test]# locate people.txt
+/cys_test/people.txt
+ 
+#范例2：
+//用locate去查找本身
+locate locate
+//会发现这样的文件，用locate就是在该文件中进行搜索，该文件会定期更新
+/var/lib/mlocate/mlocate.db
+ 
+ 
+#范例3：
+//创建一个文件，然后用locate去查询，但是查询不到，
+/var/lib/mlocate/mlocate.db  The database searched by default.
+这时就要升级文件资料库（mlocate.db），来帮助我们找到对应的文件。
+[root@localhost /]# touch /home/lingzhiling/chenyansong.list
+[root@localhost /]# locate chenyansong.list
+[root@localhost /]# updatedb        #更新,会很慢
+[root@localhost /]# locate chenyansong.list
+/home/lingzhiling/chenyansong.list
+ 
+#范例4：不区分大小写，查找
+//locate不区分大小写
+[root@linux-study cys_test]# locate peoplE.txt
+[root@linux-study cys_test]# locate -i peoplE.txt
+/cys_test/people.txt
+[root@linux-study cys_test]#
+
+#注意：但是如果你要找的文件在/tmp 临时文件中，那么它不会去搜索的到的。
+
+```
 
 # 1.find语法
 
 ```
 find [搜索范围] [匹配条件]
+
+find [查找路径] [查找标准] [处理动作]
+
+查找路径：默认是当前目录
+查找标准：默认指定路径下的所有文件
+	-name 'filename' ：对文件名做精确匹配
+		文件名通配：
+			* ： 任意长度的任意字符
+			？：
+			[]
+	-iname 'filename' :表示文件名匹配不区分大小写
+	-user hadoop  :查找用户为hadoop的文件,根据属主查找
+	-group groupname:根据数组查找
+	-uid uid:根据uid查找
+	-gid gid:根据gid查找
+	-nouser:没有属主的用户
+	-nogroup:没有属组的文件
+	
+	-type filetype
+		f: 普通文件
+		d:目录
+		c:字符设备
+		b：块设备
+		l:符号链接
+		p:管道设备
+		s:套接字文件
+		
+	-size:根据文件大小查找，默认单位是字节
+		[+|-]#k: eg： [+]10k 大于10k；10k 精确为10k
+		[+|-]#M
+		[+|-]#G
+		
+		eg:find /etc -size 10k  ;//会显示9-10k之间的数据
+		   find /etc -size -10k ;//显示所有小于10k的数据
+		   find /etc -size +10k ;//显示所有大于10k的数据
+	
+	组合条件：
+		-a :两个条件同时满足
+		-o :or #两个条件的默认形式
+		-not :非；eg:查找非目录的文件--> find /etc -not -type d
+		
+处理动作：默认为显示
+
+
 ```
 
 
