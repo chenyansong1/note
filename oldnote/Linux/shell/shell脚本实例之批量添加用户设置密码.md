@@ -30,7 +30,49 @@ done
 ```
 
 
+
+* 方式2，在添加之前判断是否存在该用户，不存在添加
+
+```Shell
+#!/bin/bash
+
+for I in {0..10};do
+	# 这里是判断用户是否存在
+	if id user$I &> /dev/null;then
+		echo "user$I exists."
+	else
+		useradd user$I
+		echo user$I | passwd --stdin user$I &> /dev/null
+	fi
+done
+```
+
+
+
+* 传参创建指定的用户名
+
+```Shell
+#!/bin/bash
+
+for I in `echo $1 | sed "s/,/ /g" `;do
+	# 这里是判断用户是否存在
+	if id user$I &> /dev/null;then
+		echo "user$I exists."
+	else
+		useradd user$I
+		echo user$I | passwd --stdin user$I &> /dev/null
+	fi
+fone
+
+# ./test.sh user1,user2,user3
+```
+
+
+
+
+
 # 2.使用chpasswd 批量创建密码
+
 ```
 [root@lnmp02 shell]# useradd chenle
 [root@lnmp02 shell]# useradd chenhao
