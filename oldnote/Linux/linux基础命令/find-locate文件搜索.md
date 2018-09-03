@@ -96,8 +96,19 @@ find [查找路径] [查找标准] [处理动作]
 		-not :非；eg:查找非目录的文件--> find /etc -not -type d
 		
 处理动作：默认为显示
-
-
+	-print 显示(默认)
+	-ls:类似于ls -l 的显示每一个文件的详细信息
+	-ok command {} \;   :一定要“\;"
+	-exec command {} \; :一定要“\;","{}"表示找到的文件
+	
+	// -ok和-exec的区别在于，每一次操作都要确认，而exec不需要确认
+	
+	#给找到的文件添加w权限
+	eg:find ./ -perm -006 -exec chmod o-w {} \;  
+	// {}表示找到的文件，即：chmod o-w filename \;
+	
+	#给找到的文件，修改文件名
+	find ./ -perm -006 -exec mv {} {}.new \;
 ```
 
 
@@ -141,12 +152,19 @@ find /cys_test/ -size +n    #+n 大于；-n小于；n等于
 ``` shell
 
 #在/etc下查找5分钟内被修改过属性的文件和目录
-find /etc -cmin -5
+find /etc -cmin -5 //小于5分钟，就是过去5分钟到现在，这段时间内
+
+find /etc -cmin +5 //大于5min钟的
  
 /*
-其中：-amin   访问时间 access
--cmin   文件属性 change （就是定义文件的元数据）
--mmin  文件内容 modify
+其中：
+-amin [+|-]#  访问时间 access
+-cmin [+|-]#   文件属性 change （就是定义文件的元数据）
+-mmin [+|-]#  文件内容 modify
+
+-atime [+|-]# :这个单位是：天
+-ctime [+|-]#
+-mtime [+|-]#
 */
 
 
@@ -273,9 +291,37 @@ chenyansongdeMacBook-Pro:test-dir chenyansong$ pwd
 
 
 
+# 权限查找
+
+
+
+```
+-perm mode : 精确匹配
+	  /mode:只要有一位一个匹配就行；-perm /644 ,只要644中有一为可以匹配就行
+	  -mode:所有的位都要匹配；-perm -644 ;那么755也是可以匹配的，因为644有的755都有
+```
+
+
+
+```
+find ./ -perm 644
+
+
+
+```
+
+
+
 # 13.执行额外的命令
 
 ```shell
+#给找到的文件添加w权限
+eg:find ./ -perm -006 -exec chmod o-w {} \;  
+// {}表示找到的文件，即：chmod o-w filename \;
+
+#给找到的文件，修改文件名
+find ./ -perm -006 -exec mv {} {}.new \;
+	
 find / -name "*test.log" -exec ls -l {} \;
 ```
 
@@ -298,4 +344,21 @@ find / -name "*test.log" -exec ls -l {} \;
 https://javawind.net/p132
 
 
+
+# xargs
+
+> build and execute command lines from standard input
+>
+> 执行来自标准输入的命令
+
+
+
+```
+find /etc -size +1M -exec echo {} >> /tmp/etc.largefiles \;
+
+#or
+
+find /etc -size +1M | xargs echo >> /tmp/etc.largefiles \;
+
+```
 
