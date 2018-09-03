@@ -97,7 +97,43 @@ PUT /_template/my_logs
 
 # 查看
 
+```
+GET /_template/template_1
+```
 
+ 
+
+ 
+
+也可以通过模糊匹配得到多个模板信息
+
+```
+GET /_template/temp* 
+```
+
+ 
+
+ 
+
+可以批量查看模板
+
+```
+GET /_template/template_1,template_2
+```
+
+ 
+
+ 
+
+验证模板是否存在：
+
+ 
+
+ 
+
+```
+HEAD _template/template_1
+```
 
 
 
