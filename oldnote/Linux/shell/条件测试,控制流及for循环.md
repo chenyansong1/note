@@ -224,6 +224,42 @@ fi
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/shell/7.png)
 
 
+
+```
+case $1 in
+[0-9])
+	echo "数字"
+	;;
+[a-z])
+	echo "小写字符"
+	;;
+[A-Z])
+	echo "大写字符"
+	;;
+*)
+	echo "特殊字符"
+esac
+```
+
+
+
+```
+case $1 in
+"start")
+	echo "正在启动...";;
+"stop")
+	echo "正在停止...";;
+"restart")
+	echo "正在重启....";;
+*)
+	echo "`basename $0` {start| stop| restart}"
+esac
+
+```
+
+
+
+
 ## 2.3.while
 
 ### 2.3.1.语法
