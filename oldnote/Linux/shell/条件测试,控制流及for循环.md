@@ -225,6 +225,8 @@ fi
 
 
 
+### 2.2.3.示例
+
 ```
 case $1 in
 [0-9])
@@ -254,6 +256,77 @@ case $1 in
 *)
 	echo "`basename $0` {start| stop| restart}"
 esac
+
+```
+
+
+
+```Shell
+#!/bin/bash
+
+DEBUG=0
+ADD=0
+DEL=0
+
+while True ;do
+	if [ $# -gt 0 ];then
+        case $1 in
+        -v|--verbose)
+            DEBUG=1
+            # 将参数中的第一个参数剔除掉，这样第二个参数就变成了第一个参数
+            shift
+            ;;
+        -h|--help)
+            echo "Usage: `basename $0` --add User_List --del User_List -v|--verbose -h|--help"
+            exit 0
+            ;;
+        --add)
+            ADD=1
+            ADD_USERS=$2
+            shift 2
+            ;;
+        --del)
+            DEL=1
+            DEL_USERS=$2
+            shift 2
+            ;;
+        *)
+            echo "Usage: `basename $0` --add User_List --del User_List -v|--verbose -h|--help"
+            exit 7
+            ;;
+        esac
+	if
+    
+done
+
+
+
+# 添加用户
+if [ $ADD -eq 1 ];then
+	# 用sed解决了字符串split的问题
+	for user in `echo $ADD_USERS|sed 's@,@ @g'` ;do
+		if id $user &>/dev/null;then
+			[ $DEBUG -eq 1 ] && echo "$user exist."
+		else
+			useradd $user
+			[ $DEBUG -eq 1 ] && echo "$user add successed."
+		fi
+	done
+fi
+
+
+# 删除用户
+if [ $DEL -eq 1 ];then
+	# 用sed解决了字符串split的问题
+	for user in `echo $DEL_USERS|sed 's@,@ @g'` ;do
+		if id $user &>/dev/null;then
+			userdel $user
+			[ $DEBUG -eq 1 ] && echo "$user del successed."
+		else
+			[ $DEBUG -eq 1 ] && echo "$user not exist."
+		fi
+	done
+fi
 
 ```
 
