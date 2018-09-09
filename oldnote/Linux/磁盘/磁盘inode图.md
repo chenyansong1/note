@@ -48,6 +48,36 @@ tags: [linux]
 
 
 
+如果是目录的话，块中的数据应该如下：
+
+![image-20180909103324945](/Users/chenyansong/Documents/note/images/linux/filesystem/block_file.png)
+
+
+
+
+
+iNode的结构如下：
+
+![image-20180909103535620](/var/folders/bx/_yxq3xys79d7tk10_qp5qk5w0000gn/T/abnerworks.Typora/image-20180909103535620.png)
+
+直接引用磁盘块，间接引用，二级引用
+
+Mode：权限
+
+Owner info:属主，属组
+
+Size：大小
+
+一级间接指针；二级间接指针(Double Indirect)；三级间接指针（Triple Indirect）；直接指针
+
+
+
+因为一个iNode中的指针的个数是有限的，所以一个iNode指向的block的个数也是有限的，而一个block的大小也是固定的，那么一个iNode代表的文件的大小是可以确定的，这就是文件的最大大小限制的由来
+
+
+
+
+
 
 ## 4.2.文件查找的过程
 
@@ -99,6 +129,19 @@ tags: [linux]
 最上面的是超级块，然后就是块组，每一个块组中包含（inode，inode 的位图，block位图）
 
 ![分区表示意图](http://ols7leonh.bkt.clouddn.com//assert/img/linux/磁盘/inode_4.png)
+
+
+
+![image-20180909102812957](/Users/chenyansong/Documents/note/images/linux/filesystem/super_block.png)
+
+
+
+* BootBlock ： 每个分区的第0个块，多文件系统的时候回用到，这个块是不会存储数据的
+* SuperBlock：存放的是：有多少个块组；每个块组中包含多少个块，块大小，空闲磁盘块，已用iNode；早期的SuperBlock会在每个BlockGroup中存一个，但是现在不是了，只是在某些BlockGroup中存就行了，做备份使用，默认情况下，我们是读取的第0个块组中的SuperBlock
+
+* GDT：Group Description Table 块组描述表：每个块组从第几个块开始，到第几个块结束；每个块组的块组名称；
+
+
 
 
 
@@ -271,7 +314,17 @@ fdisk -l /dev/sda
 
 
 
+# ext3文件系统
 
+
+
+journal file system:日志文件系统，能够加快文件系统的修复
+
+
+
+在写元数据的时候，会首先将元数据写在日志区中，然后待文件写完成再将日志区中的元数据移动到左侧的元数据区中
+
+![image-20180908221648460](/Users/chenyansong/Documents/note/images/linux/filesystem/journal.png)
 
 
 
