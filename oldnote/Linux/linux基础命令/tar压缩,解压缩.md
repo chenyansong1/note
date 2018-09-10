@@ -5,6 +5,12 @@ toc: true
 tags: [Linux基础命令]
 ---
 
+
+
+[TOC]
+
+
+
 # 1.压缩
 
 ## 1.1.tar -zcvf (压缩)
@@ -15,17 +21,17 @@ tags: [Linux基础命令]
 ## 1.2.tar -tf (查看压缩列表)
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/基础命令/tar_2.png)
- 
+
 
 ## 1.3.--include=文件(排除不需要打包的文件)
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/基础命令/tar_3.png)
 
- 
+
 ## 1.4.tar -zcvfX (排除指定的文件列表文件)
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/基础命令/tar_4.png)
- 
+
 
 ## 1.5.打包压缩的过程
 ```
@@ -100,6 +106,23 @@ tar zcvfh rc.tar.gz  /etc/rc.local
 
 ## 3.1.gzip/gunzip 压缩和解压缩
 gzip只能压缩文件，不能压缩目录，并且压缩之后源文件不见了，只剩下压缩文件。
+
+```
+gzip /path/to/somefile #压缩完成之后，会删除源文件
+gzip /test/aa.log # 会删除源文件，生成aa.log.gz
+
+gzip -d /test/aa.log.gz 相当于解压
+gzip -# : #是指定压缩比
+gzip -9 aa.log #指定压缩比为9，默认是6
+
+# 临时查看文件内容
+zcat aa.log.gz 
+
+
+
+#解压缩
+gunzip /path/to/somefile.gz
+```
 
 
 

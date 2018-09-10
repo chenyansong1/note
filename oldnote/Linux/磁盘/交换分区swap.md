@@ -63,3 +63,64 @@ Swap:           15          0        15
 
 
 
+# dd复制文件，拷贝的是底层的数据流
+
+## 使用
+
+
+
+cp复制文件的逻辑：
+
+1. 将文件通过vfs读取到内存中
+2. 将内存中的文件写入到另外一个地址
+
+dd复制文件的逻辑：
+
+1. 直接复制原始文件在磁盘的字节，写入到磁盘的另一个位置，这样dd可以只复制某个文件的一部分，如：只复制文件的几个字节
+
+```
+dd if=/etc/inittab of=/root/inittab
+if=input file
+of=output file
+bs=1	#以一个字节为单位，可以使用单位如：bs=1M; bs=1k
+count=2	#只是复制2个单位的数据
+seek=1023
+
+# 前面的1023的单位跳过，之后最后1个单位是使用0填充的，文件总大小还是1G
+dd if=/dev/zero of=/var/swapfile seek=1023 bs=1M count=1
+# 实际上这个文件的大小只有1M
+
+
+
+#备份MBR,将/dev/sda硬盘的前512字节备份到Usb上
+dd if=/dev/sda  of=/mnt/usb/mbr.backup bs=512 count=1
+#从USB还原MBR
+dd if=/mnt/usb/mbr.backup  of=/dev/sda bs=512 count=1
+
+
+# 创建1G大小的文件
+dd if=/dev/zero of=/var/swapfile bs=1M count=1024
+
+# /dev/zero 是一个冒泡设备，不停的向外吐0，
+# /dev/null 是一个吸收设备，黑洞
+
+```
+
+
+
+## 用一个文件创建swap分区
+
+
+
+1. 使用dd创建一个1G大小的文件
+2. 使用mkswap使文件变成swap类型
+3. 启用swapon
+
+
+
+![image-20180910194454517](/Users/chenyansong/Documents/note/images/linux/filesystem/dd_swap.png)
+
+
+
+
+
