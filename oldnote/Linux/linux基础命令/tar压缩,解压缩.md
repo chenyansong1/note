@@ -11,11 +11,47 @@ tags: [Linux基础命令]
 
 
 
-# 1.压缩
+# 1.归档
 
-## 1.1.tar -zcvf (压缩)
+
+
+```
+# 归档
+tar -cf
+
+tar -cf test.tar test*.log
+
+# 解归档
+tar -xf
+tar -xf test.tar
+
+# 压缩归档
+tar -zcf test.tar.gz test*.log #打包成gz后缀
+tar -jcf test.tar.bz2 test*.log  #打包成bz后缀
+tar -Jcf test.tar.xz test*.log  #打包成bz后缀
+
+#解压缩解归档
+tar -zxf test.tar.gz
+tar -jxf test.tar.gz
+tar -Jcf test.tar.xz
+
+
+
+
+```
+
+
+
+## 1.1.tar -zcvf 
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/基础命令/tar_1.png)
+
+
+
+**注意：如果没有-z选项，那么打包（归档）的文件就是一个tar文件，使用-z的原因是，调用gzip的压缩工具进行压缩，所以-zcvf产生的文件后缀是.tar.gz，解压缩也是一样的，我们使用-zxvf 中-z就是解压缩gzip文件的作用 **
+
+
+
 
 
 ## 1.2.tar -tf (查看压缩列表)
@@ -74,7 +110,7 @@ tar zcvfh rc.tar.gz  /etc/rc.local
 
 ```
 
-# 2.解压缩
+# 2.解归档
 
 ## 2.1.tar zxvf
 ```
@@ -102,7 +138,9 @@ tar zcvfh rc.tar.gz  /etc/rc.local
 
 ```
 
-# 3.其他压缩解压缩命令
+
+
+# 3.压缩解压缩命令
 
 ## 3.1.gzip/gunzip 压缩和解压缩
 gzip只能压缩文件，不能压缩目录，并且压缩之后源文件不见了，只剩下压缩文件。
@@ -144,6 +182,33 @@ bzip2 选项[-k] [文件]
     # -k 产生压缩文件后保留原文件
 
 
+#解压缩
+bunzip2 filename
+#or
+bzip2 -d filname
+
+#查看文件
+bzcat filename 
 ```
 
+
+
+## 3.4.xz
+
+
+
+```
+xz filename
+	-d 
+	-# :1-9 默认6
+	-k:压缩时保留源文件
+	
+xz -d 解压缩
+
+#解压缩
+unzx filename
+
+#查看压缩文件内容
+xzcat
+```
 

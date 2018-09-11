@@ -378,6 +378,41 @@ done
 
 
 
+* 计算100以内所有整数的和
+
+```Shell
+#!/bin/bash
+
+declare -i I=1
+declare -i SUM=0
+
+while [ $I -le 100 ];do
+	let SUM+=$I
+	let I+=1
+done
+
+echo "SUM=$SUM"
+```
+
+
+
+* 提醒用于输入字符串，一直循环输入，知道用户输入quit退出循环
+
+```Shell
+#!/bin/bash
+
+while True ;do
+	read -p "please input str" str
+	
+	if [ "$str" == "quit" ];then
+		break;
+	else
+		echo $str|tr 'a-z' 'A-Z'
+	fi
+
+done
+```
+
 
 
 # 3.for循环
