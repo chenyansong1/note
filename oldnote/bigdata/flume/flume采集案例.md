@@ -3,7 +3,12 @@ title: flume采集案例
 categories: flume   
 toc: true  
 tag: [flume]
+
 ---
+
+[TOC]
+
+
 
 
 下面是flume的几种使用案例,更多的案例可以参见[flume官网](http://flume.apache.org/FlumeUserGuide.html)
@@ -13,7 +18,7 @@ tag: [flume]
 
 ## 1.1.采集需求
 比如业务系统使用log4j生成的日志，日志内容不断增加，需要把追加到日志文件中的数据实时采集到hdfs
- 
+
 根据需求，首先定义以下3大要素
 * 采集源，即source——监控文件内容更新 :  exec  ‘tail -F file’
 * 下沉目标，即sink——HDFS文件系统  :  hdfs sink
@@ -25,7 +30,7 @@ tag: [flume]
 ## 1.2.配置文件
 用tail命令获取数据，下沉到hdfs
 vim ./conf/tail-hdfs.conf
- 
+
 ```
 # Name the components on this agent
 a1.sources = r1
@@ -80,8 +85,8 @@ a1.channels.c1.transactionCapacity = 100
 a1.sources.r1.channels = c1
 a1.sinks.k1.channel = c1
 ```
- 
- 
+
+
 ## 1.3.提供测试数据
 创建目录，循环向文件添加内容
 ```
@@ -95,7 +100,7 @@ done
  
 ```
 
-  
+
 ## 1.4.启动命令
 ```
 bin/flume-ng agent -c conf -f conf/tail-hdfs.conf -n a1
@@ -104,7 +109,7 @@ bin/flume-ng agent -c conf -f conf/tail-hdfs.conf -n a1
 
 ## 1.5.前端页面查看
 在： master:50070, 文件目录: /flum/events/
- 
+
 
 # 2.采集目录到HDFS
 
