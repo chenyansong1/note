@@ -6,12 +6,60 @@ tags: [Linux基础命令]
 ---
 
 
+
+[TOC]
+
+报告生成工具：会将每一行都分解为\$1,\$2,\$3...这样的列
+
+
+
 # 1 语法
 
 * 定义：一门语言，过滤内容（取列）
 * 语法：# awk ‘条件1{动作1} 条件2{动作2} ...’ 文件名
 * 条件：一般使用关系表达式作为条件，如：x>10 or x<=10 or x>=10
 * 动作：格式化输出 or 流程控制语句
+
+```
+awk 'pattern{action}' file
+
+#拿到pattern匹配的行，然后执行action的动作
+action：
+	print
+	
+echo "aa bb"|awk '{print $1}'
+echo "aa bb cc"|awk '{print $1,$3}'
+#$0表示一整行中的所有字段
+echo "aa bb cc"|awk '{print $0}'
+
+NF 表示分隔出来字段个数；而$NF表示最后一个字段，比如分隔出来的字段个数为4，那么NF=4，而$4就表示的最后一个字段
+
+输入的分隔符，默认是空白
+-F可以指定，awk -F: '{print $1,$3}' /etc/passwd
+
+输出分隔符，默认是空白
+
+```
+
+
+
+example
+
+```
+chenyansongdeMacBook-Pro:note chenyansong$ echo  "aa bb"|awk '{print $1}'
+aa
+chenyansongdeMacBook-Pro:note chenyansong$ echo  "aa bb"|awk '{print $2}'
+bb
+chenyansongdeMacBook-Pro:note chenyansong$ echo  "aa bb"|awk '{print $3}'
+
+chenyansongdeMacBook-Pro:note chenyansong$ echo "aa bb cc"|awk '{print $1,$3}'
+aa cc
+chenyansongdeMacBook-Pro:note chenyansong$ echo "aa bb cc"|awk '{print $0}'
+aa bb cc
+chenyansongdeMacBook-Pro:note chenyansong$ 
+```
+
+
 
 
 # 2. 指定分隔符

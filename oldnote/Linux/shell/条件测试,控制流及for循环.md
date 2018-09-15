@@ -422,6 +422,26 @@ done
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/shell/11.png)
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/shell/12.png)
 
+```shell
+for (( exp1; exp2; pexp3 ));do
+	//...command line
+done
+
+
+#计算1-100的和
+declare -i sum=0
+for((i=1;i<=100;i++));do
+	let sum+=$i
+done
+
+#计算1-100的之间偶数的和
+declare -i sum=0
+for((i=1;i<=100;i+=2));do
+	let sum+=$i
+done
+
+```
+
 
 
 
@@ -481,6 +501,81 @@ chenyansongdeMacBook-Pro:shell chenyansong$ seq 2 2 10
 chenyansongdeMacBook-Pro:shell chenyansong$ 
 
 
+```
+
+
+
+# 4.until循环
+
+
+
+进入循环，条件不满足
+
+退出循环，条件满足
+
+
+
+* 需求：直到用户输入quit退出循环，否则一直打印用户输入的字符串，并转化为大写
+
+  
+
+  while的实现方式
+
+```Shell
+#!/bin/bash
+
+read -p "please input something:" STRING
+
+while [ $STRING != 'quit' ];do
+	echo $STRING |tr 'a-z' 'A-Z'
+	read -p "please input something again:" STRING
+done
+```
+
+ 	until的实现方式
+
+```Shell
+#!/bin/bash
+
+read -p "please input something" STRING
+
+until [ $STRING == 'quit' ];do
+	echo $STRING |tr 'a-z' 'A-Z'
+	read -p "please input something again:" STRING
+done
+```
+
+
+
+​	每隔5秒钟看hadoop用户是否登录
+
+```Shell
+#!/bin/bash
+
+who |grep "hadoop" &>/dev/null
+RETVAL=$?
+
+until [ $RETVAL -eq 0 ];do
+	echo "hadoop is not login."
+	sleep 5
+	who |grep "hadoop" &>/dev/null
+	RETVAL=$?
+done
+
+echo "hadoop is logined in"
+
+
+###########另外一种简写方式###############
+#!/bin/bash
+
+
+#直到 who |grep "hadoop" &>/dev/null 的执行结果为0，表示执行成功了
+until who |grep "hadoop" &>/dev/null;do
+	echo "hadoop is not login."
+	sleep 5
+done
+
+echo "hadoop is logined in"
 ```
 
 
