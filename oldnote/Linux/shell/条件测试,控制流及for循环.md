@@ -378,6 +378,47 @@ done
 
 
 
+* 输出bash=/bin/bash的前6个的用户名
+
+```Shell
+#!/bin/bash
+
+file=/etc/passwd
+let I=1
+
+while read line;do
+	#如果用户的ID<505时，不做处理,直接进入下一次循环
+	[ `echo $line | awk -F: '{print $3}'` -le 505 ]&& continue
+	[ `echo $line | awk -F: '{print $NF}'` == "/bin/bash" ]&& echo $line|awk '{print $1}' && let I++
+	[ $I -gt 6 ] && break
+	
+done < $file
+```
+
+
+
+* 检查一个脚本执行之后是否有错误，有错误就使用vim打开，没有错误直接退出
+
+```Shell
+#!/bin/bash
+
+
+until bash -n $1 &>/dev/null;do
+	read -p "Syntax error, [Q|q] to quit, other for editing:" choice
+	case $choice in
+	q|Q)
+		echo "something wrong, quiting."
+		break
+		;;
+	*)
+		vim + $1
+		;;
+	esac
+done
+```
+
+
+
 * 计算100以内所有整数的和
 
 ```Shell
