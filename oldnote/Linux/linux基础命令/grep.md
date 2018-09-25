@@ -252,7 +252,10 @@ chen
 
 ```
 
+![image-20180925214719093](/Users/chenyansong/Documents/note/images/linux/command/grep-o.png)
+
 # 5. -E指定多个字符串进行匹配
+
 ``` shell
 #-E 表示拓展的grep，简写：egrep，可以不用转义
 
