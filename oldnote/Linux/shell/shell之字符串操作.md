@@ -18,7 +18,7 @@ ${var}	    #变量var的值, 与$var相同
 ${var-DEFAULT}	    #如果var没有被声明, 那么就以$DEFAULT作为其值 * 
 ${var:-DEFAULT}    #如果var没有被声明, 或者其值为空, 那么就以$DEFAULT作为其值 * 
 ${var=DEFAULT}    #如果var没有被声明, 那么就以$DEFAULT作为其值 * 
-${var:=DEFAULT}    #如果var没有被声明, 或者其值为空, 那么就以$DEFAULT作为其值 * 
+${var:=DEFAULT}    #如果var没有被声明, 或者其值为空, 那么就以$DEFAULT作为其值,并且将值赋值给var变量 * 
 ${var+OTHER}    #如果var声明了, 那么其值就是$OTHER, 否则就为null字符串 
 ${var:+OTHER}    #如果var被设置了, 那么其值就是$OTHER, 否则就为null字符串 
 ${var?ERR_MSG}    #如果var没被声明, 那么就打印$ERR_MSG * 
