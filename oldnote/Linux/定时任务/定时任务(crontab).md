@@ -7,6 +7,10 @@ tags: [Linux基础命令]
 
 
 
+[TOC]
+
+
+
 # 1.定时任务crond介绍
 
 &emsp;crond是linux系统中用来定期执行命令或指定程序任务的一种服务或软件
@@ -32,6 +36,17 @@ crontab    #设置命令    -l list     -e edit
 &emsp;开始→所有程序→附件→系统工具→选择任务计划程序
 
 ### 1.3.2 linux系统的定时任务
+
+
+系统cron任务
+	/etc/crontab
+		分钟 小时 天 月 周 用户 任务
+
+用户cron任务
+	/var/spool/cron/username
+		分钟 小时 天 月 周 任务
+
+
 &emsp;linux系统中定时任务调度的工作可以分为以下两个情况：
 &emsp;情况一:linux系统自身定期执行的任务工作：系统周期性执行的任务工作，如轮询系统日志，备份系统数据，清理系统缓存等。
 
@@ -131,13 +146,13 @@ crontab -l
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/定时任务/2.png)
 
- 
+
 那么chenyansong用户又是怎么进入/var/spool/cron/ ，然后去查看 /var/spool/cron/chenyansong 的呢？
- 
+
 原因：用户（chenyansong）使用：crontab
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/定时任务/3.png)
- 
+
 
 ## 2.4 指令选项说明表
 |参数|含义|指定示例|
@@ -284,7 +299,7 @@ crw-rw-rw- 1 root root 1, 3 3月  26 01:10 /dev/null
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/定时任务/4.png)
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/定时任务/5.png)
- 
+
 
 # 5.生产场景如何调试crond定时任务
 
@@ -293,7 +308,7 @@ crw-rw-rw- 1 root root 1, 3 3月  26 01:10 /dev/null
 ## 5.1 增加执行频率调试任务
 &emsp;在调试时，把任务执行频率调快一点，看能不能正常执行，如果正常，那就没问题了，再改成需要的任务的执行时间。
 &emsp;注意：有些任务时不允许频繁执行的，例如：定时往数据库里插入数据，这样的任务要在测试机上测试好，然后正式线上出问题的机会就少了。
- 
+
 
 ## 5.2调整系统时间调试任务
 
@@ -328,7 +343,9 @@ Mar 26 16:00:01 angelT CROND[3423]: (root) CMD (/usr/lib64/sa/sa1 1 1)
 # 注意：
 
 1.crontab 需要加载 环境变量
- 
+
+​	crontab执行的所有命令都去path环境变量指定的路径下去找
+
 ```
 有时我们创建了一个crontab，但是这个任务却无法自动执行，而手动执行这个任务却没有问题，这种情况一般是由于在crontab文件中没有配置环境变量引起的。
 
@@ -340,7 +357,7 @@ $start_tomcat
 
 ```
 
-2.crontab中要写全路径
+2.crontab中要写全路径，因为path环境变量的问题
 
 
 
