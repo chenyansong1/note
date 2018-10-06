@@ -3,7 +3,12 @@ title: 用户切换命令su,sudo,visudo
 categories: Linux   
 toc: true  
 tags: [linux]
+
 ---
+
+[TOC]
+
+
 
 
 # 1.用户切换命令 su
@@ -53,7 +58,7 @@ sudo cmd
 ## 2.2.sudo的执行原理
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/sudo/sudo2.png)
- 
+
 
 ## 2.3执行原理实操过程
 
@@ -65,6 +70,7 @@ root    ALL=(ALL)       ALL
 chenyansong    ALL=(ALL)       /bin/rm
 
 #ALL一定是大写的,All还不行
+
 ```
 
 ### 2.3.2.使用sudo删除
@@ -96,6 +102,10 @@ Sorry, user zhangsan is not allowed to execute '/bin/cp /etc/hosts /home/zhangsa
 ```
 
 ### 2.3.4.sudo 相关的参数
+
+#### 2.3.4.1.列出当前用户所有可以使用的sudo命令
+
+
 ``` 
 #sudo -l  列出用户在主机上可用和被禁止的命令
 [root@lamp01 ~]# sudo -l
@@ -106,7 +116,13 @@ User root may run the following commands on this host:
 User zhangsan may run the following commands on this host:
     (ALL) /bin/rm
  
- 
+
+```
+
+
+#### 2.3.4.2.删除密码时间戳
+
+```
 # sudo -k
 #通-K,删除时间戳,下一个sudo就要求提供密码,前有NOPASSWD:参数,时间戳默认5分钟也会 失效
 [zhangsan@lamp01 ~]$ sudo -K
@@ -120,14 +136,19 @@ User zhangsan may run the following commands on this host:
 [zhangsan@lamp01 ~]$ logout
 [root@lamp01 ~]# ll /var/db/sudo/zhangsan/
 总用量 0
-
 ```
 
-
+#### 2.3.4.3.visudo -c 语法检查
+```
+[root@lamp01 ~]# visudo -c
+/etc/sudoers: parsed OK
+```
 
 # 3.visudo
 
-等同于：vim /etc/sudoers
+
+
+等同于：vim /etc/sudoers 能够检查编辑的文件是否有误
 
 ## 3.1.通过echo的方式修改vim /etc/sudoers
 ```
@@ -137,11 +158,7 @@ chenyansong ALL=(ALL)   ALL
 
 ```
 
-## 3.2.visudo -c 语法检查
-```
-[root@lamp01 ~]# visudo -c
-/etc/sudoers: parsed OK
-```
+
 
 ## 3.3.修改vim /etc/sudoers文件的权限位777
 ```
@@ -161,10 +178,25 @@ sudo: no valid sudoers sources found, quitting
 [root@lamp01 ~]# chmod 440 /etc/sudoers
 ```
 
-## 3.4.viduso文件添加使用权限
+## 3.4.viduso文件添加使用权限(语法格式)
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/sudo/sudo3.png)
- 
+
+```
+
+#语法格式
+who		which_hosts=(runas)		[NOPASSWD:] command
+#who 谁
+#which_hosts 指定可以连接进来的主机
+#runas	 以谁的身份运行命令
+#command  可以执行的命令
+```
+
+
+
+## 3.4.别名
+
+别名必须全部而且只能使用大写英文字母的组合
 
 ```
 #首先需要配置一些Alias，这样在下面配置权限时，会方便一些，不用写大段大段的配置。Alias主要分成4种
@@ -193,32 +225,77 @@ USER_FLAG HOST_FLAG=(RUNAS_FLAG) NOPASSWD: COMMAND_FLAG
 
 ```
 
-## 3.5.主机别名
+### 3.5.主机别名
+
+* 主机名
+* IP
+* 网络地址
+* 其他主机别名
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/sudo/sudo4.png)
- 
 
-## 3.6.用户别名(%组)
+### 3.6.用户别名(%组)
+
+* 用户的用户名
+* 组名，使用%引导
+* 还可以使用其他已经存在的用户别名
+
+
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/sudo/sudo5.png) 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/sudo/sudo6.png)
- 
 
-## 3.7.命令别名
 
-以后可以针对不同的角色用户使用不同的命令别名
+### 3.7.命令别名
+
+* 命令路径（一般是可执行文件的路径）
+* 目录（此目录内的所有的命令）
+* 其他已经定义的命令别名
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/sudo/sudo7.png)
 
-## 3.8.角色别名
+### 3.8.角色别名
+
+* 用户名
+* %组名
+* 其他的runas别名
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/sudo/sudo8.png)
- 
-## 3.9.总结
+
+
+
+## 3.9.不需要输入密码
+
+```
+#说明NOPASSWD只对部分命令不需要输入密码
+hadoop ALL=(root) NOPASSWD: /usr/sbin/useradd, PASSWD:/usr/sbin/usermod
+```
+
+
+
+## 3.10.不允许执行的命令
+
+```
+#不允许执行 “/usr/bin/passwd root“这个命令，即：不允许通过sudo修改root的密码
+Cmnd_Alias USERADMINCMND = /usr/sbin/useradd, /usr/sbin/usermod,/usr/sbin/userdel,/usr/bin/passwd, !/usr/bin/passwd root
+
+
+
+
+#执行命令后面必须加上字符(下面表示以：字符开头，后面跟任意字符)
+/usr/bin/passwd [A-Za-z]*, !/usr/bin/passwd root
+```
+
+
+
+
+
+## 3.10.总结
+
 &emsp;通过上面的别名的配置，我们在创建新用户的时候，让用户属于上面配置的用户别名组, 这样创建的用户就能够有上面对特定组配置的权限
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/sudo/sudo9.png)
- 
+
 注意：
 * 授权规则中所有的ALL字符串必须为大写字母
 * 一行内容超长可以用“\”斜线换行
@@ -229,7 +306,7 @@ USER_FLAG HOST_FLAG=(RUNAS_FLAG) NOPASSWD: COMMAND_FLAG
 /usr/sbin/*,/sbin/*,!/usr/sbin/visudo,!/sbin/fdisk
 ```
 * 命令的路径要全路径
-* 如果不需要密码,应该加上NOPASSWD:参数
+* 如果不需要密码,应该加上NOPASSWD:参数 （即sudo之后不需要密码）
 * 用户组前面必须加%号
 
 

@@ -5,9 +5,56 @@ toc: true
 tags: [Linux基础命令]
 ---
 
+[TOC]
 
-&emsp;<font color=red>/etc/ssh/sshd_config文件</font> 中是配置ssh登陆的
-&emsp;下面是优化的步骤:
+Linux：openSSH
+
+​	服务器端：sshd，配置文件/etc/ssh/ssd_config
+
+​	客户端：ssh,配置文件 /etc/ssh/ss_config
+
+​	客户端提供的工具：
+
+​		ssh-keygen：key generation,秘钥生成器
+
+​		ssh-copy-id：将公钥传输到远程服务器
+
+​		scp：远程copy
+
+
+
+ssh-keygen -t rsa
+
+​	~/.ssh/id_rsa
+
+​	~/.ssh/id_rsa.pub
+
+公钥复制到远程主机某用户的家目录下的.ssh/authorized_keys（追加）文件或.ssh/authorized_keys2（追加）文件
+
+![image-20181006112615938](/Users/chenyansong/Documents/note/images/linux/ssh/ssh-keygen.png)
+
+
+
+一次性执行
+
+```
+ssh-keygen -t rsa -f .ssh/id-rsa-xxx -P ''
+```
+
+
+
+
+
+复制
+
+ssh-copy-id -i ~/.ssh/id_rsa.pub root@ip
+
+
+
+/etc/ssh/sshd_config文件中是配置ssh登陆的
+
+下面是优化的步骤:
+
 # 1.优化的配置
 ## 1.1.修改默认的端口(22)
 ```
@@ -70,7 +117,7 @@ GSSAPIAuthentication no
 
 ```
 
- 
+
 &emsp;方式二（推荐）：他有个好的习惯就是在修改文件之前，将文件备份（并加上时间）
 ``` shell 
 #下面是一个执行脚本
