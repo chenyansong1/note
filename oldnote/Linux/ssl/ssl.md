@@ -214,3 +214,7 @@ chenyansongdeMacBook-Pro:ssl chenyansong$ openssl rand -base64 2
 +es=
 ```
 
+
+
+# openssl实现私有CA
+
