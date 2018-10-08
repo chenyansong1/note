@@ -1,5 +1,5 @@
 模板渲染工具StringTemplate
-ji
+
 
 
 解决：多个条件拼接，避免在代码中增加判断的问题
@@ -66,3 +66,16 @@ System.out.println(hello.render());
       ]
 
 ```
+
+
+参考：
+
+https://github.com/antlr/stringtemplate4/blob/master/doc/cheatsheet.md
+
+https://stackoverflow.com/questions/18437005/how-do-i-iterate-though-a-java-list-in-stringtemplate
+
+http://www.voidcn.com/article/p-pmajwpjk-bqr.html
+
+
+
+http://imushan.com/2016/09/02/tools/StringTemplate-4%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/

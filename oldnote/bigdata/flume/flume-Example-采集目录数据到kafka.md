@@ -38,6 +38,8 @@ a1.sources.r1.fileHeader = true
 a1.sources.r1.deletePolicy = immediate
 #是否递归搜索
 a1.sources.r1.recursiveDirectorySearch = true
+#默认是读取的是oldest的文件，但是如果出现大量的小文件，就需要对文件进行排序，那么就很耗性能（CPU），所以采用随机读取文件的方式
+a1.sources.r1.consumeOrder = random
 
 #####################  channels  ############################
 a1.channels.c1.type = memory
