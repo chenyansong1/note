@@ -218,3 +218,107 @@ chenyansongdeMacBook-Pro:ssl chenyansong$ openssl rand -base64 2
 
 # openssl实现私有CA
 
+
+
+## 生成秘钥
+
+
+
+```
+#生成私钥(RSA)
+openssl genrsa
+
+#指定生成的秘钥长度
+openssl genrsa 2048
+
+#保存指定的文件中
+openssl genrsa -out filename
+
+#文件保存之后，需要修改文件的权限为600
+chmod 600 filename
+#or
+(umask 077; openssl genrsa -out server1024.key 1024)
+
+#根据上面生成的私钥，输出公钥(提取公钥)
+openssl rsa -in server1024.key -pubout
+
+```
+
+
+
+## 私有CA
+
+
+
+```
+man req
+req - PKCS#10 certificate request and certificate generating utility.
+
+# -x509 表示生成自签证书
+# -new 生成一个证书，如果后面没有-key，那么使用一个新的key(私钥)
+# -key 指定私钥
+# -out 证书输出到的文件
+# -days 证书的有效期，默认是30day
+openssl req -new -x509 -key server1024.key -out server.crt -days 365
+#接下来会让你输入：国家，省份，城市，公司，部门，主机名称(hostname很重要),邮件地址
+
+
+#查看证书的信息
+openssl x509 -text -in server.crt 
+
+```
+
+
+
+vim /etc/pki/tls/openssl.cnf ,编辑这个配置文件，可以看到ca的一些文件的目录，已经一些默认的设定（如国家，省份，城市等）
+
+
+
+下面是在默认的目录下生成证书
+
+```
+cd /etc/pki/CA
+#在private 目录下生成一个私钥
+(umask 077; openssl genrsa -out private/cakey.pem 2048)
+
+#使用私钥生成一个证书
+openssl req -new -x509 -key private/cakey.pem -out cacert.pem
+
+#创建默认的目录和文件
+mkdir certs newcerts crl
+
+touch index.txt
+touch serial
+echo 01 > serial
+
+```
+
+
+
+## 向私有CA申请证书
+
+
+
+这样如果我们有一个服务，比如是httpd，我们刚好需要为该服务生成一个证书
+
+```
+#1.首先在对应的目录下生成一个私钥
+(umask 077; openssl genrsa -out httd.key 1024)
+
+#2.生成证书，需要：国家，省份，城市等
+openssl req -new -key httpd.key -out httpd.csr
+
+#3.向证书机构(我们在上面建立的机构)，申请认证(会根据这个配置文件来签署/etc/pki/tls/openssl.cnf),我们需要将 httpd.csr 这个文件传输到我们的 证书机构所在的服务器，然后执行下面的命令，来生成该机构签署的证书
+openssl ca -in httpd.csr -out httpd.crt -days 365
+#我们需要输入：国家，省份，城市等，然后让我们选择是否需要签署[y/n]
+
+#查看已经签署的证书
+cat /etc/pki/CA/index.txt
+```
+
+
+
+
+
+
+
