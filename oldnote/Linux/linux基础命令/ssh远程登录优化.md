@@ -39,15 +39,26 @@ ssh-keygen -t rsa 生成公钥，私钥，如下
 
 ```
 ssh-keygen -t rsa -f .ssh/id-rsa-xxx -P ''
+
+#-t 指定算法
+#-f 指定文件路径
+#-P 指定密码
+
+ssh-keygen -t rsa -f .ssh/id-rsa-xxx -N ''
 ```
 
 
 
 
 
-复制
+复制公钥到指定的主机的指定用户名下
 
+```
 ssh-copy-id -i ~/.ssh/id_rsa.pub root@ip
+
+#-i [identity_file]	指定公钥路径
+
+```
 
 
 
@@ -439,6 +450,5 @@ ssh username@host -p 3333
 #在远程执行命令
 ssh username@host -p 3333 'ls /'
 
-#
 ```
 

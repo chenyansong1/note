@@ -375,3 +375,413 @@ scp -P 333 /path/to/file username@host
 	
 ```
 
+
+
+# sftp,ftp
+
+```
+sftp [-P 999] [user@]host[:dir[/]]
+
+>get /path/to/file
+>mget /path/to/file
+get [-afPpr] remote-path [local-path]
+```
+
+本地命令前面都加了一个 “l", 而直接执行命令是对远程服务器
+
+```
+FTP> ! 从 ftp 子系统退出到外壳。
+
+FTP> ? 显示 ftp 命令说明。? 与 help 相同。
+
+格式：? [command]
+
+说明：[command]指定需要帮助的命令名称。如果没有指定 command，ftp 将显示全部命令的列表。 
+
+
+
+FTP> append 使用当前文件类型设置将本地文件附加到远程计算机上的文件。
+
+格式：append local-file [remote-file]
+
+说明：local-file 指定要添加的本地文件。
+
+remote-file 指定要添加 local-file 的远程计算机上的文件。如果省略了 remote-file，本地文件名将被用作远程文件名。
+
+
+
+FTP> ascii 将文件传送类型设置为默认的 ASCII。
+
+说明：FTP 支持两种文件传送类型，ASCII 码和二进制图像。在传送文本文件时应该使用ASCII。
+
+
+
+FTP> bell 切换响铃以在每个文件传送命令完成后响铃。默认情况下，铃声是关闭的。
+
+
+
+FTP> binary（或bi）
+ 将文件传送类型设置为二进制。
+
+
+
+FTP> bye（或by）
+ 结束与远程计算机的 FTP 会话并退出 ftp。
+
+
+
+FTP> cd 更改远程计算机上的工作目录。
+
+
+
+
+
+格式：cd remote-directory
+
+说明：remote-directory 指定要更改的远程计算机上的目录。
+
+
+
+FTP> close 结束与远程服务器的 FTP 会话并返回命令解释程序。
+
+
+
+FTP> debug 切换调试。当调试打开时，发送到远程计算机的每个命令都打印，前面是字符串“>”。默认情况下，调试是关闭的。
+
+
+
+FTP> delete 删除远程计算机上的文件。
+
+格式：delete remote-file
+
+说明：remote-file 指定要删除的文件。
+
+
+
+FTP> dir 显示远程目录文件和子目录列表。
+
+格式：dir [remote-directory] [local-file]
+
+说明：remote-directory 指定要查看其列表的目录。如果没有指定目录，将使用远程计算机中的当前工作目录。Local-file 指定要存储列表的本地文件。如果没有指定，输出将显示在屏幕上。
+
+
+
+FTP> disconnect 从远程计算机断开，保留 ftp 提示。
+
+
+
+FTP> get 使用当前文件转换类型将远程文件复制到本地计算机。
+
+格式：get remote-file [local-file]
+
+说明：remote-file 指定要复制的远程文件。
+
+Local-file 指定要在本地计算机上使用的名称。如果没有指定，文件将命名为 remote-file。
+
+
+
+FTP >glob 切换文件名组合。组合允许在内部文件或路径名中使用通配符（*和?）。默认情况下，组合是打开的。
+
+
+
+FTP >hash 切换已传输的每个数据块的数字签名 (#) 打印。数据块的大小是2048 字节。默认情况下，散列符号打印是关闭的。
+
+
+
+FTP >help 显示 ftp 命令说明。
+
+格式：help [command]
+
+说明：command 指定需要有关说明的命令的名称。如果没有指定 command，ftp 将显示全部命令的列表。
+
+
+
+FTP >lcd 更改本地计算机上的工作目录。默认情况下，工作目录是启动 ftp 的目录。
+
+格式：lcd [directory]
+
+说明：directory 指定要更改的本地计算机上的目录。如果没有指定directory，将显示本地计算机中当前的工作目录。
+
+
+
+FTP >literal 将参数逐字发送到远程 FTP 服务器。将返回单个的 FTP 回复代码。
+
+格式：literal argument [ ...]
+
+说明：argument 指定要发送到 FTP 服务器的参数。
+
+
+
+FTP >ls 显示远程目录文件和子目录的缩写列表。
+
+格式：ls [remote-directory] [local-file]
+
+说明：remote-directory 指定要查看其列表的目录。如果没有指定目录，将使用远程计算机中的当前工作目录。 local-file 指定要存储列表的本地文件。如果没有指定，输出将显示在屏幕上。
+
+
+
+FTP >mdelete 删除远程计算机上的文件。
+
+格式：mdelete remote-files [ ...]
+
+说明：remote-files 指定要删除的远程文件。
+
+
+
+FTP >mdir 显示远程目录文件和子目录列表。可以使用 mdir 指定多个文件。
+
+格式：mdir remote-files [ ...] local-file
+
+说明：remote-files 指定要查看列表的目录。必须指定 remote-files。请键入 - 使用远程计算机上的当前工作目录。
+
+local-file 指定要还原列表的本地文件。请键入- 在屏幕上显示列表。
+
+
+
+FTP >mget 使用当前文件传送类型将远程文件复制到本地计算机。
+
+格式：mget remote-files [ ...]
+
+说明：remote-files 指定要复制到本地计算机的远程文件。
+
+
+
+FTP >mkdir 创建远程目录。
+
+格式：mkdir directory
+
+说明：directory 指定新的远程目录的名称。
+
+FTP >mls 显示远程目录文件和子目录的缩写列表。
+
+格式：mls remote-files [ ...] local-file
+
+说明：remote-files 指定要查看列表的文件。必须指定 remote-files；
+
+请键入- 使用远程计算机上的当前工作目录。
+
+local-file 指定要存储列表的本地文件。请键入 - 以在屏幕上显示列表。
+
+
+
+FTP >mput 使用当前文件传送类型将本地文件复制到远程计算机上。
+
+格式：mput local-files [ ...]
+
+说明：local-files 指定要复制到远程计算机的本地文件
+
+
+
+FTP >open 与指定的 FTP 服务器连接。
+
+格式：open computer [port]
+
+说明：computer 指定要连接的远程计算机。可以通过 IP 地址或计算机名称指定计算机（DNS或主机文件必须可用）。如果自动登录打开（默认），ftp 还将尝试自动将用户登录到 FTP 服务器port 指定用来联系 FTP 服务器的端口号。
+
+
+
+FTP >prompt 切换提示。如果关闭提示时 mget 及 mput 传送所有文件，Ftp在多文件传送过程中将提示允许您有选择地检索或存储文件。默认情况下，提示是
+
+打开的。
+
+
+
+FTP >put 使用当前文件传送类型将本地文件复制到远程计算机上。
+
+格式：put local-file [remote-file]
+
+说明：local-file 指定要复制的本地文件。
+
+remote-file 指定要在远程计算机上使用的名称。如果没有指定，文件将命名为 local-file。
+
+
+
+FTP >pwd 显示远程计算机上的当前目录。
+
+
+
+FTP >quit 结束与远程计算机的 FTP 会话并退出 ftp。
+
+
+
+FTP >quote 将参数逐字发送到远程 FTP 服务器。将返回单个的 FTP 回复代码。
+
+Quote 与 literal 相同。
+
+格式：quote argument [ ...]
+
+说明：argument 指定要发送到 FTP 服务器的参数。
+
+
+
+FTP >recv 使用当前文件传送类型将远程文件复制到本地计算机。Recv 与 get相同。
+
+格式：recv remote-file [local-file]
+
+说明：remote-file 指定要复制的远程文件。
+
+local-file 指定要在本地计算机上使用的名称。如果没有指定，文件将命名为 remote-file。
+
+
+
+FTP >remotehelp 显示远程命令帮助。
+
+格式：remotehelp [command]
+
+说明：command 指定需要帮助的命令的名称。如果没有指定 command，ftp将显示全部远程命令的列表。
+
+
+
+FTP >rename 重命名远程文件。
+
+格式：rename filename newfilename
+
+说明：filename 指定要重命名的文件。 newfilename 指定新的文件名。
+
+
+
+FTP >rmdir 删除远程目录。
+
+格式：rmdir directory
+
+说明：directory 指定要删除的远程目录的名称。
+
+
+
+FTP >send 使用当前文件传送类型将本地文件复制到远程计算机上。Send 与put 相同。
+
+格式：send local-file [remote-file]
+
+说明：local-file 指定要复制的本地文件。 remote-file 指定要在远程计算机上使用的名称。如果没有指定，文件将命名为 local-file。
+
+
+
+FTP >status 显示 FTP 连接和切换的当前状态。
+
+
+
+FTP >trace 切换数据包跟踪。Trace 在运行 ftp 命令时显示每个数据包的路由。
+
+
+
+FTP >type 设置或显示文件传送类型。
+
+格式：type [type-name]
+
+说明：type-name 指定文件传送类型。默认设置为 ascii。如果没有指定type-name，将显示当前的类型。
+
+
+
+FTP >user 指定远程计算机的用户。
+
+格式：user username [password] [account]
+
+说明：user-name 指定登录到远程计算机所使用的用户名。password 指定 user-name 的密码。如果没有指定，但必须指定，ftp 会提示输入密码。
+
+account 指定登录到远程计算机所使用的帐户。如果没有指定account，但是需要指定，ftp 会提示您输入帐户。
+
+
+
+FTP >verbose 切换 verbose 模式。
+
+如果打开，将显示所有 ftp 响应。在文件传送完成后，将同时显示与传送效率有关的统计信息。默认情况下，verbose 是打开的。
+
+
+
+
+
+sftp 是一个交互式文件传输程式。它类似于 ftp, 但它进行加密传输，比FTP有更高的安全性。下边就简单介绍一下如何远程连接主机，进行文件的上传和下载，以及一些相关操作。
+
+
+
+
+
+
+
+举例，如远程主机的 IP 是 202.206.64.33或者是域名www.hebust.edu.cn,用户名是  fyt
+ ,在命令行模式下:sftp fyt@202.206.64.33或者  fyt@www.hebust.edu.cn。回车提示输入密码。进入提示符
+
+
+
+sftp>
+
+
+
+如果登陆远程机器不是为了上传下载文件，而是要修改远程主机上的某些文件。可以
+
+
+
+ssh  fyt@202.206.64.33 （其实sftp就是ssh 的一个程式。）
+
+
+
+sftp> get /var/www/fuyatao/index.php  /home/fuyatao/
+
+这条语句将从远程主机的  /var/www/fuyatao/目录下将 index.php 下载到本地  /home/fuyatao/目录下。
+
+
+
+sftp> put /home/fuyatao/downloads/Linuxgl.pdf /var/www/fuyatao/
+
+这条语句将把本地 /home/fuyatao/downloads/目录下的 linuxgl.pdf文件上传至远程主机/var/www/fuyatao/ 目录下。
+
+
+
+你如果不知道远程主机的目录是什么样， pwd命令可以帮您查询远程主机的当前路径。查询本机当前工作目录 lpwd.
+
+
+
+改变路径可以用cd ，改变本机路径可以用 lcd;
+
+
+
+ls rm rmdir mkdir 这些命令都可以使用。同理调用本机都是加 l
+ , 即 lls lrm.
+
+
+
+要离开sftp，用exit 或quit、 bye 均可。详细情况可以查阅 man 
+ sftp.
+
+
+
+如果觉得在命令行模式下不太方便，可以 sudo apt-get install gftp。在图形界面下操作就简便多了。
+
+```
+
+```
+ 1. sftp user@ip
+
+        你要用sftp, 当然得登录到sftp服务器啊， 在linux的shell中执行上面的命令后， linux shell会提示用户输入密码， 我们就输入password吧。 这样就成功建立了sftp连接。
+   2. help
+
+       建立连接后， linux shell中的$编程了sftp>,  这也对。 现在执行以下help, 可以看看sftp支持哪些命令。
+
+   3. pwd和lpwd
+
+       pwd是看远端服务器的目录， 即sftp服务器默认的当前目录。  lpwd是看linux本地目录。
+
+   4. ls和lls
+
+       ls是看sftp服务器下当前目录下的东东， lls是看linux当前目录下的东东。
+
+   5. put a.txt
+
+       这个是把linux当前目录下的a.txt文件上传到sftp服务器的当前目录下。
+
+    6. get b.txt
+
+      这个是把sftp服务器当前目录下的b.txt文件下载到linux当前目录下。
+
+     7. !command
+
+        这个是指在linux上执行command这个命令， 比如!ls是列举linux当前目录下的东东， !rm a.txt是删除linux当前目录下的a.txt文件。
+
+        这个命令非常非常有用， 因为在sftp> 后输入命令， 默认值针对sftp服务器的， 所以执行rm a.txt删除的是sftp服务器上的a.txt文件， 而非本地的linux上的a.txt文件。
+
+
+     8. exit和quit
+     退出。
+
+```
+
