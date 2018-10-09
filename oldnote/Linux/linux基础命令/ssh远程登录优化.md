@@ -23,7 +23,7 @@ Linux：openSSH
 
 
 
-ssh-keygen -t rsa
+ssh-keygen -t rsa 生成公钥，私钥，如下
 
 ​	~/.ssh/id_rsa
 

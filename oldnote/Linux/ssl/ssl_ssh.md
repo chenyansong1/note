@@ -342,6 +342,14 @@ cat /etc/pki/CA/index.txt
 
 
 
+生成秘钥
+
+```
+
+```
+
+
+
 # openssh
 
 
@@ -352,5 +360,18 @@ openssh-server-4.3p2-82.el5
 openssh-4.33p2-82.el5
 openssh-askpass-4.33p2-82.el5
 openssh-clients-4.33p2-82.el5
+```
+
+
+
+# scp
+
+```
+scp -P 333 /path/to/file username@host
+	-r #递归复制(目录)
+	-p #保持文件的属性信息
+	-P #指定端口(大写的P)
+	-a #相当于 -rp
+	
 ```
 
