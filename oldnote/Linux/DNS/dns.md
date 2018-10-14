@@ -130,3 +130,10 @@ prt记录只能定义在反向
 
 ```
 
+
+
+# bind
+
+bind
+
+​	/etc/named.conf
