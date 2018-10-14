@@ -130,6 +130,9 @@ vim /etc/httpd/httd.conf
 
 directive			vlaue
 指令(不区分大小写)	   值(分区大小写)
+
+#修改配置文件之后，检查语法是否正常，类似于nginx -t 
+httpd -t 
 ```
 
 
@@ -197,6 +200,49 @@ Include conf.d/*.conf
 #worker进程需要使用普通用户运行(这里指定是谁)
 User	apache	
 Group	apache
+
+#服务管理员
+ServerAdmin	root@localhost
+
+ServerName www.baidu.com #当前服务器的IP地址对应的主机名作为此处的值
+
+UseCanonicalName  Off
+
+#文档根目录
+DocumentRoot  "/var/www/html"
+
+#定义这个路径的访问规则
+<Directory "/var/www/html">
+	#None 任何选项都不支持，推荐使用
+	#Indexes 列出所有的根写的文件，不建议使用
+	#FollowSymLinks 跟随符号链接(html下文件通过符号链接指向了另外一个文件)，不建议使用
+	#Includes 允许执行服务器端包含(SSI)
+	#ExecCGI 允许执行CGI脚本
+	#MultiView 内容协商
+	#All 支持以上所有的选项
+	Options	Indexes FollowSymLinks
+
+	#允许覆盖(Acl)
+	#AuthConfig #需要基于一个账号密码的认证
+	AllowOverride None	#none说明使用order,allow,deny的方式进行配置
+	
+	#用于定义基于主机的访问功能的，IP，网络地址或主机定义访问控制机制
+	Order allow,deny	#先allow 后deny
+	Allow from all
+	
+	#仅允许192.168.0.0/24 这个网段的IP访问
+	Order allow,deny	#这里的次数很重要，不能先deny,后allow,
+	Allow from 192.168.0.0/24  #Allow from 192.168.1.1 192.168.1.2 空格隔开
+	
+	#仅不允许192.168.0.0/24 这个网段的IP访问
+	Order deny,allow	#这里的次数很重要，不能先allow,后deny
+	Deny from 192.168.0.0/24
+	
+	
+</Directory>
+
+
+
 ```
 
 
