@@ -25,3 +25,28 @@ MIME:Multipurpose Internet Mail Extension, 多用途互联网邮件扩展
 
 
 动态网页：服务器端存储的文档非HTML格式，二十编程语言开发的脚本，脚本接收参数之后，在服务器端执行一次，运行完成之后会生成一个HTML格式的文档，服务器把生成的文档发给客户端。
+
+
+
+
+
+# 常见的http客户端和服务器端
+
+* Client
+  * IE
+  * Firefox
+  * Chrome
+  * Opera
+  * Safari
+* Server（web服务器，仅处理静态内容）
+  * Apache—>httpd
+  * IIS(web服务器，应用程序服务器)
+  * nginx
+  * lighttpd
+  * thttpd (嵌入式使用)
+* 应用程序服务器（能够解析静态内容，并且处理某种特定格式的动态内容）
+  * IIS
+  * Tomcat（Java应用程序服务器， open source）
+  * Websphere(IBM, jsp解析, 商业)
+  * Weblogic(Bea, Oracle, jsp, 商业)
+  * JBoss(RedHat, 开源 or 商业)
