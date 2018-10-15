@@ -133,6 +133,11 @@ directive			vlaue
 
 #修改配置文件之后，检查语法是否正常，类似于nginx -t 
 httpd -t 
+
+
+httpd -l #查看已经存在的模块
+
+httpd -D #查看所有的支持的模块
 ```
 
 
@@ -226,6 +231,29 @@ DocumentRoot  "/var/www/html"
 	#AuthConfig #需要基于一个账号密码的认证
 	AllowOverride None	#none说明使用order,allow,deny的方式进行配置
 	
+	########认证###########
+	AllowOverride AuthConfig
+	AuthType Basic
+	AuthName "Restricted Stie..."
+	
+	#定义用户访问
+	AuthUserFile "/etc/httpd/conf/htpasswd"
+	Require	user hadoop #只允许hadoop用户登录，需要建立该用户
+	Require valid-user	#需要用户登录验证
+	
+	#创建用户
+	#htpasswd -c -m /etc/httpd/conf/htpasswd hadoop
+	#htpasswd  -m /etc/httpd/conf/htpasswd hadoop #只有第一次-c去创建文件，后面都不用创建文件
+	#htpasswd -D username #删除用户
+	
+	#定义组访问
+	AuthGroupFile "/etc/httpd/conf/htgroup"
+	Require group myusers
+	
+	vim /etc/httpd/conf/htgroup
+	myusers: hadoop tom #这些用户需要事先已经创建了密码文件了htpasswd创建
+	###################
+	
 	#用于定义基于主机的访问功能的，IP，网络地址或主机定义访问控制机制
 	Order allow,deny	#先allow 后deny
 	Allow from all
@@ -234,6 +262,14 @@ DocumentRoot  "/var/www/html"
 	Order allow,deny	#这里的次数很重要，不能先deny,后allow,
 	Allow from 192.168.0.0/24  #Allow from 192.168.1.1 192.168.1.2 空格隔开
 	
+	#地址的表示方式
+	IP	
+	network/netmask 192.168.0.0/24 
+	hostname : www.a.com
+	domainname	a.com
+	部分IP： 172.16 == 172.16.0.0/16
+	
+	
 	#仅不允许192.168.0.0/24 这个网段的IP访问
 	Order deny,allow	#这里的次数很重要，不能先allow,后deny
 	Deny from 192.168.0.0/24
@@ -241,9 +277,50 @@ DocumentRoot  "/var/www/html"
 	
 </Directory>
 
+#不指定访问的路劲的时候，默认的index页面
+DirectoryIndex index.html index.html.var
+
+#以.ht开头的文件都禁止访问
+<Files ~"^\.ht">
+	Order allow,deny
+	Deny from all
+<Files>
+
+#
+TypesConfig /etc/mime.types
+
+DefaultType text/plain	#默认类型为：文本
+
+HostnameLookups Off	#日志中IP地址是否反解为主机名
+
+ErrorLog logs/error_log
+LogLevel warn
+#日志格式，看官网 指令/LogFormat
+LogFormat "%h %l %u %t" combined
+LogFormat "%h %l %u %t" common
+LogFormat "%h %l %u %t" referer
 
 
+CustomLog logs/access_log combined
+
+#Alias /luntan/ "/bbs/forum/" #后面两个斜线于要对应
+Alias /luntan "/bbs/forum"
+#浏览器访问http:172.16.1.1/lantan/a.jpg #访问的是 /bbs/forum/a.jpg
 ```
+
+
+
+
+
+认证在浏览器中显示
+
+![](/Users/chenyansong/Documents/note/images/http/image-20181015223048530.png)
+
+
+
+日志格式说明
+
+![image-20181015230433339](/Users/chenyansong/Documents/note/images/http/image-20181015230433339.png)
 
 
 
