@@ -103,6 +103,8 @@ Port:(80/tcp), ssl:(443/tcp) #开启的端口
 yum -y install httpd
 
 rpm -ql httpd
+
+httpd -t #检查配置文件的语法
 ```
 
 ![image-20181014175755949](/Users/chenyansong/Documents/note/images/http/httpd.png)
@@ -344,5 +346,265 @@ vim /etc/sysconfig/httpd
 
 
 
+# 虚拟主机
 
+
+
+* 基于IP（IP是稀缺自然）
+
+  IP1:80
+
+  IP2:80
+
+  
+
+* 基于端口(网页间跳转使用；或者内网使用)
+
+  IP:80
+
+  IP:8080
+
+* 基于域名(一般使用这个)
+
+  IP:80
+
+  ​	主机名不同
+
+  ​		www.a.org
+
+  ​		www.b.net
+
+
+
+得先取消中心主机，注释DocumentRoot 即可
+
+```
+vim /etc/httpd/httpd.conf
+# DocumentRoot "/var/www/html"
+
+vim /etc/httpd/conf.d/virtual.conf
+#基于IP的
+<VirtualHost 172.16.100.1:80>
+	ServerName www.a.com
+	DocumentRoot "/www/a.com"
+</VirtualHost>
+
+<VirtualHost 172.16.100.2:80>
+	ServerName www.b.com
+	DocumentRoot "/www/b.com"
+</VirtualHost>
+
+##创建目录
+mkdir -p /www/{a,b}.com
+
+
+#基于端口的,此时需要在主配置文件中，添加监听8080的端口
+vim /etc/httpd/httpd.conf
+Listen 80
+Listen 8080
+
+vim /etc/httpd/conf.d/virtual.conf
+<VirtualHost 172.16.100.1:80>
+	ServerName www.a.com
+	DocumentRoot "/www/a.com"
+</VirtualHost>
+
+<VirtualHost 172.16.100.1:8080>
+	ServerName www.b.com
+	DocumentRoot "/www/b.com"
+</VirtualHost>
+
+
+#基于主机名的
+vim /etc/httpd/conf.d/virtual.conf
+
+NameVirtualHost 172.16.100.2:80
+
+<VirtualHost 172.16.100.1:80>
+	ServerName www.a.com
+	DocumentRoot "/www/a.com"
+	#基于密码的登录验证
+	<Directory "www/b.com">
+		Options none
+		AllowOverride authconfig
+		AuthType basic
+		AuthName "Restrict area..."
+		AuthUserFile "/etc/httpd/.htpasswd"	#需要通过htpasswd 创建认证文件
+		Require valid-users
+	</Directory>
+</VirtualHost>
+
+<VirtualHost 172.16.100.1:80>
+	ServerName www.b.com
+	DocumentRoot "/www/b.com"
+	#拒绝 172.16.100.177 主机访问
+	<Directory "www/b.com">
+		Options none
+		AllowOverride none
+		Order deny,allow
+		Deny from 172.16.100.177
+	</Directory>
+</VirtualHost>
+
+vim /etc/hosts
+172.16.100.1	www.a.com
+172.16.100.1	www.b.com
+
+
+#默认虚拟主机(当访问一个不存在的主机的时候，返回的是默认的主机)
+<VirtualHost _default_:80>
+	DocumentRoot "/www/default"
+</VirtualHost>
+```
+
+htpasswd创建认证文件
+
+```
+#第一次创建需要 -c 去创建文件
+htpasswd -c -m /etc/httpd/.htpasswd tom
+
+htpasswd  -m /etc/httpd/.htpasswd jerry
+
+
+```
+
+
+
+指定日志格式和主机别名
+
+![](/Users/chenyansong/Documents/note/images/http/vhost.png)
+
+
+
+## 官网帮助
+
+
+
+![image-20181016212854608](/Users/chenyansong/Documents/note/images/http/vhost-help.png)
+
+
+
+# 基于openssl的httpd
+
+
+
+```
+yum install mod_ssl
+
+rpm -ql mod_ssl
+```
+
+![image-20181016222524597](/Users/chenyansong/Documents/note/images/http/ssl.png)
+
+
+
+在/etc/httpd/conf.d/ssl.conf下这个文件
+
+
+
+### CA
+
+```
+#1.选择一台主机，生成私钥
+cd /etc/pki/CA
+(umask 077; openssl genrsa -out private/cakey.pem 2048)
+
+#2.根据私钥生成CA的自签证书
+vim ../tls/openssl.cnf #编辑这个配置，指定默认的城市，省份，组织，部门等
+countryName_default = CN
+stateOrProvinceName_default	= Henan
+localityName_default = zhengzhou
+0.organizationName_default = testOrg
+organizationalUnitName_default = Tech
+
+#生成自签(-x509是表示自签)
+openssl req -new -x509 -key private/cakey.pem -out cacert.pem -days 3655
+#此时会让你指定主机名，Email
+
+vim ../tls/openssl.cnf
+dir 	 = /etc/pki/CA
+certs 	 = $dir/certs
+crl_dir  = $dir/crl
+database = $dir/index.txt
+
+#创建需要的文件
+mkdir certs crl newcerts
+touch index.txt
+echo 01> serial
+
+#3.生成某个应用的证书,在应用所在的主机上
+cd /etc/httpd/
+mkdir ssl
+cd ssl
+
+#生成秘钥
+(umask 077; openssl genrsa 1024 > httpd.key)
+
+#生成证书签署请求文件
+openssl req -new -key httpd.key -out httpd.csr
+CN
+Henan
+zhengzhou
+testOrg
+Tech
+hello.test.com #这个主机一定要和实际访问的主机一致
+
+
+#4.将生产的证书请求文件 发送 到CA那台主机上
+scp httpd.csr host-ca:/tmp
+
+
+#5.在CA这台主机上签署请求
+openssl ca -in /tmp/httpd.csr -out /tmp/httpd.crt -days 3650
+y
+y
+
+#查看CA已经签署的证书
+cat /etc/pki/Ca/index.txt
+
+#6.将CA签署的证书拷贝到应用服务器
+scp host-ca:/tmp/httpds.crt ./
+
+#7.配置应用服务器 使用证书
+cd /etc/httpd/conf.d/
+cp ssl.conf ssl.conf.bak
+
+vim ssl.conf
+<VirtualHost 172.16.100.1:443>
+	ServerName hello.test.com
+	DocumentRoot "/www/test.com"
+	ErrorLog logs/ssl_error_log
+	TransferLog logs/ssl_access_log
+	SSLEngine on #on表示启用ssl功能
+	SSLProtocol all -SSLv2  #从所有中去掉 SSLv2 剩下 SSLv1，tsl
+	SSLCertificateFile /etc/httpd/ssl/httpd.crt  #证书文件的位置
+	SSLCertificateKeyFile /etc/httpd/ssl/httpd.key #指定私钥路径
+</VirtualHost>
+
+
+#8.重启服务
+httpd -t #检查配置文件
+service httpd restart
+
+#9.浏览器访问
+https://hello.test.com
+```
+
+![image-20181016225052034](/Users/chenyansong/Documents/note/images/http/ca.png)
+
+![image-20181016225116738](/Users/chenyansong/Documents/note/images/http/ca02.png)
+
+
+
+浏览器访问的时候，会提示我们
+
+
+
+1. 将CA的自己的证书（/etc/pki/CA/cacert.pem ），拿到我们的Windows上，改名为cacert.crt
+2. 双击证书，安装，选择“受信任的根证书颁发机构”
+3. 浏览器访问：https://hello.test.com
+
+
+
+# 编译安装httpd
 
