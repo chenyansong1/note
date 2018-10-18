@@ -156,7 +156,6 @@ MSL（Maximum Segment Lifetime），TCP允许不同的实现可以设置不同�
 
 * 总的状态图
 
-![img](/Users/chenyansong/Documents/note/images/linux/iptables/tcp-status-all.png)
 
 
-
+![img](/Users/chenyansong/Documents/note/images/linux/iptables/tcpfsm.png)
