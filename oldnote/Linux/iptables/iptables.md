@@ -202,3 +202,95 @@ Linux2.4
 
 
 
+hook function:5个钩子函数
+
+* prerouting 刚到达本机
+
+* input：进入本机（1）
+* output:从本机出去（2）
+* forward从本机转发（3）
+* postrouting 从本机发送出去
+
+
+
+![image-20181020090657434](/Users/chenyansong/Documents/note/images/linux/iptables/hook.png)
+
+
+
+把访问频繁的请求放在上面，避免过多的检查（如web服务）
+
+通常在一个数据报文送达到网卡之后，网卡会将数据报文送达到路由表进行路由决策，但是在网卡上也有一个**钩子函数**，用于路由之前的修改数据报文的内容，同样在数据报文通过网卡发送出去之前，我们也是可以修改数据报文的内容，这里也是对应一个钩子函数。
+
+![image-20181020091741755](/Users/chenyansong/Documents/note/images/linux/iptables/hook2.png)
+
+
+
+在网卡的出口和入口位置，我们都可以对数据报文的内容进行修改，如：实现地址转换的功能
+
+
+
+规则链：每一个规则函数上提供的规则，将组成一个链，所以就有了下面这5个规则链
+
+​	PREROUTING
+
+​	INPUT
+
+​	FORWARD
+
+​	OUTPUT
+
+​	POSTROUTING
+
+功能：
+
+filter（过滤）：这里每个链都对应一个列，每个链内部又有多行，所以组成了 **表**
+
+​	INPUT 能不能到达本机
+
+​	OUTPUT 能不能从本机发出
+
+​	FORWARD 能不能经由本机转发
+
+nat(地址转换)：这里每个链都对应一个列，每个链内部又有多行，所以组成了 **表**
+
+​	PREROUTING
+
+​	OUTPUT
+
+​	POSTROUTING
+
+mangle(修改报文首部):表
+
+​	修改ttl值等
+
+​	PREROUTING
+
+​	INPUT
+
+​	OUTPUT
+
+​	FORWARD
+
+​	POSTROUTING
+
+raw(原始格式)：表
+
+​	不做任何修改
+
+​	PREROUTING
+
+​	OUTPUT
+
+
+
+![image-20181020133158472](/Users/chenyansong/Documents/note/images/linux/iptables/chains-type.png)
+
+
+
+这就是所谓的 **四表五链**
+
+
+
+## 自定义链
+
+可以使用自定义链，但只在被调用时才能发挥作用，而且如果没有被任何一条规则匹配到，还应该有返回机制
