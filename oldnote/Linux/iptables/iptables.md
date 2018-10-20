@@ -168,7 +168,9 @@ MSL（Maximum Segment Lifetime），TCP允许不同的实现可以设置不同�
 
 工作在主机或者是网络的**边缘**，对于进出的数据报文能够根据**事先定义好的规则**，做出相应的处理的组件，称之为网络防火墙或者主机防火墙.
 
- `
+
+
+## 四表五链
 
 规则：匹配标准
 
@@ -311,13 +313,17 @@ raw(原始格式)：表
 
 规则：是由 **匹配标准** 和 **处理动作** 组成
 
-iptable [-t TABLE]  COMMAND  CHAIN [num] 匹配标准  -j 处理办法
+iptable [-t TABLE]  COMMAND  CHAIN [num] 匹配条件  -j 处理办法
+
+如果-t table没有写，默认是 -t filter 表
 
 
 
-## 匹配标准
 
-* 通用匹配
+
+## 匹配条件
+
+### 通用匹配
 
 | 匹配标准                | 说明                                                         |
 | ----------------------- | ------------------------------------------------------------ |
@@ -327,11 +333,141 @@ iptable [-t TABLE]  COMMAND  CHAIN [num] 匹配标准  -j 处理办法
 | -i  interface           | 指定数据报文流入的接口（从哪个网卡进入的），在prerouting，input, forward中使用才有意义 |
 | -o interface            | 指定数据报文流出的接口（从哪个网卡出去的），在postrouting,output,forward中使用才有意义 |
 
-* 扩展匹配（调用netfilter的扩展模块）
+### 扩展匹配（调用netfilter的扩展模块）
 
-​		隐含扩展：不用特别指定由哪个模块进行扩展 ，因为此时使用了 -p(tcp|udp|icmp)
 
-​		显式扩展：必须指明由哪个模块进行的扩展，在iptable中使用-m选项可完成此功能
+
+* 隐含扩展
+
+  不用特别指定由哪个模块进行扩展 ，因为此时使用了 -p(tcp|udp|icmp),比如如果我们使用了tcp之后，就可以使用tcp这个特定协议的扩展，可以指定源端口，目标端口进行匹配
+
+  ```
+  -p tcp
+  	--sport PORT [-PROT2]  ：源端口
+  	--dport PORT  [-PROT2]  ：目标端口
+  可以使用连续的端口，如 ： --sprot 80-110
+  	--tcp-flags mask comp : 通过tcp的标志位匹配
+  		--tcp-flags SYN,FIN,ACK,RST  SYN,ACK  只检查mask指定的标志位(SYN,FIN,ACK,RST)，comp表示此列表中的位必须为1(SYN,ACK都为1)，comp中出现的，但是mask中没有出现的，必须为0，如：FIN和RST必须为0
+  		--tcp-flags SYN,FIN,ACK,RST  SYN ：表示只有SYN为1，其他都为0，表示三次握手中的第一次，简写为--syn
+  		--syn :匹配三次握手中的第一次
+  		
+  #放行172.16网络的 访问172.16.100.7 主机的ssh服务
+  ##进入放行
+  iptables -t filter -A INPUT -s 172.16.0.0/16 -d 172.16.100.7 -p tcp --dport 22 -j ACCEPT
+  ##出去放行
+  iptables -t filter -A OUTPUT -s 172.16.100.7 -d 172.16/16 -p tcp --sport 22 -j ACCEPT
+  
+  
+  
+  -p icmp
+  		--icmp-type :指定icmp协议报文的类型
+  			0:echo-reply ping响应报文
+  			8:echo-request ping请求报文
+  			
+  #放行本机ping
+  iptables -A OUTPUT -s 172.16.110.7 -p icmp --icmp-type 8 -j ACCEPT
+  iptables -A INPUT -d 172.16.110.7 -p icmp --icmp-type 0 -j ACCEPT
+  
+  
+  -p udp
+  	--sport
+  	--dport
+  	
+  #DNS服务器提供服务:(从内网主机到DNS服务器，从DNS服务器到根服务器)，所以tcp需要些四条规则，udp需要些四条规则，总共8条规则
+  
+  
+  ```
+
+  
+
+  DNS服务的请求场景
+
+  * 客户端请求DNS服务器
+  * DNS服务器请求根服务器
+
+  
+
+  ![image-20181020175106434](/Users/chenyansong/Documents/note/images/linux/iptables/dns-open.png)
+
+  
+
+
+
+* 显式扩展：必须指明由哪个模块进行的扩展，在iptable中使用-m选项可完成此功能
+
+  state:状态扩展，结合ip_conntrack追踪会话的状态，
+
+  ​	NEW:新连接的请求
+
+  ​	ESTABLISHED:以建立的连接，对于新请求的相应也是已建立的连接
+
+  ​	INVALID : 非法连接请求（如：SYN=1, FIN=1)
+
+  ​	RELATED:相关联的
+
+  ​		-m state - -state NEW,ESTABLISHED -j ACCEPT
+
+  
+
+  
+
+* 保存规则
+
+  service iptables save	 会保存文件到 /etc/sysconfig/iptables
+
+  或者
+
+  iptables-save > /etc/sysconfig/iptables.2018
+
+  iptables-restore </etc/sysconfig/iptables.2018  #使生效
+
+
+  ```
+  iptables重启的时候，会读取下面的文件到内存中
+  [root@localhost ~]# cat /etc/sysconfig/iptables
+  # Firewall configuration written by system-config-firewall
+  # Manual customization of this file is not recommended.
+  *filter
+  :INPUT ACCEPT [0:0]
+  :FORWARD ACCEPT [0:0]
+  :OUTPUT ACCEPT [0:0]
+  -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+  -A INPUT -p icmp -j ACCEPT
+  -A INPUT -i lo -j ACCEPT
+  -A INPUT -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT
+  -A INPUT -j REJECT --reject-with icmp-host-prohibited
+  -A FORWARD -j REJECT --reject-with icmp-host-prohibited
+  COMMIT
+  [root@localhost ~]# 
+  ```
+
+  
+
+  
+
+  
+
+
+
+
+
+连接追踪
+
+在 /proc/net/ip_conntrack 文件中保存了当前主机和其他外面的主机的连接信息
+
+![image-20181020180430565](/Users/chenyansong/Documents/note/images/linux/iptables/ip_conntrack.png)
+
+
+
+ 
+
+
+
+
+
+
+
+
 
 
 
@@ -339,11 +475,17 @@ iptable [-t TABLE]  COMMAND  CHAIN [num] 匹配标准  -j 处理办法
 
 -j target
 
-| TARGET |                                            |
-| ------ | ------------------------------------------ |
-| ACCEPT | 接收                                       |
-| DROP   | 悄悄拒绝                                   |
-| REJECT | 明确拒绝，测试目的建议使用，一般不建议使用 |
+| TARGET     |                                                              |
+| ---------- | ------------------------------------------------------------ |
+| ACCEPT     | 接收（放行）                                                 |
+| DROP       | 悄悄拒绝                                                     |
+| REJECT     | 明确拒绝，测试目的建议使用，一般不建议使用                   |
+| DNAT       | 目标地址转换                                                 |
+| SNAT       | 源地址转换                                                   |
+| REDIRECT   | 端口重定向                                                   |
+| MASQUERADE | mas querade 地址伪装，在nat表中postrouting链中实现**源地址转换**的 |
+| LOG        | 记录日志                                                     |
+| MARK       | 给一个报文打一个标记                                         |
 
 
 
@@ -363,17 +505,164 @@ iptable  -t filter -A INPUT -s 172.16.0.0/16 -d 172.16.100.7 -j DROP
 
 
 
-管理规则
+* 管理规则
 
--A :附加一条规则，在链的尾部追加，
+  -A :附加一条规则，在链的尾部追加，
 
--I chain [num] : 插入一条规则，指定插入到chain链上的第num条的位置 ，省略num则为第一条
+  -I chain [num] : 插入一条规则，指定插入到chain链上的第num条的位置 ，省略num则为第一条
 
--D chain [num] : 
+  -D chain [num] : 删除指定链中的第num条规则
+
+  -R chain [num]: 替换指定的规则
+
+  
+
+* 管理链：
+
+  -F [chain]：flush，清空指定规则链，如果省略chain，则删除对应表中的所有链
+
+  -P chain [ACCETP|DROP] :指定链的默认策略
+
+  -N :自定义一个新的空链
+
+  -S：删除一个自定义的空链，如果是非空，先使用-F清空
+
+  -Z:清空计数器（置零）
+
+  -E :重命名一条自定义链
+
+```
+#将链的默认策略改为drop，最好事先写好能够ssh的规则，不然会将ssh也挡在外面，这样就不能远程了
+iptables -P INPUT DROP 
+iptables -P OUTPUT DROP 
+iptables -P FORWARD DROP 
+
+#放行web服务
+iptables -I INPUT  -d 172.16.100.7 -p tcp --dport 80 -j ACCEPT
+iptables -I OUTPUT -s 172.16.100.7 -p tcp --sport 80 -j ACCEPT
+#查看
+[root@localhost ~]# iptables -L -n
+Chain INPUT (policy DROP)
+target     prot opt source               destination         
+ACCEPT     tcp  --  0.0.0.0/0            172.16.100.7        tcp dpt:80 
+Chain OUTPUT (policy DROP)
+target     prot opt source               destination         
+ACCEPT     tcp  --  172.16.100.7         0.0.0.0/0           tcp spt:80 
+
+
+#放行本地的ping
+iptables -A INPUT -s 127.0.0.1 -d 127.0.0.1 -i lo -j ACCEPT
+iptables -A OUTPUT -s 127.0.0.1 -d 127.0.0.1 -o lo -j ACCEPT
+
+
+#放行icmp
+
+
+```
 
 
 
-管理链
+* 查看类
+
+  -L：擦汗指定表中的规则（会将IP反解为主机名，将端口反解为协议名称）
+
+  ​	-n : 以数字格式显示主机地址和端口号
+
+  ​	-v : 显示详细信息（计数器信息：接收的报文数量，字节总大小）
+
+  ​	--line-numbers :显示规则号码
+
+```
+iptables -t filter -L -n 
+#简写,默认是filter表
+iptables -L -n
+
+
+
+#以IP和端口号显示
+[root@localhost ~]# iptables -L -n 
+Chain INPUT (policy ACCEPT 默认的策略是 ACCEPT)
+target     prot opt source               destination         
+ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0           state RELATED,ESTABLISHED 
+
+
+#显示计数器详情
+[root@localhost ~]# iptables -L -n -v
+Chain INPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+  306 30874 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0           state RELATED,ESTABLISHED 
+  
+#显示规则的行号        
+[root@localhost ~]# iptables -L -n --line-numbers
+Chain INPUT (policy ACCEPT)
+num  target     prot opt source               destination         
+1    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0           state RELATED,ESTABLISHED 
+2    ACCEPT     icmp --  0.0.0.0/0            0.0.0.0/0           
+3    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0           
+4    ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0           state NEW tcp dpt:22 
+5    REJECT     all  --  0.0.0.0/0            0.0.0.0/0           reject-with icmp-host-prohibited 
+
+```
+
+
+
+iptables不是服务，但是有服务脚本，服务脚本的主要作用在于管理保存的规则，装载及移除iptables/netfilter相关的内核模块：iptables_nat, iptables_filter,iptables_mangle, iptabels_raw, ip_nat, ip_conntrack
+
+
+
+
+
+
+
+
+
+# icmp code 对照表
+
+
+
+| TYPE | CODE | Description                                                  | Query | Error |
+| ---- | ---- | ------------------------------------------------------------ | ----- | ----- |
+| 0    | 0    | Echo Reply——回显应答（Ping应答）                             | x     |       |
+| 3    | 0    | Network Unreachable——网络不可达                              |       | x     |
+| 3    | 1    | Host Unreachable——主机不可达                                 |       | x     |
+| 3    | 2    | Protocol Unreachable——协议不可达                             |       | x     |
+| 3    | 3    | Port Unreachable——端口不可达                                 |       | x     |
+| 3    | 4    | Fragmentation needed but no frag. bit set——需要进行分片但设置不分片比特 |       | x     |
+| 3    | 5    | Source routing failed——源站选路失败                          |       | x     |
+| 3    | 6    | Destination network unknown——目的网络未知                    |       | x     |
+| 3    | 7    | Destination host unknown——目的主机未知                       |       | x     |
+| 3    | 8    | Source host isolated (obsolete)——源主机被隔离（作废不用）    |       | x     |
+| 3    | 9    | Destination network administratively prohibited——目的网络被强制禁止 |       | x     |
+| 3    | 10   | Destination host administratively prohibited——目的主机被强制禁止 |       | x     |
+| 3    | 11   | Network unreachable for TOS——由于服务类型TOS，网络不可达     |       | x     |
+| 3    | 12   | Host unreachable for TOS——由于服务类型TOS，主机不可达        |       | x     |
+| 3    | 13   | Communication administratively prohibited by filtering——由于过滤，通信被强制禁止 |       | x     |
+| 3    | 14   | Host precedence violation——主机越权                          |       | x     |
+| 3    | 15   | Precedence cutoff in effect——优先中止生效                    |       | x     |
+| 4    | 0    | Source quench——源端被关闭（基本流控制）                      |       |       |
+| 5    | 0    | Redirect for network——对网络重定向                           |       |       |
+| 5    | 1    | Redirect for host——对主机重定向                              |       |       |
+| 5    | 2    | Redirect for TOS and network——对服务类型和网络重定向         |       |       |
+| 5    | 3    | Redirect for TOS and host——对服务类型和主机重定向            |       |       |
+| 8    | 0    | Echo request——回显请求（Ping请求）                           | x     |       |
+| 9    | 0    | Router advertisement——路由器通告                             |       |       |
+| 10   | 0    | Route solicitation——路由器请求                               |       |       |
+| 11   | 0    | TTL equals 0 during transit——传输期间生存时间为0             |       | x     |
+| 11   | 1    | TTL equals 0 during reassembly——在数据报组装期间生存时间为0  |       | x     |
+| 12   | 0    | IP header bad (catchall error)——坏的IP首部（包括各种差错）   |       | x     |
+| 12   | 1    | Required options missing——缺少必需的选项                     |       | x     |
+| 13   | 0    | Timestamp request (obsolete)——时间戳请求（作废不用）         | x     |       |
+| 14   |      | Timestamp reply (obsolete)——时间戳应答（作废不用）           | x     |       |
+| 15   | 0    | Information request (obsolete)——信息请求（作废不用）         | x     |       |
+| 16   | 0    | Information reply (obsolete)——信息应答（作废不用）           | x     |       |
+| 17   | 0    | Address mask request——地址掩码请求                           | x     |       |
+| 18   | 0    | Address mask reply——地址掩码应答                             |       |       |
+
+http://www.cnitblog.com/yang55xiaoguang/articles/59581.html
+
+
+
+
 
 ​	 
 
