@@ -337,7 +337,7 @@ iptable [-t TABLE]  COMMAND  CHAIN [num] 匹配条件  -j 处理办法
 
 
 
-* 隐含扩展
+#### 隐含扩展
 
   不用特别指定由哪个模块进行扩展 ，因为此时使用了 -p(tcp|udp|icmp),比如如果我们使用了tcp之后，就可以使用tcp这个特定协议的扩展，可以指定源端口，目标端口进行匹配
 
@@ -393,23 +393,132 @@ iptable [-t TABLE]  COMMAND  CHAIN [num] 匹配条件  -j 处理办法
 
 
 
-* 显式扩展：必须指明由哪个模块进行的扩展，在iptable中使用-m选项可完成此功能
+#### 显式扩展
 
-  state:状态扩展，结合ip_conntrack追踪会话的状态，
+必须指明由哪个模块进行的扩展，在iptable中使用-m选项可完成此功能
 
-  ​	NEW:新连接的请求
 
-  ​	ESTABLISHED:以建立的连接，对于新请求的相应也是已建立的连接
 
-  ​	INVALID : 非法连接请求（如：SYN=1, FIN=1)
+##### state:状态扩展
 
-  ​	RELATED:相关联的
+   结合ip_conntrack追踪会话的状态，
 
-  ​		-m state - -state NEW,ESTABLISHED -j ACCEPT
+​	NEW:新连接的请求
 
-  
+​	ESTABLISHED:以建立的连接，对于新请求的相应也是已建立的连接
 
-  
+​	INVALID : 非法连接请求（如：SYN=1, FIN=1)
+
+​	RELATED:相关联的，如在ftp服务中，建立连接使用的是21号端口，但是后面的数据请求使用的是一个随机的端口，此时就用到了**相关联的**这种状态，表示跟此前的状态有关联
+
+​		-m state - -state NEW,ESTABLISHED -j ACCEPT
+
+
+```
+#接收来自ssh的请求(如果是状态追踪，那么请求进来是有new，establish，但是出去只能是establish)
+iptables -A INPUT -d 172.16.100.7 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+
+iptables -A OUTPUT -s 172.16.100.7 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+
+
+
+#出去的报文都是ESTABLISHED，所以出去我们只需要写一条规则就行了，并把它放在第一条，这样实现最先匹配
+iptables -I OUTPUT -s 172.16.100.7 -m state --state ESTABLISHED -j ACCEPT
+
+
+#开放ftp服务(首先需要装载ip_conntrack_ftp , ip_nat_ftp模块)
+iptables -A INPUT -d 172.16.100.7 -p tcp -m state --state RELATED,ESTABLISHED -j ACCEPT
+##修改出去的第一条
+iptables -R OUTPUT 1 -s 172.16.100.7 -p tcp -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+```
+
+​	
+
+##### multiport：离散多端口匹配扩展
+
+```
+-m multiport
+	--source-ports 
+	--destination-ports
+	--ports		不分区源和目标
+	
+iptables -I INPUT 2 -d 172.16.100.7 -p tcp -m multiport --destination-ports 21,22,80 -m state --state NEW -j ACCEPT
+
+```
+
+
+
+##### iprange,ip范围扩展
+
+```
+-m iprange 
+    --src-range ip-ip
+    --dst-range ip-ip
+
+#当前的ssh服务，仅放行给172.16.100.3 - 172.16.100.100 访问
+iptables -A INPUT -p tcp --dport 22 -m iprange --src-range 172.16.100.3-172.16.100.100 -m state --state NEW,ESTABLISHED -j ACCEPT
+
+```
+
+
+
+##### connlimit,连接数限定
+
+可以限定某一个IP，最多发起多少个连接请求
+
+```
+! --connlimit-above n  #连接的上限,注意 ! 的作用
+--connlimit-above 2 -j ACCEPT #表示达到2个的上限就放行，但是加上的!就表示没有达到2个就放行，所以一般需要加上！
+
+#表示低于2个的连接就放行(没有达到)
+iptables -A INPUT -d 172.16.100.7 -p tcp --dport 80 -m connlimit ! --connlimit-above 2 -j ACCEPT
+
+
+```
+
+
+
+##### limit
+
+速率限定，每单位时间的请求数
+
+```
+每单位时间接入的请求数，以及并发接入的请求数
+--limit rate  #每秒，或者每分钟，或者每小时可以进入多少连接 default 3/hour 
+--limit-burst  #并发接入的连接数
+
+#ssh服务，允许每分钟只接入3个请求
+iptables -I INPUT -d 172.16.100.7 -p tcp --dport 22 -m limit ---limit 3/minute --limit-burst 3 -j ACCEPT
+
+
+#限制每分钟5个ping请求
+iptables -A INPUT -d 172.16.100.7 -p icmp --icmp-type 8 -m limit --limit 5/minute -j ACCEPT
+
+
+
+```
+
+##### string
+
+字符串匹配过滤
+
+```
+--algo {bm|kmp}   #指定一个算法
+--string "STRING"  #需要匹配的字符串
+
+
+
+#包含 h7n9的字符串都拒绝(注意是OUTPUT的请求，所以是出去的报文有字符串过滤的情况)
+iptables -I OUTPUT -s 172.16.100.7 -m string --algo kmp --string "h7n9" -j REJECT
+
+```
+
+
+
+​	
+
+
 
 * 保存规则
 
@@ -457,6 +566,12 @@ iptable [-t TABLE]  COMMAND  CHAIN [num] 匹配条件  -j 处理办法
 
 ![image-20181020180430565](/Users/chenyansong/Documents/note/images/linux/iptables/ip_conntrack.png)
 
+可以修改这个值
+
+```
+sysctl -w net.ipv4.ip_conntrack_max=65536
+```
+
 
 
  
@@ -499,37 +614,56 @@ iptable  -t filter -A INPUT -s 172.16.0.0/16 -d 172.16.100.7 -j DROP
 
 ```
 
+
+
+> LOG 记录日志
+
+```
+--log-level 
+--log-prefix prefix
+--log-tcp-sequence
+--log-tcp-options
+--log-ip-options
+--log-uid
+
+iptables -I INPUT -d 172.16.100.7 -p icmp --icmp-type 8 -j LOG --log-prefix "firewall log for icmp--"
+
+tail -f /var/log/messages	#查看记录的日志
+```
+
+
+
 ​	
 
 ## 命令command
 
 
 
-* 管理规则
+### 管理规则
 
-  -A :附加一条规则，在链的尾部追加，
+-A :附加一条规则，在链的尾部追加，
 
-  -I chain [num] : 插入一条规则，指定插入到chain链上的第num条的位置 ，省略num则为第一条
+-I chain [num] : 插入一条规则，指定插入到chain链上的第num条的位置 ，省略num则为第一条
 
-  -D chain [num] : 删除指定链中的第num条规则
+-D chain [num] : 删除指定链中的第num条规则 :iptables -D INPUT 1  表示删除第一条规则
 
-  -R chain [num]: 替换指定的规则
+-R chain [num]: 替换指定的规则
 
-  
 
-* 管理链：
 
-  -F [chain]：flush，清空指定规则链，如果省略chain，则删除对应表中的所有链
+### 管理链：
 
-  -P chain [ACCETP|DROP] :指定链的默认策略
+-F [chain]：flush，清空指定规则链，如果省略chain，则删除对应表中的所有链
 
-  -N :自定义一个新的空链
+-P chain [ACCETP|DROP] :指定链的默认策略
 
-  -S：删除一个自定义的空链，如果是非空，先使用-F清空
+-N :自定义一个新的空链
 
-  -Z:清空计数器（置零）
+-S：删除一个自定义的空链，如果是非空，先使用-F清空
 
-  -E :重命名一条自定义链
+-Z:清空计数器（置零）
+
+-E :重命名一条自定义链
 
 ```
 #将链的默认策略改为drop，最好事先写好能够ssh的规则，不然会将ssh也挡在外面，这样就不能远程了
@@ -562,15 +696,40 @@ iptables -A OUTPUT -s 127.0.0.1 -d 127.0.0.1 -o lo -j ACCEPT
 
 
 
-* 查看类
+#### 自定义链
 
-  -L：擦汗指定表中的规则（会将IP反解为主机名，将端口反解为协议名称）
+```
+#创建一个新的链
+iptables -N clean_in
 
-  ​	-n : 以数字格式显示主机地址和端口号
+iptables -A clean_in -d 255.255.255.255 -p icmp -j DROP
+iptables -A clean_in -d 172.16.255.255 -p icmp -j DROP
+iptables -A clean_in -p tcp ! --syn -m state --state NEW -j DROP
+#返回主链
+iptables -A clean_in -d 172.16.100.7 -j RETURN
 
-  ​	-v : 显示详细信息（计数器信息：接收的报文数量，字节总大小）
+#被主链调用
+iptables -I INPUT -j clean_in
 
-  ​	--line-numbers :显示规则号码
+
+
+```
+
+由下图，我们可以看到，首先在主链中，进入了chen_in链的调用，同时可以看到clean_in链是被引用了一次（也就是主链引用）
+
+![image-20181021221047366](/Users/chenyansong/Documents/note/images/linux/iptables/udc.png)
+
+
+
+### 查看链
+
+-L：擦汗指定表中的规则（会将IP反解为主机名，将端口反解为协议名称）
+
+​	-n : 以数字格式显示主机地址和端口号
+
+​	-v : 显示详细信息（计数器信息：接收的报文数量，字节总大小）
+
+​	--line-numbers :显示规则号码
 
 ```
 iptables -t filter -L -n 
