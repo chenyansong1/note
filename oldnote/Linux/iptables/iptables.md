@@ -769,7 +769,11 @@ iptables不是服务，但是有服务脚本，服务脚本的主要作用在于
 
 
 
-# iptables抵御ddos
+# iptables抵御dos攻击
+
+
+
+![image-20181021222000293](/Users/chenyansong/Documents/note/images/linux/iptables/dos.png)
 
 
 
