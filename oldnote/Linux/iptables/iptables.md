@@ -827,6 +827,28 @@ http://www.cnitblog.com/yang55xiaoguang/articles/59581.html
 
 
 
-​	 
+# NAT 
+
+Network Address Translation
+
+
+
+* DNAT 目标地址转换
+* SNAT 源地址转换
+
+
+
+```
+-j SNAT
+
+	--to-source #指定源地址
+	--
+	
+iptables -t 
+```
+
+
+
+
 
 ​	
