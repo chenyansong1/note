@@ -841,13 +841,49 @@ Network Address Translation
 ```
 -j SNAT
 
-	--to-source #指定源地址
-	--
+	--to-source #指定源地址  --to-source 123.2.3.2-123.2.3.5 指定多个地址
+-j MASQUERADE #可以动态的选择外网地址，这样不用我们指定外网地址
 	
-iptables -t 
+
+-j DNAT
+	--to-destination IP[:port]
+
+#原地址转换，使内网能够上网
+iptables -t nat -A POSTROUTING -s 192.168.0.0/24 -j SNAT --to-source 123.2.3.2
+
+
+#目录地址转换
+##场景：假设我们只有一个公网IP，但是我们内网中有web服务器和ftp服务器，我们希望外网访问80的时候，我们将目标地址转换成web服务器，外网访问21的时候，我们将目标地址转换成ftp服务器，这就是所谓的 端口映射
+iptables -t nat -A PREROUTING -d 123.2.3.2 -p tcp --dport 80 -j DNAT --to-destination 192.168.10.22
+
+iptables -t nat -A PREROUTING -d 123.2.3.2 -p tcp --dport 21 -j DNAT --to-destination 192.168.10.33
+
+#服务器做了返回的地址转换
+
+
+#改变目标地址的同时改变端口
+iptables -t nat -A PREROUTING -d 111.11.11.1 -p tcp --dport 80 -j DNAT --to-destination 192.168.10.33:8080
+
+
 ```
 
 
+
+
+
+# layer7
+
+
+
+iptables并不能实现应用层协议的过滤，此时就有了layer7
+
+
+
+需要给内核打补丁
+
+需要给iptables打补丁
+
+https://blog.csdn.net/u014721096/article/details/78629523
 
 
 
