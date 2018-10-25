@@ -135,6 +135,21 @@ shell> sudo grep 'temporary password' /var/log/mysql/mysqld.log
 
 
 
+MySQL的初始化数据库
+
+```
+information_schema	#MySQL运行时数据
+mysql	#MySQL的表的元数据信息
+test	#测试数据库
+
+ls /var/lib/mysql 有对应数据库的文件目录
+	test	#对应数据库
+	mysql	#对应数据库，而information_schema是内存信息，不属于锁文件
+	#如果我们在该目录下新建一个 mydb，那么使用客户端去查询的时候，可以看到 show databases; 
+```
+
+![image-20181025224303969](/Users/chenyansong/Documents/note/images/mysql/database-new.png)
+
 
 
 # 客户端连接
@@ -156,4 +171,121 @@ mysql的用户：username@host 放在一起限定的
 #如：我们授权一个用户时，需要同时指定：username , host
 mysql> GRANT ALL ON menagerie.* TO 'your_mysql_name'@'your_client_host';
 ```
+
+
+
+如果在Linux上，MySQL的客户端和服务器端在同一台主机，那么使用的是socket连接，如果是远程的客户端连接服务器上的MySQL，使用的是tcp/IP, 可以查看文件：/var/lib/mysql/mysql.sock 这个文件
+
+
+
+关系型数据库对象：
+
+* 库
+
+* 表
+* 索引
+* 视图
+* 约束（键）
+* 存储函数
+* 存储过程
+* 触发器
+* 游标
+* 用户
+* 权限
+* 事务
+
+
+
+
+
+字段类型
+
+​	字符
+
+​		CHAR(N)		#固定长度
+
+​		VARCHAR(N)  #可变长度
+
+​		BINARY(n)	#固定长度，区分大小写
+
+​		VARBINARY(n)	#可变长度，区分大小写
+
+​		TEXT(n)			#大文本，不区分大小写
+
+​		BLOB(n)			#大文本，区分大小写 （binary large object）
+
+​	数值
+
+​		精确数值
+
+​			整形
+
+​				TINYINT  (一个字节，-128-127 或者0-255) 
+
+​				SMALLINT（2个字节）
+
+​				MEDIUMINT（3个字节）
+
+​				INT	（4个字节）
+				BIGINT(8个字节)
+
+​				修饰符：UNSIGNED 无符号
+
+​			十进制
+
+​				DECIMAL 可以精确的表示一个浮点数
+
+​		近似数值
+
+​			浮点数
+
+​				FLOAT
+
+​				DOUBLE
+
+​	日期
+
+​		DATE	#日期
+
+​		TIME	#时间
+
+​		DATETIME	#日期时间
+
+​		STAMP	#时间戳
+
+​	布尔
+
+​		0 or 1
+
+
+
+DDL
+
+​	CREATE 
+
+​	ALTER
+
+​	DROP
+
+
+
+DML
+
+​	INSERT
+
+​	UPDATE
+
+​	DELETE
+
+
+
+DCL
+
+​	GRANT
+
+​	REVOKE
+
+
+
+
 
