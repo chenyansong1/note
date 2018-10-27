@@ -178,7 +178,7 @@ mysql> GRANT ALL ON menagerie.* TO 'your_mysql_name'@'your_client_host';
 
 
 
-关系型数据库对象：
+# 关系型数据库对象
 
 * 库
 
@@ -196,7 +196,7 @@ mysql> GRANT ALL ON menagerie.* TO 'your_mysql_name'@'your_client_host';
 
 
 
-
+# 数据类型
 
 字段类型
 
@@ -259,7 +259,13 @@ mysql> GRANT ALL ON menagerie.* TO 'your_mysql_name'@'your_client_host';
 
 ​	内置类型：ENUM, SET
 
-DDL
+
+
+# 数据库操作
+
+* DML
+* DCL
+* DDL
 
 ```
 #CREATE 
@@ -279,40 +285,73 @@ DDL
     #删除表
     DROP TABLE [IF EXISTS] tb_name;
     
-    #修改表(help alter table)
+    #修改表(help alter table 这个很重要，你不可能记住所有的定义)
+    ALTER TABLE tb_name #还可以指定字段的位置
+		ADD [COLUMN] col_name column_definition [FIRST | AFTER col_name]
+		CHANGE [COLUMN] old_name new_col_name column_definition [FIRST | AFTER col_name]
+		
     ALTER TABLE tb_name;
     	MODIFY:修改字段的属性
     	CHANGE：修改字段名称
     	ADD：添加一个字段
     	DROP:删除一个字段
-#ALTER
-
+	
+	ALTER TABLE student ADD course VARCHAR(100)  #会在所有的字段后面添加上这个字段
+	ALTER TABLE student CAHNGE course course_new VARCHAR(101) 
+	
 
 #DROP
 	DROP DATABASE db_name;
 
+#INSERT 
+	INSERT INTO tb_name(col1, col2,...) VALUES ('','',...);
+	#插入一批数据
+	INSERT INTO tb_name(col1, col2,...) VALUES ('','',...),('','',...) ..;
 
+#UPDATE
+	UPDATE tb_name set column_name=value WHERE... #如果不指定条件的话，会改变所有的行，这样很危险
+	
+#DELETE
+	DELETE FROM tb_name where 
+	
+#TRUCATE 清空表
+	TRUCATE TABLE tb_name
+	
+#SELECT 
+	SELECT column,... FROM tb_name WHERE CONDITIONS
+	
+	
+
+#创建用户:通过'USERNAME'@'HOST' 唯一的确定一个用户
+	CREATE USER 'USERNAME'@'HOST' IDENTIFIED BY 'PASSWD'
+	DROP USER 'USERNAME'@'HOST' 
+	#jerry@localhost  , jerry@172.16.100.1不是同一个用户
+	
+	HOST:
+		IP
+		HOSTNAME
+		NETWORK
+		通配符：
+			_ : 匹配任意单个字符； 172.16.0._   表示 172.16.0.1 - 172.16.0.9
+			% ：匹配任意长度的任意字符， jerry@'%' 表示从所有的主机上jerry上可以登录
+
+
+#授权用户
+	GRANT pri1, pri2,...  ON db_name.tb_name TO 'USERNAME'@'HOST' [IDENTIFIED BY 'PWD'] #修改密码是可选的
+	#如果用户不存在，那么直接创建用户，并授权
+	
+	GRANT ALL PRIVILEGES ON mydb.* TO 'jerry'@'%' #授权所有的权限给jerry
+	
+#取消授权
+	REVOKE pri1,pri2.. ON db_name.tb_name FROM 'USERNAME'@'HOST' 
+
+#查看用户的权限
+	SHOW GRANTS FOR 'USERNAME'@'HOST' 
 ```
 
 
 
 
-
-DML
-
-​	INSERT
-
-​	UPDATE
-
-​	DELETE
-
-
-
-DCL
-
-​	GRANT
-
-​	REVOKE
 
 
 
