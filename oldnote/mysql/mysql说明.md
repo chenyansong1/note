@@ -227,7 +227,7 @@ mysql> GRANT ALL ON menagerie.* TO 'your_mysql_name'@'your_client_host';
 ​				MEDIUMINT（3个字节）
 
 ​				INT	（4个字节）
-				BIGINT(8个字节)
+​				BIGINT(8个字节)
 
 ​				修饰符：UNSIGNED 无符号
 
@@ -257,15 +257,44 @@ mysql> GRANT ALL ON menagerie.* TO 'your_mysql_name'@'your_client_host';
 
 ​		0 or 1
 
-
+​	内置类型：ENUM, SET
 
 DDL
 
-​	CREATE 
+```
+#CREATE 
+	##创建库
+	CREATE DATABASE db_name;
+    CREATE DATABASE IF NOT EXISTS db_name;	#如果存在就创建
+    
+    ##创建表
+    CREATE TABLE tb_name(col1 ,col2, col3...);
+    USE my_db_name;
+    CREATE TABLE students(name CHAR(20), age TINYINT UNSIGNED, gender CHAR(1) NOT NULL);
+    #查看表
+    SHOW TABLES [FROM db_name];
+    #查看表结构
+    DESC tb_name;
+    DESC student; #注意表名是区分大小写的，因为表是要对应单个文件的，而文件的名称在不同的文件系统上是不同的(有的文件系统区分大小写，有的不区分)
+    #删除表
+    DROP TABLE [IF EXISTS] tb_name;
+    
+    #修改表(help alter table)
+    ALTER TABLE tb_name;
+    	MODIFY:修改字段的属性
+    	CHANGE：修改字段名称
+    	ADD：添加一个字段
+    	DROP:删除一个字段
+#ALTER
 
-​	ALTER
 
-​	DROP
+#DROP
+	DROP DATABASE db_name;
+
+
+```
+
+
 
 
 
