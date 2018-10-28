@@ -260,6 +260,19 @@ mysql> GRANT ALL ON menagerie.* TO 'your_mysql_name'@'your_client_host';
 
 
 
+# 约束(constraint)
+
+* 外键约束：引用完整性
+
+* 主键约束：唯一，不能为空，一张表中只能有一个主键
+
+* 唯一性约束：每一行的某个字段不允许出现相同的值，但是可以为空，一张表可以有多个
+
+* 检查性约束：age TINYINT  && 0<age<200 (年龄的常理值)
+
+
+
+
 # 数据库操作
 
 * DML
@@ -764,8 +777,32 @@ mysql> SELECT USER();
 +----------------+
 1 row in set (0.00 sec)
 
-mysql> 
-
-
 ```
 
+
+
+* 存储管理器
+  * 权限及完整性管理器
+  * 事物管理器
+  * 文件管理器
+  * 缓冲区管理器
+* 查询管理器
+  * DML解释器
+  * DDL解释器
+  * DCL解释器
+  * 查询执行引擎
+
+
+
+MySQL为每一个用户单独创建一个线程，而这个用户发起的所有的请求都在这个线程内部完成，
+
+
+
+MySQL是单进程，多线程的
+
+* 守护线程 
+* 应用线程
+
+
+
+![image-20181028235542875](/Users/chenyansong/Documents/note/images/mysql/struct.png)
