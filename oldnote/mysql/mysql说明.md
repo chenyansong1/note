@@ -139,6 +139,7 @@ MySQL的初始化数据库
 
 ```
 information_schema	#MySQL运行时数据
+performance_schema #MYSQL状态信息
 mysql	#MySQL的表的元数据信息
 test	#测试数据库
 
@@ -147,8 +148,6 @@ ls /var/lib/mysql 有对应数据库的文件目录
 	mysql	#对应数据库，而information_schema是内存信息，不属于锁文件
 	#如果我们在该目录下新建一个 mydb，那么使用客户端去查询的时候，可以看到 show databases; 
 ```
-
-![image-20181025224303969](/Users/chenyansong/Documents/note/images/mysql/database-new.png)
 
 
 
@@ -325,7 +324,7 @@ mysql> GRANT ALL ON menagerie.* TO 'your_mysql_name'@'your_client_host';
 #创建用户:通过'USERNAME'@'HOST' 唯一的确定一个用户
 	CREATE USER 'USERNAME'@'HOST' IDENTIFIED BY 'PASSWD'
 	DROP USER 'USERNAME'@'HOST' 
-	#jerry@localhost  , jerry@172.16.100.1不是同一个用户
+	#jerry@localhost  , jerry@127.0.0.1不是同一个用户
 	
 	HOST:
 		IP
@@ -347,6 +346,370 @@ mysql> GRANT ALL ON menagerie.* TO 'your_mysql_name'@'your_client_host';
 
 #查看用户的权限
 	SHOW GRANTS FOR 'USERNAME'@'HOST' 
+	
+#设置用户密码
+##1使用客户端命令
+mysql>SET PASSWORD FOR 'USERNAME'@'HOST' = PASSWORD('123456')
+
+
+##2在shell中使用命令行
+shell>mysqladmin -uUSERNAME -hHOST -p password 'new-passwd'
+
+##3在客户端改表:mysql.user的字段
+mysql>UPDATE mysql.user SET Password=PASSWORD('new-passwd') where User='hostname' AND Host='host'
+
+##这里修改了密码并不会立即生效，需要加载到内存中，所以需要flush，让MySQL重读授权表；
+##FLUSH PRIVILEGES;
+```
+
+
+
+# MySQL的mysql库
+
+```shell
+USE mysql;
+#可以查看用户可以从哪些host登录
+SELECT User, Host, Password FROM user;
+
+
+```
+
+
+
+
+
+# mysql通用二进制格式安装
+
+
+
+官网安装文档：
+
+https://dev.mysql.com/doc/refman/5.6/en/binary-installation.html
+
+## install
+
+```
+#前置依赖
+shell> yum search libaio  # search for info
+shell> yum install libaio # install library
+
+
+#安装
+##创建用户和组
+shell> groupadd mysql
+#-r创建的是系统用户，为系统的某些程序使用，如这里的mysql,-r不会创建家目录
+shell> useradd -r -g mysql -s /bin/false mysql		
+##解压文件在 /usr/local目录下(建议是安装在这个目录下的，也可以改)
+shell> cd /usr/local
+shell> tar zxvf /path/to/mysql-VERSION-OS.tar.gz
+##创建软连接
+shell> ln -s full-path-to-mysql-VERSION-OS mysql
+shell> cd mysql
+##初始化数据库
+shell> scripts/mysql_install_db --user=mysql
+##启动
+shell> bin/mysqld_safe --user=mysql &
+# Next command is optional
+##可选，加入到服务进程中
+shell> cp support-files/mysql.server /etc/init.d/mysql.server
+##可选，加入环境变量中
+shell> export PATH=$PATH:/usr/local/mysql/bin
+```
+
+
+
+## 初始化日志，启动日志说明
+
+```shell
+#mysql初始化的时候，有下面的日志
+2018-10-28 10:04:08 1401 [Note] InnoDB: 5.6.40 started; log sequence number 1625977
+2018-10-28 10:04:08 1401 [Note] Binlog end
+2018-10-28 10:04:08 1401 [Note] InnoDB: FTS optimize thread exiting.
+2018-10-28 10:04:08 1401 [Note] InnoDB: Starting shutdown...
+2018-10-28 10:04:10 1401 [Note] InnoDB: Shutdown completed; log sequence number 1625987
+OK
+
+To start mysqld at boot time you have to copy
+##cp support-files/mysql.server /etc/init.d/mysql.server 设置开机自启动
+support-files/mysql.server to the right place for your system
+
+#记得为root用户设置密码
+PLEASE REMEMBER TO SET A PASSWORD FOR THE MySQL root USER !
+To do so, start the server, then issue the following commands:
+
+  ./bin/mysqladmin -u root password 'new-password'
+  ./bin/mysqladmin -u root -h localhost.localdomain password 'new-password'
+
+Alternatively you can run:
+
+  ./bin/mysql_secure_installation
+
+which will also give you the option of removing the test
+databases and anonymous user created by default.  This is
+strongly recommended for production servers.
+
+See the manual for more instructions.
+
+#启动MySQL进程的命令
+You can start the MySQL daemon with:
+
+  cd . ; ./bin/mysqld_safe &
+
+You can test the MySQL daemon with mysql-test-run.pl
+
+  cd mysql-test ; perl mysql-test-run.pl
+
+Please report any problems at http://bugs.mysql.com/
+
+The latest information about MySQL is available on the web at
+
+  http://www.mysql.com
+
+Support MySQL by buying support/licenses at http://shop.mysql.com
+
+WARNING: Found existing config file ./my.cnf on the system.
+Because this file might be in use, it was not replaced,
+but was used in bootstrap (unless you used --defaults-file)
+and when you later start the server.
+The new default config file was created as ./my-new.cnf,
+please compare it with your file and take the changes you need.
+
+#启动MySQL进程的时候，默认是读取的是/etc/my.cnf文件，可以--defaults-file指定配置文件
+WARNING: Default config file /etc/my.cnf exists on the system
+This file will be read by default by the MySQL server
+If you do not want to use this, either remove it, or use the
+--defaults-file argument to mysqld_safe when starting the server
+
+[root@localhost mysql]# echo $?
+
+#mysql进程启动的时候，有下面的日志
+[root@localhost mysql]# bin/mysqld_safe --user=mysql &
+[1] 2077
+[root@localhost mysql]# 181028 10:28:10 mysqld_safe Logging to '/var/log/mysqld.log'.
+181028 10:28:10 mysqld_safe Starting mysqld daemon with databases from /var/lib/mysql
+
+#查看是否存在mysql进程
+[root@localhost mysql]# ps -ef|grep mysql
+root      1705  1683  0 10:23 pts/2    00:00:00 tail -f mysqld.log
+root      2077  1245  0 10:28 pts/0    00:00:00 /bin/sh bin/mysqld_safe --user=mysql
+mysql     2234  2077  0 10:28 pts/0    00:00:00 /usr/local/mysql/bin/mysqld --basedir=/usr/local/mysql --datadir=/var/lib/mysql --plugin-dir=/usr/local/mysql/lib/plugin --user=mysql --log-error=/var/log/mysqld.log --pid-file=/var/run/mysqld/mysqld.pid --socket=/var/lib/mysql/mysql.sock
+root      2257  1245  0 10:28 pts/0    00:00:00 grep mysql
+```
+
+## mysql的配置文件
+
+mysql默认的是读取 ： /etc/my.cnf这个配置文件，如果我们想要改变这个配置文件，在启动mysql的时候，可以指定 --defaults-file 配置文件 (bin/mysqld_safe --user=mysql --defaults-file config-file)
+
+```
+[root@localhost mysql]# cat /etc/my.cnf 
+[mysqld]
+datadir=/var/lib/mysql		#数据目录,建立将数据目录放在一个独立的大磁盘上，最好是逻辑卷，这样可以扩展
+socket=/var/lib/mysql/mysql.sock	#sock文件目录，客户端访问服务器端的mysql是通过tcp进行的，但是如果是本地客户端访问，则通过socket进行，这样更快
+user=mysql
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0
+
+[mysqld_safe]
+log-error=/var/log/mysqld.log			#日志文件，这里可以看到启动报错的日志信息
+pid-file=/var/run/mysqld/mysqld.pid		#pid文件
+
+
+#可以看到 /var/lib/mysql 目录下有sock文件，和数据库对应的目录，如test这个数据库
+[root@localhost mysql]# ll /var/lib/mysql
+total 110608
+-rw-rw----. 1 mysql mysql       56 Oct 28 10:11 auto.cnf
+-rw-rw----. 1 mysql mysql 12582912 Oct 28 10:28 ibdata1
+-rw-rw----. 1 mysql mysql 50331648 Oct 28 10:28 ib_logfile0
+-rw-rw----. 1 mysql mysql 50331648 Oct 28 10:04 ib_logfile1
+drwx------. 2 mysql mysql     4096 Oct 28 10:04 mysql
+srwxrwxrwx. 1 mysql mysql        0 Oct 28 10:28 mysql.sock
+drwx------. 2 mysql mysql     4096 Oct 28 10:04 performance_schema
+drwx------. 2 mysql mysql     4096 Oct 28 10:04 test
+[root@localhost mysql]# 
+```
+
+
+
+配置文件格式，集中式配置文件，可以为多个程序提供配置
+
+
+
+```
+/etc/my.cnf --> /etc/mysql/my.cnf --> $BASEDIR(安装)/my.cnf -->data-dir/my.cnf--> ~(mysql的home)/.my.cnf 依次覆盖
+
+#客户端配置
+[mysql]
+
+#所有的客户端的通用配置
+[client]
+socket  = /var/lib/mysql/mysql.sock	#这个需要指定，不然有可能连接不上
+
+#服务器端配置
+[mysqld]
+socket  = /var/lib/mysql/mysql.sock
+# try number of cpu's * 2 for thread_concurrency : cpu的个数乘以2
+thread_concurrency = 8	#线程并发量
+datadir = /mydata/data	#数据存放的目录
+
+
+```
+
+
+
+## 生产环境初始化数据目录的过程
+
+1. 为MySQL的数据存放在一个逻辑卷中，如 /mydata/mysql
+2. 为上面的MySQL存放目录授权 chown -R mysql:mysql /mydata/mysql
+3. scripts/mysql_install_db  --basedir=/mydata/mysql  --user=mysql 初始化mysql，这样在该目录下就有一些初始化的库文件
+4. 修改配置文件 /etc/my.cnf
+
+
+
+## 初始化文件
+
+scripts/mysql_install_db --help 在初始化的时候会生成一个/etc/my.cnf文件，这个文件会指定数据目录，sock的位置，pid文件的位置，日志文件的位置
+
+```
+[root@localhost mysql]# scripts/mysql_install_db --help
+Usage: scripts/mysql_install_db [OPTIONS]
+  --basedir=path       The path to the MySQL installation directory.
+  --builddir=path      If using --srcdir with out-of-directory builds, you
+                       will need to set this to the location of the build
+                       directory where built files reside.
+  --cross-bootstrap    For internal use.  Used when building the MySQL system
+                       tables on a different host than the target.
+  --datadir=path       The path to the MySQL data directory.
+                       If missing, the directory will be created, but its
+                       parent directory must already exist and be writable.
+  --defaults-extra-file=name
+                       Read this file after the global files are read.
+  --defaults-file=name Only read default options from the given file name.
+  --force              Causes mysql_install_db to run even if DNS does not
+                       work.  In that case, grant table entries that
+                       normally use hostnames will use IP addresses.
+  --help               Display this help and exit.                     
+  --ldata=path         The path to the MySQL data directory. Same as --datadir.
+  --no-defaults        Don't read default options from any option file.
+  --keep-my-cnf        Don't try to create my.cnf based on template. 
+                       Useful for systems with working, updated my.cnf.
+                       Deprecated, will be removed in future version.
+  --random-passwords   Create and set a random password for all root accounts
+                       and set the "password expired" flag,
+                       also remove the anonymous accounts.
+  --rpm                For internal use.  This option is used by RPM files
+                       during the MySQL installation process.
+  --skip-name-resolve  Use IP addresses rather than hostnames when creating
+                       grant table entries.  This option can be useful if
+                       your DNS does not work.
+  --srcdir=path        The path to the MySQL source directory.  This option
+                       uses the compiled binaries and support files within the
+                       source tree, useful for if you don't want to install
+                       MySQL yet and just want to create the system tables.
+  --user=user_name     The login username to use for running mysqld.  Files
+                       and directories created by mysqld will be owned by this
+                       user.  You must be root to use this option.  By default
+                       mysqld runs using your current login name and files and
+                       directories that it creates will be owned by you.
+Any other options are passed to the mysqld program.
+
+```
+
+
+
+## 启动报错解决
+
+```
+2018-10-28 10:24:50 1866 [ERROR] Can't start server: can't check PID filepath: No such file or directory
+2018-10-28 10:26:37 2050 [ERROR] /usr/local/mysql/bin/mysqld: Can't create/write to file '/var/run/mysqld/mysqld.pid' (Errcode: 13 - Permission denied)
+2018-10-28 10:26:37 2050 [ERROR] Can't start server: can't create PID file: Permission denied
+
+
+##错误的原因
+mysql的pid文件不能创建，没有这个目录var/run/mysqld/，所以我们创建这个目录
+mkdir var/run/mysqld/
+##但是还是有写权限的问题，因为我们启动MySQL进程的时候，是以mysql用户去启动的，所以需要给这个目录授权
+ chown -R mysql:mysql /var/run/mysqld
+ 
+```
+
+
+
+# mysql的两类变量
+
+* 服务器变量
+  * 定义MySQL服务器运行属性 （数据目录，log定义,初始化的设定都可以在这里看到）
+    * SHOW GLOBAL VARIABLES 
+
+```
+
+mysql> SHOW GLOBAL VARIABLES;
+
+| pid_file | /var/run/mysqld/mysqld.pid  
+| plugin_dir | /usr/local/mysql/lib/plugin/     
+| skip_external_locking | ON  
+| skip_name_resolve  | OFF   
+
+#模糊查询某个我们需要的变量
+mysql> SHOW GLOBAL VARIABLES LIKE '%data%';
++-------------------------------+------------------------+
+| Variable_name                 | Value                  |
++-------------------------------+------------------------+
+| character_set_database        | latin1                 |
+| collation_database            | latin1_swedish_ci      |
+| datadir                       | /var/lib/mysql/        |
+| innodb_data_file_path         | ibdata1:12M:autoextend |
+| innodb_data_home_dir          |                        |
+| innodb_stats_on_metadata      | OFF                    |
+| max_length_for_sort_data      | 1024                   |
+| metadata_locks_cache_size     | 1024                   |
+| metadata_locks_hash_instances | 8                      |
+| myisam_data_pointer_size      | 6                      |
+| skip_show_database            | OFF                    |
+| updatable_views_with_limit    | YES                    |
++-------------------------------+------------------------+
+12 rows in set (0.00 sec)
+
+mysql> 
+
+```
+
+
+
+* 状态变量
+  * 保存的MySQL服务器运行的统计数据
+    * SHOW GLOBAL STATUS
+
+```
+mysql> SHOW GLOBAL STATUS;
++-----------------------------------------------+-------------+
+| Variable_name                                 | Value       |
++-----------------------------------------------+-------------+
+| Aborted_clients                               | 0           |
+| Aborted_connects                              | 0           |
+| Binlog_cache_disk_use                         | 0           |
+| Binlog_cache_use                              | 0           |
+| Binlog_stmt_cache_disk_use                    | 0           |
+| Binlog_stmt_cache_use                         | 0           |
+
+
+
+mysql> SHOW GLOBAL STATUS LIKE '%select%';
++--------------------------+-------+
+| Variable_name            | Value |
++--------------------------+-------+
+| Com_insert_select        | 0     |
+| Com_replace_select       | 0     |
+| Com_select               | 6     |	#SELECT命令执行了6次
+| Connection_errors_select | 0     |
+| Select_full_join         | 0     |
+| Select_full_range_join   | 0     |
+| Select_range             | 0     |
+| Select_range_check       | 0     |
+| Select_scan              | 20    |
++--------------------------+-------+
+9 rows in set (0.00 sec)
+
+
 ```
 
 
@@ -355,5 +718,54 @@ mysql> GRANT ALL ON menagerie.* TO 'your_mysql_name'@'your_client_host';
 
 
 
+# MySQL的默认函数
 
+
+
+```
+#查询MySQL的版本
+mysql> SELECT VERSION();
++-----------+
+| VERSION() |
++-----------+
+| 5.6.40    |
++-----------+
+1 row in set (0.01 sec)
+
+
+
+#查看客户端当前使用的数据库版本
+mysql> SELECT DATABASE();
++------------+
+| DATABASE() |
++------------+
+| NULL       |
++------------+
+1 row in set (0.00 sec)
+
+mysql> use mysql;
+Database changed
+mysql> SELECT DATABASE();
++------------+
+| DATABASE() |
++------------+
+| mysql      |
++------------+
+1 row in set (0.00 sec)
+
+mysql> 
+
+#查看当前登录的用户
+mysql> SELECT USER();
++----------------+
+| USER()         |
++----------------+
+| root@localhost |
++----------------+
+1 row in set (0.00 sec)
+
+mysql> 
+
+
+```
 
