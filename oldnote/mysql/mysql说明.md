@@ -2,6 +2,16 @@
 
 # mysql的官网说明
 
+* MySQL Server（msyqld, mysql) ： MySQL客户端，服务器端
+* MySQL Cluster：集群（一般至少4个节点）
+* MySQL Proxy：代理，实现路由，实现读写分离
+* MySQL Adminnitrator : 
+* Mysql Query Browser：
+* MySQL Workbench ： 以上三个整合在一起，是MySQL的管理工具
+* MySQL Migration Toolkit :工具箱，数据移植用
+* MySQL Embeddded Server：嵌入式
+* MySQL Drivers and Connectors :连接器 （驱动）
+
 
 
 Community Edition  :  社区版
@@ -862,3 +872,5 @@ MySQL是单进程，多线程的
   我们读取数据的时候，需要将磁盘中的行数据加载到内存中，但是如果我们一次读取的数据很多的时候，内存放不下了，此时需要将内存中最近最少使用的地址置换出内存，这里就有一个 **缓存置换策略**
 
   什么时候开始置换(例如内存中还剩95%开始置换)，有些快不允许置换(被钉住的块)
+
+* 
