@@ -370,19 +370,7 @@ mysql> GRANT ALL ON menagerie.* TO 'your_mysql_name'@'your_client_host';
 #查看用户的权限
 	SHOW GRANTS FOR 'USERNAME'@'HOST' 
 	
-#设置用户密码
-##1使用客户端命令
-mysql>SET PASSWORD FOR 'USERNAME'@'HOST' = PASSWORD('123456')
 
-
-##2在shell中使用命令行
-shell>mysqladmin -uUSERNAME -hHOST -p password 'new-passwd'
-
-##3在客户端改表:mysql.user的字段
-mysql>UPDATE mysql.user SET Password=PASSWORD('new-passwd') where User='hostname' AND Host='host'
-
-##这里修改了密码并不会立即生效，需要加载到内存中，所以需要flush，让MySQL重读授权表；
-##FLUSH PRIVILEGES;
 ```
 
 
@@ -434,7 +422,7 @@ shell> scripts/mysql_install_db --user=mysql
 shell> bin/mysqld_safe --user=mysql &
 # Next command is optional
 ##可选，加入到服务进程中
-shell> cp support-files/mysql.server /etc/init.d/mysql.server
+shell> cp support-files/mysql.server /etc/init.d/mysql.server  #这样启动的时候就可以使用 systemctl start msyql.server  (centos7)
 ##可选，加入环境变量中
 shell> export PATH=$PATH:/usr/local/mysql/bin
 ```
@@ -657,6 +645,47 @@ mkdir var/run/mysqld/
 
 
 
+# MySQL安装完成之后有哪些变化
+
+## 生成的用户
+
+```
+#会生成3个用户
+root@127.0.0.1
+root@localhost
+root@hostname #当前主机名
+
+#两个匿名用户		#建议将这些匿名用户删除
+''@localhost
+''@hostname
+
+DROP USER 'USERNAME'@'HOST' 
+#或者删除 mysql.user的表中的对应的记录
+
+```
+
+
+
+## root用户密码设置
+
+```
+#设置用户密码
+##1使用客户端命令
+mysql>SET PASSWORD FOR 'USERNAME'@'HOST' = PASSWORD('123456')
+
+
+##2在shell中使用命令行
+shell>mysqladmin -uUSERNAME -hHOST -p password 'new-passwd' #回车指定老密码，才能改新密码
+
+##3在客户端改表:mysql.user的字段
+mysql>UPDATE mysql.user SET Password=PASSWORD('new-passwd') where User='hostname' AND Host='host'
+
+##这里修改了密码并不会立即生效，需要加载到内存中，所以需要flush，让MySQL重读授权表；
+##FLUSH PRIVILEGES;
+```
+
+
+
 # mysql的两类变量
 
 * 服务器变量
@@ -873,4 +902,94 @@ MySQL是单进程，多线程的
 
   什么时候开始置换(例如内存中还剩95%开始置换)，有些快不允许置换(被钉住的块)
 
-* 
+
+
+
+# MySQL客户端和服务器通信的方式
+
+
+
+* Unix
+  * mysql --> mysql.sock --> mysqld
+* Windows
+  * mysql --> memory(pipe) --> mysqld
+* 不在同一台主机上，基于TCP/IP协议
+  * mysql -uroot -h172.16.11.11 -p
+
+
+
+# mysql客户端和非客户端工具
+
+> 客户端工具
+
+* mysql
+* mysqlimport
+* mysqldump
+* mysqladmin
+* mysqlcheck  ： 检查数据库完整性工具
+
+> 非客户端工具
+
+* myisamchk ： 检查isam表
+* myisampack ： 压缩 isam表
+
+
+
+这些客户端工具都会读取 [client] 配置
+
+
+
+# mysql本机不要密码连接
+
+
+
+```
+#在用户的家目录下
+vim ~/.my.cnf
+[client]
+user=root
+password=123456
+host=localhost
+
+
+#然后客户端连接,就可以连接了
+shell>mysql
+
+```
+
+
+
+# mysql表文件，数据文件
+
+```
+进入MySQL的数据目录
+[root@localhost mysql]# ll /var/lib/mysql/mysql  #查看mysql库的目录
+-rw-rw----. 1 mysql mysql  10684 Oct 28 10:04 user.frm	#user表的表结构定义文件
+-rw-rw----. 1 mysql mysql    468 Oct 28 10:04 user.MYD	#user表的表数据文件
+-rw-rw----. 1 mysql mysql   2048 Oct 28 10:04 user.MYI	#user表的索引文件
+
+MyISAM
+	.frm 表结构定义文件
+	.MYD 表数据文件
+	.MYI 表的索引文件
+
+InnoDB
+	db.opt	当前数据库的默认字符集和字符集的排序规则定义，一些数据库的选项
+	.frm  表结构(每个表有一个)
+	.idb  表空间(表数据和表索引)(每个表有一个)
+	所有表共享一个表空间文件
+	建议：每一个表独立的一个表空间文件,进行如下的操作
+	
+	
+SHOW VARIABLES LIKE '%innoDB%';
+innodb_file_per_table  	OFF
+
+vim /etc/my.cnf
+[mysqld]
+innodb_file_per_table=1  #需要重启mysql
+
+#进行了上面的设置之后，这样每一个表都有一个表空间和表结构数据
+```
+
+
+
