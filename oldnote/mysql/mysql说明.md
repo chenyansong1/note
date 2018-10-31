@@ -816,6 +816,23 @@ mysql> SELECT USER();
 +----------------+
 1 row in set (0.00 sec)
 
+#查看使用的默认存储引擎
+mysql> SHOW ENGINES;
++--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
+| Engine             | Support | Comment                                                        | Transactions | XA   | Savepoints |
++--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
+| InnoDB             | DEFAULT | Supports transactions, row-level locking, and foreign keys     | YES          | YES  | YES        |
+| CSV                | YES     | CSV storage engine                                             | NO           | NO   | NO         |
+| MRG_MYISAM         | YES     | Collection of identical MyISAM tables                          | NO           | NO   | NO         |
+| BLACKHOLE          | YES     | /dev/null storage engine (anything you write to it disappears) | NO           | NO   | NO         |
+| MyISAM             | YES     | MyISAM storage engine                                          | NO           | NO   | NO         |
+| MEMORY             | YES     | Hash based, stored in memory, useful for temporary tables      | NO           | NO   | NO         |
+| ARCHIVE            | YES     | Archive storage engine                                         | NO           | NO   | NO         |
+| FEDERATED          | NO      | Federated MySQL storage engine                                 | NULL         | NULL | NULL       |
+| PERFORMANCE_SCHEMA | YES     | Performance Schema                                             | NO           | NO   | NO         |
++--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
+9 rows in set (0.00 sec)
+
 ```
 
 动态SQL：程序设计语言使用函数（mysql_connect())或者方法与RDBMS服务器建立连接，并进行交互，通过建立连接向SQL服务器发送查询语句，并将结果保存至变量中而后进行处理
@@ -992,4 +1009,186 @@ innodb_file_per_table=1  #需要重启mysql
 ```
 
 
+
+
+
+# mysql客户端命令
+
+
+
+```
+mysql 
+	-u root
+	-p 3306
+	-D my_db	#默认连接的数据库
+	-h 192.168.1.11
+	
+交互式
+批处理模式(脚本模式)
+
+#登录客户端执行脚本
+mysql>source /root/test.sql
+
+#直接在shell命令行中
+shell>msyql -uroot -proot </root/test.sql
+
+#mysql的帮助命令
+mysql>\? 		#打印帮助命令
+
+#语句结束符
+mysql>delimiter //		#设置语句结束符为 //
+mysql>\d ;				#设置语句结束符为 ;
+
+#重要的客户端命令
+mysql>\c 				#提前终止语句
+
+mysql>command \g		#无论语句结束符是什么，直接将此语句送至服务器端执行
+mysql>command \G		#无论语句结束符是什么，直接将此语句送至服务器端执行，而且以纵向显示
+
+mysql>quit				#退出
+mysql>\! ls /root		#执行shell命令
+mysql>\W				#显示警告信息
+mysql>\w				#不显示警告信息
+
+
+#mysql中提示符的含义
+mysql>			#准备输入命令
+	->			#等待结束符
+	'>			#等待另一个 单引号
+	">			#等待另一个 双引号
+	`>			#等待另一个反引号
+	/*>			#等待另一个结束注释符		/*   注释 */
+
+
+#MYSQL的输出格式
+shell>mysql -uroot -p --html		#则输出为HTML
+shell>mysql -uroot -p --xml			#则输出为xml格式
+
+
+```
+
+
+
+# mysqladmin命令
+
+
+
+```
+help command
+mysql>help SELECT;		#查看select如何使用
+
+
+mysqladmin 
+	-u
+	-p
+	-h
+	create  my_db
+	drop	my_db
+	ping	#查看数据库是否在线
+	processlist		#查看进程列表
+	status			#显示mysql的服务器状态
+		--sleep	2	#2s显示一次
+		--count	3	#只显示2次
+	extended-status	#显示状态变量(统计变量，全局的 show global status)
+	flush-status		#重置统计status
+	
+	variables		#服务器的变量(状态开关)
+	flush-privileges	#重读授权表
+	reload				#同上
+	
+	flush-logs			#二进制，中继日志滚动
+	flush-hosts			#清除主机内部信息(DNS缓存，主机名多次连接失败被封)
+	refresh			#关闭所有打开的表，并且滚动日志，类似于(flush-logs && flush-hosts)
+	
+	shutdown	#关闭mysqld
+	version		#版本号，及状态信息
+	
+	kill		#杀死一个内部线程的
+	password	#设置用户密码
+	
+	start-slave		#启动从服务器的复制线程，主从复制的时候用到
+				这两个线程为：SQL thread ， IO thread
+	stop-slave		#停止
+	
+	
+#创建数据库
+mysqladmin -uroot -h 127.0.0.1 -p create my_db
+
+#删除数据库
+mysqladmin -uroot -h 127.0.0.1 -p drop my_db
+
+
+#ping MySQL服务器端是否在线
+[root@localhost bin]# mysqladmin -uroot -h 127.0.0.1 -p ping
+Enter password: 
+mysqld is alive
+
+#查看进程列表
+[root@localhost bin]# mysqladmin -uroot -h 127.0.0.1 -p processlist
+Enter password: 
++----+------+-----------------+----+---------+------+-------+------------------+
+| Id | User | Host            | db | Command | Time | State | Info             |
++----+------+-----------------+----+---------+------+-------+------------------+
+| 27 | root | localhost:43996 |    | Query   | 0    | init  | show processlist |
++----+------+-----------------+----+---------+------+-------+------------------+
+[root@localhost bin]# 
+
+#mysql的status
+[root@localhost bin]# mysqladmin -uroot -h 127.0.0.1 -p status --sleep 2 --count 4
+Enter password: 
+Uptime: 3927  Threads: 1  Questions: 159  Slow queries: 0  Opens: 115  Flush tables: 2  Open tables: 28  Queries per second avg: 0.040
+Uptime: 3929  Threads: 1  Questions: 160  Slow queries: 0  Opens: 115  Flush tables: 2  Open tables: 28  Queries per second avg: 0.040
+Uptime: 3931  Threads: 1  Questions: 161  Slow queries: 0  Opens: 115  Flush tables: 2  Open tables: 28  Queries per second avg: 0.040
+Uptime: 3933  Threads: 1  Questions: 162  Slow queries: 0  Opens: 115  Flush tables: 2  Open tables: 28  Queries per second avg: 0.041
+
+```
+
+
+
+# 存储引擎
+
+```
+
+#查看使用的默认存储引擎
+mysql> SHOW ENGINES;
++--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
+| Engine             | Support | Comment                                                        | Transactions | XA   | Savepoints |
++--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
+| InnoDB             | DEFAULT(默认使用的引擎) | Supports transactions, row-level locking, and foreign keys     | YES          | YES  | YES        |
+| CSV                | YES     | CSV storage engine                                             | NO           | NO   | NO         |
+| MRG_MYISAM         | YES     | Collection of identical MyISAM tables                          | NO           | NO   | NO         |
+| BLACKHOLE          | YES     | /dev/null storage engine (anything you write to it disappears) | NO           | NO   | NO         |
+| MyISAM             | YES     | MyISAM storage engine                                          | NO           | NO   | NO         |
+| MEMORY             | YES     | Hash based, stored in memory, useful for temporary tables      | NO           | NO   | NO         |
+| ARCHIVE            | YES     | Archive storage engine                                         | NO           | NO   | NO         |
+| FEDERATED          | NO      | Federated MySQL storage engine                                 | NULL         | NULL | NULL       |
+| PERFORMANCE_SCHEMA | YES     | Performance Schema                                             | NO           | NO   | NO         |
++--------------------+---------+----------------------------------------------------------------+--------------+------+------------+
+9 rows in set (0.00 sec)
+
+#查看某个表的属性信息
+mysql> SHOW TABLE STATUS LIKE 'user'\G
+*************************** 1. row ***************************
+           Name: user
+         Engine: MyISAM
+        Version: 10
+     Row_format: Dynamic
+           Rows: 2
+ Avg_row_length: 152
+    Data_length: 468
+Max_data_length: 281474976710655
+   Index_length: 2048
+      Data_free: 164
+ Auto_increment: NULL
+    Create_time: 2018-10-28 10:04:06
+    Update_time: 2018-10-31 20:43:56
+     Check_time: NULL
+      Collation: utf8_bin
+       Checksum: NULL
+ Create_options: 
+        Comment: Users and global privileges
+1 row in set (0.00 sec)
+
+mysql> 
+```
 
