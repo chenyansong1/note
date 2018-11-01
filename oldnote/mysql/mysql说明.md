@@ -223,6 +223,8 @@ mysql> GRANT ALL ON menagerie.* TO 'your_mysql_name'@'your_client_host';
 
 ​		BLOB(n)			#大文本，区分大小写 （binary large object）
 
+​		ENUM, SET		# 如Set('m','f')  我们可以组合 ： m, f, mf, fm
+
 ​	数值
 
 ​		精确数值
@@ -248,9 +250,9 @@ mysql> GRANT ALL ON menagerie.* TO 'your_mysql_name'@'your_client_host';
 
 ​			浮点数
 
-​				FLOAT
+​				FLOAT	#4字节
 
-​				DOUBLE
+​				DOUBLE	#8字节
 
 ​	日期
 
@@ -267,6 +269,16 @@ mysql> GRANT ALL ON menagerie.* TO 'your_mysql_name'@'your_client_host';
 ​		0 or 1
 
 ​	内置类型：ENUM, SET
+
+
+
+1. 值类型
+2. 占据多大的存储空间
+3. 定长还是变长
+4. 如何比较及排序法则
+5. 是否能够索引
+
+
 
 
 
@@ -1203,5 +1215,14 @@ mysql>
 mysql>SHOW VARIABLES LIKE 'AUTOCOMMIT';
 
 #
+```
+
+
+
+```
+#查看一些启动时的设置的参数 (类似于 客户端执行： show variables)
+[root@localhost bin]# mysqld --help --verbose
+
+
 ```
 
