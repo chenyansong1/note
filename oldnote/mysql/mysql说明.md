@@ -1192,3 +1192,16 @@ Max_data_length: 281474976710655
 mysql> 
 ```
 
+
+
+
+
+# 事物
+
+```
+#查看是否自动提交,1或者ON表示启用；0或者OFF表示关闭
+mysql>SHOW VARIABLES LIKE 'AUTOCOMMIT';
+
+#
+```
+
