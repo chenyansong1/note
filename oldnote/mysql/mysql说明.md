@@ -231,7 +231,7 @@ mysql> GRANT ALL ON menagerie.* TO 'your_mysql_name'@'your_client_host';
 
 ​			整形
 
-​				TINYINT  (一个字节，-128-127 或者0-255) 
+​				TINYINT  (一个字节，-128-127 或者0-255)  TINYINT(1) 还是1个字节存储，但是显示的时候只是显示1位，如：如果存储111 ，那么显示的时候只是显示1
 
 ​				SMALLINT（2个字节）
 
@@ -256,19 +256,104 @@ mysql> GRANT ALL ON menagerie.* TO 'your_mysql_name'@'your_client_host';
 
 ​	日期
 
-​		DATE	#日期
+​		DATE	#日期	2018-11-11
 
-​		TIME	#时间
+​		TIME	#时间	11:11:11
 
-​		DATETIME	#日期时间
+​		DATETIME	#日期时间 2018-11-11 11:11:11
 
-​		STAMP	#时间戳
+​		TIMESTAMP	#时间戳	毫秒值
+
+​		YEAR	
 
 ​	布尔
 
 ​		0 or 1
 
 ​	内置类型：ENUM, SET
+
+| Type       | Storage Required            | Max length                 |
+| ---------- | --------------------------- | -------------------------- |
+| CHAR(M)    | M 个字符                    | 255 characters         2^8 |
+| VARCHAR(M) | m+ 1 or 2 bytes(表示结束符) | 65535 characters           |
+| TINYTEXT   | L character + 1 byte        | 255 character              |
+| TEXT       | L character + 2 byte        | 65535 character            |
+| MEDIUMTEXT | L character + 3 byte        | 16777215 character         |
+| LONGTEXT   | L character + 4 byte        | 4294967295 character       |
+| TINYBLOB   | 255byte                     |                            |
+| BLOB       | 64Kb                        |                            |
+| LONGBLOB   | 4Gb                         |                            |
+| MEDIUMBLOB | 16Mb                        |                            |
+
+> char和tinytext都可以表示255个字符，但是当需要索引的时候，char可以对整个字段进行索引，但是tinytext不能
+
+
+
+* 字符串类型的修饰属性
+  * NOT NULL
+  * NULL
+  * DEFAULT
+  * CHARACTER SET      #字符集
+  * COLLATION              #排序规则，默认从表继承，表没有，从数据库继承，数据库服务器继承，这样一层一层的继承关系
+
+* 数值类型的修饰符
+  * AUTO_INCREMENT        #自动增长
+    * 该字段一定不能为空 NOT NULL
+    * 该列一定要创建索引，要么是主键索引，要么是唯一键索引
+    * 只能是正数，所以一般声明为 UNSIGNED
+    * MySQL内部有一个函数 ： LAST_INSERT_ID() 最近一次生成 auto_increment的值： SELECT LAST_INSERT_ID();
+    * eg: 
+
+```
+#创建auto_increment的列
+CREATE TABLE test(
+	id INT UNSIGNED AUTO_INCREMENT NOT NULL PRIMARY KEY
+	name CHAR(100)
+);
+
+#查看最后一次生成的auto_increment的值
+SELECT LAST_INSERT_ID();
+```
+
+* 浮点数
+  * DOUBLE(g.f)			# DOUBLE(3.2)      # 1.36
+  * FLOAT(g.f)                      
+* 布尔值  相当于 TINYINT(1) 0-255   
+  * BOOLEAN
+  * BOOL
+* 日期时间型
+
+|           |                                                |        |              |
+| --------- | ---------------------------------------------- | ------ | ------------ |
+| DATE      | '1000-01-01' TO '9999-12-31'                   | 3 byte | '0000-00-00' |
+| DATETIME  | '1000-01-01 00:00:01' TO '9999-12-31 23:59:59' | 8 byte |              |
+| TIMESTAMP | '1971-01-01 00:00:01' TO '2038-01-18 23:59:59' | 4 byte |              |
+| TIME      | '-838:59:59' TO '838:59:58'                    | 3 byte |              |
+| YEAR(2)   | 00-99                                          | 1      |              |
+| YEAR(4)   | 1901-2155                                      |        |              |
+
+* 日期时间型的修饰符
+  * NOT NULL
+  * NULL
+  * DEFAULT
+
+* ENUM        可以表示65535钟变化，即：枚举的值可以是65535钟个选择
+
+```
+rtype ENUM('A','PRT','CNAME')
+```
+
+
+
+* SET      可以表示1-64个字符串，表中存储的是字符的下标索引，所以这个也没有必要创建索引
+
+```
+#查看服务器支持的字符集
+SHOW CHARACTER SET;
+
+#显示各个字符集下的排序规则
+SHOW COLLATION;
+```
 
 
 
@@ -277,6 +362,441 @@ mysql> GRANT ALL ON menagerie.* TO 'your_mysql_name'@'your_client_host';
 3. 定长还是变长
 4. 如何比较及排序法则
 5. 是否能够索引
+
+
+
+
+
+# SQL模型定义
+
+* ANSI QUOTES  : 双引号和反引号只能用来引用字段名称，表名等，而单引号只能用来引用字符串
+* IGNORE SPACE ： 忽略多余的空白字符
+* STRICT_ALL_TABLES: 所有的非法的数值都是不允许的
+* STRICT_TRANS_TABLES : 向支持事物的表中插入非法数据的时候是不允许的
+* TRADITIONAL : 
+
+
+
+```
+#查看SQL 模型
+SHOW GLOBAL VARIABLES LIKE 'sql_mode';
+```
+
+
+
+
+
+# MySQL的服务器变量
+
+按照作用域，分成两类：
+
+* 全局变量
+
+  SHOW GOLBAL VARIABLES;  #只有
+
+* 会话变量
+
+  SHOW [SESSION] VARIABLES;  
+
+
+
+按照生效时间划分：
+
+* 动态调整：立即生效
+  * 全局：对当前会话无效，只对新建立的会话有效
+  * 会话：及时生效，但只对当前会话有效
+* 静态调整：需要服务器重启
+  * 写在配置文件中
+  * 通过参数传递给 mysqld进程
+
+```
+#查看服务器变量
+SELECT @@global.sql_mode
+SELECT @@session.sql_mode
+```
+
+* 设定变量的值
+
+```
+SET GLOBAL|SESSION 变量名='value'
+
+SET GLOBAL sql_mode='strict_all_tables';
+
+SET SESSION sql_mode='strict_trans_tables';
+```
+
+
+
+
+
+# SQL语句
+
+## 数据库
+
+
+
+```
+#创建数据库
+mysql> HELP CREATE DATABASE;
+Name: 'CREATE DATABASE'
+Description:
+Syntax:
+CREATE {DATABASE | SCHEMA} [IF NOT EXISTS] db_name
+    [create_specification] ...
+
+create_specification:
+    [DEFAULT] CHARACTER SET [=] charset_name
+  | [DEFAULT] COLLATE [=] collation_name
+
+#创建数据库
+CREATE DATABASE [IF NOT EXISTS] db_name [CHARACTER SET][=]charset_name COLLATE [=] collation_name
+
+mysql>  CREATE DATABASE IF NOT EXISTS students CHARACTER SET = 'utf8' COLLATE = 'utf8_general_ci';
+Query OK, 1 row affected (0.00 sec)
+
+
+#我们进入到student库对应的目录文件下
+[root@localhost mysql]# cd /var/lib/mysql/students/
+[root@localhost students]# ll
+total 4
+-rw-rw----. 1 mysql mysql 61 Nov  1 00:38 db.opt
+[root@localhost students]# cat db.opt	#这里就可以看到定义的变量 
+default-character-set=utf8			
+default-collation=utf8_general_ci
+[root@localhost students]# 
+
+#修改数据库
+我们对数据库修改，只能修改 ”字符集和排序规则“
+mysql> HELP ALTER DATABASE;
+Name: 'ALTER DATABASE'
+Description:
+Syntax:
+ALTER {DATABASE | SCHEMA} [db_name]
+    alter_specification ...
+ALTER {DATABASE | SCHEMA} db_name
+    UPGRADE DATA DIRECTORY NAME
+
+alter_specification:
+    [DEFAULT] CHARACTER SET [=] charset_name
+  | [DEFAULT] COLLATE [=] collation_name
+
+#删除数据库
+mysql> HELP DROP DATABASE;
+Name: 'DROP DATABASE'
+Description:
+Syntax:
+DROP {DATABASE | SCHEMA} [IF EXISTS] db_name
+
+#数据库重命名：一般我们并不会重新修改数据库的名称
+```
+
+
+
+## 表
+
+```
+#创建表
+mysql> HELP CREATE TABLE;
+Name: 'CREATE TABLE'
+Description:
+Syntax:
+#方式1：直接定义一张空表
+CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name
+    (create_definition,...)
+    [table_options]
+    [partition_options]
+
+#方式2：从其他表中查询到数据，以这些数据创建新的表
+CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name
+    [(create_definition,...)]
+    [table_options]
+    [partition_options]
+    [IGNORE | REPLACE]
+    [AS] query_expression		#查询表达式
+
+#方式3：以其他表为模板创建空表
+CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name
+    { LIKE old_tbl_name | (LIKE old_tbl_name) }
+
+create_definition:
+    col_name column_definition
+  | [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (index_col_name,...)
+      [index_option] ...
+  | {INDEX|KEY} [index_name] [index_type] (index_col_name,...)
+      [index_option] ...
+  | [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY]
+      [index_name] [index_type] (index_col_name,...)
+      [index_option] ...
+  | {FULLTEXT|SPATIAL} [INDEX|KEY] [index_name] (index_col_name,...)
+      [index_option] ...
+  | [CONSTRAINT [symbol]] FOREIGN KEY
+      [index_name] (index_col_name,...) reference_definition
+  | CHECK (expr)
+
+column_definition:
+    data_type [NOT NULL | NULL] [DEFAULT default_value]
+      [AUTO_INCREMENT] [UNIQUE [KEY]] [[PRIMARY] KEY]
+      [COMMENT 'string']
+      [COLUMN_FORMAT {FIXED|DYNAMIC|DEFAULT}]
+      [STORAGE {DISK|MEMORY|DEFAULT}]
+      [reference_definition]
+
+data_type:
+    BIT[(length)]
+  | TINYINT[(length)] [UNSIGNED] [ZEROFILL]
+  | SMALLINT[(length)] [UNSIGNED] [ZEROFILL]
+  | MEDIUMINT[(length)] [UNSIGNED] [ZEROFILL]
+  | INT[(length)] [UNSIGNED] [ZEROFILL]
+  | INTEGER[(length)] [UNSIGNED] [ZEROFILL]
+  | BIGINT[(length)] [UNSIGNED] [ZEROFILL]
+  | REAL[(length,decimals)] [UNSIGNED] [ZEROFILL]
+  | DOUBLE[(length,decimals)] [UNSIGNED] [ZEROFILL]
+  | FLOAT[(length,decimals)] [UNSIGNED] [ZEROFILL]
+  | DECIMAL[(length[,decimals])] [UNSIGNED] [ZEROFILL]
+  | NUMERIC[(length[,decimals])] [UNSIGNED] [ZEROFILL]
+  | DATE
+  | TIME[(fsp)]
+  | TIMESTAMP[(fsp)]
+  | DATETIME[(fsp)]
+  | YEAR
+  | CHAR[(length)]
+      [CHARACTER SET charset_name] [COLLATE collation_name]
+  | VARCHAR(length)
+      [CHARACTER SET charset_name] [COLLATE collation_name]
+  | BINARY[(length)]
+  | VARBINARY(length)
+  | TINYBLOB
+  | BLOB[(length)]
+  | MEDIUMBLOB
+  | LONGBLOB
+  | TINYTEXT
+      [CHARACTER SET charset_name] [COLLATE collation_name]
+  | TEXT[(length)]
+      [CHARACTER SET charset_name] [COLLATE collation_name]
+  | MEDIUMTEXT
+      [CHARACTER SET charset_name] [COLLATE collation_name]
+  | LONGTEXT
+      [CHARACTER SET charset_name] [COLLATE collation_name]
+  | ENUM(value1,value2,value3,...)
+      [CHARACTER SET charset_name] [COLLATE collation_name]
+  | SET(value1,value2,value3,...)
+      [CHARACTER SET charset_name] [COLLATE collation_name]
+  | spatial_type
+
+index_col_name:
+    col_name [(length)] [ASC | DESC]
+
+index_type:
+    USING {BTREE | HASH}
+
+index_option:
+    KEY_BLOCK_SIZE [=] value
+  | index_type
+  | WITH PARSER parser_name
+  | COMMENT 'string'
+
+reference_definition:
+    REFERENCES tbl_name (index_col_name,...)
+      [MATCH FULL | MATCH PARTIAL | MATCH SIMPLE]
+      [ON DELETE reference_option]
+      [ON UPDATE reference_option]
+
+reference_option:
+    RESTRICT | CASCADE | SET NULL | NO ACTION | SET DEFAULT
+
+table_options:
+    table_option [[,] table_option] ...
+
+table_option:
+    AUTO_INCREMENT [=] value
+  | AVG_ROW_LENGTH [=] value
+  | [DEFAULT] CHARACTER SET [=] charset_name
+  | CHECKSUM [=] {0 | 1}
+  | [DEFAULT] COLLATE [=] collation_name
+  | COMMENT [=] 'string'
+  | CONNECTION [=] 'connect_string'
+  | {DATA|INDEX} DIRECTORY [=] 'absolute path to directory'
+  | DELAY_KEY_WRITE [=] {0 | 1}
+  | ENGINE [=] engine_name
+  | INSERT_METHOD [=] { NO | FIRST | LAST }
+  | KEY_BLOCK_SIZE [=] value
+  | MAX_ROWS [=] value
+  | MIN_ROWS [=] value
+  | PACK_KEYS [=] {0 | 1 | DEFAULT}
+  | PASSWORD [=] 'string'
+  | ROW_FORMAT [=] 	 # 行格式{DEFAULT|DYNAMIC|FIXED|COMPRESSED|REDUNDANT|COMPACT}
+  | STATS_AUTO_RECALC [=] {DEFAULT|0|1}
+  | STATS_PERSISTENT [=] {DEFAULT|0|1}
+  | STATS_SAMPLE_PAGES [=] value
+  | TABLESPACE tablespace_name [STORAGE {DISK|MEMORY|DEFAULT}] #指定表空间
+  | UNION [=] (tbl_name[,tbl_name]...)
+
+partition_options:
+    PARTITION BY
+        { [LINEAR] HASH(expr)
+        | [LINEAR] KEY [ALGORITHM={1|2}] (column_list)
+        | RANGE{(expr) | COLUMNS(column_list)}
+        | LIST{(expr) | COLUMNS(column_list)} }
+    [PARTITIONS num]
+    [SUBPARTITION BY
+        { [LINEAR] HASH(expr)
+        | [LINEAR] KEY [ALGORITHM={1|2}] (column_list) }
+      [SUBPARTITIONS num]
+    ]
+    [(partition_definition [, partition_definition] ...)]
+
+partition_definition:
+    PARTITION partition_name
+        [VALUES
+            {LESS THAN {(expr | value_list) | MAXVALUE}
+            |
+            IN (value_list)}]
+        [[STORAGE] ENGINE [=] engine_name]
+        [COMMENT [=] 'string' ]
+        [DATA DIRECTORY [=] 'data_dir']
+        [INDEX DIRECTORY [=] 'index_dir']
+        [MAX_ROWS [=] max_number_of_rows]
+        [MIN_ROWS [=] min_number_of_rows]
+        [TABLESPACE [=] tablespace_name]
+        [NODEGROUP [=] node_group_id]
+        [(subpartition_definition [, subpartition_definition] ...)]
+
+subpartition_definition:
+    SUBPARTITION logical_name
+        [[STORAGE] ENGINE [=] engine_name]
+        [COMMENT [=] 'string' ]
+        [DATA DIRECTORY [=] 'data_dir']
+        [INDEX DIRECTORY [=] 'index_dir']
+        [MAX_ROWS [=] max_number_of_rows]
+        [MIN_ROWS [=] min_number_of_rows]
+        [TABLESPACE [=] tablespace_name]
+        [NODEGROUP [=] node_group_id]
+
+query_expression:
+    SELECT ...   (Some valid select or union statement)
+
+CREATE TABLE creates a table with the given name. You must have the
+CREATE privilege for the table.
+
+By default, tables are created in the default database, using the
+InnoDB storage engine. An error occurs if the table exists, if there is no default database, or if the database does not exist.
+
+
+#方式1
+CREATE TABLE [IF NOT EXISTS] (col_name data_type 修饰符，索引)
+CREATE TABLE tb1(
+	id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	name CHAR(20) NOT NULL,
+    age TINYINT NOT NULL);
+    
+CREATE TABLE tb1(
+	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	name CHAR(20) NOT NULL,
+    age TINYINT NOT NULL,
+    PRIMARY KEY(id), #单独定义索引，有时候，我们需要将多个字段放在一起作为主键，此时就可以像这样单独定义： PRIMARY KEY(id,name) #将id,name作为联合主键
+    UNIQUE KEY(name), #单独定义唯一键，也是可以在定义字段的后面写
+    INDEX KEY(id),   #单独定义索引，也是可以直接在字段上加这个来标明是索引
+    ...);
+    
+    
+mysql> CREATE TABLE courses(cid TINYINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    -> course VARCHAR(50) NOT NULL,
+    -> other CHAR(1)
+    -> );
+    
+#查看表的格式
+mysql> SHOW TABLE STATUS LIKE 'courses' \G
+*************************** 1. row ***************************
+           Name: courses
+         Engine: InnoDB
+        Version: 10
+     Row_format: Compact
+           Rows: 0
+ Avg_row_length: 0
+    Data_length: 16384
+Max_data_length: 0
+   Index_length: 0
+      Data_free: 0
+ Auto_increment: 1
+    Create_time: 2018-11-01 01:53:24
+    Update_time: NULL
+     Check_time: NULL
+      Collation: utf8_general_ci
+       Checksum: NULL
+ Create_options: 
+        Comment: 
+        
+#删除table
+DROP TABLE courses;
+  
+#创建表的时候指定存储引擎    
+mysql> CREATE TABLE courses(cid TINYINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, course VARCHAR(50) NOT NULL, other CHAR(1) ) ENGINE=MYISAM;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> SHOW TABLE STATUS LIKE 'courses' \G                                              *************************** 1. row ***************************
+           Name: courses
+         Engine: MyISAM
+        Version: 10
+     Row_format: Dynamic
+           Rows: 0
+ Avg_row_length: 0
+    Data_length: 0
+Max_data_length: 281474976710655
+   Index_length: 1024
+      Data_free: 0
+ Auto_increment: 1
+    Create_time: 2018-11-01 01:58:46
+    Update_time: 2018-11-01 01:58:46
+     Check_time: NULL
+      Collation: utf8_general_ci
+       Checksum: NULL
+ Create_options: 
+        Comment: 
+1 row in set (0.00 sec);
+
+
+#查看表的字段定义
+mysql> 
+mysql> desc courses;
++--------+---------------------+------+-----+---------+----------------+
+| Field  | Type                | Null | Key | Default | Extra          |
++--------+---------------------+------+-----+---------+----------------+
+| cid    | tinyint(3) unsigned | NO   | PRI | NULL    | auto_increment |
+| course | varchar(50)         | NO   |     | NULL    |                |
+| other  | char(1)             | YES  |     | NULL    |                |
++--------+---------------------+------+-----+---------+----------------+
+3 rows in set (0.00 sec)
+
+
+#查看表的索引
+mysql> SHOW INDEXES FROM courses;  #从这里可以知道，主键是有创建索引的
++---------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| Table   | Non_unique 是否为“非唯一” | Key_name | Seq_in_index(在表中的第几个索引) | Column_name(索引名称) | Collation(排序方式)| Cardinality | Sub_part | Packed | Null | Index_type(索引类型) | Comment | Index_comment |
++---------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+| courses |          0 | PRIMARY  |            1 | cid         | A         |           0 |     NULL | NULL   |      | BTREE      |         |               |
++---------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+
+1 row in set (0.00 sec)
+
+
+```
+
+
+
+
+
+唯一键，主键，索引的区别：
+
+键：是特殊的索引，也称为约束，可用作索引，属于特殊的索引，B+Tree的索引结构
+
+
+
+## 索引
+
+
+
+视图
+
+DML
 
 
 
