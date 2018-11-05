@@ -494,6 +494,8 @@ DROP {DATABASE | SCHEMA} [IF EXISTS] db_name
 
 ## 表
 
+### 创建表
+
 ```
 #创建表
 mysql> HELP CREATE TABLE;
@@ -778,6 +780,159 @@ mysql> SHOW INDEXES FROM courses;  #从这里可以知道，主键是有创建�
 1 row in set (0.00 sec)
 
 
+#通过select创建表
+CREATE TABLE test_courses 
+SELECT * FROM courses WHERE cid<=2;
+
+#显示表的结构,注意：这样创建出来的新表字段是相同的，但是字段的修饰符将不会存在了
+desc test_courses;
+desc courses;
+
+
+#以其他表为模板创建新的表
+CREATE TABLE test LIKE courses;
+#这时候显示表结构是一样的，字段的修饰符也是一样的
+desc test_courses;
+desc courses;
+
+
+#单字段
+PRIMARY KEY
+UNIQUE KEY
+
+#单字段或多字段
+PRIMARY KEY (col,...)
+UNIQUE KEY(col,...)
+INDEX (col,...)
+```
+
+
+
+### 修改表
+
+```
+#修改表帮助 
+mysql> HELP ALTER TABLE;
+Name: 'ALTER TABLE'
+Description:
+Syntax:
+ALTER [ONLINE|OFFLINE] [IGNORE] TABLE tbl_name
+    [alter_specification [, alter_specification] ...]
+    [partition_options]
+
+alter_specification:
+    table_options
+  | ADD [COLUMN] col_name column_definition
+        [FIRST | AFTER col_name]
+  | ADD [COLUMN] (col_name column_definition,...)
+  | ADD {INDEX|KEY} [index_name]
+        [index_type] (index_col_name,...) [index_option] ...
+  | ADD [CONSTRAINT [symbol]] PRIMARY KEY
+        [index_type] (index_col_name,...) [index_option] ...
+  | ADD [CONSTRAINT [symbol]]
+        UNIQUE [INDEX|KEY] [index_name]
+        [index_type] (index_col_name,...) [index_option] ...
+  | ADD FULLTEXT [INDEX|KEY] [index_name]
+        (index_col_name,...) [index_option] ...
+  | ADD SPATIAL [INDEX|KEY] [index_name]
+        (index_col_name,...) [index_option] ...
+  | ADD [CONSTRAINT [symbol]]
+        FOREIGN KEY [index_name] (index_col_name,...)
+        reference_definition
+  | ALGORITHM [=] {DEFAULT|INPLACE|COPY}
+  | ALTER [COLUMN] col_name {SET DEFAULT literal | DROP DEFAULT}
+  | CHANGE [COLUMN] old_col_name new_col_name column_definition
+        [FIRST|AFTER col_name]
+  | [DEFAULT] CHARACTER SET [=] charset_name [COLLATE [=] collation_name]
+  | CONVERT TO CHARACTER SET charset_name [COLLATE collation_name]
+  | {DISABLE|ENABLE} KEYS
+  | {DISCARD|IMPORT} TABLESPACE
+  | DROP [COLUMN] col_name
+  | DROP {INDEX|KEY} index_name
+  | DROP PRIMARY KEY
+  | DROP FOREIGN KEY fk_symbol
+  | FORCE
+  | LOCK [=] {DEFAULT|NONE|SHARED|EXCLUSIVE}
+  | MODIFY [COLUMN] col_name column_definition
+        [FIRST | AFTER col_name]
+  | ORDER BY col_name [, col_name] ...
+  | RENAME [TO|AS] new_tbl_name
+  | ADD PARTITION (partition_definition)
+  | DROP PARTITION partition_names
+  | TRUNCATE PARTITION {partition_names | ALL}
+  | COALESCE PARTITION number
+  | REORGANIZE PARTITION partition_names INTO (partition_definitions)
+  | EXCHANGE PARTITION partition_name WITH TABLE tbl_name
+  | ANALYZE PARTITION {partition_names | ALL}
+  | CHECK PARTITION {partition_names | ALL}
+  | OPTIMIZE PARTITION {partition_names | ALL}
+  | REBUILD PARTITION {partition_names | ALL}
+  | REPAIR PARTITION {partition_names | ALL}
+  | REMOVE PARTITIONING
+
+index_col_name:
+    col_name [(length)] [ASC | DESC]
+
+index_type:
+    USING {BTREE | HASH}
+
+index_option:
+    KEY_BLOCK_SIZE [=] value
+  | index_type
+  | WITH PARSER parser_name
+  | COMMENT 'string'
+
+table_options:
+    table_option [[,] table_option] ...
+
+table_option:
+    AUTO_INCREMENT [=] value
+  | AVG_ROW_LENGTH [=] value
+  | [DEFAULT] CHARACTER SET [=] charset_name
+  | CHECKSUM [=] {0 | 1}
+  | [DEFAULT] COLLATE [=] collation_name
+  | COMMENT [=] 'string'
+  | CONNECTION [=] 'connect_string'
+  | {DATA|INDEX} DIRECTORY [=] 'absolute path to directory'
+  | DELAY_KEY_WRITE [=] {0 | 1}
+  | ENGINE [=] engine_name
+  | INSERT_METHOD [=] { NO | FIRST | LAST }
+  | KEY_BLOCK_SIZE [=] value
+  | MAX_ROWS [=] value
+  | MIN_ROWS [=] value
+  | PACK_KEYS [=] {0 | 1 | DEFAULT}
+  | PASSWORD [=] 'string'
+  | ROW_FORMAT [=] {DEFAULT|DYNAMIC|FIXED|COMPRESSED|REDUNDANT|COMPACT}
+  | STATS_AUTO_RECALC [=] {DEFAULT|0|1}
+  | STATS_PERSISTENT [=] {DEFAULT|0|1}
+  | STATS_SAMPLE_PAGES [=] value
+  | TABLESPACE tablespace_name [STORAGE {DISK|MEMORY|DEFAULT}]
+  | UNION [=] (tbl_name[,tbl_name]...)
+  
+  
+# 添加，删除，修改字段
+## 修改字段名：change既可以修改字段名称，又可以修改字段的修饰符；但是MODIFY只能修改字段的修饰符
+ALTER TABLE test CHANGE name iname VARCHAR(100);
+
+## 新增表字段
+ALTER TABLE test ADD start_time DATE NOT NULL;
+
+## 删除表
+DROP TABLE test;
+
+# 添加，删除，修改索引
+ALTER TABLE test ADD UNIQUE KEY (name);
+
+# 修改表名
+ALTER TABLE test RENAME TO test_newname;
+RENAME TABLE test TO test_newname;
+
+
+#修改表属性
+
+#添加外键
+ALTER TABLE student ADD FOREIGN KEY (cid) FEFERENCES courses(cid);
+
 ```
 
 
@@ -792,11 +947,105 @@ mysql> SHOW INDEXES FROM courses;  #从这里可以知道，主键是有创建�
 
 ## 索引
 
+### 创建索引
+
+```
+mysql> HELP CREATE INDEX;
+Name: 'CREATE INDEX'
+Description:
+Syntax:
+CREATE [ONLINE|OFFLINE] [UNIQUE|FULLTEXT|SPATIAL] INDEX index_name
+    [index_type]
+    ON tbl_name (index_col_name,...)
+    [index_option]
+    [algorithm_option | lock_option] ...
+
+index_col_name:
+    col_name [(length)] [ASC | DESC]	#length表示只是比较多长的字符
+
+index_option:
+    KEY_BLOCK_SIZE [=] value
+  | index_type
+  | WITH PARSER parser_name
+  | COMMENT 'string'
+
+index_type:
+    USING {BTREE | HASH}
+
+algorithm_option:
+    ALGORITHM [=] {DEFAULT|INPLACE|COPY}
+
+lock_option:
+    LOCK [=] {DEFAULT|NONE|SHARED|EXCLUSIVE}
 
 
-视图
+#创建索引
+CREATE INDEX name_on_student ON student (name);
 
-DML
+#查看表的索引
+SHOW INDEXES FROM student;
+
+
+```
+
+
+
+### 删除索引
+
+```
+
+DROP INDEX index_name ON tb1_name;
+```
+
+
+
+## DML
+
+### select
+
+```
+SELECT selecct-list FROM tb WHERE qualification;
+
+#简单查询
+SELECT * FROM tb_name;
+SELECT f1,f2.f3 FROM tb_name;				#投影
+SELECT * FROM tb_name where qualification;	#选择
+SELECT DISTINCT gender FROM tb_name ;		#相同的词只显示一次
+
+#正则
+SELECT name FROM students WHERE name RLIKE '^[MNY].*'; #查询以 MNY开头的行
+
+#多表查询
+##连接方式
+	交叉连接：笛卡尔乘积，一张表的一行和另一张表的所有行进行一次连接
+		SELECT * FROM tb1,tb2;
+	自然连接：等值连接
+		SELECT * FROM tb1,tb2 WHERE tb1.f1=tb2.f2
+	外连接：
+		左外连接:保持左表不变
+		右外连接:
+	自连接：SELECT * FROM tb1 as t1, tb2 as t2 where t1.cid=t2.sid;
+		
+
+#子查询
+
+
+
+```
+
+
+
+### insert
+
+
+
+### delete
+
+
+
+### update
+
+
 
 
 
