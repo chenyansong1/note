@@ -170,8 +170,12 @@ mysql
 	-u  username
 	-p 回车
 	-h mysql-server-host
+	-e 'commands'
 	
 mysql -uroot -p -h localhost
+
+#执行MySQL命令
+shell>mysql -uroot -p -h localhost -e 'CRERAE DATABASE test_db;'
 ```
 
 mysql的用户：username@host 放在一起限定的
@@ -1028,22 +1032,58 @@ SELECT name FROM students WHERE name RLIKE '^[MNY].*'; #查询以 MNY开头的�
 		
 
 #子查询
+##年龄大于平均年龄的人:比较操作符中使用子查询，子查询只能返回单个值
+SELECT name FROM students WHERE age > (SELECT AVG(age) FROM students);
 
+##在from中使用子查询
+SELECT a.name FROM
+(
+	SELECT name,age FROM students
+) a;
 
 
 ```
 
 
 
-### insert
+## view视图
+
+```
+mysql> HELP CREATE VIEW;
+Name: 'CREATE VIEW'
+Description:
+Syntax:
+CREATE
+    [OR REPLACE]
+    [ALGORITHM = {UNDEFINED | MERGE | TEMPTABLE}]
+    [DEFINER = { user | CURRENT_USER }]
+    [SQL SECURITY { DEFINER | INVOKER }]
+    VIEW view_name [(column_list)]
+    AS select_statement
+    [WITH [CASCADED | LOCAL] CHECK OPTION]
 
 
+#创建视图
+CREATE VIEW sct AS (SELECT name FROM students);
 
-### delete
+#视图会被当做表
+SHOW TABLES;
+
+#使用视图
+SELECT * FROM sct;
+
+#删除视图
+DROP VIEW sct;
+
+#view没有update,直接删除原来，然后新创建一个视图
 
 
+#查看视图的创建语句
+SHOW CREATE TABLE students;
+SHOW CREATE VIEW sct;
 
-### update
+
+```
 
 
 
