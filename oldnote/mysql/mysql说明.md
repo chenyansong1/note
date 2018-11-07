@@ -1044,6 +1044,25 @@ SELECT a.name FROM
 
 ```
 
+### insert 
+
+```
+
+#方式1
+INSERT INTO tb_name(col1,col2,col3,..) VALUES(val1,val2...)[,(),...]
+
+#方式2
+INSERT INTO tb_name SET name='tom';
+
+
+#方式3
+INSERT INTO tb_name SELECT f1,f2 FROM tb_2;
+```
+
+
+
+
+
 
 
 ## view视图
@@ -2035,3 +2054,13 @@ mysql>SHOW VARIABLES LIKE 'AUTOCOMMIT';
 
 ```
 
+
+
+# 锁
+
+
+
+* 锁粒度：从大到小，MySQL服务器仅支持表级别锁，行锁需要由存储引擎完成
+  * 表锁
+  * 页锁：一个数据块可能存放多条数据
+  * 行锁
