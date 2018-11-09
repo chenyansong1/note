@@ -1182,34 +1182,7 @@ SHOW CREATE VIEW sct;
 #SELECT 
 	SELECT column,... FROM tb_name WHERE CONDITIONS
 	
-	
-
-#创建用户:通过'USERNAME'@'HOST' 唯一的确定一个用户
-	CREATE USER 'USERNAME'@'HOST' IDENTIFIED BY 'PASSWD'
-	DROP USER 'USERNAME'@'HOST' 
-	#jerry@localhost  , jerry@127.0.0.1不是同一个用户
-	
-	HOST:
-		IP
-		HOSTNAME
-		NETWORK
-		通配符：
-			_ : 匹配任意单个字符； 172.16.0._   表示 172.16.0.1 - 172.16.0.9
-			% ：匹配任意长度的任意字符， jerry@'%' 表示从所有的主机上jerry上可以登录
-
-
-#授权用户
-	GRANT pri1, pri2,...  ON db_name.tb_name TO 'USERNAME'@'HOST' [IDENTIFIED BY 'PWD'] #修改密码是可选的
-	#如果用户不存在，那么直接创建用户，并授权
-	
-	GRANT ALL PRIVILEGES ON mydb.* TO 'jerry'@'%' #授权所有的权限给jerry
-	
-#取消授权
-	REVOKE pri1,pri2.. ON db_name.tb_name FROM 'USERNAME'@'HOST' 
-
-#查看用户的权限
-	SHOW GRANTS FOR 'USERNAME'@'HOST' 
-	
+		
 
 ```
 
@@ -2038,13 +2011,6 @@ mysql>
 
 # 事物
 
-```
-#查看是否自动提交,1或者ON表示启用；0或者OFF表示关闭
-mysql>SHOW VARIABLES LIKE 'AUTOCOMMIT';
-
-#
-```
-
 
 
 ```
@@ -2056,6 +2022,76 @@ mysql>SHOW VARIABLES LIKE 'AUTOCOMMIT';
 
 
 
+```
+ACID:(原子性，一致性，隔离性，持久性)
+
+
+#事物日志:他是顺序IO，所以写事物日志比直接写磁盘快的多
+重做日志：
+撤销日志：在进行每次操作之前，保存上一次的状态，方便撤销
+
+
+#事物隔离级别：
+	READ UNCOMMITTED:读未提交，读取了别人没有提交的部分数据
+	READ COMMITTED:读取别人已经提交的数据，但是当自己在一个事物中第二次重复读的时候，就能读取到别人已经提交的数据
+	REPATABLE READ:可以重复读(在自己的事物内可以重复读取数据，每次读取的结果一样,但是还是会读取到 新插入的行
+	SERIABLIZABLE:串行
+
+#查看事物的隔离级别
+SHOW GLOBAL VARIABLES LIKE '%iso%';
+
+
+#事物的状态
+活动的：active
+部分提交的：最后一条语句执行后
+失败的
+终止的：提前结束
+提交的：成功完成
+```
+
+
+
+![image-20181109084724925](/Users/chenyansong/Documents/note/images/mysql/tx-status.png)
+
+
+
+```
+#事物调度
+	可恢复调度
+	无级联调度
+	
+#并发控制依赖的技术手段
+	锁
+	时间戳
+	多版本并发控制(MVCC)
+	
+	
+#客户端执行事物操作
+mysql>START TRANSACTION;	#开启事物
+mysql>DELETE FROM students WHERE name='zhangsan';
+mysql>ROLLBACK;		#回滚事物
+mysql>COMMIT;		#提交事物
+
+
+#查看是否自动提交,1或者ON表示启用；0或者OFF表示关闭
+mysql>SHOW VARIABLES LIKE 'AUTOCOMMIT';
+#如果是自动提交，那么直接提交的语句，将无法回滚
+#因为每一次的自动提交都会产生一次IO操作，所以建议 明确 使用事物，并且关闭自动提交
+mysql>SET autocommit=0;
+
+
+#设置保存点
+savepoint a;
+
+#回退到指定保存点
+ROLLBACK TO a;
+
+```
+
+
+
+
+
 # 锁
 
 
@@ -2064,3 +2100,439 @@ mysql>SHOW VARIABLES LIKE 'AUTOCOMMIT';
   * 表锁
   * 页锁：一个数据块可能存放多条数据
   * 行锁
+
+
+
+
+
+# 用户和权限管理
+
+MySQL是在初始化的时候，会产生一些表，这些表涉及到权限，用户，性能等，在MySQL启动的时候，会将这些表加载到内存中，这样能够加速访问权限的检查
+
+
+
+```
+#user:用户账号，全局权限
+#db:库级别的权限
+#host:废弃
+#tables_priv:表级别权限
+#columns_priv:列级别权限
+#procs_priv:存储过程和存储函数相关的权限
+#proxies_priv:代理用户权限
+
+
+#用户账号：用户名@主机
+主机：
+	主机名：www.baidu.com, mysql
+	IP:172.11.11.11
+	网络地址：172.16.0.0/255.255.0.0
+	
+	通配符：%  _
+		172.16.%.%
+		%.mageedu.com
+		
+		
+如果使用主机名进行，MySQL需要反解，所以一般我们 设置略过主机名的解析
+--skip-name-resolv
+
+
+#查看库级别的权限
+mysql> SELECT * FROM db \G
+*************************** 1. row ***************************
+                 Host: %
+                   Db: test		#库
+                 User: 
+          Select_priv: Y
+          Insert_priv: Y
+          Update_priv: Y
+          Delete_priv: Y
+          Create_priv: Y
+            Drop_priv: Y
+           Grant_priv: N		#没有授权的权限,是能否给其他用户授权
+      References_priv: Y
+           Index_priv: Y
+           Alter_priv: Y
+Create_tmp_table_priv: Y
+     Lock_tables_priv: Y
+     Create_view_priv: Y
+       Show_view_priv: Y
+  Create_routine_priv: Y
+   Alter_routine_priv: N
+         Execute_priv: N
+           Event_priv: Y
+         Trigger_priv: Y
+         
+#表级别的权限
+
+```
+
+## 创建用户
+
+```
+#创建用户
+mysql> HELP CREATE USER;
+Name: 'CREATE USER'
+Description:
+Syntax:
+CREATE USER
+    user [auth_option] [, user [auth_option]] ...
+
+user:
+    (see )
+
+auth_option: {
+    IDENTIFIED BY 'auth_string'
+  | IDENTIFIED BY PASSWORD 'hash_string'
+  | IDENTIFIED WITH auth_plugin
+  | IDENTIFIED WITH auth_plugin AS 'hash_string'
+}
+
+#创建用户:通过'USERNAME'@'HOST' 唯一的确定一个用户
+	CREATE USER 'USERNAME'@'HOST' IDENTIFIED BY 'PASSWD'
+	DROP USER 'USERNAME'@'HOST' 
+	#jerry@localhost  , jerry@127.0.0.1不是同一个用户
+	
+	HOST:
+		IP
+		HOSTNAME
+		NETWORK
+		通配符：
+			_ : 匹配任意单个字符； 172.16.0._   表示 172.16.0.1 - 172.16.0.9
+			% ：匹配任意长度的任意字符， jerry@'%' 表示从所有的主机上jerry上可以登录
+
+
+#默认情况下，MySQL创建的用户时没有任何权限的，如下：
+mysql> SELECT * FROM mysql.user where user='tom' \G
+*************************** 1. row ***************************
+                  Host: 192.168.11.15
+                  User: tom
+              Password: *71FF744436C7EA1B954F6276121DB5D2BF68FC07
+           Select_priv: N
+           Insert_priv: N
+           Update_priv: N
+           Delete_priv: N
+           Create_priv: N
+             Drop_priv: N
+           Reload_priv: N
+         Shutdown_priv: N
+          Process_priv: N
+             File_priv: N
+            Grant_priv: N
+       References_priv: N
+            Index_priv: N
+            Alter_priv: N
+          Show_db_priv: N
+            Super_priv: N
+ Create_tmp_table_priv: N
+      Lock_tables_priv: N
+          Execute_priv: N
+       Repl_slave_priv: N
+      Repl_client_priv: N
+      Create_view_priv: N
+        Show_view_priv: N
+   Create_routine_priv: N
+    Alter_routine_priv: N
+      Create_user_priv: N
+            Event_priv: N
+          Trigger_priv: N
+Create_tablespace_priv: N
+              ssl_type: 
+            ssl_cipher: 
+           x509_issuer: 
+          x509_subject: 
+         max_questions: 0
+           max_updates: 0
+       max_connections: 0
+  max_user_connections: 0
+                plugin: mysql_native_password
+ authentication_string: 
+      password_expired: N
+1 row in set (0.00 sec)
+
+#MySQL的权限表都是存入内存中的，所以当我们创建了用户的时候，需要通知MySQL重新将授权表载入内存中(create user 创建的时候会自动重读，所以我们不需要 flush privileges;)
+
+
+#还有一种方式是在mysql.user表中插入记录
+INSERT INTO mysql.user(user,host,password) values();
+#这种方式需要通知MySQL重读授权表
+FLUSH PRIVILEGES;
+
+
+
+#重命名用户
+RENAME USER old_name to new_name;
+
+
+#忘记管理员密码
+./bin/msyqld_safe --skip-grant-tables --skip-networking --user=mysql
+
+#然后修改密码
+mysql登录上去
+mysql>UPDATE mysql.user SET password=PASSWORD('NEW-PWD') WHERE user='' and host='';
+
+```
+
+## 授权
+
+```
+
+#授权用户
+	GRANT pri1, pri2,...  ON db_name.tb_name TO 'USERNAME'@'HOST' [IDENTIFIED BY 'PWD'] #修改密码是可选的
+	#如果用户不存在，那么直接创建用户，并授权
+	
+	GRANT ALL PRIVILEGES ON mydb.* TO 'jerry'@'%' #授权所有的权限给jerry
+
+#明确说明授权的类型：TABLE | FUNCTION | PROCEDURE
+GRANT EXECUTE ON FUNCTION mydb.abc TO 'USERNAME'@'HOST' 
+
+#授权只能操作某张表的某个字段(只能更新test表的age字段)
+GRANT UPDATE(age) ON mydb.test TO 'USERNAME'@'HOST' 
+
+
+#取消授权
+	REVOKE pri1,pri2.. ON db_name.tb_name FROM 'USERNAME'@'HOST' 
+
+#查看用户的权限
+	SHOW GRANTS FOR 'USERNAME'@'HOST' 
+
+mysql> SHOW GRANTS FOR 'tom'@'192.168.11.15' \G
+*************************** 1. row ***************************
+Grants for tom@192.168.11.15: GRANT USAGE ON *.* TO 'tom'@'192.168.11.15' IDENTIFIED BY PASSWORD '*71FF744436C7EA1B954F6276121DB5D2BF68FC07'
+1 row in set (0.00 sec)
+
+#我们可以看到 tom用户只有 USAGE 权限(USAGE权限表示只有连接数据库的权限，没有其他任何权限)
+```
+
+
+
+
+
+
+
+Table 6.2 Permissible Privileges for GRANT and REVOKE**
+
+| Privilege                                                    | Grant Table Column           | Context                               |
+| ------------------------------------------------------------ | ---------------------------- | ------------------------------------- |
+| [`ALL [PRIVILEGES\]`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_all) | Synonym for “all privileges” | Server administration                 |
+| [`ALTER`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_alter) | `Alter_priv`                 | Tables                                |
+| [`ALTER ROUTINE`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_alter-routine) | `Alter_routine_priv`         | Stored routines                       |
+| [`CREATE`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_create) | `Create_priv`                | Databases, tables, or indexes         |
+| [`CREATE ROUTINE`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_create-routine) | `Create_routine_priv`        | Stored routines                       |
+| [`CREATE TABLESPACE`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_create-tablespace) | `Create_tablespace_priv`     | Server administration                 |
+| [`CREATE TEMPORARY TABLES`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_create-temporary-tables) | `Create_tmp_table_priv`      | Tables                                |
+| [`CREATE USER`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_create-user) | `Create_user_priv`           | Server administration                 |
+| [`CREATE VIEW`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_create-view) | `Create_view_priv`           | Views                                 |
+| [`DELETE`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_delete) | `Delete_priv`                | Tables                                |
+| [`DROP`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_drop) | `Drop_priv`                  | Databases, tables, or views           |
+| [`EVENT`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_event) | `Event_priv`                 | Databases                             |
+| [`EXECUTE`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_execute) | `Execute_priv`               | Stored routines                       |
+| [`FILE`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_file) | `File_priv`                  | File access on server host            |
+| [`GRANT OPTION`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_grant-option) | `Grant_priv`                 | Databases, tables, or stored routines |
+| [`INDEX`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_index) | `Index_priv`                 | Tables                                |
+| [`INSERT`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_insert) | `Insert_priv`                | Tables or columns                     |
+| [`LOCK TABLES`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_lock-tables) | `Lock_tables_priv`           | Databases                             |
+| [`PROCESS`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_process) | `Process_priv`               | Server administration                 |
+| [`PROXY`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_proxy) | See `proxies_priv` table     | Server administration                 |
+| [`REFERENCES`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_references) | `References_priv`            | Databases or tables                   |
+| [`RELOAD`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_reload) | `Reload_priv`                | Server administration                 |
+| [`REPLICATION CLIENT`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_replication-client) | `Repl_client_priv`           | Server administration                 |
+| [`REPLICATION SLAVE`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_replication-slave) | `Repl_slave_priv`            | Server administration                 |
+| [`SELECT`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_select) | `Select_priv`                | Tables or columns                     |
+| [`SHOW DATABASES`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_show-databases) | `Show_db_priv`               | Server administration                 |
+| [`SHOW VIEW`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_show-view) | `Show_view_priv`             | Views                                 |
+| [`SHUTDOWN`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_shutdown) | `Shutdown_priv`              | Server administration                 |
+| [`SUPER`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_super) | `Super_priv`                 | Server administration                 |
+| [`TRIGGER`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_trigger) | `Trigger_priv`               | Tables                                |
+| [`UPDATE`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_update) | `Update_priv`                | Tables or columns                     |
+| [`USAGE`](https://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html#priv_usage) | Synonym for “no privileges”  | Server administration                 |
+
+
+
+
+
+# mysql日志
+
+* 错误日志
+  * 服务器启动，关闭过程中的信息
+  * 服务器运行过程中的错误信息
+  * 事件调度器运行一个事件时产生的信息
+  * 在从服务器上启动从服务器进程时产生的信息
+
+```
+| log_error      | /var/log/mysqld.log     #错误日志的位置    
+| log_output     | FILE                       
+| log_warnings   | 1  	#是否开启warning信息记录，默认是开启的
+```
+
+
+
+* 查询日志（一般日志）
+
+```
+| general_log  | OFF        #关闭一般查询日志，避免产生磁盘IO
+| general_log_file | /var/lib/mysql/localhost.log 
+| log_output   | FILE  #日志信息是记录在哪里的，默认是file，可选的有：file,table,none(不记录)，如果写的是 table,file 那么都使用记录
+```
+
+
+
+* 慢查询日志
+
+```
+#查询时间超过这个值的都定义为慢查询
+mysql> SHOW GLOBAL VARIABLES LIKE 'long_query_time';
++-----------------+-----------+
+| Variable_name   | Value     |
++-----------------+-----------+
+| long_query_time | 10.000000 |
++-----------------+-----------+
+1 row in set (0.00 sec)
+
+#注意：这里的语句执行时长为实际的执行时间，而非在CPU上的执行时间，因此负载较重的服务器更容易产生慢查询，其最小值为0，默认值为10，单位为秒钟
+
+| slow_query_log        | OFF  #是否启用慢查询日志 
+| slow_query_log_file   | /var/lib/mysql/localhost-slow.log 
+
+#开启
+mysql>SET GLOBAL slow_query_log=1;
+```
+
+
+
+
+
+* 二进制日志（binary log 任何可能引起数据库变化的操作，就会记录，用于实现MySQL复制，MySQL即时点恢复)
+
+```
+| log_bin     		| OFF  |
+| log_bin_basename  	#  bin文件的目录
+| log_bin_index    |
+
+#开启binlog，vim /etc/my.cnf
+log_bin=mysql-bin		#这里指定binlog的文件后缀，注意并不是 off or on
+
+#我们查看全局的binlog变量，由下面我们可以知道：配置文件的log_bin和全局变量log_bin是两个不同的参数，没有关系，配置文件设置了log_bin,那么全局变量的log_bin=ON
+mysql> SHOW GLOBAL VARIABLES LIKE '%log_bin%';
++---------------------------------+--------------------------------+
+| Variable_name                   | Value                          |
++---------------------------------+--------------------------------+
+| log_bin                         | ON                             |
+| log_bin_basename                | /var/lib/mysql/mysql-bin       |
+| log_bin_index                   | /var/lib/mysql/mysql-bin.index |
+
+
+
+#查看二进制日志内容
+ bin/mysqlbinlog
+ 
+ #二进制日志的格式
+ 	基于语句：statement:记录的是 update 这样的语句
+ 	基于行:row	如果insert into tb(birthday) values(current_now()) 这个是不能基于语句的，因为current_now()函数是获取当前时间，需要立即执行的，所以此时就需要基于行的方式进行
+ 	混合方式:mixed(结合上面两种方式)
+ 	
+ #二进制日志事件:binlog日志中记录的都是一个一个的事件
+ 	记录事件产生的时间(starttime)，语句是在哪一个时刻执行的
+ 	相对位置(position)：上一个 事件 结束的位置
+ 	#所以如果我们想要日志中的一部分内容，可以使用:两个起始时间 或者两个位置去获取对应的部分
+ 	
+ #二进制日志文件
+ 	索引文件
+ 	二进制日志文件
+
+#在MySQL的数据目录下有会下面两个文件
+mysql-bin.000001
+mysql-bin.index
+
+#查看索引文件：索引文件记录是 其实结束位置，对应的mysql-bin.000xx 文件
+[root@localhost mysql]# cat /var/lib/mysql/mysql-bin.index 
+./mysql-bin.000001
+[root@localhost mysql]# 
+
+
+#查看当前的位置，及记录的二进制日志
+mysql> SHOW MASTER STATUS;
++------------------+----------+--------------+------------------+-------------------+
+| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
++------------------+----------+--------------+------------------+-------------------+
+| mysql-bin.000001 |      238 |              |                  |                   |
++------------------+----------+--------------+------------------+-------------------+
+1 row in set (0.00 sec)
+
+
+#查看binlog的日志内容
+mysql>  SHOW MASTER STATUS;
++------------------+----------+--------------+------------------+-------------------+
+| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
++------------------+----------+--------------+------------------+-------------------+
+| mysql-bin.000001 |      353 |              |                  |                   |
++------------------+----------+--------------+------------------+-------------------+
+1 row in set (0.00 sec)
+
+mysql> SHOW BINLOG EVENTS IN 'mysql-bin.000001';
++------------------+-----+-------------+-----------+-------------+-------------------------------------------------------------------+
+| Log_name         | Pos | Event_type  | Server_id | End_log_pos | Info                                                              |
++------------------+-----+-------------+-----------+-------------+-------------------------------------------------------------------+
+| mysql-bin.000001 |   4 | Format_desc |         1 |         120 | Server ver: 5.6.40-log, Binlog ver: 4                             |
+| mysql-bin.000001 | 120 | Query       |         1 |         238 | CREATE DATABASE test_2018110                                      |
+| mysql-bin.000001 | 238 | Query       |         1 |         353 | CREATE DATABASE test_201801                                       |
+| mysql-bin.000001 | 353 | Query       |         1 |         483 | use `test_201801`; CREATE TABLE test(ID INT,NAME VARCHAR(10))     |
+| mysql-bin.000001 | 483 | Query       |         1 |         576 | BEGIN                                                             |
+| mysql-bin.000001 | 576 | Query       |         1 |         710 | use `test_201801`; INSERT INTO test(id,name) values(1,'zhangsan') |
+| mysql-bin.000001 | 710 | Xid         |         1 |         741 | COMMIT /* xid=27 */                                               |
++------------------+-----+-------------+-----------+-------------+-------------------------------------------------------------------+
+7 rows in set (0.00 sec)
+
+
+#指定显示的位置
+mysql> SHOW BINLOG EVENTS IN 'mysql-bin.000001' FROM 238;
++------------------+-----+------------+-----------+-------------+-------------------------------------------------------------------+
+| Log_name         | Pos(其实位置) | Event_type | Server_id(服务器ID号，表示由哪个服务器产生的) | End_log_pos(结束位置) | Info                                                              |
++------------------+-----+------------+-----------+-------------+-------------------------------------------------------------------+
+| mysql-bin.000001 | 238 | Query      |         1 |         353 | CREATE DATABASE test_201801                                       |
+| mysql-bin.000001 | 353 | Query      |         1 |         483 | use `test_201801`; CREATE TABLE test(ID INT,NAME VARCHAR(10))     |
+| mysql-bin.000001 | 483 | Query      |         1 |         576 | BEGIN                                                             |
+| mysql-bin.000001 | 576 | Query      |         1 |         710 | use `test_201801`; INSERT INTO test(id,name) values(1,'zhangsan') |
+| mysql-bin.000001 | 710 | Xid        |         1 |         741 | COMMIT /* xid=27 */                                               |
++------------------+-----+------------+-----------+-------------+-------------------------------------------------------------------+
+5 rows in set (0.00 sec)
+
+
+#还有一种查看日志的方式
+ /usr/local/mysql/bin/mysqlbinlog mysql-bin.000001
+ 
+#查询的时候，指定起止时间
+mysqlbinlog --start-position=107 --stop-position=358 mysql-bin.000001 
+
+#查询的时候，指定起止位置
+mysqlbinlog  --start-datetime='2018-11-01 13:56:50'   --end-datetime='2018-11-01 13:56:50'  mysql-bin.000001 
+
+
+#因为里面的是SQL脚本，所以我们可以将里面的日志导出之后，执行这个SQL脚本，这也是恢复的逻辑
+mysqlbinlog  --start-datetime='2018-11-01 13:56:50'   --end-datetime='2018-11-01 13:56:50'  mysql-bin.000001 > rangtimes.sql
+
+
+#手动刷新日志
+mysql>FLUSH LOGS;
+
+#手动删除binlog,不能通过rm去删除 mysql-bin.000001 遮掩的文件
+mysql>PURGE BINARY LOGS TO 'mysql-bin.000001';
+mysql>PURGE BINARY LOGS BEFORE '2018-11-11 11:11:11';
+
+
+#查看当前所有的二进制文件
+mysql> SHOW BINARY LOGS;
++------------------+-----------+
+| Log_name         | File_size |
++------------------+-----------+
+| mysql-bin.000001 |       741 |
++------------------+-----------+
+
+
+
+```
+
+
+
+中继日志：从主服务器上拉取过来的二进制日志
+
+事物日志
