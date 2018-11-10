@@ -2546,4 +2546,43 @@ mysql> SHOW BINARY LOGS;
   <old_value>
   <new_value>
   #所以如果删除了一张表的话，事物是不能回滚的
+  
+  
+  innodb_flush_log_at_trx_commit:
+  	0:每秒同步，并执行磁盘flush操作
+  	1：每事物同步，并执行磁盘flush操作
+  	2：每事物同步，但不执行flush操作，由操作系统决定什么时候刷写磁盘
+  
+  | innodb_log_file_size    	| 50331648  #48M      
+  | innodb_log_files_in_group  | 2      #默认是2个事物日志
+  | innodb_log_group_home_dir   | ./   #存放日志的目录   
+  | innodb_mirrored_log_groups  | 1    #多少个事物日志组  
+  
+  #事物日志的存储位置：/datapath/
+  ib_logfile0
+  ib_logfile1
+  
   ```
+
+
+# mysql备份和还原
+
+* 备份类型
+  * 根据服务器是否离线：什么时候备份
+    * 热备份：读写都不受影响
+    * 温备份：仅可以执行度操作
+    * 冷备份：离线备份，读写操作均不能执行
+  * 根据：怎么备份
+    * 物理备份：复制数据文件
+    * 逻辑备份：将数据导出到文本文件中
+  * 数据集是否：备份多少数据
+    * 完全备份
+    * 增量备份：仅备份上次完全备份或增量备份以后变化的数据
+    * 差异备份：仅备份上次完全备份以来变化的数据
+
+
+
+
+
+
+
