@@ -2686,6 +2686,100 @@ mysqlbinlog mysql-bin.0000xxx | mysql -uroot -p
 
 ```
 
+对于逻辑备份，我们恢复的时候，需要指定将binlog关闭，因为此时产生的binlog并没有用
+
+```
+sql_log_bin	#表示是否记录二进制日志
+mysql>SET sql_log_bin=0; #关闭，只对当前会话有效
+mysql>SOURCE /root/all.sql;	#在当前会话下导入
+mysql>SET sql_log_bin=1;	#再开启记录
+
+```
 
 
+
+## select into outfile
+
+对于备份单张表比较方便，他备份的都是表的数据，并没有表的结构
+
+```
+#备份
+SELECT * INTO OUTFILE '/tmp/t1.txt' FROM t1 where conditions;
+#重新导入
+LOAD DATA INFILE '/tmp/t1.txt' INTO TABLE t1;
+```
+
+
+
+## lvm备份
+
+snapshot：快照
+
+前提：
+
+​	1.数据文件需要在逻辑卷上
+
+​	2.此逻辑卷所在的卷组要有足够的空间使用快照卷
+
+​	3.事物日志一定要和数据文件一定要在同一个逻辑卷上，这是为了保证对事务日志和数据文件的快照在同一个时间点上
+
+
+
+```
+#1.锁表
+mysql>FLUSH TABLES WITH READ LOCK;
+#2.刷新日志
+mysql>FLUSH LOGS;
+#3.记录binlog的状态
+在另外的客户端中
+shell2>mysql -uroot -p -e 'SHOW MASTER SATUS \G' > /backup/master-`date +%F`.info
+#4.创建快照卷,注意MySQL的数据文件是放在：/dev/myvg/mydata 这个逻辑卷上的
+shell>lvcreate -L 50M -s -p r -n mydata-snap /dev/myvg/mydata
+#5.释放锁
+mysql>UNLOCK TABLES;
+
+#6.备份上面的快照
+shell>mount /dev/myvg/mydata-snap /mnt -ro
+shell>cd /mnt/data
+shell>mkdir /back/full-bakup-`date +%F`
+shell>cp -a ./* /backup/full-bakup-2018-11-11/  #(使用-a保证复制的文件还是原来的属主数组)
+
+#7.卸载，删除快照卷
+shell>umount /mnt
+shell>lvremove --force /dev/myvg/mydata-snap
+
+#8.进入备份目录下，删除二进制日志
+shell>cd /backup/full-bakup-2018-11-11/
+shell>rm -f mysql-bin.*
+
+#9.备份二进制日志
+shell>cat /backup/master-2018-11-11.info #查看我们的二进制日志的备份点，从这个点开始向后备份
+shell>mysqlbinlog --start-position=n /path/to/mysql/mysql-bin.xxxx
+
+##如果我们的binlog是跨文件了，我们需要将所有的binlog的内容导入到一个sql文件中，然后再去执行该SQL，此时需要的是通过时间(这个时间是需要去binlog中的对应的position的位置上去查看)来进行，如下：
+shell>mysqlbinlog -start-datetime='yyyy-mm-dd HH:mm:ss' /path/to/mysql/mysql-bin.xx1 mysql-bin.xx2..  > /backup/incremental-`date +%F-%H-%M-%S`.sql
+
+
+#10.模拟MySQL存储数据的硬盘损坏
+shell>rm -rf /path/to/mysql/data
+
+#11.还原(使用-a保证复制的文件还是原来的属主数组，如果不是，就需要修改为mysql的属组属主)
+shell>cp -a /back/full-bakup-2018-11-11/* /path/to/mysql/data
+
+#12.重新启动MySQL
+shell>service mysqld start
+
+#13.还原binlog，登录mysql的客户端
+mysql>set sql_log_bin=0;  #关闭二进制的日志记录
+mysql>SOURCE /backup/incremental-`date +%F-%H-%M-%S`.sql
+#查询数据是否完整
+mysql>SEELCT * FROM test;
+mysql>set sql_log_bin=1;	#重新开启记录
+mysql>SHOW MASTER STATUS;	#查看binlog的位置
+
+```
+
+
+
+## xtrabackup备份
 
