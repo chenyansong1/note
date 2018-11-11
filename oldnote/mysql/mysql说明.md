@@ -2582,6 +2582,109 @@ mysql> SHOW BINARY LOGS;
 
 
 
+* 备份工具
+
+  * mysqldump:逻辑备份工具
+  * mysqlhostcopy:物理备份工具(需要锁表，几乎是一个冷备份工具)
+  * 文件系统备份：cp(只能实现冷备)
+  * 逻辑卷的快照功能：lv, 实现几乎热备
+    * mysql>FLUSH TABLES;
+    * mysql>LOCK TABLES;#Innodb此时需要做一些额外的监控，看缓存和日志文件是否全部同步到磁盘
+    * 创建快照
+    * 释放锁
+    * 复制数据
+  * 第三方工具
+    * ibbackup:商业工具
+    * xtrabackup:开源工具
+
+
+
+
+
+## mysqldump备份
+
+完全备份+二进制日志
+
+完全+增量
+
+### 备份单个数据库，或库中的表
+
+```
+db_name [tb1]
+#备份指定库的【指定表】，这里只是备份数据库的数据，并没有库的创建命令
+mysqldump db_name [tb1][tb2]
+
+#备份多个库(此时会有创建库的命令)
+mysqldump --databases db_name1,db_nam2...
+mysqldump --all-databases
+
+#将整个表的数据备份为批量插入的insert语句
+mysqldump -uroot -p students > /root/students.sql
+
+#导入刚刚导出的数据库
+##1.创建数据库
+mysql>CREATE DATABASE studb;
+##2.导入到指定的数据库
+shell>mysql studb -uroot -p </root/students.sql
+
+/*
+这里的部分方式是不能实现数据的一致性，我们在备份之前需要锁表
+*/
+mysql>FLUSH TABLES WITH READ LOCK; #刷新表并且以读的方式锁表
+mysql>FLUSH LOGS;#刷新binlog，重新生成一个新的binlog
+mysql>SHOW BINARY LOGS;#查看当前最新的binlog,记住这个binlog
+shell>mysqldump -uroot -p students > /root/students.sql #锁表之后，开始备份
+mysql>UNLOCK TABLES;#释放锁
+
+
+--master-data={0|1|2} ，该选项要求具有RELOAD权限，如果没有给定--single-transaction，则此选项会自动启用--lock-all-tables,这样就不需要我们手动去锁表，然后手动去unlock表
+	0:不记录二进制日志文件及其位置
+	1:以change master to 的方式记录位置，可用于恢复后直接启动从服务器
+	2:以change master to的方式记录位置，但是默认是注释掉该条语句
+	
+mysqldump --master-data=1  -uroot -h 127.0.0.1 -p students > student2.sql
+
+#我们vim student2.sql 文件的时候，可以在文件的开头看到这样的语句
+
+CHANGE MASTER TO MASTER_LOG_FILE='mysql-bin.000001', MASTER_LOG_POS=881;
+说明，从服务器在执行这个的时候，会将自己的binlog重新设置
+
+
+--lock-all-tables ： 锁定所有的表：FLUSH TABLES WITH READ LOCK;
+--flush-logs：执行日志flush
+--single-transaction:如果指定库中的表类型均为InnoDB，则可以使用此选项启动热备
+
+#备份所有的库
+mysqldump -uroot -p --lock-all-tables --flush-logs --all-databases --master-data=1 > /root/all.sql
+
+
+下面是一个完整的备份策略：每周完全备份+每日增量
+1.每周完全备份：mysqldump
+	mysqldump -uroot -p --lock-all-tables --flush-logs --all-databases --master-data=1 > /root/all.sql
+	
+2.每日增量：备份二进制日志(备份之前flush logs)
+	mysql>FLUSH LOGS;
+	shell>cp /path/to/mysql/mysql-bin.0000xx /root/backup/
+	#或者直接将binlog的语句导出，作为增量
+	shell>mysqlbinlog mysql-bin.0000xx > /root/backup/inc_sql/mysql-bin.0000xx.sql
+	
+#现在假定MySQL存放数据的磁盘坏了(我们手动删除数据目录下的所有的文件，即可模拟出来)
+实现恢复的方式
+#0.停止所有的MySQL进程
+killall mysqld
+#1.重新初始化数据库
+./scripts/mysql_install_db --user=mysql --datadir=/mydata/data
+#2.启动MySQL
+service mysqld start
+#3.使用上面的备份数据进行还原
+mysql -uroot -p < /root/all.sql		#首先还原完全备份
+mysqlbinlog mysql-bin.0000xxx >tmp.sql
+mysql -uroot -p < tmp.sql  #导入增量
+##or 通过管道直接给MySQL执行
+mysqlbinlog mysql-bin.0000xxx | mysql -uroot -p 
+
+
+```
 
 
 
