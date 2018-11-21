@@ -24,10 +24,17 @@
 
 ![image-20181119220459022](/Users/chenyansong/Documents/note/images/nginx/io_2.png)
 
-
-
 ![image-20181119220526879](/Users/chenyansong/Documents/note/images/nginx/io_3.png)
 
 
 
+# 
+
+
+
+
 https://blog.csdn.net/yyxyong/article/details/62894064
+
+http://blog.chinaunix.net/uid-28458801-id-4464639.html
+
+http://blog.jobbole.com/104638/
