@@ -70,9 +70,41 @@ tar -zxvf nginx-1.6.3.tar.gz
 
 # prefix : 表示软件安装在哪
 #user,  group 是以什么用户和组来安装软件
-#http_ssl_module 是安全模块;      http_stub_status_module 是监控模块
+#http_ssl_module 是安全模块;      http_stub_status_module 是监控模块,状态页面
+
+#一些特殊的模块
+--http-client-body-temp-path=path  #客户端的通过post上传的文件的临时目录(如果文件很大的话，不可能都放在内存中)
+defines a directory for storing temporary files that hold client request bodies. After installation, the directory can always be changed in the nginx.conf configuration file using the client_body_temp_path directive. By default the directory is named prefix/client_body_temp.
+
+--http-proxy-temp-path=path #作为代理时需要的临时目录
+
+--error-log-path=path
+sets the name of the primary error, warnings, and diagnostic file. After installation, the file name can always be changed in the nginx.conf configuration file using the error_log directive. By default the file is named prefix/logs/error.log.
+
+--http-log-path=path
+sets the name of the primary request log file of the HTTP server. After installation, the file name can always be changed in the nginx.conf configuration file using the access_log directive. By default the file is named prefix/logs/access.log.
+
+--pid-path=path
+sets the name of an nginx.pid file that will store the process ID of the main process. After installation, the file name can always be changed in the nginx.conf configuration file using the pid directive. By default the file is named prefix/logs/nginx.pid.
+
+--lock-path=path
+sets a prefix for the names of lock files. After installation, the value can always be changed in the nginx.conf configuration file using the lock_file directive. By default the value is prefix/logs/nginx.lock.
+
+--with-http_gunzip_module
+enables building the ngx_http_gunzip_module module that decompresses responses with “Content-Encoding: gzip” for clients that do not support “gzip” encoding method. This module is not built by default.
+
+--with-http_gzip_static_module
+enables building the ngx_http_gzip_static_module module that enables sending precompressed files with the “.gz” filename extension instead of regular files. This module is not built by default.
+
+--with-http_flv_module	#流媒体
+enables building the ngx_http_flv_module module that provides pseudo-streaming server-side support for Flash Video (FLV) files. This module is not built by default.
+
+--with-http_mp4_module
+enables building the ngx_http_mp4_module module that provides pseudo-streaming server-side support for MP4 files. This module is not built by default.
 
 #之所以用编译的方式，不用yum的方式，是我们可以定制，哪些模块需要我们就安装，哪些模块不需要我们就不编译安装
+#with表示默认是启用的
+#without表示默认是没有启用的
 #我们将：--without-pcre 我们就可以取消对pcre模块的加入,对于陌生的软件，我们需要看他的readme：
 #查看编译的参数：如果软件不是我们安装的，我们要知道其中安装了哪些模块，使用:-V 来查看，如下：
 
@@ -116,7 +148,7 @@ http://192.168.0.106/
 
 &emsp;如果使用浏览器访问不了：1.先ping ip ，2然后Telnet ip port 3.查看防火墙是否关闭，或者是selinux打开了，使用setgotten 0将其临时关闭即可
 
- 
+
 # 6.启动参数说明
 ```
 [root@lamp01 ~]# cd /application/nginx/
@@ -178,7 +210,7 @@ drwxr-xr-x 2 root  root 4096 8月   1 2016 sbin    #启动目录
 安装操作系统的时候没有安装gcc
 
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/nginx/install/3.png)
- 
+
 
 需要安装下面的软件包
 ```
