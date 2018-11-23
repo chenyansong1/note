@@ -15,7 +15,7 @@ a1.channels = c1
 
 ###############  sources
 
-ĞèÒª¼ÓÉÏremote ip
+éœ€è¦åŠ ä¸Šremote ip
 
 a1.sources.r1.type = com.bluedon.flume.MyNetcatUdpSource
 
@@ -39,7 +39,7 @@ a1.channels.c1.transactionCapacity = 100
 
 a1.sources.r1.channels = c1
 
-source À¹½ØÆ÷
+source æ‹¦æˆªå™¨
 
 a1.sources.r1.interceptors = i1
 
@@ -51,7 +51,7 @@ a1.sources.r1.interceptors.i1.replaceString = lxw1234
 
 a1.sources.r1.interceptors.i1.charset = UTF-8
 
-ÊÇ·ñÅäÖÃÊ±¼ä´Á
+æ˜¯å¦é…ç½®æ—¶é—´æˆ³
 
 a1.sources.r1.interceptors.i1.type = com.bluedon.flume.FlumeInterCeptor$Builder
 
@@ -79,16 +79,15 @@ a1.sinks.k1.channel = c1
 
 
 
-²âÊÔ
+æµ‹è¯•
 
 ```
-#·¢ËÍ²âÊÔÊı¾İ
+#å‘é€æµ‹è¯•æ•°æ®
 echo "111221-chenyansong-ccc"|nc -u 127.0.0.1 5143
 
-#Êä³ö½á¹û
+#è¾“å‡ºç»“æœ
 lxw1234-chenyansong-ccc
 ```
-
 
 
 
