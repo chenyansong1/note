@@ -15,3 +15,10 @@ todo-list
   - 1.路径替换：github中的图片是可以在typora中显示了，但是需要将原来所有的本地静态路径改过来
   - 2.提交
 
+
+
+```
+ find . -type f -name "*.md"|grep "Linux内存映射"
+ 
+```
+
