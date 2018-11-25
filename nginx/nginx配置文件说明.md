@@ -216,6 +216,8 @@ Context:	http, server, location, if in location #说明root指令只能用在这
 
 ## 配置指令
 
+### server
+
 ```
 1.server {}
 #定义一个虚拟主机
@@ -226,7 +228,9 @@ server {
     server_name www.baidu.com;
     root "/vhosts/web1";
 }
-
+```
+### listen
+```
 2.listen
 listen address[:port]
 listen port;
@@ -237,6 +241,9 @@ listen 8000;
 listen *:8000;
 listen localhost:8000;
 
+```
+### server_name
+```
 3.server_name
 
 Syntax:	server_name name ...;	#支持多个主机，名称可以使用正则表达式（需要以 ~ 开头）或者通配符
@@ -250,13 +257,22 @@ Context:	server
 4.正则表达式匹配检查
 5.default_server
 
+```
 
+### root
+
+```
 4.root
 #用于设置资源路径映射，用于指明请求的URL所对应的资源所在的文件系统上的根路径
 Syntax:	root path;	#root指令
 Default:	root html;
 Context:	http, server, location, if in location #说明root指令只能用在这些地方
 
+```
+
+### location
+
+```
 5.location
 #根据用户请求的URI来匹配location(因为一个server中可以有多个location)，当匹配到时，此请求将会被相应的location配置块所处理，例如做访问控制等功能
 Syntax:	
@@ -315,7 +331,11 @@ location ~* \.(gif|jpg|jpeg)$ {
 
 #The “/” request will match configuration A, the “/index.html” request will match configuration B, the “/documents/document.html” request will match configuration C, the “/images/1.gif” request will match configuration D, and the “/documents/1.jpg” request will match configuration E.
 
+```
 
+### alias
+
+```
 6.alias
 #用来实现路径映射，他和root的区别在于，alias可以拿到URI中匹配的变量，然后使用这些变量
 Syntax:	alias path;
@@ -342,6 +362,188 @@ it is better to use the root directive instead:
 location /images/ {#root还要替换掉根
     root /vhosts/web1;
 }
+
+```
+
+### index模块
+```
+7.指定默认主页面
+#有一个index模块，如下
+```
+
+
+
+![image-20181125150750897](/Users/chenyansong/Documents/note/images/nginx/index_module.png)
+
+
+### error_page模块
+
+```
+8.error_page code [...] [=code] URI | @name
+#为常见的错误信息提供错误页面
+#根据http响应状态码来指明特用的错误页面
+
+error_page 404 /404_customed.html
+[=code] : 以指定的响应吗进行响应，而不是以默认的原来的响应，默认表示以新资源的响应吗为其响应吗
+
+#重写响应吗为200
+error_page 404 =200 /404_customed.html
+
+
+```
+
+
+### 基于IP的访问控制(allow,deny)
+
+```
+9.基于IP的访问控制
+allow
+deny
+
+Syntax:	allow address | CIDR | unix: | all;
+Default:	—
+Context:	http, server, location, limit_except
+
+Syntax:	deny address | CIDR | unix: | all;
+Default:	—
+Context:	http, server, location, limit_except
+
+
+location / {
+    deny  192.168.1.1;
+    allow 192.168.1.0/24;
+    allow 10.1.1.0/16;
+    allow 2001:0db8::/32;
+    deny  all;
+}
+```
+
+
+
+![image-20181125152829258](/Users/chenyansong/Documents/note/images/nginx/access_control.png)
+
+### 基于用户的访问控制(user,passwd)
+
+```
+10.基于用户的访问控制
+basic,digest
+
+#基于用户名，密码的访问控制(ngx_http_auth_basic_module)
+auth_basic	"";		#认证名称
+auth_basic_user_file	#账号密码文件，可以使用htpasswd创建
+	账号密码文件建议使用htpasswd来创建
+
+#语法
+Syntax:	auth_basic string | off;
+Default:	auth_basic off;
+Context:	http, server, location, limit_except
+
+Syntax:	auth_basic_user_file file;
+Default:	—
+Context:	http, server, location, limit_except
+Specifies 
+
+#example
+location / {
+    auth_basic           "Only for VIP";
+    auth_basic_user_file conf/htpasswd;
+}
+
+# conf/htpasswd格式如下
+# comment
+name1:password1
+name2:password2:comment
+name3:password3
+
+#httpd中是自带一个命令的：htpasswd
+#第一次使用-c
+shell>htpasswd -c -m /etc/nginx/users/.htpasswd tom
+new passwd:
+```
+
+![image-20181125183416046](/Users/chenyansong/Documents/note/images/nginx/auth_pwd.png)
+
+### 配置SSL
+
+```
+11.配置SSL
+
+#1.生成私钥
+#2.生成证书签署请求
+#3.CA根据2中生产的请求，生成证书
+
+server {
+    listen              443 ssl;
+    keepalive_timeout   70;
+	server_name 	www.test.com;
+	
+    ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers         AES128-SHA:AES256-SHA:RC4-SHA:DES-CBC3-SHA:RC4-MD5;
+    
+    ssl_certificate     /usr/local/nginx/conf/cert.pem; #证书文件
+    ssl_certificate_key /usr/local/nginx/conf/cert.key; #私钥文件 
+    
+    ssl_session_cache   shared:SSL:10m;
+    ssl_session_timeout 10m;
+
+    ...
+}
+
+#测试
+https://www.test.com
+```
+
+### 开启stub_status 状态页面
+
+```
+12.开启stub_status 状态页面
+#The ngx_http_stub_status_module module provides access to basic status information.
+
+#This module is not built by default, it should be enabled with the --with-http_stub_status_module configuration parameter.
+
+#In versions prior to 1.7.5, the directive syntax required an arbitrary argument, for example, “stub_status on”.
+
+
+#example
+location = /basic_status {
+    stub_status;
+    allow 172.16.0.0/16;	#这些状态数据只能我们自己能够访问
+    deny all;
+}
+
+#This configuration creates a simple web page with basic status data which may look like as follows:
+
+Active connections: 291 
+server accepts handled requests
+ 16630948 16630948 31070465 
+Reading: 6 Writing: 179 Waiting: 106 
+
+
+
+# Active connections ：The current number of active client connections including Waiting connections.
+accepts：已经接受的连接The total number of accepted client connections.
+
+handled：已经处理过的连接The total number of handled connections. Generally, the parameter value is the same as accepts unless some resource limits have been reached (for example, the worker_connections limit).
+
+requests：请求的数量The total number of client requests.
+
+Reading：正在接受的请求The current number of connections where nginx is reading the request header.
+
+Writing：The current number of connections where nginx is writing the response back to the client.
+
+Waiting：The current number of idle client connections waiting for a request.
+
+```
+
+![image-20181125192013459](/Users/chenyansong/Documents/note/images/nginx/stub_status_module.png)
+
+### rewrite(url重写)
+
+```
+13.rewrite #url重写
+
+#http://www.baidu.com/images/a/b/1.jpg --> /imgs/a/b/1.jpg
+rewrite ^/images/(.*\.jpg)$ /imgs/$1 break;
 
 ```
 
