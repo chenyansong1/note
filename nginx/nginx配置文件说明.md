@@ -539,11 +539,180 @@ Waiting：The current number of idle client connections waiting for a request.
 
 ### rewrite(url重写)
 
+ngx_http_rewrite_module
+
 ```
 13.rewrite #url重写
+Syntax:	rewrite regex replacement [flag];
+Default:	—
+Context:	server, location, if
+
+An optional flag parameter can be one of:
+
+last:stops processing the current set of ngx_http_rewrite_module directives and starts a search for a new location matching the changed URI;
+此rewrite规则重写完成后，不再被后面其他的rewrite规则进行处理，而是由User Agent重新对重写后的URL再一次请求，并从头开始执行类似的过程
+
+http://www.baidu.com/images/a/b/1.jpg --> http://www.baidu.com/imgs/a/b/1.jpg
+http://www.baidu.com/imgs/a/b/1.jpg -->再次请求
+
+
+break:stops processing the current set of ngx_http_rewrite_module directives as with the break directive;
+一旦此rewrite规则重写完成之后，由User Agent重新对重写后的URL再一次请求，但是此时不会再规则检查(如果两条规则会造成循环的时候，此时使用break可以打破循环)
+
+redirect:returns a temporary redirect with the 302 code; used if a replacement string does not start with “http://”, “https://”, or “$scheme”;
+以302响应码(临时重定向)返回新的URL
+
+	
+permanent:returns a permanent redirect with the 301 code.
+以301响应码(永久重定向)返回新的URL
+
 
 #http://www.baidu.com/images/a/b/1.jpg --> /imgs/a/b/1.jpg
 rewrite ^/images/(.*\.jpg)$ /imgs/$1 break;
 
 ```
+
+### if
+
+`ngx_http_rewrite_module` 模块中
+
+```
+Syntax:	if (condition) { ... }
+Default:	—
+Context:	server, location
+
+#可以使用的条件如下：
+A condition may be any of the following:
+
+1. a variable name变量名; false if the value of a variable is an empty string or “0”;
+
+
+2. comparison of a variable(比较操作符) with a string using the “=” and “!=” operators;
+
+3. 正则表达式模式匹配matching of a variable against a regular expression using the “~” (区分大小写for case-sensitive matching) and “~*” (不区分大小写for case-insensitive matching) operators. Regular expressions can contain captures that are made available for later reuse in the $1..$9 variables. Negative operators “!~”(不匹配检查) and “!~*” are also available. If a regular expression includes the “}” or “;” characters, the whole expressions should be enclosed in single or double quotes.
+
+4. checking of a file existence with the “-f” and “!-f” operators;测试文件是否存在
+
+5. checking of a directory existence with the “-d” and “!-d” operators;测试目录是否存在
+
+6. checking of a file, directory, or symbolic link existence with the “-e” and “!-e” operators;测试是否存在(包括：文件，目录，链接符号)
+
+7. checking for an executable file with the “-x” and “!-x” operators.检查是否有执行权限
+
+
+#Examples:
+
+if ($http_user_agent ~ MSIE) { #http_user_agent客户端浏览器类型，MSIE是微软浏览器，我们可以根据客户端浏览器的不同，返回不同的站点(web,mobile)
+    rewrite ^(.*)$ /msie/$1 break;
+}
+
+if ($http_cookie ~* "id=([^;]+)(?:;|$)") {
+    set $id $1;
+}
+
+if ($request_method = POST) {
+    return 405;
+}
+
+if ($slow) {
+    limit_rate 10k;
+}
+
+if ($invalid_referer) {
+    return 403;
+}
+
+#防盗链
+location ~* \.(jpg|gif|jpeg|png)$ {
+    valid_referer none blocked www.test.com;
+    #一个URL是有一个引用的，我们可以指定来自哪些站点的引用是允许的
+    
+    if ($invalid_referer) {
+    	rewrite ^/ http://www.test.com/403.html;
+    }
+}
+
+```
+
+
+
+### valid_referers校验链接引用
+
+referer是指请求从哪里来的
+`ngx_http_referer_module`
+
+```
+Syntax:	valid_referers none | blocked | server_names | string ...;
+Default:	—
+Context:	server, location
+
+#Example 
+valid_referers none blocked server_names
+               *.example.com example.* www.example.org/galleries/
+               ~\.google\.;
+
+if ($invalid_referer) {
+    return 403;
+}
+
+#如果引用是在valid_referers中指定的，那么$invalid_referer为空，否则为“1”
+
+Parameters can be as follows:
+
+none：the “Referer” field is missing in the request header;
+
+blocked：the “Referer” field is present in the request header, but its value has been deleted by a firewall or proxy server; such values are strings that do not start with “http://” or “https://”;
+
+server_names：the “Referer” request header field contains one of the server names;
+
+arbitrary string：defines a server name and an optional URI prefix. A server name can have an “*” at the beginning or end. During the checking, the server’s port in the “Referer” field is ignored;
+
+regular expression ：the first symbol should be a “~”. It should be noted that an expression will be matched against the text starting after the “http://” or “https://”.
+```
+
+
+
+### 定制访问日志格式
+
+`ngx_http_log_module`
+
+```
+log_format main '$remote_addr - $remote_user....';
+access_log logs/access.log main;
+
+```
+
+
+
+### 网络连接相关的配置
+
+`ngx_http_core_module`
+
+```
+1.keepalive_timeout #;
+#长连接的超时时长，默认75s;
+
+2.keepalive_requests #;
+#在一个长连接上，能够允许请求的最大资源数
+
+3.keepalive_disable [msie6|safari|none];
+#为指定类型的User Agent禁用长连接(msie6为IE)
+
+4.tcp_nodelay on|off;
+#是否对长连接使用tcp_nodelay
+
+5.client_header_timeout
+#读取HTTP请求报文首部的超时时长
+
+6.client_body_timeout
+#读取http请求报文body部分的超时时长
+
+#7.send_timeout #;
+#发送响应报文的超时时长
+
+```
+
+
+
+### fastcgi的相关配置
 
