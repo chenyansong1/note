@@ -6,6 +6,49 @@
 
 
 
+## nginx的模块
+
+nginx由内核和模块组成，其中，内核的设计非常微小和简洁，完成的工作也非常简单，仅仅通过查找配置文件将客户端请求映射到一个location block（location是NGINX的配置中的一个指令），而在这个location中所配置的每一个指令将会启动不同的模块去完成相应的工作。
+
+
+
+nginx的模块从结构上分为核心模块，基础模块和第三方模块
+
+* 核心模块
+  * HTTP模块
+  * Event模块
+  * mail模块
+
+* 基础模块
+  * HTTP Access模块
+  * HTTP FastCGI模块
+  * HTTP Proxy模块
+  * HTTP Rewrite模块
+
+* 第三方模块
+  * HTTP Upstream
+  * request Hash模块
+  * notice模块
+  * HTTP Access key模块
+
+
+
+NGINX的模块从功能上分为三类：
+
+* Handlers (处理器模块) ，此类模块直接处理请求，并进行输出内容和修改headers信息等操作，handlers处理器模块一般只能有一个
+* Filters（过滤器模块），此类模块主要对其他处理器模块输出的内容进行修改操作，最后由NGINX输出
+* Proxies(代理类模块)，就是NGINX的HTTP Upstream之类的模块，这些模块主要与后端一些服务比如fastCGI等操作交互，实现服务代理和负载均衡等功能
+
+
+
+![image-20181126221720248](/Users/chenyansong/Documents/note/images/nginx/struct_stream.png)
+
+![image-20181126221850170](/Users/chenyansong/Documents/note/images/nginx/struct_stream2.png)
+
+
+
+
+
 配置文件
 
 * main配置段：全局配置段
