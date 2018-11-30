@@ -5,6 +5,8 @@ toc: true
 tag: [elasticsearch]
 ---
 
+[TOC]
+
 
 
 索引别名的应用场景：
