@@ -49,6 +49,11 @@
   ![image-20181202085842534](/Users/chenyansong/Documents/note/images/math/markdown3.png)
 
 
+
+### 常用箭头
+
+![image-20181202101316963](/Users/chenyansong/Documents/note/images/math/jiantou.png)
+
 ### 3 字母修饰
 
 ##### 3.1  上下标
@@ -86,6 +91,10 @@
 
 
 ![image-20181202090133063](/Users/chenyansong/Documents/note/images/math/markdown8.png)
+
+$A=\{a, b, c, d, e\}$
+
+
 
 ##### 3.6 求和、极限与积分
 
@@ -223,4 +232,6 @@ $$
 ### 5 参考文献
 
 [MathJax tutorial](https://link.jianshu.com?t=http://meta.math.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference)
+
+
 
