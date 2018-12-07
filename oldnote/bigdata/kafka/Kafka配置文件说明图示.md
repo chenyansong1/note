@@ -5,8 +5,11 @@ toc: true
 tag: [kafka]
 ---
 
-
 ![](http://ols7leonh.bkt.clouddn.com//assert/img/bigdata/kafka/conf/conf.png)
+
+![](https://github.com/chenyansong1/note/blob/master/img/bigdata/kafka/conf/conf.png?raw=true)
+
+
 
 
 
