@@ -22,3 +22,44 @@ todo-list
  
 ```
 
+
+
+![](https://github.com/chenyansong1/note/blob/master/img/bigdata/kafka/conf/conf.png?raw=true)
+
+
+
+1. 找到所有的png，jpg图片
+2. 图片的url可能是Windows，Mac，七牛的HTTP的url
+3. 将所有的url替换为：conf.png?raw=true
+4. 因为图片的目录放在了两个目录下面，所有，
+   1. 如果是七牛的图片需要改成：
+   2. 如果是images的图片（不管是Windows的还是Mac的地址），需要改成：
+   3. 
+
+
+
+```
+
+
+https://github.com/chenyansong1/note/blob/master/img/bigdata/kafka/conf/conf.png
+
+#七牛图片改成
+
+![](https://github.com/chenyansong1/note/blob/master/img/bigdata/kafka/conf/conf.png?raw=true)
+
+
+#Windows和Mac图片，改成：
+
+![](https://github.com/chenyansong1/note/blob/master/images/bigdata/kafka/conf/conf.png?raw=true)
+
+
+img png or img jpg
+
+images png or images jpg
+
+
+
+```
+
+
+
