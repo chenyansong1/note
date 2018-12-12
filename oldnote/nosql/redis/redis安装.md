@@ -32,6 +32,8 @@ wget https://github.com/ijonas/dotfiles/raw/master/etc/redis.conf
 #下载这2个配置文件是为了能更好的启动和关闭redis。
 #在/usr/local/bin 目录下'，自带的redis-server也可以用默认的(二进制编译)不能打开，下载来的同名文件是一个shell脚本（自己写的一个启动脚本），调用启动/usr/local/bin 目录下'的redis-server，可以打开查看修改
 
+#启动需要加上配置文件
+./src/redis-server  redis.conf
 ```
 
 # 4.把配置文件放到合适的位置
