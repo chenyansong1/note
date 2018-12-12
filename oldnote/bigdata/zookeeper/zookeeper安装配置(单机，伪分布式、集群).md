@@ -4,8 +4,14 @@ categories: hadoop
 tags: [zookeeper]
 ---
 
+[TOC]
+
+
+
+
 
 # 1.单机模式搭建
+
 ## 1.1.解压
 ```
 cd /home/oldboy/tools/                

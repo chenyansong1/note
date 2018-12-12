@@ -5,6 +5,15 @@
 [hadoop@hdp-node-01 bin]$ ./plugin install mobz/elasticsearch-head
 //.....
 Installed head into /home/hadoop/app/elasticsearch-2.4.3/plugins/head
+
+
+
+#注意这个是需要外网的：https://github.com/mobz/elasticsearch-head/archive/master.zip
+Trying https://github.com/mobz/elasticsearch-head/archive/master.zip ...
+Downloading .....................................DONE
+Verifying https://github.com/mobz/elasticsearch-head/archive/master.zip checksums if available ...
+NOTE: Unable to verify checksum for downloaded plugin (unable to find .sha1 or .md5 file to verify)
+Installed head into /home/hadoop/elasticsearch-2.4.3/plugins/head
 ```
 
 下面是访问head的地址：

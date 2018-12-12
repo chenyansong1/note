@@ -21,12 +21,87 @@
 
 由上面的图可以知道，冯诺依曼计算机的瓶颈在运算器（所有的东西都要经过运算器）
 
-![image-20181211215717265](/Users/chenyansong/Documents/note/images/computermk/fnym2.png)
+![image-20181211215717265](/E:/git-workspace/note/images/computermk/fnym2.png)
 
 
 
-![image-20181211220039892](/Users/chenyansong/Documents/note/images/computermk/fnym3.png)
+# 现代计算机的硬件框图
 
 
 
-![image-20181211220144739](/Users/chenyansong/Documents/note/images/computermk/xdjsj.png)
+![image-20181211220039892](/E:/git-workspace/note/images/computermk/fnym3.png)
+
+
+
+![image-20181211220144739](/E:/git-workspace/note/images/computermk/xdjsj.png)
+
+
+
+# 编程举例
+
+计算
+
+$$
+ax^2+bx+c
+$$
+
+
+
+**实现的步骤如下：**
+
+* 取x至运算器中
+* 乘以x在运算器中
+* 乘以a在运算器中
+* 存ax^2在存储器中
+* 取b至运算器中
+* 乘以x在运算器中
+* 加$ax^2$在运算器中
+* 加c在运算器中 
+
+
+
+将上面的式子变形
+$$
+(ax+b)x+c
+$$
+**实现的步骤如下：**
+
+* 取x至运算器中
+* 乘以a在运算器中
+* 加b在运算器中
+* 乘以x在运算器中
+* 加c在运算器中
+
+
+
+
+
+# 指令格式举例
+
+指令是由操作码和数据的地址组成的，**操作码和数据的地址都是二进制的**
+
+![1544576807059](E:\git-workspace\note\images\computermk\zhilinggeshi.png)
+
+
+
+计算下面表达式的程序清单
+$$
+ax^2+bx+c
+$$
+
+![1544577037710](E:\git-workspace\note\images\computermk\zhilinchengxuqingdan.png)
+
+
+
+# 存储器
+
+
+
+
+
+
+
+# 运算器
+
+
+
