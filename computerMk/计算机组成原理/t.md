@@ -97,11 +97,53 @@ $$
 
 
 
-
+![1544661870559](E:\git-workspace\note\images\computermk\cunchuqi.png)
 
 
 
 # 运算器
+
+![1544661930049](E:\git-workspace\note\images\computermk\yunsuanqi.png)
+
+
+
+* 加法的过程
+
+![1544662062108](E:\git-workspace\note\images\computermk\yunsuanqi_jiafa.png)
+
+
+
+* 减法的过程
+
+![1544662152829](E:\git-workspace\note\images\computermk\yunsuanqi_jianfa.png)
+
+* 乘法的过程
+
+![1544662204035](E:\git-workspace\note\images\computermk\yunsuanqi_chengfa.png)
+
+* 除法的过程
+
+![1544662238740](E:\git-workspace\note\images\computermk\yunsuanqi_chufa.png)
+
+
+
+# 控制器
+
+
+
+
+
+
+
+
+
+# 其他blog
+
+https://www.jianshu.com/p/7355584679d3
+
+
+
+https://blog.csdn.net/Mark__Zeng/article/details/39966731
 
 
 
