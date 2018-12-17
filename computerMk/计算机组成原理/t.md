@@ -80,7 +80,7 @@ $$
 
 指令是由操作码和数据的地址组成的，**操作码和数据的地址都是二进制的**
 
-![1544576807059](/Users/chenyansong/Documents/note\images\computermk\zhilinggeshi.png)
+![1544576807059](E:\git-workspace\note\images\computermk\zhilinggeshi.png)
 
 
 
@@ -89,7 +89,7 @@ $$
 ax^2+bx+c
 $$
 
-![1544577037710](/Users/chenyansong/Documents/note\images\computermk\zhilinchengxuqingdan.png)
+![1544577037710](E:\git-workspace\note\images\computermk\zhilinchengxuqingdan.png)
 
 
 
@@ -97,37 +97,51 @@ $$
 
 
 
-![1544661870559](/Users/chenyansong/Documents/note\images\computermk\cunchuqi.png)
+![1544661870559](E:\git-workspace\note\images\computermk\cunchuqi.png)
 
 
 
 # 运算器
 
-![1544661930049](/Users/chenyansong/Documents/note\images\computermk\yunsuanqi.png)
+![1544661930049](E:\git-workspace\note\images\computermk\yunsuanqi.png)
 
 
 
 * 加法的过程
 
-![1544662062108](/Users/chenyansong/Documents/note\images\computermk\yunsuanqi_jiafa.png)
+![1544662062108](E:\git-workspace\note\images\computermk\yunsuanqi_jiafa.png)
 
 
 
 * 减法的过程
 
-![1544662152829](/Users/chenyansong/Documents/note\images\computermk\yunsuanqi_jianfa.png)
+![1544662152829](E:\git-workspace\note\images\computermk\yunsuanqi_jianfa.png)
 
 * 乘法的过程
 
-![1544662204035](/Users/chenyansong/Documents/note\images\computermk\yunsuanqi_chengfa.png)
+![1544662204035](E:\git-workspace\note\images\computermk\yunsuanqi_chengfa.png)
 
 * 除法的过程
 
-![1544662238740](/Users/chenyansong/Documents/note\images\computermk\yunsuanqi_chufa.png)
+![1544662238740](E:\git-workspace\note\images\computermk\yunsuanqi_chufa.png)
 
 
 
 # 控制器
+
+
+
+![1545006714309](E:\git-workspace\note\images\computermk\cunchuqi_1.png)
+
+
+
+* 主机完成一条指令的过程
+
+**以取数指令为例**
+
+![1545006863078](E:\git-workspace\note\images\computermk\cunchuqi_2.png)
+
+**以存数指令为例**
 
 
 
