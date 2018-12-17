@@ -143,11 +143,11 @@ $$
 
 **以存数指令为例**
 
+![1545007008625](E:\git-workspace\note\images\computermk\cunchuqi_3.png)
 
 
 
-
-
+![1545007083913](E:\git-workspace\note\images\computermk\cunchuqi_4.png)
 
 
 
