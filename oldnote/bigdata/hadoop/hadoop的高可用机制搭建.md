@@ -5,6 +5,8 @@ toc: true
 tag: [hadoop]
 ---
 
+[TOC]
+
 
 
 
@@ -23,13 +25,13 @@ tag: [hadoop]
 # 2.集群规划
 ## 2.1.分布示意图
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/bigdata/hadoop/hadoop_ha.png)
+![](E:/git-workspace/note/img/bigdata/hadoop/hadoop_ha.png)
 
  
+
  
- 
- 
- 
+
+
 ## 2.2.规划表
 
  主机名|  IP 			|安装的软件 			|运行的进程
@@ -69,7 +71,7 @@ mini7	|192.168.1.207	| jdk、hadoop、zookeeper|	 DataNode、NodeManager、Journ
    server.3=hadoop07:2888:3888
    #保存退出
 ```
-   
+
  1.3.创建一个tmp文件夹，创建myid文件
 ```
    mkdir /home/hadoop/app/zookeeper-3.4.5/tmp
@@ -108,7 +110,7 @@ mini7	|192.168.1.207	| jdk、hadoop、zookeeper|	 DataNode、NodeManager、Journ
    export HADOOP_HOME=/hadoop/hadoop-2.6.4
    export PATH=$PATH:$JAVA_HOME/bin:$HADOOP_HOME/bin
 ```
- 
+
 ### 3.2.3.修改hadoo-env.sh
 ```
     export JAVA_HOME=/home/hadoop/app/jdk1.7.0_55

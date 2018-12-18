@@ -6,14 +6,22 @@ tag: [hadoop]
 ---
 
 
+
+[TOC]
+
+
+
 # 1.hdfs和yarn的作用
+
 1. HDFS就是负责管理文件的，其中data node 就是数据节点存储数据的，而name node就是管理data node的
 2. yarn是负责跑mapreduce，调度硬件资源给执行的程序用的，node manager 负责调用mapreduce程序，而resource manager是负责管理node manager的
 
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/bigdata/hadoop/install/install_hadoop.png)
 
-<!--more-->
+
+![](E:/git-workspace/note/img/bigdata/hadoop/install/install_hadoop.png)
+
+
 
 # 2.主机规划
 
@@ -33,7 +41,7 @@ passwd hadoop
 
 ```
 
- 
+
 ## 3.2.为HADOOP用户分配sudoer权限
 ```
 #vim    /etc/sudoers
@@ -131,7 +139,7 @@ tar -zxvf cenos-6.5-hadoop-2.6.4.tar.gz -C    /home/hadoop/app/        #解压�
 所有的配置文件在官网可以看到：
 
 Configuration
- 
+
 * core-default.xml
 * hdfs-default.xml
 * mapred-default.xml
@@ -139,7 +147,7 @@ Configuration
 * Deprecated Properties
 
 
- 
+
 >cd /home/hadoop/app/hadoop-2.6.4/
 
 ```
@@ -322,7 +330,7 @@ Found 1 items
 http://192.168.0.11:50070
 
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/bigdata/hadoop/install/install_test.png)
+![](E:/git-workspace/note/img/bigdata/hadoop/install/install_test.png)
 
 
 
