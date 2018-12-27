@@ -304,3 +304,19 @@ FAILED TO WRITE PID
 有点坑
 
 ```
+
+
+```
+java.lang.RuntimeException: My id 4 not in the peer list
+    搭建集群的时候需要配置zookeeper节点，同时需要在zoo.cfg中的文件配置服务节点。这个问题主要是因为上述两处配置没有相互对应起来，我虽然在myid中配置了节点4但是我在zoo.cfg的文件直接配置server1,2,3并没有节点4，而且zookeeper的节点必须从1开始，所以在配置文件的时候还是在myid中按顺序添加吧。
+
+vim $zk_home/data/myid
+
+vim $zk_home/conf/zoo.cfg 
+
+server.1=soc62:2888:3888
+server.2=soc63:2888:3888
+server.3=soc64:2888:3888
+
+```
+

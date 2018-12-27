@@ -10,7 +10,7 @@
 
 
 
-![](E:\note\images\bigdata\kafka\kafka-ssl.png)
+![](E:\git-workspace\note\images\bigdata\kafka\kafka-ssl.png)
 
 
 
@@ -80,7 +80,7 @@ keytool -keystore "$KEY_STORE" -alias "${CLUSTER_NAME}" -import -file "${CLUSTER
 
 
 
-![](E:\note\images\bigdata\kafka\kafka-ssl-2.png)
+![](E:\git-workspace\note\images\bigdata\kafka\kafka-ssl-2.png)
 
 
 
