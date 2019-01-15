@@ -4,15 +4,14 @@
 
 
 
-![img](/Users/chenyansong/Documents/note/images/linux/iptables/seven-layer.png)
-
+![img](https://github.com/chenyansong1/note/blob/master/images/linux/iptables/seven-layer.png?raw=true?raw=true)
 
 
 通信过程中，每层协议都要加上一个数据首部（header），称为封装（Encapsulation），如下图所示
 
 
 
-![img](/Users/chenyansong/Documents/note/images/linux/iptables/header-layer.png)
+![img](https://github.com/chenyansong1/note/blob/master/images/linux/iptables/header-layer.png?raw=true)
 
 
 
@@ -20,9 +19,9 @@
 
 
 
-![image-20181017200226974](/Users/chenyansong/Documents/note/images/linux/iptables/ip-layer.png)
+![image-20181017200226974](https://github.com/chenyansong1/note/blob/master/images/linux/iptables/ip-layer.png?raw=true)
 
-![img](/Users/chenyansong/Documents/note/images/linux/iptables/ip-layer2.png)
+![img](https://github.com/chenyansong1/note/blob/master/images/linux/iptables/ip-layer2.png?raw=true)
 
 
 
@@ -40,7 +39,7 @@ Protocol：协议（字段指出此数据报所携带上层数据使用的TCP协
 
 常用网际协议编号：
 
-![img](/Users/chenyansong/Documents/note/images/linux/iptables/ip-procol.png)
+![img](https://github.com/chenyansong1/note/blob/master/images/linux/iptables/ip-procol.png?raw=true)
 
 
 
@@ -48,11 +47,11 @@ Header CheckSum: 首部校验和，占用16位二进制数，用于协议头数�
 
 # TCP报文头
 
-![image-20181017200410479](/Users/chenyansong/Documents/note/images/linux/iptables/tcp-layer.png)
+![image-20181017200410479](https://github.com/chenyansong1/note/blob/master/images/linux/iptables/tcp-layer.png?raw=true)
 
 
 
-![img](/Users/chenyansong/Documents/note/images/linux/iptables/tcp-layer2.png)
+![img](https://github.com/chenyansong1/note/blob/master/images/linux/iptables/tcp-layer2.png?raw=true)
 
 
 
@@ -87,7 +86,7 @@ https://blog.csdn.net/qzcsu/article/details/72861891
 
 
 
-![image-20181018194913463](/Users/chenyansong/Documents/note/images/linux/iptables/tcp-thread.png)
+![image-20181018194913463](https://github.com/chenyansong1/note/blob/master/images/linux/iptables/tcp-thread.png?raw=true)
 
 
 
@@ -105,7 +104,7 @@ https://blog.csdn.net/qzcsu/article/details/72861891
 
 
 
-![image-20181018195743160](/Users/chenyansong/Documents/note/images/linux/iptables/tcp-four.png)
+![image-20181018195743160](https://github.com/chenyansong1/note/blob/master/images/linux/iptables/tcp-four.png?raw=true)
 
 >  为什么客户端最后还要等待2MSL？
 
@@ -144,7 +143,7 @@ MSL（Maximum Segment Lifetime），TCP允许不同的实现可以设置不同�
 
 * 服务器端
 
-![img](/Users/chenyansong/Documents/note/images/linux/iptables/tcp-status.png)
+![img](https://github.com/chenyansong1/note/blob/master/images/linux/iptables/tcp-status.png?raw=true)
 
 * 客户端
 
@@ -152,13 +151,13 @@ MSL（Maximum Segment Lifetime），TCP允许不同的实现可以设置不同�
 
 
 
-![img](/Users/chenyansong/Documents/note/images/linux/iptables/tcp-status2.png)
+![img](https://github.com/chenyansong1/note/blob/master/images/linux/iptables/tcp-status2.png?raw=true)
 
 * 总的状态图
 
 
 
-![img](/Users/chenyansong/Documents/note/images/linux/iptables/tcpfsm.png)
+![img](https://github.com/chenyansong1/note/blob/master/images/linux/iptables/tcpfsm.png?raw=true)
 
 
 
@@ -196,7 +195,7 @@ Linux2.4
 
 
 
-![image-20181018234248087](/Users/chenyansong/Documents/note/images/linux/iptables/sys-user.png)
+![image-20181018234248087](https://github.com/chenyansong1/note/blob/master/images/linux/iptables/sys-user.png?raw=true)
 
 
 
@@ -215,7 +214,7 @@ hook function:5个钩子函数
 
 
 
-![image-20181020090657434](/Users/chenyansong/Documents/note/images/linux/iptables/hook.png)
+![image-20181020090657434](https://github.com/chenyansong1/note/blob/master/images/linux/iptables/hook.png?raw=true)
 
 
 
@@ -223,7 +222,7 @@ hook function:5个钩子函数
 
 通常在一个数据报文送达到网卡之后，网卡会将数据报文送达到路由表进行路由决策，但是在网卡上也有一个**钩子函数**，用于路由之前的修改数据报文的内容，同样在数据报文通过网卡发送出去之前，我们也是可以修改数据报文的内容，这里也是对应一个钩子函数。
 
-![image-20181020091741755](/Users/chenyansong/Documents/note/images/linux/iptables/hook2.png)
+![image-20181020091741755](https://github.com/chenyansong1/note/blob/master/images/linux/iptables/hook2.png?raw=true)
 
 
 
@@ -285,7 +284,7 @@ raw(原始格式)：表
 
 
 
-![image-20181020133158472](/Users/chenyansong/Documents/note/images/linux/iptables/chains-type.png)
+![image-20181020133158472](https://github.com/chenyansong1/note/blob/master/images/linux/iptables/chains-type.png?raw=true)
 
 
 
@@ -387,7 +386,7 @@ iptable [-t TABLE]  COMMAND  CHAIN [num] 匹配条件  -j 处理办法
 
   
 
-  ![image-20181020175106434](/Users/chenyansong/Documents/note/images/linux/iptables/dns-open.png)
+  ![image-20181020175106434](https://github.com/chenyansong1/note/blob/master/images/linux/iptables/dns-open.png?raw=true)
 
   
 
@@ -564,7 +563,7 @@ iptables -I OUTPUT -s 172.16.100.7 -m string --algo kmp --string "h7n9" -j REJEC
 
 在 /proc/net/ip_conntrack 文件中保存了当前主机和其他外面的主机的连接信息
 
-![image-20181020180430565](/Users/chenyansong/Documents/note/images/linux/iptables/ip_conntrack.png)
+![image-20181020180430565](https://github.com/chenyansong1/note/blob/master/images/linux/iptables/ip_conntrack.png?raw=true)
 
 可以修改这个值
 
@@ -717,7 +716,7 @@ iptables -I INPUT -j clean_in
 
 由下图，我们可以看到，首先在主链中，进入了chen_in链的调用，同时可以看到clean_in链是被引用了一次（也就是主链引用）
 
-![image-20181021221047366](/Users/chenyansong/Documents/note/images/linux/iptables/udc.png)
+![image-20181021221047366](https://github.com/chenyansong1/note/blob/master/images/linux/iptables/udc.png?raw=true)
 
 
 
@@ -773,7 +772,7 @@ iptables不是服务，但是有服务脚本，服务脚本的主要作用在于
 
 
 
-![image-20181021222000293](/Users/chenyansong/Documents/note/images/linux/iptables/dos.png)
+![image-20181021222000293](https://github.com/chenyansong1/note/blob/master/images/linux/iptables/dos.png?raw=true)
 
 
 
