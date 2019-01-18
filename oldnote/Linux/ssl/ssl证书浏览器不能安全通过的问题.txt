@@ -1,0 +1,13 @@
+https://github.com/loganstellway/self-signed-ssl/edit/master/self-signed-tls
+
+
+https://blog.csdn.net/u013066244/article/details/78725842
+
+https://github.com/chenyansong1/note/blob/master/oldnote/Linux/ssl/ssl_ssh.md
+
+
+浏览器中的问题：Certificate - Subject Alternative Name missing
+The certificate for this site does not contain a Subject Alternative Name extension containing a domain name or IP address.
+
+
+
