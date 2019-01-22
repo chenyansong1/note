@@ -10,4 +10,7 @@ https://github.com/chenyansong1/note/blob/master/oldnote/Linux/ssl/ssl_ssh.md
 The certificate for this site does not contain a Subject Alternative Name extension containing a domain name or IP address.
 
 
+https://stackoverflow.com/questions/43665243/invalid-self-signed-ssl-cert-subject-alternative-name-missing
+
+
 
