@@ -305,7 +305,7 @@ echo 01 > serial
 
 ```
 #1.首先在对应的目录下生成一个私钥
-(umask 077; openssl genrsa -out httd.key 1024)
+(umask 077; openssl genrsa -out httpd.key 1024)
 
 #2.生成证书，需要：国家，省份，城市等
 openssl req -new -key httpd.key -out httpd.csr
