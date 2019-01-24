@@ -12,5 +12,8 @@ The certificate for this site does not contain a Subject Alternative Name extens
 
 https://stackoverflow.com/questions/43665243/invalid-self-signed-ssl-cert-subject-alternative-name-missing
 
+https://stackoverflow.com/questions/7580508/getting-chrome-to-accept-self-signed-localhost-certificate/43666288#
+https://stackoverflow.com/questions/21297139/how-do-you-sign-a-certificate-signing-request-with-your-certification-authority/21340898#21340898
+https://stackoverflow.com/questions/10175812/how-to-create-a-self-signed-certificate-with-openssl
 
 
