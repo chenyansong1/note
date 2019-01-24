@@ -40,9 +40,11 @@ openssl req \
 2. 输入：certmgr.msc
 3. 进入下面的配置页面
 
-![1548301003305](E:\git-workspace\note\images\linux\ssh\chrome-ssl1.png)
+![1548301003305](https://github.com/chenyansong1/note/blob/master/images/linux/ssh/chrome-ssl1.png?raw=true)
 
-![1548300933957](E:\git-workspace\note\images\linux\ssh\chrome-ssl.png)
+
+
+![1548300933957](https://github.com/chenyansong1/note/blob/master/images/linux/ssh/chrome-ssl.png?raw=true)
 
 
 
@@ -66,7 +68,9 @@ openssl req \
 
 # 4.浏览器访问
 
-![1548301155706](E:\git-workspace\note\images\linux\ssh\chrome-ssl3.png)
+
+
+![1548301155706](https://github.com/chenyansong1/note/blob/master/images/linux/ssh/chrome-ssl3.png?raw=true)
 
 
 
