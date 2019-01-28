@@ -19,7 +19,8 @@ tags: [linux]
 &emsp;&emsp;将磁盘划分成多个逻辑的组成结构，可以在分区的基础上创建独立的文件系统
 
 
-![分区表示意图](http://ols7leonh.bkt.clouddn.com//assert/img/linux/磁盘/inode.png)
+
+![分区表示意图](https://github.com/chenyansong1/note/blob/master/img/linux/磁盘/inode.png?raw=true)
 
 
 
@@ -44,13 +45,17 @@ tags: [linux]
 
 ## 4.1.inode逻辑结构示意图
 
-![分区表示意图](http://ols7leonh.bkt.clouddn.com//assert/img/linux/磁盘/inode_2.bmp)
+![分区表示意图](https://github.com/chenyansong1/note/blob/master/img/linux/磁盘/inode_2.bmp?raw=true)
+
+
 
 
 
 如果是目录的话，块中的数据应该如下：
 
-![image-20180909103324945](/Users/chenyansong/Documents/note/images/linux/filesystem/block_file.png)
+![image-20180909103324945](https://github.com/chenyansong1/note/blob/master/images/linux/filesystem/block_file.png?raw=true)
+
+
 
 
 
@@ -81,7 +86,9 @@ Size：大小
 
 ## 4.2.文件查找的过程
 
-![分区表示意图](http://ols7leonh.bkt.clouddn.com//assert/img/linux/磁盘/inode_3.bmp)
+![分区表示意图](https://github.com/chenyansong1/note/blob/master/img/linux/磁盘/inode_3.bmp?raw=true)
+
+
 
 ## 4.3.创建文件的过程
 
@@ -128,11 +135,13 @@ Size：大小
 # 5.超级块和块组
 最上面的是超级块，然后就是块组，每一个块组中包含（inode，inode 的位图，block位图）
 
-![分区表示意图](http://ols7leonh.bkt.clouddn.com//assert/img/linux/磁盘/inode_4.png)
+![分区表示意图](https://github.com/chenyansong1/note/blob/master/img/linux/磁盘/inode_4.png?raw=true)
 
 
 
-![image-20180909102812957](/Users/chenyansong/Documents/note/images/linux/filesystem/super_block.png)
+
+
+![image-20180909102812957](https://github.com/chenyansong1/note/blob/master/images/linux/filesystem/super_block.png?raw=true)
 
 
 
@@ -300,7 +309,9 @@ fdisk -l /dev/sda
 
 
 
-![image-20180908221648460](/Users/chenyansong/Documents/note/images/linux/filesystem/vfs.png)
+![image-20180908221648460](https://github.com/chenyansong1/note/blob/master/images/linux/filesystem/vfs.png?raw=true)
+
+
 
 
 
@@ -324,7 +335,7 @@ journal file system:日志文件系统，能够加快文件系统的修复
 
 在写元数据的时候，会首先将元数据写在日志区中，然后待文件写完成再将日志区中的元数据移动到左侧的元数据区中
 
-![image-20180908221648460](/Users/chenyansong/Documents/note/images/linux/filesystem/journal.png)
+![image-20180908221648460](https://github.com/chenyansong1/note/blob/master/images/linux/filesystem/journal.png?raw=true)
 
 
 
