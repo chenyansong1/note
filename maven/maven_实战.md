@@ -4,7 +4,7 @@
 
 [TOC]
 
-#1. maven的安装和配置
+#1.maven的安装和配置
 
 ## 1.1.maven的目录结构
 
@@ -405,6 +405,30 @@ mvn archetype:generate
 最终生成的目录结构如下：
 
 ![](https://github.com/chenyansong1/note/blob/master/images/maven/abc8.png?raw=true)
+
+
+
+# 5.坐标和依赖
+
+如何唯一的标识一个maven项目
+
+坐标详解
+
+依赖范围
+
+依懒性传递
+
+依赖调解（依赖冲突）
+
+最佳实现
+
+ 	1. 排除依赖
+ 	2. 归类依赖
+ 	3. 优化依赖
+
+
+
+
 
 
 
