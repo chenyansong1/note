@@ -215,15 +215,101 @@ E:\helloworld>mvn clean compile
 
 
 
-
-
-
-
-
-
 ## 2.3.编写测试代码
 
+* 测试代码的目录结构
 
+maven的项目的默认的测试代码目录是src/test/java
+
+* JUnit依赖
+
+```xml
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+```
+
+
+
+> 上述POM代码中还有一个值为test的元素scope，scope为依赖范围，若依赖范围为test，则表示该依赖只对测试代码有效，换句话说，测试代码中的import JUnit代码是没有问题的，**但是如果在主代码中用import JUnit代码，就会造成编译错误，如果不声明依赖范围，那么默认值就是compile，表示该依赖对主代码和测试代码都有效**
+
+
+
+* 测试代码的编写流程
+
+  1. 准备测试类及数据
+  2. 执行要测试的行为
+  3. 检查结果
+
+  ```java
+  import com.juvenxu.mvnbook.helloworld.HelloWorld;
+  import org.junit.Assert;
+  import org.junit.Test;
+  
+  /**
+   * Created by landun on 2019/1/29.
+   */
+  public class HellowWorldTest {
+  
+      @Test
+      public void testSayHello(){
+          // 1.准备测试类及数据
+          HelloWorld helloWorld = new HelloWorld();
+          // 2.执行要测试的行为
+          String result = helloWorld.sayHello();
+  		// 3.检查结果（使用JUnit框架的Asset类检查结果是否为我们期望的“hello Maven”）
+          Assert.assertEquals("Hello Maven", result);
+  
+      }
+  }
+  
+  ```
+
+  
+
+* mvn clean test测试
+
+  在Maven执行测试(test)之前,他会先自动执行：
+
+  1. 项目主资源处理，
+  2. 主代码编译，
+  3. 测试资源处理，
+  4. 测试代码编译
+  5. surefire:test任务运行测试等工作
+
+* 可能出现的问题
+
+![1548727906232](E:\git-workspace\note\images\maven\abc3.png)
+
+
+
+出现上述原因是：由于历史原因，Maven的核心插件之一compiler插件默认只支持编译java1.3，因此需简要配置该插件使其支持Java1.8，在pom.xml文件中添加如下：
+
+```xml
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+```
+
+
+
+* 总的测试日志如下
+
+![1548728204447](E:\git-workspace\note\images\maven\abc4.png)
 
 
 
@@ -231,9 +317,88 @@ E:\helloworld>mvn clean compile
 
 
 
+* 打包
+
+  默认打包类型为jar，简单的执行命令mvn clean package运行打包，可以看到如下输出：
+
+  ![1548728204447](E:\git-workspace\note\images\maven\abc5.png)
+
+  jar插件的jar目标将项目主代码打包成一个名为hello-world-1.0-SNAPSHOT.jar的文件，该文件也位于target/输出目录下，他是根据artifact-version.jar规则进行命名的
+
+  
+
+* 安装
+
+  如果才能让其他的Maven项目直接引用这个jar呢？这就需要 mvn clean install
+
+  
+
+  ![1548728204447](E:\git-workspace\note\images\maven\abc6.png)
+
+​	
+
+* 指定Main运行
+
+  默认打包生成的jar是不能够直接运行的，因为带有main方法的类信息不会添加到manifest中（打开jar文件中的META-INF/MANIFEST.MF文件，将无法看到Main-Class一行），为了生成可执行的jar文件，需要借助maven-shade-plugin，配置改插件如下：
+
+  ```xml
+              <!--main-->
+              <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-shade-plugin</artifactId>
+                  <version>1.4</version>
+                  <executions>
+                      <execution>
+                          <phase>package</phase>
+                          <goals>
+                              <goal>shade</goal>
+                          </goals>
+                          <configuration>
+                              <transformers>
+                                  <transformer
+                                          implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                      <mainClass>com.juvenxu.mvnbook.helloworld.HelloWorld</mainClass>
+                                  </transformer>
+                              </transformers>
+                          </configuration>
+                      </execution>
+                  </executions>
+              </plugin>
+  ```
+
+
+
+​	打开 hello-world-1.0-SNAPSHOT.jar 的META-INF/MANIFEST.MF，可以看到他包含这样一行信息：
+
+```
+Main-Class: com.juvenxu.mvnbook.helloworld.HelloWorld
+```
+
+​	并且这个jar是可以直接运行的，如下：
+
+```
+java -jar hello-world-1.0-SNAPSHOT.jar
+test from hello world!
+
+```
+
+
+
 ## 2.5.使用archetype生成项目骨架
 
+在Maven的约定中：在项目的根目录中放置pom.xml，在src/main/java目录中放置项目的主代码，在src/test/java中放置项目的测试代码，这些项目骨架是我们手动创建的，而Maven是可以自动创建的
 
+
+
+如果是Maven3，简单的运行：
+
+```
+mvn archetype:generate
+
+#每一个Archetype前面都会有一个编号，同时命令行会提示一个默认的编号，其对应的Archetype为maven-archetype-quickstart，直接回车以选择该Archetype，紧接着Maven会提示输入要创建项目的groupId，artifactId,version，以及包名package，如下输入并确认
+```
+
+![1548728204447](E:\git-workspace\note\images\maven\abc7.png)
 
 
 
