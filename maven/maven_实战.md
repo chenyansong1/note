@@ -414,9 +414,50 @@ mvn archetype:generate
 
   ![](https://github.com/chenyansong1/note/blob/master/images/maven/abc9.png?raw=true)
 
-坐标详解
+  
 
-依赖范围
+* 坐标详解
+
+  maven通过下面的坐标进行唯一的定位一个组件
+
+  1. groupId: groupId的表示方式与Java包名的表示方式类似，通常与域名反向一一对应，如groupId为org.sonatyp.nexus, org.sonatype表示Sonatype公司的网站，nexus是Nexus这一实际项目，改groupId与域名nexus.sonatype.org对应
+  2. artifactId：该元素定义实际项目中的一个Maven项目（模块），**推荐的做法是使用实际项目名称作为artifactId的前缀**，比如artifactId是nexus-indexer，使用了实际项目名nexus作为前缀
+  3. version：版本
+  4. packaging：定义maven项目的打包方式，packaging为jar，最终的文件名为nexus-indexer-2.0.0.jar，而使用war打包方式的maven项目，最终生成的构件会有一个.war文件，不过这不是绝对的，比如packaging=maven-plugin的构件扩展名也是jar，**默认maven使用jar**
+  5. classifier：该元素用来帮助定义构建输出的一些附属构件（如：nexus-indexer-2.0.0-javadoc.jar, nexus-indexer-2.0.0-sources.jar)，注意，不能直接定义项目的classifier，因为附属构件不是项目直接默认生成的，而是由附加的插件帮助生成的
+
+  
+
+* 依赖范围
+
+```xml
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+```
+
+​	如上，依赖是使用的范围，使用scope来定义，首先要介绍三种classpath：
+
+1. 编译classpath
+2. 测试classpath
+3. 运行classpath
+
+例如上面的JUnit只会加入到**测试classpath**中，不会加入到其他另外两种classpath中
+
+| scope    | description                                                  |
+| -------- | ------------------------------------------------------------ |
+| compile  | 编译依赖范围，默认就是这种范围，对编译、测试，运行三种classpath都有效 |
+| test     | 测试依赖范围，只对测试classpath有效                          |
+| provided | 对编译和测试classpath有效，但是对运行classpath无效，如：servlet-api，在编译和测试项目的时候需要改依赖，但是在项目运行的时候，由于容器已经提供，就不需要Maven重复的引入 |
+| runtime  |                                                              |
+|          |                                                              |
+
+
 
 依懒性传递
 
