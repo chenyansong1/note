@@ -402,6 +402,12 @@ mvn archetype:generate
 
 
 
+最终生成的目录结构如下：
+
+![](https://github.com/chenyansong1/note/blob/master/images/maven/abc8.png?raw=true)
+
+
+
 
 
 
