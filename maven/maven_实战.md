@@ -144,7 +144,7 @@ Maven项目的核心是pom.xml，POM（Project Object Model，项目对象模型
 
 * 主代码的目录结构：默认情况下，代码位于：**src/main/java**
 
-![](E:\git-workspace\note\images\maven\abc1.png)
+![](https://github.com/chenyansong1/note/blob/master/images/maven/abc1.png?raw=true)
 
 
 
@@ -170,7 +170,7 @@ public class HelloWorld {
 
 ```
 
-![1548667781074](E:\git-workspace\note\images\maven\abc2.png)
+![](https://github.com/chenyansong1/note/blob/master/images/maven/abc2.png?raw=true)
 
 
 
@@ -284,7 +284,7 @@ maven的项目的默认的测试代码目录是src/test/java
 
 * 可能出现的问题
 
-![1548727906232](E:\git-workspace\note\images\maven\abc3.png)
+![](https://github.com/chenyansong1/note/blob/master/images/maven/abc3.png?raw=true)
 
 
 
@@ -309,7 +309,7 @@ maven的项目的默认的测试代码目录是src/test/java
 
 * 总的测试日志如下
 
-![1548728204447](E:\git-workspace\note\images\maven\abc4.png)
+![](https://github.com/chenyansong1/note/blob/master/images/maven/abc4.png?raw=true)
 
 
 
@@ -321,7 +321,7 @@ maven的项目的默认的测试代码目录是src/test/java
 
   默认打包类型为jar，简单的执行命令mvn clean package运行打包，可以看到如下输出：
 
-  ![1548728204447](E:\git-workspace\note\images\maven\abc5.png)
+  ![](https://github.com/chenyansong1/note/blob/master/images/maven/abc5.png?raw=true)
 
   jar插件的jar目标将项目主代码打包成一个名为hello-world-1.0-SNAPSHOT.jar的文件，该文件也位于target/输出目录下，他是根据artifact-version.jar规则进行命名的
 
@@ -333,7 +333,7 @@ maven的项目的默认的测试代码目录是src/test/java
 
   
 
-  ![1548728204447](E:\git-workspace\note\images\maven\abc6.png)
+  ![](https://github.com/chenyansong1/note/blob/master/images/maven/abc6.png?raw=true)
 
 ​	
 
@@ -398,7 +398,7 @@ mvn archetype:generate
 #每一个Archetype前面都会有一个编号，同时命令行会提示一个默认的编号，其对应的Archetype为maven-archetype-quickstart，直接回车以选择该Archetype，紧接着Maven会提示输入要创建项目的groupId，artifactId,version，以及包名package，如下输入并确认
 ```
 
-![1548728204447](E:\git-workspace\note\images\maven\abc7.png)
+![](https://github.com/chenyansong1/note/blob/master/images/maven/abc7.png?raw=true)
 
 
 
