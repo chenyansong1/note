@@ -410,7 +410,9 @@ mvn archetype:generate
 
 # 5.坐标和依赖
 
-如何唯一的标识一个maven项目
+* 如何唯一的标识一个maven项目
+
+  ![](https://github.com/chenyansong1/note/blob/master/images/maven/abc9.png?raw=true)
 
 坐标详解
 
