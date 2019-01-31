@@ -454,22 +454,183 @@ mvn archetype:generate
 | compile  | 编译依赖范围，默认就是这种范围，对编译、测试，运行三种classpath都有效 |
 | test     | 测试依赖范围，只对测试classpath有效                          |
 | provided | 对编译和测试classpath有效，但是对运行classpath无效，如：servlet-api，在编译和测试项目的时候需要改依赖，但是在项目运行的时候，由于容器已经提供，就不需要Maven重复的引入 |
-| runtime  |                                                              |
-|          |                                                              |
+| runtime  | 运行时范围有效                                               |
+| system   | 系统依赖范围，使用system范围的依赖时必须通过systemPath元素显示的指定依赖文件的路径 |
 
 
 
-依懒性传递
+```xml
+<dependency>
+	<groupId>javax.sql</groupId>
+	<artifactId>jdbc-stdext</artifactId>
+    <version>2.0</version>
+    <scope>system</scope>
+    <systemPath>${java.home}/lib/rt.jar</systemPath>
+</dependency>
+```
 
-依赖调解（依赖冲突）
-
-最佳实现
-
- 	1. 排除依赖
- 	2. 归类依赖
- 	3. 优化依赖
 
 
+![](https://github.com/chenyansong1/note/blob/master/images/maven/abc10.png?raw=true)
+
+
+
+* 依懒性传递
+
+  A项目依赖B，B项目依赖C，这样A项目和C之间就有了传递性依赖
+
+  ![](https://github.com/chenyansong1/note/blob/master/images/maven/abc11.png?raw=true)
+
+  ![](E:\git-workspace\note\images\maven\abc11.png)
+
+  如上图：account-email有一个compile范围的sprint-core依赖，spring-core有一个compile范围的commons-logging依赖，那么commons-logging就会成为account-email的compile范围依赖，commons-logging是account-email的一个传递性依赖
+
+
+
+​	假设A依赖于B，B依赖于C，那么我们说A对于B是第一直接依赖，B对于C是第二直接依赖，A对于C是传递性依赖，第一直接依赖的范围和第二直接依赖的范围决定了传递性依赖的范围，如下表：
+
+​	![](E:\git-workspace\note\images\maven\abc12.png)
+
+
+
+* 依赖调解（依赖冲突）
+
+  当同时依赖多个相同的不同版本的项目的时候，这是就会有冲突的问题，maven解决依赖的方式有如下两种：
+
+  1. 路径最近者优先
+
+     A->B->C->X(1.0)
+
+     A->D->X(2.0)
+
+     此时：X(2.0)会被解析使用
+
+     
+
+  2. 第一声明者优先
+
+     当路径长度相同的时候，最先定义的会被使用，如：
+
+     A->B->Y(1.0)
+
+     A->C->Y(2.0)
+
+     此时：Y(1.0)会被解析使用
+
+  
+
+* 最佳实现
+
+ 1. 排除依赖
+
+    你可能想要替换某个传递性依赖，**项目A依赖于项目B，但是由于一些原因，不想引入传递性依赖C，而是自己显示的声明对于项目C 1.1.0版本的依赖**如下：
+
+    ```xml
+    <dependency>
+    	<groupId>com.juvenxu.mvnbook</groupId>
+    	<artifactId>project-b</artifactId>
+        <version>1.0.0</version>
+        <exclusions>
+        	<exclusion>
+            	<groupId>com.juvenxu.mvnbook</groupId>
+                <artifactId>project-c</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+    
+    <dependency>
+    	<groupId>com.juvenxu.mvnbook</groupId>
+    	<artifactId>project-c</artifactId>
+        <version>1.1.0</version>
+    </dependency>
+    ```
+
+
+
+![](E:\git-workspace\note\images\maven\abc13.png)
+
+
+
+2. 归类依赖
+
+   例如，我们在使用spring Framework的时候，会引入：
+
+   org.springframework:spring-core:2.5.6
+
+   org.springframework:spring-core:2.5.6
+
+   org.springframework:spring-context-support:2.5.6
+
+   他们都是来自同一个项目的不同模块，因此这些依赖的版本都是相同的，而且将来升级的时候也会一起升级，所以需要指定这些依赖的版本一致，配置如下：
+
+   ```xml
+   <properties>
+   	<springframework.version>2.5.6</springframework.version>
+   </properties>
+   
+   <dependencies>
+   	<dependency>
+       	<groupId>org.springframework</groupId>
+           <artifactId>spring-core</artifactId>
+           <version>${springframework.version}</version>
+       </dependency>
+   	<dependency>
+       	<groupId>org.springframework</groupId>
+           <artifactId>spring-beans</artifactId>
+           <version>${springframework.version}</version>
+       </dependency>
+   	<dependency>
+       	<groupId>org.springframework</groupId>
+           <artifactId>spring-context</artifactId>
+           <version>${springframework.version}</version>
+       </dependency>
+   </dependencies>
+   ```
+
+3. 优化依赖
+
+   这里涉及到三个命令行:
+
+   ```latex
+   mvn dependency:list
+   mvn dependency:tree
+   mvn dependency:analyze
+   
+   
+   #mvn dependency:list
+   [INFO] The following files have been resolved:
+   [INFO]    org.apache.lucene:lucene-backward-codecs:jar:5.5.2:compile
+   [INFO]    org.apache.hadoop:hadoop-annotations:jar:2.7.2:compile
+   [INFO]    commons-el:commons-el:jar:1.0:runtime
+   [INFO]    net.sf.jopt-simple:jopt-simple:jar:5.0.3:compile
+   [INFO]    org.apache.htrace:htrace-core:jar:3.1.0-incubating:compile
+   [INFO]    com.google.protobuf:protobuf-java:jar:2.5.0:compile
+   [INFO]    org.quartz-scheduler:quartz:jar:2.2.1:compile
+   [INFO]    tomcat:jasper-compiler:jar:5.5.23:compile
+   [INFO]    com.sun.jersey:jersey-json:jar:1.9:compile
+   
+   
+   #mvn dependency:tree
+   [INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ AnalyzeServer-Bigdata ---
+   [INFO] com.bluedon:AnalyzeServer-Bigdata:jar:1.0-SNAPSHOT
+   [INFO] +- org.apache.spark:spark-core_2.11:jar:2.0.2:compile
+   [INFO] |  +- org.apache.avro:avro-mapred:jar:hadoop2:1.7.7:compile
+   [INFO] |  |  +- org.apache.avro:avro-ipc:jar:1.7.7:compile
+   [INFO] |  |  \- org.apache.avro:avro-ipc:jar:tests:1.7.7:compile
+   [INFO] |  +- com.twitter:chill_2.11:jar:0.8.0:compile
+   [INFO] |  |  \- com.esotericsoftware:kryo-shaded:jar:3.0.3:compile
+   [INFO] |  |     +- com.esotericsoftware:minlog:jar:1.3.0:compile
+   [INFO] |  |     \- org.objenesis:objenesis:jar:2.1:compile
+   [INFO] |  +- com.twitter:chill-java:jar:0.8.0:compile
+   [INFO] |  +- org.apache.xbean:xbean-asm5-shaded:jar:4.4:compile
+   [INFO] |  +- org.apache.spark:spark-launcher_2.11:jar:2.0.2:compile
+   
+   
+   #mvn dependency:analyze
+   
+   ```
+
+   
 
 
 
