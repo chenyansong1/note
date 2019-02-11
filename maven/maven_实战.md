@@ -410,25 +410,25 @@ mvn archetype:generate
 
 # 5.坐标和依赖
 
-* 如何唯一的标识一个maven项目
+## 如何唯一的标识一个maven项目
 
   ![](https://github.com/chenyansong1/note/blob/master/images/maven/abc9.png?raw=true)
 
   
 
-* 坐标详解
+## 坐标详解
 
-  maven通过下面的坐标进行唯一的定位一个组件
+maven通过下面的坐标进行唯一的定位一个组件
 
-  1. groupId: groupId的表示方式与Java包名的表示方式类似，通常与域名反向一一对应，如groupId为org.sonatyp.nexus, org.sonatype表示Sonatype公司的网站，nexus是Nexus这一实际项目，改groupId与域名nexus.sonatype.org对应
-  2. artifactId：该元素定义实际项目中的一个Maven项目（模块），**推荐的做法是使用实际项目名称作为artifactId的前缀**，比如artifactId是nexus-indexer，使用了实际项目名nexus作为前缀
-  3. version：版本
-  4. packaging：定义maven项目的打包方式，packaging为jar，最终的文件名为nexus-indexer-2.0.0.jar，而使用war打包方式的maven项目，最终生成的构件会有一个.war文件，不过这不是绝对的，比如packaging=maven-plugin的构件扩展名也是jar，**默认maven使用jar**
-  5. classifier：该元素用来帮助定义构建输出的一些附属构件（如：nexus-indexer-2.0.0-javadoc.jar, nexus-indexer-2.0.0-sources.jar)，注意，不能直接定义项目的classifier，因为附属构件不是项目直接默认生成的，而是由附加的插件帮助生成的
+1. groupId: groupId的表示方式与Java包名的表示方式类似，通常与域名反向一一对应，如groupId为org.sonatyp.nexus, org.sonatype表示Sonatype公司的网站，nexus是Nexus这一实际项目，改groupId与域名nexus.sonatype.org对应
+2. artifactId：该元素定义实际项目中的一个Maven项目（模块），**推荐的做法是使用实际项目名称作为artifactId的前缀**，比如artifactId是nexus-indexer，使用了实际项目名nexus作为前缀
+3. version：版本
+4. packaging：定义maven项目的打包方式，packaging为jar，最终的文件名为nexus-indexer-2.0.0.jar，而使用war打包方式的maven项目，最终生成的构件会有一个.war文件，不过这不是绝对的，比如packaging=maven-plugin的构件扩展名也是jar，**默认maven使用jar**
+5. classifier：该元素用来帮助定义构建输出的一些附属构件（如：nexus-indexer-2.0.0-javadoc.jar, nexus-indexer-2.0.0-sources.jar)，注意，不能直接定义项目的classifier，因为附属构件不是项目直接默认生成的，而是由附加的插件帮助生成的
 
-  
 
-* 依赖范围
+
+## 依赖范围
 
 ```xml
     <dependencies>
@@ -475,15 +475,15 @@ mvn archetype:generate
 
 
 
-* 依懒性传递
+## 依懒性传递
 
-  A项目依赖B，B项目依赖C，这样A项目和C之间就有了传递性依赖
+A项目依赖B，B项目依赖C，这样A项目和C之间就有了传递性依赖
 
-  ![](https://github.com/chenyansong1/note/blob/master/images/maven/abc11.png?raw=true)
+![](https://github.com/chenyansong1/note/blob/master/images/maven/abc11.png?raw=true)
 
-  ![](E:\git-workspace\note\images\maven\abc11.png)
+![](E:\git-workspace\note\images\maven\abc11.png)
 
-  如上图：account-email有一个compile范围的sprint-core依赖，spring-core有一个compile范围的commons-logging依赖，那么commons-logging就会成为account-email的compile范围依赖，commons-logging是account-email的一个传递性依赖
+如上图：account-email有一个compile范围的sprint-core依赖，spring-core有一个compile范围的commons-logging依赖，那么commons-logging就会成为account-email的compile范围依赖，commons-logging是account-email的一个传递性依赖
 
 
 
@@ -493,57 +493,57 @@ mvn archetype:generate
 
 
 
-* 依赖调解（依赖冲突）
+## 依赖调解（依赖冲突）
 
-  当同时依赖多个相同的不同版本的项目的时候，这是就会有冲突的问题，maven解决依赖的方式有如下两种：
+当同时依赖多个相同的不同版本的项目的时候，这是就会有冲突的问题，maven解决依赖的方式有如下两种：
 
-  1. 路径最近者优先
+1. 路径最近者优先
 
-     A->B->C->X(1.0)
+   A->B->C->X(1.0)
 
-     A->D->X(2.0)
+   A->D->X(2.0)
 
-     此时：X(2.0)会被解析使用
+   此时：X(2.0)会被解析使用
 
-     
+   
 
-  2. 第一声明者优先
+2. 第一声明者优先
 
-     当路径长度相同的时候，最先定义的会被使用，如：
+   当路径长度相同的时候，最先定义的会被使用，如：
 
-     A->B->Y(1.0)
+   A->B->Y(1.0)
 
-     A->C->Y(2.0)
+   A->C->Y(2.0)
 
-     此时：Y(1.0)会被解析使用
+   此时：Y(1.0)会被解析使用
 
-  
 
-* 最佳实现
 
- 1. 排除依赖
+## 最佳实现
 
-    你可能想要替换某个传递性依赖，**项目A依赖于项目B，但是由于一些原因，不想引入传递性依赖C，而是自己显示的声明对于项目C 1.1.0版本的依赖**如下：
+### 1. 排除依赖
 
-    ```xml
-    <dependency>
-    	<groupId>com.juvenxu.mvnbook</groupId>
-    	<artifactId>project-b</artifactId>
-        <version>1.0.0</version>
-        <exclusions>
-        	<exclusion>
-            	<groupId>com.juvenxu.mvnbook</groupId>
-                <artifactId>project-c</artifactId>
-            </exclusion>
-        </exclusions>
-    </dependency>
-    
-    <dependency>
-    	<groupId>com.juvenxu.mvnbook</groupId>
-    	<artifactId>project-c</artifactId>
-        <version>1.1.0</version>
-    </dependency>
-    ```
+你可能想要替换某个传递性依赖，**项目A依赖于项目B，但是由于一些原因，不想引入传递性依赖C，而是自己显示的声明对于项目C 1.1.0版本的依赖**如下：
+
+```xml
+<dependency>
+	<groupId>com.juvenxu.mvnbook</groupId>
+	<artifactId>project-b</artifactId>
+    <version>1.0.0</version>
+    <exclusions>
+    	<exclusion>
+        	<groupId>com.juvenxu.mvnbook</groupId>
+            <artifactId>project-c</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+
+<dependency>
+	<groupId>com.juvenxu.mvnbook</groupId>
+	<artifactId>project-c</artifactId>
+    <version>1.1.0</version>
+</dependency>
+```
 
 
 
@@ -551,86 +551,86 @@ mvn archetype:generate
 
 
 
-2. 归类依赖
+### 2. 归类依赖
 
-   例如，我们在使用spring Framework的时候，会引入：
+例如，我们在使用spring Framework的时候，会引入：
 
-   org.springframework:spring-core:2.5.6
+org.springframework:spring-core:2.5.6
 
-   org.springframework:spring-core:2.5.6
+org.springframework:spring-core:2.5.6
 
-   org.springframework:spring-context-support:2.5.6
+org.springframework:spring-context-support:2.5.6
 
-   他们都是来自同一个项目的不同模块，因此这些依赖的版本都是相同的，而且将来升级的时候也会一起升级，所以需要指定这些依赖的版本一致，配置如下：
+他们都是来自同一个项目的不同模块，因此这些依赖的版本都是相同的，而且将来升级的时候也会一起升级，所以需要指定这些依赖的版本一致，配置如下：
 
-   ```xml
-   <properties>
-   	<springframework.version>2.5.6</springframework.version>
-   </properties>
-   
-   <dependencies>
-   	<dependency>
-       	<groupId>org.springframework</groupId>
-           <artifactId>spring-core</artifactId>
-           <version>${springframework.version}</version>
-       </dependency>
-   	<dependency>
-       	<groupId>org.springframework</groupId>
-           <artifactId>spring-beans</artifactId>
-           <version>${springframework.version}</version>
-       </dependency>
-   	<dependency>
-       	<groupId>org.springframework</groupId>
-           <artifactId>spring-context</artifactId>
-           <version>${springframework.version}</version>
-       </dependency>
-   </dependencies>
-   ```
+```xml
+<properties>
+	<springframework.version>2.5.6</springframework.version>
+</properties>
 
-3. 优化依赖
+<dependencies>
+	<dependency>
+    	<groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>${springframework.version}</version>
+    </dependency>
+	<dependency>
+    	<groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>${springframework.version}</version>
+    </dependency>
+	<dependency>
+    	<groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>${springframework.version}</version>
+    </dependency>
+</dependencies>
+```
 
-   这里涉及到三个命令行:
+### 3. 优化依赖
 
-   ```latex
-   mvn dependency:list
-   mvn dependency:tree
-   mvn dependency:analyze
-   
-   
-   #mvn dependency:list
-   [INFO] The following files have been resolved:
-   [INFO]    org.apache.lucene:lucene-backward-codecs:jar:5.5.2:compile
-   [INFO]    org.apache.hadoop:hadoop-annotations:jar:2.7.2:compile
-   [INFO]    commons-el:commons-el:jar:1.0:runtime
-   [INFO]    net.sf.jopt-simple:jopt-simple:jar:5.0.3:compile
-   [INFO]    org.apache.htrace:htrace-core:jar:3.1.0-incubating:compile
-   [INFO]    com.google.protobuf:protobuf-java:jar:2.5.0:compile
-   [INFO]    org.quartz-scheduler:quartz:jar:2.2.1:compile
-   [INFO]    tomcat:jasper-compiler:jar:5.5.23:compile
-   [INFO]    com.sun.jersey:jersey-json:jar:1.9:compile
-   
-   
-   #mvn dependency:tree
-   [INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ AnalyzeServer-Bigdata ---
-   [INFO] com.bluedon:AnalyzeServer-Bigdata:jar:1.0-SNAPSHOT
-   [INFO] +- org.apache.spark:spark-core_2.11:jar:2.0.2:compile
-   [INFO] |  +- org.apache.avro:avro-mapred:jar:hadoop2:1.7.7:compile
-   [INFO] |  |  +- org.apache.avro:avro-ipc:jar:1.7.7:compile
-   [INFO] |  |  \- org.apache.avro:avro-ipc:jar:tests:1.7.7:compile
-   [INFO] |  +- com.twitter:chill_2.11:jar:0.8.0:compile
-   [INFO] |  |  \- com.esotericsoftware:kryo-shaded:jar:3.0.3:compile
-   [INFO] |  |     +- com.esotericsoftware:minlog:jar:1.3.0:compile
-   [INFO] |  |     \- org.objenesis:objenesis:jar:2.1:compile
-   [INFO] |  +- com.twitter:chill-java:jar:0.8.0:compile
-   [INFO] |  +- org.apache.xbean:xbean-asm5-shaded:jar:4.4:compile
-   [INFO] |  +- org.apache.spark:spark-launcher_2.11:jar:2.0.2:compile
-   
-   
-   #mvn dependency:analyze
-   
-   ```
+这里涉及到三个命令行:
 
-   
+```latex
+mvn dependency:list
+mvn dependency:tree
+mvn dependency:analyze
+
+
+#mvn dependency:list
+[INFO] The following files have been resolved:
+[INFO]    org.apache.lucene:lucene-backward-codecs:jar:5.5.2:compile
+[INFO]    org.apache.hadoop:hadoop-annotations:jar:2.7.2:compile
+[INFO]    commons-el:commons-el:jar:1.0:runtime
+[INFO]    net.sf.jopt-simple:jopt-simple:jar:5.0.3:compile
+[INFO]    org.apache.htrace:htrace-core:jar:3.1.0-incubating:compile
+[INFO]    com.google.protobuf:protobuf-java:jar:2.5.0:compile
+[INFO]    org.quartz-scheduler:quartz:jar:2.2.1:compile
+[INFO]    tomcat:jasper-compiler:jar:5.5.23:compile
+[INFO]    com.sun.jersey:jersey-json:jar:1.9:compile
+
+
+#mvn dependency:tree
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ AnalyzeServer-Bigdata ---
+[INFO] com.bluedon:AnalyzeServer-Bigdata:jar:1.0-SNAPSHOT
+[INFO] +- org.apache.spark:spark-core_2.11:jar:2.0.2:compile
+[INFO] |  +- org.apache.avro:avro-mapred:jar:hadoop2:1.7.7:compile
+[INFO] |  |  +- org.apache.avro:avro-ipc:jar:1.7.7:compile
+[INFO] |  |  \- org.apache.avro:avro-ipc:jar:tests:1.7.7:compile
+[INFO] |  +- com.twitter:chill_2.11:jar:0.8.0:compile
+[INFO] |  |  \- com.esotericsoftware:kryo-shaded:jar:3.0.3:compile
+[INFO] |  |     +- com.esotericsoftware:minlog:jar:1.3.0:compile
+[INFO] |  |     \- org.objenesis:objenesis:jar:2.1:compile
+[INFO] |  +- com.twitter:chill-java:jar:0.8.0:compile
+[INFO] |  +- org.apache.xbean:xbean-asm5-shaded:jar:4.4:compile
+[INFO] |  +- org.apache.spark:spark-launcher_2.11:jar:2.0.2:compile
+
+
+#mvn dependency:analyze
+
+```
+
+
 
 
 
