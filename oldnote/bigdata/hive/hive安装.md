@@ -142,23 +142,23 @@ COLUMNS_V2：是所有的字段信息
 
 ```
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/bigdata/hive/mysql/1.png)
+![](https://github.com/chenyansong1/note/blob/master/img/bigdata/hive/mysql/1.png?raw=true)
 
 
 
 所创建的数据库
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/bigdata/hive/mysql/2.png)
+![](https://github.com/chenyansong1/note/blob/master/img/bigdata/hive/mysql/2.png?raw=true)
 
 
  所有表，如下，我们创建了student表
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/bigdata/hive/mysql/3.png)
+![](https://github.com/chenyansong1/note/blob/master/img/bigdata/hive/mysql/3.png?raw=true)
 
 
 所有的字段信息，如下是student表中存在的字段
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/bigdata/hive/mysql/4.png)
+![](https://github.com/chenyansong1/note/blob/master/img/bigdata/hive/mysql/4.png?raw=true)
 
 
 
@@ -172,9 +172,9 @@ bin/hive
 
 ## 8.2.Hive thrift服务
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/bigdata/hive/mysql/5.png)
+![](https://github.com/chenyansong1/note/blob/master/img/bigdata/hive/mysql/5.png?raw=true)
 
- 
+
 ```
 #启动方式，（假如是在hadoop01上）：
 #启动为前台：
