@@ -2,6 +2,7 @@
 
 
 ```
+cd ${ES_HOME}/bin/
 [hadoop@hdp-node-01 bin]$ ./plugin install mobz/elasticsearch-head
 //.....
 Installed head into /home/hadoop/app/elasticsearch-2.4.3/plugins/head
