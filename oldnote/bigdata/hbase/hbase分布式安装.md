@@ -114,7 +114,7 @@ hbase shell
 ```
 页面监控
 
-http://master:60010/
+http://master:16010/
 
 
 

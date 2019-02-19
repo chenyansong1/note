@@ -5,7 +5,12 @@ toc: true
 tag: [hive]
 ---
 
+[TOC]
+
+
+
 # 1.解压
+
 ```
 cd /home/hadoop/app/
 #解压
@@ -71,7 +76,7 @@ mv ./conf/hive-env.sh.template ./conf/hive-env.sh
 <value>root</value>
 <description>password to use against metastore database</description>
 </property>
-</configuration>
+
  
 <property>
   <name>hive.metastore.warehouse.dir</name>
@@ -85,6 +90,7 @@ mv ./conf/hive-env.sh.template ./conf/hive-env.sh
   <description>如果配置了这里,就可以通过远程连接到hive的元数据,注意要在远端(hadoop-master中)的hive中启动:hive --service metastore &</description>
 </property>
 
+</configuration>
 ```
 
 
