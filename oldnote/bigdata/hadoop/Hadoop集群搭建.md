@@ -144,6 +144,7 @@ Configuration
 * hdfs-default.xml
 * mapred-default.xml
 * yarn-default.xml
+* slaves
 * Deprecated Properties
 
 
