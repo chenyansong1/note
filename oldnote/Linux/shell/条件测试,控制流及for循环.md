@@ -205,7 +205,7 @@ FILE1 -ot FILE2
 
 ### 2.1.3.example
 ```
-# 判断字符串是否为空
+# 判断字符串是否为空；注意：第一个if和【之间有空格
 if [ $log_dir"x"="x" ];then
 	echo "true"
 fi
