@@ -101,7 +101,6 @@ $[ -w dream ]
 1
 [root@node-test conf]# [ ! -e /home ] && echo 1
 [root@node-test conf]# 
-
 ```
 
 
