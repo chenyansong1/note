@@ -91,6 +91,17 @@ $echo $?
 或者
 $[ -w dream ]
 
+
+#判断文件或者目录是否存在
+[root@node-test conf]# [ -e /etc/hosts ] && echo 1
+1
+[root@node-test conf]# [ -e /home2 ] && echo 1
+[root@node-test conf]# 
+[root@node-test conf]# [ ! -e /home2 ] && echo 1
+1
+[root@node-test conf]# [ ! -e /home ] && echo 1
+[root@node-test conf]# 
+
 ```
 
 

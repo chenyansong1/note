@@ -318,6 +318,13 @@ sed --expression='s/test/check/' --expression='/love/d' file
 ```
 
 
+
+### 匹配某一行开头，替换整行内容
+```
+sed -i '/^cloud_server_ip/ccloud_server_ip = update.skyeye.360safe.com' name.txt
+```
+
+
 ### 脚本scriptfile 
 
 sed脚本是一个sed的命令清单，启动Sed时以-f选项引导脚本文件名。Sed对于脚本中输入的命令非常挑剔，在命令的末尾不能有任何空白或文本，如果在一行中有多个命令，要用分号分隔。以#开头的行为注释行，且不能跨行。
