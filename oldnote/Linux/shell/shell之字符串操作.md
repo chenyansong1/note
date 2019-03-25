@@ -103,7 +103,7 @@ chenyansongdeMacBook-Pro:shell chenyansong$
 
 或者使用shell的方式分割
 
-```
+```shell
 shell编程中，经常需要将由特定分割符分割的字符串分割成数组，多数情况下我们首先会想到使用awk
 但是实际上用shell自带的分割数组功能会更方便。假如
 a="one,two,three,four"
@@ -141,5 +141,17 @@ or 下标访问
 		done
 
 
+```
+
+
+
+* 字符串正则提取
+
+```shell
+[root@node-test ~]# echo here365test | sed 's/.*ere\([0-9]*\).*/\1/g'
+365
+[root@node-test ~]# echo zookeeper1 | sed 's/zookeeper\([0-9]*\)/\1/g'
+1
+[root@node-test ~]# 
 ```
 
