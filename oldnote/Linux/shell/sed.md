@@ -161,6 +161,9 @@ chen3
 chen4
 chen5
 chen6
+
+#替换匹配行
+sed -i 's/^a.*/haha/g' tmp.txt 
  
 /*
 注意： s 是查找和替换，用一个字符串去替换匹配到的另一个字符串，
