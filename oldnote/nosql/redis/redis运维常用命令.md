@@ -470,7 +470,7 @@ linux下默认的换行是\n,windows系统的换行符是\r\n，redis使用的�
  
 echo -en '*3\r\n$3\r\nSET\r\n$3\r\nkey\r\n$5\r\nvalue\r\n' | redis-cli --pipe 
 ```
- 
+
 
 
 # 19.查看时间戳与微妙数
@@ -564,5 +564,43 @@ OK
  
 redis 127.0.0.1:6379> CLIENT GETNAME        # 清除完毕
 (nil)
+
+
+#查看哪些IP下的连接比较多：
+redis 127.0.0.1:6379> CLIENT LIST
+id=639 addr=210.38.139.144:47782 fd=22 name= age=75 idle=15 flags=N db=0 sub=0 psub=0 multi=-1 qbuf=0 qbuf-free=0 obl=0 oll=0 omem=0 events=r cmd=ping
+id=16 addr=210.38.139.150:60262 fd=19 name= age=5260 idle=1 flags=N db=0 sub=0 psub=0 multi=-1 qbuf=0 qbuf-free=0 obl=0 oll=0 omem=0 events=r cmd=set
+id=79 addr=210.38.139.150:60268 fd=34 name= age=4783 idle=1 flags=N db=0 sub=0 psub=0 multi=-1 qbuf=0 qbuf-free=0 obl=0 oll=0 omem=0 events=r cmd=set
+
+
+
+#Redis Client Kill 命令用于关闭客户端连接。
+redis Client Kill 命令基本语法如下：
+redis 127.0.0.1:6379> CLIENT KILL ip:port
+
+
+返回值
+成功关闭时，返回 OK 。
+
+实例
+# 列出所有已连接客户端
+redis 127.0.0.1:6379> CLIENT LIST
+addr=127.0.0.1:43501 fd=5 age=10 idle=0 flags=N db=0 sub=0 psub=0 multi=-1 qbuf=0 qbuf-free=32768 obl=0 oll=0 omem=0 events=r cmd=client
+ 
+# 杀死当前客户端的连接
+redis 127.0.0.1:6379> CLIENT KILL 127.0.0.1:43501
+OK
+ 
+# 之前的连接已经被关闭，CLI 客户端又重新建立了连接
+# 之前的端口是 43501 ，现在是 43504
+ 
+redis 127.0.0.1:6379> CLIENT LIST
+addr=127.0.0.1:43504 fd=5 age=0 idle=0 flags=N db=0 sub=0 psub=0 multi=-1 qbuf=0 qbuf-free=32768 obl=0 oll=0 omem=0 eve
+
+
+#最大连接数
+redis:6379> config get maxclients
+1) "maxclients"
+2) "10000"
 ```
 
