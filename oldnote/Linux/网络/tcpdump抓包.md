@@ -25,6 +25,7 @@ tcpdump
 (6)dst port ! 22 : 不抓取目标端口是22的数据包
 (7)src net 192.168.1.0/24 : 数据包的源网络地址为192.168.1.0/24
 (8)-w ./target.cap : 保存成cap文件，方便用ethereal(即wireshark)分析
+(9)-n 以数字显示主机及端口：tcpdump -n
 
 
 
@@ -151,11 +152,10 @@ tcpdump -i eth0 '((port 8000) and (tcp[(tcp[12]>>2):4]=0x47455420))' -nnAl -w /t
 ```
 tcpdump tcp -i any -t -s 0 -c 100 and host 10.130.10.22 and port 9092 -w ./target-2019011509.cap
 
-
-
-
-
 ```
+
+
+
 
 
 
