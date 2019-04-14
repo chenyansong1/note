@@ -91,6 +91,16 @@ $echo $?
 或者
 $[ -w dream ]
 
+
+#判断文件或者目录是否存在
+[root@node-test conf]# [ -e /etc/hosts ] && echo 1
+1
+[root@node-test conf]# [ -e /home2 ] && echo 1
+[root@node-test conf]# 
+[root@node-test conf]# [ ! -e /home2 ] && echo 1
+1
+[root@node-test conf]# [ ! -e /home ] && echo 1
+[root@node-test conf]# 
 ```
 
 
@@ -205,7 +215,7 @@ FILE1 -ot FILE2
 
 ### 2.1.3.example
 ```
-# 判断字符串是否为空
+# 判断字符串是否为空；注意：第一个if和【之间有空格
 if [ $log_dir"x"="x" ];then
 	echo "true"
 fi
@@ -241,6 +251,18 @@ case $1 in
 *)
 	echo "特殊字符"
 esac
+
+
+
+===================
+"scala")
+				#解压，修改配置文件
+				;;
+#这里有一个模糊匹配			
+zookeeper*)
+				#解压，修改配置文件
+				;;
+
 ```
 
 

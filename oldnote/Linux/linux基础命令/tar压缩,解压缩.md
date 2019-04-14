@@ -212,3 +212,21 @@ unzx filename
 xzcat
 ```
 
+
+
+
+
+# 问题
+
+
+
+```
+tar xvfz apache-tomcat-8.5.12.tar.gz
+gzip: stdin: not in gzip format
+tar: Child returned status 1
+tar: Error is not recoverable: exiting now
+
+#解决的方式
+This error is coming due to file is not completely downloaded.
+```
+

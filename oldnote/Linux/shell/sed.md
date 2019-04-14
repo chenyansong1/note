@@ -161,6 +161,9 @@ chen3
 chen4
 chen5
 chen6
+
+#替换匹配行
+sed -i 's/^a.*/haha/g' tmp.txt 
  
 /*
 注意： s 是查找和替换，用一个字符串去替换匹配到的另一个字符串，
@@ -217,6 +220,31 @@ aaaa
 testadd
 aa cc dd
 AAA
+
+
+#增加一行或多行字符串
+[root@localhost ruby]# cat ab
+Hello!
+ruby is me,welcome to my blog.
+end
+[root@localhost ruby] # sed '1a drink tea' ab  #第一行后增加字符串"drink tea"
+Hello!
+drink tea
+ruby is me,welcome to my blog. 
+end
+[root@localhost ruby] # sed '1,3a drink tea' ab #第一行到第三行后增加字符串"drink tea"
+Hello!
+drink tea
+ruby is me,welcome to my blog.
+drink tea
+end
+drink tea
+[root@localhost ruby] # sed '1a drink tea\nor coffee' ab   #第一行后增加多行，使用换行符\n
+Hello!
+drink tea
+or coffee
+ruby is me,welcome to my blog.
+end
 ```
 
 
@@ -315,6 +343,13 @@ sed -e '1,5d' -e 's/test/check/' file
 
 ```
 sed --expression='s/test/check/' --expression='/love/d' file
+```
+
+
+
+### 匹配某一行开头，替换整行内容
+```
+sed -i '/^cloud_server_ip/ccloud_server_ip = update.skyeye.360safe.com' name.txt
 ```
 
 

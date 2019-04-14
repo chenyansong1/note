@@ -76,7 +76,82 @@ chenyansongdeMacBook-Pro:shell chenyansong$
 
 
 
+* 字符串分割为字符数组，然后遍历
+
+```shell
+% awk -F\| '{
+  for (i = 0; ++i <= NF;)
+    print i, $i
+  }' <<<'12|23|11'
+1 12
+2 23
+3 11
+
+#Or, using split:
+
+% awk '{
+  n = split($0, t, "|")
+  for (i = 0; ++i <= n;)
+    print i, t[i]
+  }' <<<'12|23|11'
+1 12
+2 23
+3 11
 ```
 
+
+
+或者使用shell的方式分割
+
+```shell
+shell编程中，经常需要将由特定分割符分割的字符串分割成数组，多数情况下我们首先会想到使用awk
+但是实际上用shell自带的分割数组功能会更方便。假如
+a="one,two,three,four"
+要将$a分割开，可以这样：
+
+
+OLD_IFS="$IFS" 
+IFS="," 
+arr=($a) 
+IFS="$OLD_IFS" 
+for s in ${arr[@]} 
+do 
+    echo "$s" 
+done
+
+
+or 下标访问
+		component_name_list=“kafka#jdk#zookeeper”
+		OLD_IFS="$IFS" 
+		IFS="#" 
+		arr=($component_name_list) 
+		IFS="$OLD_IFS" 
+		
+		
+		for((i=0;i<${#arr[*]};i++));do
+			case ${arr[i]} in
+			"jdk")
+				echo "$i jdk installing...";;
+				scp $component_dir/
+			"scala")
+				echo "scala installing...";;
+			*)
+				echo "$component_name[i] is unknown component"
+			esac
+		done
+
+
+```
+
+
+
+* 字符串正则提取
+
+```shell
+[root@node-test ~]# echo here365test | sed 's/.*ere\([0-9]*\).*/\1/g'
+365
+[root@node-test ~]# echo zookeeper1 | sed 's/zookeeper\([0-9]*\)/\1/g'
+1
+[root@node-test ~]# 
 ```
 
