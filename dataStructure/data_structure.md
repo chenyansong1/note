@@ -69,3 +69,41 @@ $$
   * 低次项可忽略：$O(n^a + n^b = O(n^a)), a>b>0$
 
 ![image-20190414185449244](/Users/chenyansong/Documents/note/images/data_structure/ot.png)
+
+
+
+![image-20190414190531350](/Users/chenyansong/Documents/note/images/data_structure/ot2.png)
+
+
+
+不含转向(循环，调用，递归)等，必顺序执行，即$O(1)$
+
+
+
+* 常数的复杂度为$O(1)$
+
+* 对数的复杂度
+
+  ![image-20190414191634505](/Users/chenyansong/Documents/note/images/data_structure/ot3.png)![image-20190414192143449](/Users/chenyansong/Documents/note/images/data_structure/ot4.png)
+
+  他是无限接近于$O(1)$
+
+
+
+* 多项式的复杂度
+
+  ![image-20190414193122232](/Users/chenyansong/Documents/note/images/data_structure/ot5.png)
+
+  ![image-20190414193319237](/Users/chenyansong/Documents/note/images/data_structure/ot6.png)
+
+* 指数复杂度
+
+  ![image-20190414194028297](/Users/chenyansong/Documents/note/images/data_structure/ot7.png)
+
+
+
+* 增长速度	
+
+  ![image-20190414195022097](/Users/chenyansong/Documents/note/images/data_structure/ot8.png)
+
+  ![image-20190414195204408](/Users/chenyansong/Documents/note/images/data_structure/ot9.png)
