@@ -1,3 +1,5 @@
+[TOC]
+
 flume-ng自带了各种拦截器，以实现不同的需求
 
 flume-ng  interceptors 可以理解为一个过滤器，通过配置可以收集到符合自己需要类型的日志
@@ -124,7 +126,7 @@ a1.sinks.k1.channel = c1
 
 
 
-# Regex FilteringInterceptor
+# 4.Regex FilteringInterceptor
 
 Regex Filtering Interceptor拦截器用于过滤事件，筛选出与配置的正则表达式相匹配的事件。可以用于包含事件和排除事件。常用于数据清洗，通过正则表达式把数据过滤出来。
 
@@ -163,13 +165,47 @@ a1.sinks.k1.channel = c1
 
 
 
+# 5.Search and Replace Interceptor
+
+该拦截器用于将events中的正则匹配到的内容做相应的替换。
+
+具体配置示例如下：
+
+```
+## source 拦截器
+agent_lxw1234.sources.sources1.interceptors = i1
+agent_lxw1234.sources.sources1.interceptors.i1.type = search_replace
+agent_lxw1234.sources.sources1.interceptors.i1.searchPattern = [0-9]+
+agent_lxw1234.sources.sources1.interceptors.i1.replaceString = lxw1234
+agent_lxw1234.sources.sources1.interceptors.i1.charset = UTF-8 
+
+```
+
+该配置将events中的数字替换为lxw1234。
+
+原始的events内容为：
+
+
+
+![flume interceptor](E:\git-workspace\note\bigdata\flume\search_replace.jpg)
+
+实际的events内容为：
+
+
+
+![flume interceptor](E:\git-workspace\note\bigdata\flume\search_replace2.jpg)
 
 
 
 
 
+转自：
+
+http://blog.csdn.net/looklook5/article/details/40588669
+http://lxw1234.com/archives/2015/11/545.htm
 
 
-    转自：http://blog.csdn.net/looklook5/article/details/40588669
+
+
 
 
