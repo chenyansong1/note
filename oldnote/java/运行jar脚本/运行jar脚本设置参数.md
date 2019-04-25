@@ -147,6 +147,26 @@ chenyansongdeMacBook-Pro:bin chenyansong$ java -X
 
 
 
+# 解压jar中的文件出来
+
+```
+Linux shell 中提取zip或jar文件中的某个文件
+
+假如有个压缩包 abc.jar, 里面文件如下 （可以用unzip -l abc.jar 查看）：
+
+data/1.txt
+data/2.txt
+
+
+那就可以如下提取里面指定的文件到指定的位置，但上级目录将不会被创建。不加-d参数就解压到当前目录，-d参数可以指定不存在的目录，会自动创建。解压得到的文件名不变。
+
+unzip -j abc.jar data/2.txt -d /tmp/data_in_abc
+```
+
+
+
+
+
 
 # Example
 

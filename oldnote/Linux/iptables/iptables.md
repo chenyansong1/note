@@ -860,6 +860,10 @@ iptables -t nat -A PREROUTING -d 123.2.3.2 -p tcp --dport 21 -j DNAT --to-destin
 #服务器做了返回的地址转换
 
 
+#查看定义的映射
+iptables -t nat -vnL PREROUTING --line-number
+
+
 #改变目标地址的同时改变端口
 iptables -t nat -A PREROUTING -d 111.11.11.1 -p tcp --dport 80 -j DNAT --to-destination 192.168.10.33:8080
 
