@@ -744,7 +744,7 @@ target     prot opt source               destination
 ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0           state RELATED,ESTABLISHED 
 
 
-#显示计数器详情
+#显示计数器详情：这里可以看到通过每条规则的包的数量和字节数
 [root@localhost ~]# iptables -L -n -v
 Chain INPUT (policy ACCEPT 0 packets, 0 bytes)
  pkts bytes target     prot opt in     out     source               destination         
