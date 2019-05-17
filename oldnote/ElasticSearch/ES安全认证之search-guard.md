@@ -254,7 +254,11 @@ sh example.sh
 
  
 
-
+> 从上图生成的证书中可以看到，生成了三种类型的证书：
+>
+> 1. ES节点证书
+> 2. 客户端证书
+> 3. 根证书
 
 
 
@@ -265,13 +269,229 @@ sh example.sh
 
 
 
+#### 2.3.1 证书上传到elasticsearch
+将example-pki-scripts文件夹中的node-0-keystore.jks和truststore.jks复制到elasticsearch的配置目录中（/etc/elasticsearch）
+
+```
+cp node-0-keystore.jks /etc/elasticsearch
+
+cp truststore.jks /etc/elasticsearch 
+```
+
+将example-pki-scripts文件夹中的test-keystore.jks和truststore.jks复制到elasticsearch程序目录下的plugins/search-guard-2/sgconfig下，如果这个节点是主节点，则所有节点的search guard配置都从这个节点中配置，然后分发到其它节点中
+
+```
+cp test-keystore.jks /usr/share/elasticsearch/plugins/search-guard-2/sgconfig/
+
+cp truststore.jks /usr/share/elasticsearch/plugins/search-guard-2/sgconfig/
+```
+
+#### 2.3.2.修改elasticsearch配置文件
+
+```
+#vim /etc/elasticsearch/elasticsearch.yml
+
+17  cluster.name: test
+
+23  node.name: node-0
+
+54  network.host: 0.0.0.0 
+```
+
+增加以下配置：
+
+[![复制代码](https://common.cnblogs.com/images/copycode.gif)](javascript:void(0);)
+
+```
+# search-guard配置
+
+# 配置ssl
+
+ searchguard.ssl.transport.enabled: true
+
+ searchguard.ssl.transport.keystore_filepath: node-0-keystore.jks
+
+ searchguard.ssl.transport.keystore_password: 12345678
+
+ searchguard.ssl.transport.truststore_filepath: truststore.jks
+
+ searchguard.ssl.transport.truststore_password: 12345678
+
+ searchguard.ssl.transport.enforce_hostname_verification: false
+
+ searchguard.ssl.transport.resolve_hostname: false
+
+ 
+
+# 配置http
+
+# http配置，这里我只是为了测试方便，配置完，应该设置为true
+
+ searchguard.ssl.http.enabled: false
+
+ searchguard.ssl.http.keystore_filepath: node-0-keystore.jks
+
+ searchguard.ssl.http.keystore_password: 12345678
+
+ searchguard.ssl.http.truststore_filepath: truststore.jks
+
+ searchguard.ssl.http.truststore_password: 12345678
+
+
+ searchguard.allow_all_from_loopback: true
+
+ 
+
+# 这里注意，下面的配置一定要和签的客户端证书一致，否则不能插入配置
+
+ searchguard.authcz.admin_dn:
+
+ - CN=test, OU=client, O=client, L=Test, C=DE
+```
+
+[![复制代码](https://common.cnblogs.com/images/copycode.gif)](javascript:void(0);)
+
+注意事项：
+
+配置文件中的所有配置项开头必须要留一个空格符，否则会启动不了elasticsearch，这个是配置文件的格式
 
 
 
 
 
+#### 2.3.3.配置完后重启elasticsearch
 
-### 2.3.search guard 用户、角色、权限
+```
+systemctl restart elasticsearch
+
+systemctl status elasticsearc
+```
+
+#### 2.3.3.将配置写入运行中的elasticsearch
+
+进入到elasticsearch安装目录中
+
+```
+cd /usr/share/elasticsearch/
+```
+
+运行如下命令将配置写入到elasticsearch中：
+
+```
+./plugins/search-guard-2/tools/sgadmin.sh -cn 集群名称 -h hostname -cd plugins/search-guard-2/sgconfig -ks plugins/search-guard-2/sgconfig/admin-keystore.jks -kspass password -ts plugins/search-guard-2/sgconfig/truststore.jks -tspass password -nhnv
+```
+
+hostname：指的是elasticsearch的elasticsearch.yml配置文件中 network.host 设置的值
+
+根据上面的配置，输入的命令如下：
+
+```
+./plugins/search-guard-2/tools/sgadmin.sh -cn test -h 0.0.0.0 -cd plugins/search-guard-2/sgconfig -ks plugins/search-guard-2/sgconfig/test-keystore.jks -kspass 12345678 -ts plugins/search-guard-2/sgconfig/truststore.jks -tspass 12345678 -nhnv
+```
+
+需要注意：
+
+```
+如果提示没有操作权限，则必须先把hash.sh文件的权限开放
+chmod -R 777 plugins/search-guard-2/tools/sgadmin.sh
+```
+
+的是这时候elasticsearch的服务必须是运行状态。如果插入配置失败，检查配置文件，比如前面提到的，生成客户端证书的时候dname的参数 必须与配置文件中searchguard.authcz.admin_dn:下的认证列表进行对应。
+
+ 
+
+如成功写入配置，则会显示以下信息：
+
+![searchguard](E:\git-workspace\note\images\bigdata\es\searchguard-install-3.png)
+
+
+
+### 2.3.search guard 用户、角色、权限配置文件说明
+
+search-guard中的用户权限管理
+
+相关配置文件的介绍
+
+searchguard 主要有5个配置文件在plugins/search-guard-2/sgconfig 下：
+
+1、sg_config.yml：主配置文件不需要做改动。
+
+2、sg_internal_users.yml：本地用户文件，定义用户密码以及对应的权限。
+
+3、sg_roles.yml：权限配置文件
+
+4、sg_roles_mapping.yml:定义用户的映射关系
+
+5、sg_action_groups.yml：定义权限
+
+ 
+
+修改内置用户密码，然后再运行一次search guard 配置写入命令。
+
+1.则先用plugins/search-guard-2/tools/hash.sh生成hash字符串，生成密码：
+
+```
+cd /usr/share/elasticsearch/
+
+plugins/search-guard-2/tools/hash.sh -p 123456
+如果提示没有操作权限，则必须先把hash.sh文件的权限开放
+chmod -R 777 plugins/search-guard-2/tools/hash.sh
+```
+
+获得哈希生成后的密码
+
+
+![searchguard](E:\git-workspace\note\images\bigdata\es\searchguard-install-4.png)
+
+
+2.将字符串复制到sg_internal_users.yml文件的对应用户密码位置，在密码下面记得写入原密码的提示，难保你那天忘记了。
+
+```
+vim plugins/search-guard-2/sgconfig/sg_internal_users.yml
+```
+
+
+![searchguard](E:\git-workspace\note\images\bigdata\es\searchguard-install-5.png)
+
+
+3.添加用户权限
+
+```
+vim /usr/share/elasticsearch/plugins/search-guard-2/sgconfig/sg_roles_mapping.yml
+```
+
+在39行处的sg_all_access添加你新增的用户名，就获得所有权限了
+
+
+![searchguard](E:\git-workspace\note\images\bigdata\es\searchguard-install-6.png)
+
+
+4.重新写入配置
+
+先回到elasticsearch的安装文件夹
+
+```
+cd /usr/share/elasticsearch/
+./plugins/search-guard-2/tools/sgadmin.sh -cn test -h 0.0.0.0 -cd plugins/search-guard-2/sgconfig -ks plugins/search-guard-2/sgconfig/test-keystore.jks -kspass 12345678 -ts plugins/search-guard-2/sgconfig/truststore.jks -tspass 12345678 -nhnv
+```
+
+5.测试
+
+```
+curl -XGET "http://shifu:123456@127.0.0.1:9200"
+```
+
+如果密码设置成功则显示
+
+
+![searchguard](E:\git-workspace\note\images\bigdata\es\searchguard-install-7.png)
+
+
+现在每次想访问你网站的9200端口都必须要有搜索认证的保护了。
+
+
+![searchguard](E:\git-workspace\note\images\bigdata\es\searchguard-install-8.png)
+
 
 
 
@@ -284,7 +504,13 @@ sh example.sh
 
 ## 3.客户端认证（访问通过search guard）
 
+* java客户端访问：
 
+  https://search-guard.com/searchguard-elasicsearch-transport-clients/
+
+* http访问：
+
+  <https://www.techcoil.com/blog/how-to-send-an-http-request-to-a-http-basic-authentication-endpoint-in-java-without-using-any-external-libraries/>
 
 
 
