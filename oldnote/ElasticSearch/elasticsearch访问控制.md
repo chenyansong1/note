@@ -4,8 +4,6 @@ elasticsearch访问控制
 
 https://www.cnblogs.com/shifu204/p/6376683.html
 
-https://blog.csdn.net/desilting/article/details/59114352
-
 https://blog.csdn.net/eff666/article/details/52916355
 
 https://www.cnblogs.com/marility/p/9392645.html
