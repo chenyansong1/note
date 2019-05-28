@@ -1,6 +1,6 @@
 转自：https://www.cnblogs.com/shifu204/p/6376683.html
 
-
+参见：https://blog.csdn.net/zmx729618/article/details/81095832
 
 
 [TOC]
@@ -496,6 +496,21 @@ curl -XGET "http://shifu:123456@127.0.0.1:9200"
 
 
 
+```shell
+#带密码去创建索引
+[hadoop@spark01 sgconfig]$ curl -X PUT 'http://admin:Admin_1234@172.16.110.173:9200/accounts/person/1' -d ' 
+{
+  "user": "张三",
+  "title": "工程师",
+  "desc": "数据库管理"
+}' 
+{"_index":"accounts","_type":"person","_id":"1","_version":1,"_shards":{"total":2,"successful":1,"failed":0},"created":true}[hadoop@spark01 sgconfig]$ 
+[hadoop@spark01 sgconfig]$ 
+
+```
+
+
+
 
 
 
@@ -508,6 +523,8 @@ curl -XGET "http://shifu:123456@127.0.0.1:9200"
 
   https://search-guard.com/searchguard-elasicsearch-transport-clients/
 
+  https://blog.csdn.net/eff666/article/details/52916355
+
 * http访问：
 
   <https://www.techcoil.com/blog/how-to-send-an-http-request-to-a-http-basic-authentication-endpoint-in-java-without-using-any-external-libraries/>
@@ -517,6 +534,19 @@ curl -XGET "http://shifu:123456@127.0.0.1:9200"
 ## 4.遇到的坑
 
 
+
+各个文件的安装放置情况：
+
+1. search-ssl
+2. search-guard
+3. es/config
+
+
+
+|                                  | client-证书       | node-证书                                   | 信任-证书                      |
+| -------------------------------- | ----------------- | ------------------------------------------- | ------------------------------ |
+| plugins/search-guard-2/sgconfig/ | test-keystore.jks |                                             | truststore.jks                 |
+| es/config                        |                   | node-x-keystore.jks (**x对应的是每个节点**) | truststore.jks （all节点一样） |
 
 
 
