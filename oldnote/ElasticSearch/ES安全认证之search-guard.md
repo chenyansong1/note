@@ -101,7 +101,7 @@ bin/plugin install -b com.floragunn/search-guard-2/<version>
 elasticsearch 2.3.5版本：
 
 ```
-bin/plugin install -b com.floragunn/search-guard-2/2.3.5.10
+bin/plugin install -b com.floragunn/search-guard-2/2.4.3.12
 ```
 
 elasticsearch版本：elasticsearch 5.x
@@ -123,7 +123,7 @@ bin/plugin install -b com.floragunn/search-guard-ssl/<version>
 elasticsearch 2.3.5版本：
 
 ```
-bin/plugin install -b com.floragunn/search-guard-ssl/2.3.5.19
+bin/plugin install -b com.floragunn/search-guard-ssl/2.4.3.21
 ```
 
 elasticsearch 5.x
