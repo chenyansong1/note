@@ -7,7 +7,7 @@ tags: [Linux基础命令]
 
 
 
-```
+```shell 
 #需求:测试能否正常访问一个网站(即:求返回的状态码 200表示正常)
 [root@lnmp02 sbin]# curl -I -s  --w "%{http_code}\n" www.etiantian.org -o /dev/null
 200
@@ -29,6 +29,10 @@ All variables are specified as %{variable_name} and to output a normal % you jus
 http_code      The numerical response code
 http_connect   The numerical code
 。。。。。。。。(可以使用man curl查看)
+
+
+#curl:使用密码登录
+curl -XGET -u esuser:test@bd http://172.16.110.241:9200
 
 
 ```

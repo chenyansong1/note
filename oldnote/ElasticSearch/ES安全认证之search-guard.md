@@ -479,6 +479,10 @@ cd /usr/share/elasticsearch/
 
 ```
 curl -XGET "http://shifu:123456@127.0.0.1:9200"
+
+#or
+
+curl -XGET -u esuser:test@bd http://172.16.110.241:9200
 ```
 
 如果密码设置成功则显示
@@ -540,6 +544,30 @@ curl -XGET "http://shifu:123456@127.0.0.1:9200"
 1. search-ssl
 2. search-guard
 3. es/config
+
+
+
+
+
+
+
+# 总结简要步骤
+
+1. 安装search-ssl,search-guard-2
+2. git下载秘钥生成的工具脚本
+3. 生成秘钥
+4. 秘钥拷贝到本节点，及秘钥拷贝到其他节点（）
+5. 修改ES的配置文件
+6. 添加权限用户
+7. 启动ES
+8. 使ES的配置生效
+9. 测试
+   1. http测试
+   2. java客户端测试
+
+
+
+
 
 
 
