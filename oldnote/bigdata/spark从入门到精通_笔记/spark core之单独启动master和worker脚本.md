@@ -52,7 +52,9 @@ sbin/start-all.sh脚本可以直接启动集群中的master进程和worker进程
 实例:
 1、启动master: 日志和web ui，观察master url
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/bigdata/spark从入门到精通_笔记/单独启动master.png)
+![](/img/bigdata/spark从入门到精通_笔记/单独启动master.png)
+
+
 
 
 2、启动worker: 观察web ui，是否有新加入的worker节点，以及对应的信息
