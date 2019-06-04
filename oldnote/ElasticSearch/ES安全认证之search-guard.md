@@ -20,7 +20,7 @@
 
 
 
-![searchguard](E:\git-workspace\note\images\bigdata\es\searchguard.png)
+![searchguard](https://github.com/chenyansong1/note/blob/master/images/bigdata/es/searchguard.png?raw=true)
 
 
 
@@ -86,7 +86,7 @@ https://github.com/floragunncom/search-guard
 cd /usr/share/elasticsearch
 ```
 
- 
+
 
 安装方法：
 
@@ -250,7 +250,7 @@ sh example.sh
 
 
 
-![searchguard](E:\git-workspace\note\images\bigdata\es\searchguard-install-2.png)
+![searchguard](https://github.com/chenyansong1/note/blob/master/images/bigdata/es/searchguard-install-2.png?raw=true)
 
  
 
@@ -402,7 +402,7 @@ chmod -R 777 plugins/search-guard-2/tools/sgadmin.sh
 
 如成功写入配置，则会显示以下信息：
 
-![searchguard](E:\git-workspace\note\images\bigdata\es\searchguard-install-3.png)
+![searchguard](https://github.com/chenyansong1/note/blob/master/images/bigdata/es/searchguard-install-3.png?raw=true)
 
 
 
@@ -441,7 +441,7 @@ chmod -R 777 plugins/search-guard-2/tools/hash.sh
 获得哈希生成后的密码
 
 
-![searchguard](E:\git-workspace\note\images\bigdata\es\searchguard-install-4.png)
+![searchguard](https://github.com/chenyansong1/note/blob/master/images/bigdata/es/searchguard-install-4.png?raw=true)
 
 
 2.将字符串复制到sg_internal_users.yml文件的对应用户密码位置，在密码下面记得写入原密码的提示，难保你那天忘记了。
@@ -451,7 +451,7 @@ vim plugins/search-guard-2/sgconfig/sg_internal_users.yml
 ```
 
 
-![searchguard](E:\git-workspace\note\images\bigdata\es\searchguard-install-5.png)
+![searchguard](https://github.com/chenyansong1/note/blob/master/images/bigdata/es/searchguard-install-5.png?raw=true)
 
 
 3.添加用户权限
@@ -463,7 +463,7 @@ vim /usr/share/elasticsearch/plugins/search-guard-2/sgconfig/sg_roles_mapping.ym
 在39行处的sg_all_access添加你新增的用户名，就获得所有权限了
 
 
-![searchguard](E:\git-workspace\note\images\bigdata\es\searchguard-install-6.png)
+![searchguard](https://github.com/chenyansong1/note/blob/master/images/bigdata/es/searchguard-install-6.png?raw=true)
 
 
 4.重新写入配置
@@ -488,13 +488,13 @@ curl -XGET -u esuser:test@bd http://172.16.110.241:9200
 如果密码设置成功则显示
 
 
-![searchguard](E:\git-workspace\note\images\bigdata\es\searchguard-install-7.png)
+![searchguard](https://github.com/chenyansong1/note/blob/master/images/bigdata/es/searchguard-install-7.png?raw=true)
 
 
 现在每次想访问你网站的9200端口都必须要有搜索认证的保护了。
 
 
-![searchguard](E:\git-workspace\note\images\bigdata\es\searchguard-install-8.png)
+![searchguard](https://github.com/chenyansong1/note/blob/master/images/bigdata/es/searchguard-install-8.png?raw=true)
 
 
 
