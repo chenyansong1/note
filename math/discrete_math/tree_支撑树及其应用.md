@@ -115,3 +115,11 @@
 # 斯坦纳树
 
 ![image-20190609175232280](/Users/chenyansong/Documents/note/images/discrete_math/image-20190609175232280.png)
+
+当R=V时，斯坦纳树问题即是最小支撑树问题
+
+
+
+如下图，a,b,c三个存在需要修建公路，需要找使得a,b,c存在连接起来的最小成本(d村不一定修建公路)
+
+![image-20190609175703674](/Users/chenyansong/Documents/note/images/discrete_math/image-20190609175703674.png)
