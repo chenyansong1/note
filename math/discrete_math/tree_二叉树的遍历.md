@@ -88,3 +88,7 @@
 # 标号树
 
 对数中的顶点和/或边进行"标号"
+
+笔记整理：
+
+https://www.icourse163.org/learn/NJTU-1002530017?tid=1003117004#/learn/content?type=detail&id=1004513880&cid=1005666731
