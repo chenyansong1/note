@@ -8,7 +8,19 @@
 
 假设(G,W)为赋权图，则图中一条道路的长度(length)，是指该道路中各条边权重之和
 
+
+
+![image-20190612190609106](/Users/chenyansong/Documents/note/images/discrete_math/image-20190612190609106.png)
+
+**最短道路的一部分也是最短道路**
+
 ![image-20190610191957834](https://github.com/chenyansong1/note/blob/master/images/discrete_math/image-20190610191957834.png?raw=true)
+
+
+
+>  **d(v)就是我们所说的标记**
+
+
 
 ![image-20190610192637643](https://github.com/chenyansong1/note/blob/master/images/discrete_math/image-20190610192637643.png?raw=true)
 
@@ -22,7 +34,17 @@
 
 
 
+最后得到的是一棵树，称之为最短道路树
 
+![image-20190612192015681](/Users/chenyansong/Documents/note/images/discrete_math/image-20190612192015681.png)
+
+
+
+注解：
+
+* 该算法解决的是已知起始点最短路径的问题，而已知终点求最短路径的问题与之完全相同
+* 该算法也适用于有向图的情况，所得结果构成一棵根树
+* 该算法仅仅适合于边全部是正值的情况
 
 
 
