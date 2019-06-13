@@ -91,11 +91,15 @@
 
 对数中的顶点和/或边进行"标号"
 
-![](E:\git-workspace\note\images\discrete_math\biaohaoshu.png)
+
+
+![image-20190612205014561](https://github.com/chenyansong1/note/blob/master/images/discrete_math/biaohaoshu.png?raw=true)
+
 
 如下是对定点进行标号
 
-![](E:\git-workspace\note\images\discrete_math\biaohaoshu2.png)
+![image-20190612205014561](https://github.com/chenyansong1/note/blob/master/images/discrete_math/biaohaoshu2.png?raw=true)
+
 
 
 
@@ -103,33 +107,38 @@
 
 
 
-![](E:\git-workspace\note\images\discrete_math\biaohaoshu3.png)
+![image-20190612205014561](https://github.com/chenyansong1/note/blob/master/images/discrete_math/biaohaoshu3.png?raw=true)
 
-![](E:\git-workspace\note\images\discrete_math\biaohaoshu4.png)
+![image-20190612205014561](https://github.com/chenyansong1/note/blob/master/images/discrete_math/biaohaoshu4.png?raw=true)
 
-![](E:\git-workspace\note\images\discrete_math\biaohaoshu6.png)
+![image-20190612205014561](https://github.com/chenyansong1/note/blob/master/images/discrete_math/biaohaoshu5.png?raw=true)
 
-![](E:\git-workspace\note\images\discrete_math\biaohaoshu7.png)
+
+![image-20190612205014561](https://github.com/chenyansong1/note/blob/master/images/discrete_math/biaohaoshu6.png?raw=true)
+
+
+![image-20190612205014561](https://github.com/chenyansong1/note/blob/master/images/discrete_math/biaohaoshu7.png?raw=true)
+
 
 
 
 对应的中序遍历，后序遍历，也可以画出来
 
-![](E:\git-workspace\note\images\discrete_math\biaohaoshu8.png)
+![image-20190612205014561](https://github.com/chenyansong1/note/blob/master/images/discrete_math/biaohaoshu8.png?raw=true)
 
-![](E:\git-workspace\note\images\discrete_math\biaohaoshu9.png)
+![image-20190612205014561](https://github.com/chenyansong1/note/blob/master/images/discrete_math/biaohaoshu9.png?raw=true)
 
-![](E:\git-workspace\note\images\discrete_math\biaohaoshu10.png)
+![image-20190612205014561](https://github.com/chenyansong1/note/blob/master/images/discrete_math/biaohaoshu10.png?raw=true)
 
-![](E:\git-workspace\note\images\discrete_math\biaohaoshu11.png)
+![image-20190612205014561](https://github.com/chenyansong1/note/blob/master/images/discrete_math/biaohaoshu11.png?raw=true)
 
-## 
 
-![](E:\git-workspace\note\images\discrete_math\biaohaoshu11.png)
 
 ## 波兰式和逆波兰式
 
 波兰式：将前序遍历的结果依次入栈，然后遇到两个相邻的数字就取出两个数字和一个符号，进行运算，将运算的结果再入栈，如果不满足上述条件就一次对前序遍历结果入栈，最后栈中的数字就是运算的结果
 
-![](E:\git-workspace\note\images\discrete_math\biaohaoshu12.png)
+![image-20190612205014561](https://github.com/chenyansong1/note/blob/master/images/discrete_math/biaohaoshu12.png?raw=true)
+
+
 
