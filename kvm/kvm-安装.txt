@@ -1,0 +1,69 @@
+1.安装
+
+ll -sh  /var/lib/libvirt/images/
+ll /var/lib/libvirt/images/
+
+yum -y install virt-manager qemu-kvm libvirtd
+#可能会起不来
+systemctl start libvirtd
+
+#直接执行，查看
+/usr/sbin/libvirtd 
+#搜索缺的依赖
+yum search rbd
+
+yum -y install librbd1-devel
+/usr/sbin/libvirtd 
+
+#socket报错
+yum -y install openssl-devel
+
+#再次前台启动
+/usr/sbin/libvirtd 
+systemctl start libvirtd
+
+virt-manager
+virsh list
+virsh list --all
+cd /var/
+ls
+virt-install 
+cd /var/vmvare/
+ls
+cd /var/lib/libvirt/
+cd images/
+ls
+
+#创建虚拟机
+virt-install --name Centos7 --hvm  --ram 2048 --vcpus 4 --disk path=/var/vmvare/Centos7.img,size=64 --network network:default --accelerate --vnc --os-variant Centos7.0 --cdrom /var/lib/libvirt/images/CentOS-7-x86_64-DVD-1708.iso -d
+virsh list
+
+#查看所有的虚拟机
+virsh list --all
+virt-install --name Centos7 --hvm  --ram 2048 --vcpus 4 --disk path=/var/vmvare/Centos7.img,size=64 --network network:default --accelerate --vnc --os-variant Centos7.0 --cdrom /var/lib/libvirt/images/CentOS-7-x86_64-DVD-1708.iso -d
+systemctl stop libvirtd
+/usr/sbin/libvirtd 
+/usr/sbin/libc
+/usr/sbin/libvirtd 
+ps -ef |grep virt
+kill -9 33584
+/usr/sbin/virtlogd 
+/usr/sbin/virtlogd &
+/usr/sbin/libvirtd 
+/usr/sbin/libvirtd  &
+virt-install --name Centos7 --hvm  --ram 2048 --vcpus 4 --disk path=/var/vmvare/Centos7.img,size=64 --network network:default --accelerate --vnc --os-variant Centos7.0 --cdrom /var/lib/libvirt/images/CentOS-7-x86_64-DVD-1708.iso -d
+history
+[root@localhost ~]# 
+
+#管理工具使用
+systemctl stop libvirtd
+/usr/sbin/libvirtd
+virt-manager
+cd /var/vmvare/
+qemu-img create -f qcow2 test.qcow2 10G
+virsh list
+virsh list --akk
+virsh list --all
+virsh edit Centos7
+
+
