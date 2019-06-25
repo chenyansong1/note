@@ -8,7 +8,7 @@ tag: [kafka]
 
 # Kafka整体结构图
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/bigdata/kafka/structure/1.png)
+![](https://github.com/chenyansong1/note/blob/master/img/bigdata/kafka/structure/1.png)
 
  
 
@@ -86,7 +86,7 @@ tag: [kafka]
 
 
 
- ![](http://ols7leonh.bkt.clouddn.com//assert/img/bigdata/kafka/structure/2.png)
+ ![](https://github.com/chenyansong1/note/blob/master/img/bigdata/kafka/structure/2.png)
 
 
 
