@@ -2,11 +2,7 @@
 
 # Ubuntu Docker安装
 
-
-
-
-
-
+略
 
 # CentOS Docker安装
 
@@ -107,6 +103,23 @@ sudo systemctl start docker
 由于本地没有hello-world这个镜像，所以会下载一个hello-world的镜像，并在容器内运行。
 
 ------
+
+## 添加非root用户
+
+```shell
+#创建一个docker的用户组
+sudo groupadd docker
+#将当前的用户添加到用户组中，这样我们就可以用${USER}这个用户去执行docker命令了
+sudo gpasswd -a ${USER} docker
+#重新启动docker服务
+sudo service docker restart
+```
+
+
+
+![1561456256653](E:\git-workspace\note\images\docker\docker_add_user2.png)
+
+
 
 ## 镜像加速
 
