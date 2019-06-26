@@ -155,9 +155,94 @@ docker top 容器名
 
 ```
 
+![1561519477215](E:\git-workspace\note\images\docker\docker09.png)
+
+### 在运行的容器中启动新进程
+```shell
+docker exec [-d] [-i] [-t] containerName [command] [arg...]
+#-d 后台执行
+#-i 交互式
+#-t 打开终端
+
+
+docker start container02
+
+# 在容器中启动另外一个进程bash
+docker exec -i -t container02 /bin/bash
+
+#使用Crtl P crtl Q之后，容器进入后台，然后top看进程
+docker top container02
+[root@spark01 ~]# 
+
+
+```
+
+### 停止运行中的容器
+
+
+```shell
+docker stop 容器名
+
+docker kill 容器名
+
+#区别：stop会等待容器停止，kill会直接结束容器
+```
+
+​	
+
 
 
 ## 在容器中部署静态网站
 
+* 容器的端口映射
 
+  ```shell
+  run [-p|-P]
+  # -P --publish-all=true|false，默认为false 为容器暴露的所有端口进行映射
+  docker run -P -i -t ubuntu /bin/bash
+  
+  #-p,--publish=[]
+  containerPort  只指定容器的端口，宿主机的端口是随机的
+  	docker run -p 90 -i -t ubuntu /bin/bash
+  hostPort:containerPort  同时指定宿主机端口和容器端口
+  	docker run -p 8080:80 -i -t ubuntu /bin/bash
+  ip:containerPort  指定IP和容器端口
+  	docker run -p 0.0.0.0:80 -i -t ubuntu /bin/bash
+  	
+  ip:hostPort:containerPort  指定IP,宿主机端口，容器端口
+  	docker run -p 0.0.0.0:80 -i -t ubuntu /bin/bash
+  ```
 
+Nginx部署静态网站
+
+* 创建映射80端口的交互式容器
+* 安装Nginx
+* 安装文本编辑器vim
+* 创建静态页面
+* 修改Nginx配置文件
+* 运行Nginx
+* 验证网站访问
+
+```shell
+#docker run -p 80 --name web -t -i ubuntu:15.10 /bin/bash
+
+#yum install -y nginx
+
+#yum install -y vim
+
+#mkdir -p /var/www/html
+#cd /var/www/html
+#echo "hello world">index.html
+
+[root@spark01 ~]# docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS                   NAMES
+3f085ab475e7        ubuntu:15.10        "/bin/bash"         5 minutes ago       Up 5 minutes        0.0.0.0:32768->80/tcp   web
+[root@spark01 ~]# 
+#可以看到
+```
+
+​	
+
+可以`docker inspect web` 去看容器的详情，下图，我们可看到**容器的IP地址和端口映射的情况**
+
+![1561548125207](E:\git-workspace\note\images\docker\docker_command9.png)
