@@ -4,7 +4,7 @@
 
 ## 容器的基本操作
 
-* 启动容器
+### 启动容器
 
   ```shell
   docker run Image [command] [arg...]
@@ -20,7 +20,7 @@
 
   > 我们看到容器启动执行完命令就退出了
 
-* 启动交互式容器
+### 启动交互式容器
 
   ```shell
   #
@@ -35,7 +35,7 @@
 
 
 
-* 查看容器
+### 查看容器
 
   ```shell
   docker ps [-a] [-l]
@@ -54,7 +54,7 @@
 
   ![1561458223375](https://github.com/chenyansong1/note/blob/master/images/docker/docker_command4.png?raw=true)
 
-* 自定义容器名字
+### 自定义容器名字
 
   ```shell
   docker run --name=container01 -i -t  ubuntu:15.10 /bin/bash
@@ -66,6 +66,24 @@
 
 
 
+### 重新启动停止的容器
+
+  ```shell
+  docker star [i] 容器名
+  #-i 表示以交互的方式启动
+  ```
+
+  
+
+### 删除停止的容器
+
+  ```shell
+  docker rm [容器名|容器ID]
+  #rm只能删除已经停止的容器
+  ```
+
+  ![1561517770962](E:\git-workspace\note\images\docker\docker_command6.png)
+
 
 
 
@@ -73,11 +91,69 @@
 
 ## 守护式容器
 
+1. 能够长期运行
+2. 没有交互式会话
+3. 适合运行应用程序和服务
+
+### 后台运行一个容器
+
+```shell
+docker run -i -t image /bin/bash
+
+#ctrl+P   crtl+Q 进入后台运行模式
+
+#回到前台
+docker attach containerName|containId
+```
+
+​	![1561518846963](E:\git-workspace\note\images\docker\docker_command7.png)
 
 
 
+### 启动守护式容器
+
+```shell
+docker run -d image [command] [args...]
+
+#-d指定容器后台运行
+```
+
+![1561519477215](E:\git-workspace\note\images\docker\docker_command8.png)
+
+### 查看日志
+
+```shell
+docker logs [-f] [-t] [--tail] 容器名
+
+#-f --follows=true|false 默认false 控制台实时打印
+#-t --timestamps=true|false默认为false 在日志前面加上时间
+#--tail="all"  这样会显示所有的日志 tail number只显示最新的多少条
 
 
+#example
+#返回所有的日志
+docker logs	containername
+
+#-t 会加上时间
+docker logs -t containername
+
+
+#-f 只显示最新的几条
+docker logs -f containername
+
+#tail number只显示最新的2条
+docker logs -f --tail 2 container02
+[root@spark01 ~]# docker logs -f --tail 2 container02
+hello world
+hello world
+```
+
+### 查看容器内的进程
+
+```shell
+docker top 容器名
+
+```
 
 
 
