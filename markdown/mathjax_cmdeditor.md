@@ -1,4 +1,3 @@
-﻿
 ---
 
 #Cmd Markdown 公式指导手册
@@ -85,10 +84,10 @@ E=mc^2 \text{，自动编号公式示例}
 
 - 例子：
 ```
-$$ x^{y^z}=(1+{\rm e}^x)^{-2xy^w} $$
+$$ x^{y^z}=(1+{ e}^x)^{-2xy^w} $$
 ```
 
-- 显示：$$ x^{y^z}=(1+{\rm e}^x)^{-2xy^w} $$
+- 显示：$$ x^{y^z}=(1+{\  e}^x)^{-2xy^w} ​$$
 
 另外，如果要在左右两边都有上下标，可以用 `\sideset` 命令。
 
@@ -122,9 +121,9 @@ $$ f(x,y,z) = 3y^2z \left( 3+\frac{7x+5}{1+y^2} \right) $$
 
 - 例子：
 ```
-$$ \left. \frac{{\rm d}u}{{\rm d}x} \right| _{x=0} $$
+$$ \left. \frac{{\  d}u}{{\  d}x} \right| _{x=0} $$
 ```
-- 显示：$$ \left. \frac{{\rm d}u}{{\rm d}x} \right| _{x=0} $$
+- 显示：$$ \left. \frac{{ d}u}{{ d}x} \right| _{x=0} $$
 
 ##4．如何输入分数
 
@@ -154,9 +153,9 @@ $$\sqrt{2} \quad and \quad \sqrt[n]{3}$$
 
 - 例子：
 ```
-$$f(x_1,x_2,\underbrace{\ldots}_{\rm ldots} ,x_n) = x_1^2 + x_2^2 + \underbrace{\cdots}_{\rm cdots} + x_n^2$$
+$$f(x_1,x_2,\underbrace{\ldots}_{\  ldots} ,x_n) = x_1^2 + x_2^2 + \underbrace{\cdots}_{\  cdots} + x_n^2$$
 ```
-- 显示：$$f(x_1,x_2,\underbrace{\ldots}_{\rm ldots} ,x_n) = x_1^2 + x_2^2 + \underbrace{\cdots}_{\rm cdots} + x_n^2$$
+- 显示：$$f(x_1,x_2,\underbrace{\ldots}_{\  ldots} ,x_n) = x_1^2 + x_2^2 + \underbrace{\cdots}_{\  cdots} + x_n^2$$
 
 ##7．如何输入矢量
 
@@ -181,11 +180,11 @@ $$\overleftarrow{xy} \quad and \quad \overleftrightarrow{xy} \quad and \quad \ov
 
 例子：
 ```
-$$\int_0^1 {x^2} \,{\rm d}x$$
+$$\int_0^1 {x^2} \,{\  d}x$$
 ```
-显示：$$\int_0^1 {x^2} \,{\rm d}x$$
+显示：$$\int_0^1 {x^2} \,{\  d}x$$
 
-本例中 `\,` 和 `{\rm d}` 部分可省略，但建议加入，能使式子更美观。
+本例中 `\,` 和 `{\  d}` 部分可省略，但建议加入，能使式子更美观。
 
 ##9．如何输入极限运算
 
@@ -246,7 +245,7 @@ $$\sum_{i=1}^n \frac{1}{i^2} \quad and \quad \prod_{i=1}^n \frac{1}{i^2} \quad a
 
 > **若需要显示更大或更小的字符，在符号前插入 `\large` 或 `\small` 命令。**
 
-> 若找不到需要的符号，使用 [$\rm{Detexify^2}$](http://detexify.kirelabs.org/classify.html) 来画出想要的符号。
+> 若找不到需要的符号，使用 [$\ {Detexify^2}$](http://detexify.kirelabs.org/classify.html) 来画出想要的符号。
 
 > ![Detexify^2](http://i.stack.imgur.com/ScK3R.png)
 
@@ -355,13 +354,13 @@ $$\sum_{i=1}^n \frac{1}{i^2} \quad and \quad \prod_{i=1}^n \frac{1}{i^2} \quad a
 示例中 **全部大写** 的字体仅大写可用。
 
 |输入|说明|显示|输入|说明|显示|
-|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
-|\rm|罗马体|$\rm{Sample}$|\cal|花体|$\cal{SAMPLE}$|
+|:--:|:--:|:--:|:--:|:--:|:--:|
+|\|罗马体|$\ {Sample}$|\cal|花体|$\cal{SAMPLE}$|
 |\it|意大利体|$\it{Sample}$|\Bbb|黑板粗体|$\Bbb{SAMPLE}$|
 |\bf|粗体|$\bf{Sample}$|\mit|数学斜体|$\mit{SAMPLE}$|
 |\sf|等线体|$\sf{Sample}$|\scr|手写体|$\scr{SAMPLE}$|
-|\tt|打字机体|$\tt{Sample}$|
-|\frak|旧德式字体|$\frak{Sample}$|
+|\tt|打字机体|$\tt{Sample}$||||
+|\frak|旧德式字体|$\frak{Sample}$||||
 
 
 转换字体十分常用，例如在积分中：
@@ -369,20 +368,20 @@ $$\sum_{i=1}^n \frac{1}{i^2} \quad and \quad \prod_{i=1}^n \frac{1}{i^2} \quad a
 - 例子：
 ```
 \begin{array}{cc}
-\mathrm{Bad} & \mathrm{Better} \\
+\math {Bad} & \math {Better} \\
 \hline \\
-\int_0^1 x^2 dx & \int_0^1 x^2 \,{\rm d}x
+\int_0^1 x^2 dx & \int_0^1 x^2 \,{\  d}x
 \end{array}
 ```
 
 - 显示：
 \begin{array}{cc}
-\mathrm{Bad} & \mathrm{Better} \\
+\math {Bad} & \math {Better} \\
 \hline \\
-\int_0^1 x^2 dx & \int_0^1 x^2 \,{\rm d}x
+\int_0^1 x^2 dx & \int_0^1 x^2 \,{\  d}x
 \end{array}
 
-注意比较两个式子间 $dx$ 与 ${\rm d} x$ 的不同。
+注意比较两个式子间 $dx$ 与 ${\  d} x$ 的不同。
 使用 `\operatorname` 命令也可以达到相同的效果，详见 [定义新的符号 \operatorname](#1定义新的符号-operatorname) 。
 
 ##14．大括号和行标的使用
@@ -711,7 +710,7 @@ $ \begin{Vmatrix} 1 & 2 \\ 3 & 4 \\ \end{Vmatrix} $
 |matrix|pmatrix|bmatrix|Bmatrix|vmatrix|Vmatrix|
 |:--:|:--:|:--:|:--:|:--:|:--:|
 |$ \begin{matrix} 1 & 2 \\ 3 & 4 \\ \end{matrix} $|$ \begin{pmatrix} 1 & 2 \\ 3 & 4 \\ \end{pmatrix} $|$ \begin{bmatrix} 1 & 2 \\ 3 & 4 \\ \end{bmatrix} $|$ \begin{Bmatrix} 1 & 2 \\ 3 & 4 \\ \end{Bmatrix} $|$ \begin{vmatrix} 1 & 2 \\ 3 & 4 \\ \end{vmatrix} $|$ \begin{Vmatrix} 1 & 2 \\ 3 & 4 \\ \end{Vmatrix} $|
-　　　　
+
 ##3．如何输入带省略符号的矩阵
 
 使用 `\cdots` $\cdots$ , `\ddots` $\ddots$ , `\vdots` $\vdots$ 来输入省略符号。
@@ -1214,7 +1213,7 @@ $\require{AMScd}$
 |**!! 本段内容为个人翻译，可能有不准确之处 !!**|
 |:--:|
 
-These are issues that won't affect the correctness of formulas, but might make them look significantly better or worse. Beginners should feel free to ignore this advice; someone else will correct it for them, or more likely nobody will care.
+These are issues that won't affect the correctness of fo ulas, but might make them look significantly better or worse. Beginners should feel free to ignore this advice; someone else will correct it for them, or more likely nobody will care.
 
 现在指出的小问题并不会影响方程式及公式等的正确显示，但能让它们看起来明显更好看。初学者可无视这些建议，自然会有强迫症患者替你们改掉它的，或者更可能地，根本没人发现这些问题。
 
@@ -1226,7 +1225,7 @@ Don't use `\frac` in exponents or limits of integrals; it looks bad and can be c
 - 例子：
 ```
 \begin{array}{cc}
-\mathrm{Bad} & \mathrm{Better} \\
+\math {Bad} & \math {Better} \\
 \hline \\
 e^{i\frac{\pi}2} \quad e^{\frac{i\pi}2}& e^{i\pi/2} \\
 \int_{-\frac\pi2}^\frac\pi2 \sin x\,dx & \int_{-\pi/2}^{\pi/2}\sin x\,dx \\
@@ -1235,7 +1234,7 @@ e^{i\frac{\pi}2} \quad e^{\frac{i\pi}2}& e^{i\pi/2} \\
 
 - 显示：
 \begin{array}{cc}
-\mathrm{Bad} & \mathrm{Better} \\
+\math {Bad} & \math {Better} \\
 \hline \\
 e^{i\frac{\pi}2} \quad e^{\frac{i\pi}2}& e^{i\pi/2} \\
 \int_{-\frac\pi2}^\frac\pi2 \sin x\,dx & \int_{-\pi/2}^{\pi/2}\sin x\,dx \\
@@ -1248,7 +1247,7 @@ The `|` symbol has the wrong spacing when it is used as a divider, for example i
 - 例子:
 ```
 \begin{array}{cc}
-\mathrm{Bad} & \mathrm{Better} \\
+\math {Bad} & \math {Better} \\
 \hline \\
 \{x|x^2\in\Bbb Z\} & \{x\mid x^2\in\Bbb Z\} \\
 \end{array}
@@ -1256,19 +1255,19 @@ The `|` symbol has the wrong spacing when it is used as a divider, for example i
 
 - 显示：
 \begin{array}{cc}
-\mathrm{Bad} & \mathrm{Better} \\
+\math {Bad} & \math {Better} \\
 \hline \\
 \{x|x^2\in\Bbb Z\} & \{x\mid x^2\in\Bbb Z\} \\
 \end{array}
 
-For double and triple integrals, don't use `\int\int` or `\int\int\int`. Instead use the special forms `\iint` and `\iiint`:
+For double and triple integrals, don't use `\int\int` or `\int\int\int`. Instead use the special fo s `\iint` and `\iiint`:
 
 使用多重积分符号时，不要多次使用 `\int` 来声明，直接使用 `\iint` 来表示 **二重积分** ，使用 `\iiint` 来表示 **三重积分** 等。对于无限次积分，可以用 `\int \cdots \int` 表示。
 
 - 例子：
 ```
 \begin{array}{cc}
-\mathrm{Bad} & \mathrm{Better} \\
+\math {Bad} & \math {Better} \\
 \hline \\
 \int\int_S f(x)\,dy\,dx & \iint_S f(x)\,dy\,dx \\
 \int\int\int_V f(x)\,dz\,dy\,dx & \iiint_V f(x)\,dz\,dy\,dx
@@ -1277,7 +1276,7 @@ For double and triple integrals, don't use `\int\int` or `\int\int\int`. Instead
 
 - 显示：
 \begin{array}{cc}
-\mathrm{Bad} & \mathrm{Better} \\
+\math {Bad} & \math {Better} \\
 \hline \\
 \int\int_S f(x)\,dy\,dx & \iint_S f(x)\,dy\,dx \\
 \int\int\int_V f(x)\,dz\,dy\,dx & \iiint_V f(x)\,dz\,dy\,dx
@@ -1292,17 +1291,17 @@ Use `\,`, to insert a thin space before differentials; without this $\TeX$ will 
 - 例子：
 ```
 \begin{array}{cc}
-\mathrm{Bad} & \mathrm{Better} \\
+\math {Bad} & \math {Better} \\
 \hline \\
-\iiint_V f(x){\rm d}z {\rm d}y {\rm d}x & \iiint_V f(x)\,{\rm d}z\,{\rm d}y\,{\rm d}x
+\iiint_V f(x){\  d}z {\  d}y {\  d}x & \iiint_V f(x)\,{\  d}z\,{\  d}y\,{\  d}x
 \end{array}
 ```
 
 - 显示：
 \begin{array}{cc}
-\mathrm{Bad} & \mathrm{Better} \\
+\math {Bad} & \math {Better} \\
 \hline \\
-\iiint_V f(x){\rm d}z {\rm d}y {\rm d}x & \iiint_V f(x)\,{\rm d}z\,{\rm d}y\,{\rm d}x
+\iiint_V f(x){\  d}z {\  d}y {\  d}x & \iiint_V f(x)\,{\  d}z\,{\  d}y\,{\  d}x
 \end{array}
 
 ---
