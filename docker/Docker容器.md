@@ -246,3 +246,34 @@ CONTAINER ID        IMAGE               COMMAND             CREATED             
 可以`docker inspect web` 去看容器的详情，下图，我们可看到**容器的IP地址和端口映射的情况**
 
 ![1561548125207](E:\git-workspace\note\images\docker\docker_command9.png)
+
+访问Nginx
+
+```shell
+curl 宿主机IP:产生的随机端口
+curl 容器的IP:80(可省略)
+
+```
+
+停止容器之后，重新启动Nginx服务
+
+```shell
+#停止容器
+docker stop web
+
+#重新启动容器，发现Nginx服务并没有启动
+docker start -i web
+#进入容器之后，ps -ef|grep nginx
+
+#在宿主机上，exec启动服务
+docker exec web nginx
+
+#查看容器启动的进程
+docker top web
+
+#ip：port访问Nginx
+curl http://host:port
+#此时容器的IP地址已经变了，需要重新inspect查看
+
+```
+
