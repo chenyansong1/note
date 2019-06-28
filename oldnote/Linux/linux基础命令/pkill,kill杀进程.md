@@ -46,3 +46,10 @@ kill `cat /var/run/sshd.pid`
 kill -HUP `cat /var/run/sshd.pid`
 kill -USR2 `cat /var/run/sshd.pid`
 ```
+
+# 批量杀死进程
+
+```shell
+$ ps -ef | grep rtprecv | grep -v grep | awk '{print $2}' | xargs kill -9
+```
+
