@@ -185,6 +185,36 @@ ubuntu              15.10               sha256:9b9cb95443b5f846cd3c8cfa3f64e63b6
 
 # 获取和推送镜像
 
+* 查找镜像
+
+  ```shell
+  #方式1：通过官网Docker Hub 
+  https://registry.hub.docker.com
+  #这个要注册Docker Hub的网站
+  #国内可以使用阿里云：https://yq.aliyun.com/articles/29941
+  #但是也是要注册的
+  
+  
+  #方式2：docker search [options] term
+  --automated=false  #only show automated builds
+  --no-trunc=flase   #Don't truncate output
+  -s,--stars=0       #only displays with at least x stars
+  #最多返回25个结果
+  
+  docker search nginx
+  docker search -s 99 tomcat
+  ```
+
+  
+
+* 拉取镜像
+
+* 推送镜像
+
+```shell
+
+```
+
 
 
 
