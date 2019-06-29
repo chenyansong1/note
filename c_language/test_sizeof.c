@@ -10,15 +10,15 @@
 
 
 #include "stdio.h"
-
+#include "stdlib.h"
 
 int main(){
-	char c = 127;
-	c = c+1;
-	printf("c=%d\n", c);
-	//printf("sizeof(char)=%ld\n", sizeof(char));
-	//printf("sizeof(short)=%ld\n", sizeof(short));
-	//printf("sizeof(int)=%ld\n", sizeof(int));
-	//printf("sizeof(long)=%ld\n", sizeof(long));
+void *p;
+int cnt = 0;
+while((p=malloc(100*1024*1024))){
+  cnt++;
+}
+printf("分配了%d00MB的空间\n", cnt);
+
 	return 0;
 }
