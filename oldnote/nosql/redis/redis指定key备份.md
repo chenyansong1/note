@@ -6,7 +6,7 @@ tags: [redis]
 ---
 
 
-```
+```shell
 #备份指定的key
 ./redis-cli  -a 123456 --raw dump iocs | head -c-1 > back_iocs_data
 #恢复到指定的newkey
