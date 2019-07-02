@@ -209,23 +209,113 @@ ubuntu              15.10               sha256:9b9cb95443b5f846cd3c8cfa3f64e63b6
 
 * 拉取镜像
 
+  ```shell
+  docker pull [options] Name [:tag]
+  -a, --all-tags=false 下载所有tag的到的镜像到本地
+  
+  docker pull [选项] [Docker Registry 地址[:端口号]/]仓库名[:标签]
+  - Docker 镜像仓库地址：地址的格式一般是 <域名/IP>[:端口号]。默认地址是 Docker Hub。
+  - 仓库名：如之前所说，这里的仓库名是两段式名称，即 <用户名>/<软件名>。对于 Docker Hub，如果不给出用户名，则默认为 library，也就是官方镜像。
+  
+  $ docker pull ubuntu:18.04
+  上面的命令中没有给出 Docker 镜像仓库地址，因此将会从 Docker Hub 获取镜像。而镜像名称是 ubuntu:18.04，因此将会获取官方镜像 library/ubuntu 仓库中标签为 18.04 的镜像。
+  
+  #查看本地的镜像
+  docker images -a
+  
+  [root@spark01 ~]# docker images -a
+  REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+  nginx               latest              719cd2e3ed04        2 weeks ago         109MB
+  ubuntu              15.10               9b9cb95443b5        2 years ago         137MB
+  [root@spark01 ~]# 
+  
+  #拉取远程的镜像
+  docker pull ubuntu:14.04
+  ##这里既指定了name=ubuntu , 也指定了tag=14.04
+  
+  
+  ```
+
+* 解决拉取镜像缓慢的问题
+
+  ```shell
+  --registry-mirror 选项
+  1. 修改： /etc/default/docker
+  2. 添加：DOCKER_OPTS="--registry-mirror=http://mirror-address"
+  
+  
+  对于使用 systemd 的系统，请在 /etc/docker/daemon.json 中写入如下内容（如果文件不存在请新建该文件）
+  
+  {
+    "registry-mirrors": [
+      "https://dockerhub.azk8s.cn",
+      "https://reg-mirror.qiniu.com"
+    ]
+  }
+  注意，一定要保证该文件符合 json 规范，否则 Docker 将不能启动。
+  
+  之后重新启动服务。
+  
+  $ sudo systemctl daemon-reload
+  $ sudo systemctl restart docker
+  注意：如果您之前查看旧教程，修改了 docker.service 文件内容，请去掉您添加的内容（--registry-mirror=https://dockerhub.azk8s.cn）。
+  ```
+
+  
+
 * 推送镜像
 
 ```shell
+docker push Name:[tag]
 
+docker push username/nginx
+#此时需要输入用户名
+#输入密码
+#输入验证邮箱
+#这里需要注意的是：docker并不会将整个镜像都传到docker hub上，只会上传修改的部分，这个和git很像
+
+#成功之后，就可以在docker hub的网站上看到
 ```
-
-
-
-
 
 # 构建镜像
 
+```shell
+#两种方式
+
+#通过容器构建镜像
+docker commit 
+
+#通过Dockerfile文件构建镜像
+docker build
 
 
+docker commit [options] container [repository[:tag]]
+-a,--author=""  #指定镜像的作者（作者的名字+联系方式）
+-m, --message="" #commit message 镜像构建的信息
+-p, --pause=true #不去暂停正在使用的容器
 
+docker commit -a 'username+email' -m 'nginx' commit_test usnername/commit_test1
+
+#查看构建的镜像
+docker images -a
+```
 
 # Dockerfile指令
+
+* 创建Dockerfile文件
+* 使用docker build命令
+
+```shell
+#创建第一个Dockerfile
+#First Dockerfile
+FROM ubuntu:14:04	#镜像的基础
+MAINTAINER username "username@gmail.com" #镜像的维护人
+#需要在镜像中执行的命令
+RUN apt-get update
+RUN apt-get install -y nginx
+EXPOSE 80
+
+```
 
 
 
