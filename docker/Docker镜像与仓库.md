@@ -523,3 +523,23 @@ docker build -t="username/df_test"
 * 再执行Dockerfile中的下一条指令，反复重复上面的操作，直至所有的指令执行完毕
 
 * 使用中间层镜像进行调试
+
+  * 查找错误
+
+* 构建缓存
+
+  将之前的镜像看做缓存
+
+* 不使用缓存
+
+  ```shell
+  docker build --no-cache
+  ```
+
+* 查看镜像的构建过程
+
+  ```shell
+  docker history image
+  ```
+
+  
