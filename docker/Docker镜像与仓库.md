@@ -313,21 +313,213 @@ MAINTAINER username "username@gmail.com" #镜像的维护人
 #需要在镜像中执行的命令
 RUN apt-get update
 RUN apt-get install -y nginx
-EXPOSE 80
+EXPOSE 80	#暴露的端口
 
+
+docker build [options] path|url|-
+--force-rm=false
+--no-cache=false
+--pull=false
+-q,--quiet=false
+--rm=true
+-t,--tag=""
+
+docker build -t="username/df_test"
 ```
 
 
 
+* 指令格式
+
+  ```shell
+  instruction arg
+  
+  #example
+  #First Dockerfile
+  FROM ubuntu:14:04	#镜像的基础
+  MAINTAINER username "username@gmail.com" #镜像的维护人
+  #需要在镜像中执行的命令
+  RUN apt-get update
+  RUN apt-get install -y nginx
+  EXPOSE 80	#暴露的端口
+  ```
 
 
 
+* FROM指令
+
+  ```shell
+  FROM <image>
+  FROM <image>:<tag>
+  
+  #image必须是已经存在的镜像，必须是基础镜像，必须是第一条非注释指令
+  
+  
+  ```
+
+  
+
+* MAINTAINER指令
+
+  ```shell
+  MAINTAINER <name>
+  #指定镜像的作者信息，包含镜像的所有者和联系信息
+  
+  MAINTAINER username "username@gmail.com" #指定了作者名和作者的email地址
+  ```
+
+  
+
+* RUN
+
+  ```shell
+  #指定当前镜像中运行的命令
+  RUN <comman> (shell模式)
+  RUN ["executable", "parm1", "param2"] (exec模式)
+  
+  #shell模式
+  RUN echo hello
+  
+  #exec模式下
+  RUN ["executable", "param1", "param2"]
+  RUN ["/bin/bash", "-c", "echo hello"]
+  ```
+
+* EXPOSE
+
+  ```shell
+  EXPOSE <port> [<port>...]
+  #指定运行该镜像的容器使用的端口
+  
+  EXPOSE 80
+  
+  #这里指定的端口，只是告诉docker，该容器中会使用这个端口，但是当我们启动特定的容器的时候，还是要指定端口映射
+  
+  docker run -p 80 -d username/df_test1 nginx -g "daemon off"
+  ```
+
+* CMD
+
+  ```shell
+  #提供容器运行的默认命令
+  CMD ["executable", "param1", "param2"](exec模式)
+  CMD command param1 param2 (shell模式)
+  CMD ["params1", "params2"](作为entrypoint指令的默认参数) 和entrypoint搭配使用
+  
+  
+  #run执行命令：是在镜像构建过程中执行的，他会覆盖cmd中的命令
+  #cmd指定的命令是在容器运行中运行的
+  ```
+
+  
+
+* ENTERYPOINT
+
+  ```shell
+  #entrypoint指令不会被run命令所覆盖
+  ENTRYPONIT ["executable", "param1", "param2"](exec模式)
+  
+  ENTRYPOINT command param1 param2 (shell模式)
+  
+  #用entrypoint指定命令，用cmd指定命令运行的参数
+  ```
+
+  
+
+* ADD ，COPY
+
+  ```shell
+  #将文件或目录复制到指定的文件镜像中
+  #支持来源地址 和 目标地址
+  ADD <src> ... <dest>
+  ADD ["src"..."<dest>"](适用于文件路径中有空格的情况)
+  
+  COPY <src>...<dest>
+  COPY["src"..."<dest>"](适用于文件路径中有空格的情况)
+  
+  #add包含类似于tar的解压功能
+  #如果单纯复制文件，Docker推荐使用copy
+  
+  #拷贝index.html到指定的路径下
+  COPY index.html /usr/share/nginx/html/
+  
+  ```
+
+  
+
+* VOLUME
+
+  ```shell
+  #向镜像容器中添加卷
+  VOLUME ["/data"]
+  ```
+
+  
+
+* WORKDIR
+
+  ```shell
+  #在容器中指定工作路径
+  WORKDIR /path/to/workdir
+  #需要使用绝对路径，如果使用相对路径，会产生路径传递
+  WORKDIR /a
+  WORKDIR b
+  WORKDIR c
+  RUN PWD
+  /a/b/c
+  ```
+
+  
+
+* ENV
+
+  ```shell
+  ENV <KEY><VALUE>
+  ENV <KEY>=<VALUE>...
+  ```
+
+  
+
+* USER
+
+  ```shell
+  #指定镜像会以什么样的用户去运行
+  USER daemon
+  
+  #eg ：使用nginx用户去运行
+  USER nginx
+  
+  USER user
+  USER user:group
+  USER user:gid
+  
+  USER uid
+  USER uid:gid
+  USER uid:group
+  
+  #默认使用的是root用户
+  
+  ```
+
+  
+
+* ONBUILD
+
+  ```shell
+  #镜像触发器
+  #当一个镜像被其他镜像作为基础镜像时执行
+  #当此镜像在构建时，会插入指令
+  
+  ```
+
+  
 
 # Dockerfile构建过程
 
+* 从基础镜像运行一个容器
+* 执行一条指令，对容器做出修改
+* 对执行修改后的容器，执行类似docker commit的操作，提交一个新的镜像层
+* 基于刚提交的镜像层运行一个新的容器
+* 再执行Dockerfile中的下一条指令，反复重复上面的操作，直至所有的指令执行完毕
 
-
-
-
-
-
+* 使用中间层镜像进行调试
