@@ -135,37 +135,36 @@ docker start container1 container2 container3
 
   ![1562154628494](E:\git-workspace\note\images\docker\network5.png)
 
+  * filter表中包含的链
+
+    * INPUT
+    * FORWARD
+    * OUTPUT
+
+    ```shell
+    iptables -t filter -L -n
+    ```
+
+    
+
+* 查看端口映射
+
+  ```shell
+  docker port containerName
+  80/tcp -> 0.0.0.0:49153
+  
+  #curl 127.0.0.1:49153
+  ```
+
   
 
+* 允许端口映射访问
 
+* 限制IP访问容器
 
-允许端口映射访问
-
-
-
-限制IP访问容器
-
-
-
-
-
-# Docker容器与外部网络的链接
-
-
-
-
-
-基于iptables的防火墙机制
-
-
-
-
-
-
-
-Docker容器的网络连接
-
-
-
-
+  ```shell
+  iptables  -I DOCKER -s 10.22.111.3 -d 172.17.0.8 -p tcp --dport 80 j DROP
+  
+  #iptalbes -L -n
+  ```
 
