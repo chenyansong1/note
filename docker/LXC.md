@@ -88,7 +88,45 @@ Docker是LXC的增强版
 
 为每一个镜像自带调试工具
 
+批量下载容器
 
+分层构建，联合挂载
+
+容器不需要持久，从创建开始，停止结束
+
+容器的启动，调度-->容器编排工具
+
+docker编排工具：machine + swarm + compose
+
+mesos统一资源调度+marachon
+
+kubernetes -> k8s 容器编排工具
+
+Moby - CE
+
+google-> CNCF 
+
+libcontainer -> runC  (容器运行时的环境标准)
+
+docker架构
+
+![1562240223857](E:\git-workspace\note\images\docker\arch1.png)
+
+
+
+Registry
+
+​	repository： 每个仓库放一种应用程序：仓库名是应用程序名，如：nginx，而nginx有很多的版本
+
+每一个镜像有一个tag:如：nginx:1.10, nginx:1.15， nginx:latest, nginx:stable
+
+仓库名+tag唯一的标识镜像
+
+
+
+镜像是静态的，不会运行，容器是动态，他有生命周期
+
+images,container, networks volumes, plugins 对象，实现增删改查
 
 
 
