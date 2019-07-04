@@ -456,4 +456,4 @@ WARNING: devicemapper: usage of loopback devices is strongly discouraged for pro
 [root@spark01 ~]# 
 ```
 
-![1562244662123](C:\Users\landun\AppData\Roaming\Typora\typora-user-images\1562244662123.png)
+
