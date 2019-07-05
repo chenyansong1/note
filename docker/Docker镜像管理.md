@@ -57,22 +57,136 @@ Docker镜像含有启动容器所需要的文件系统及其内容，因此，�
     * Private Registry：通过设有防火墙和额外的安全层的私有实体提供的registry
 
   * Registry（repository and index)
+
     * Repository
+
       * 由某个特定的docker镜像的所有迭代版本组成的镜像仓库
 
+      * 一个Registry中可以存在多个Repository
+
+        * Repository可分为“顶层仓库”和“用户仓库”
+        * 用户仓库名称格式为“用户名/仓库名"
+        * 每个仓库可以包含多个Tag（标签），每个标签对应一个镜像
+
+      * Index
+
+        * 维护用户账户，镜像的校验以及公共命名空间的信息
+        * 相当于为Registry提供了一个用户认证等功能的检索接口
+
+      * docker registry中的镜像通常由开发人员制作，而后推送给“公共”或”私有“ Registry上保存，工其他人员使用
+
+        ![1562308013592](E:\git-workspace\note\images\docker\im4.png)
+
+  * Dockerfile文件自动构建
+
+    在github上创建一个仓库用于写Dockerfile文件，如果这个github中的Dockerfile文件被改变会通过**Webhooks**通知**Automated Builds（他在Docker Hub)上**，然后docker hub拉取github上的Dockerfile实现自动构建镜像
+
+    ![1562309001891](E:\git-workspace\note\images\docker\im5.png)
 
 
 
+* 获取镜像
+
+  ```shell
+  docker pull <registry>[:<port>]/[<namespace/]<name>:<tag>
+  
+  #docker pull quay.io/coreos/flanrel
+  
+  ```
+
+  ![1562309355954](E:\git-workspace\note\images\docker\im6.png)
+
+  ![1562309490734](E:\git-workspace\note\images\docker\im7.png)
 
 
 
+* 镜像的制作途径
+
+  * Dockerfile
+  * 基于容器制作
+  * Docker Hub automated builds
+
+  ![1562309665480](E:\git-workspace\note\images\docker\im8.png)
 
 
 
+# 基于容器制作镜像
 
+* Create a new image from a container's changes
 
+  ```shell
+  docker commit [options] container [repository[:port]]
+  
+  --author,-a  #作者信息（用户名，邮箱等）
+  --change, -c #修改原有的基础镜像的指令
+  --message, -m #
+  --pause, -p #
+  
+  
+  [root@spark01 ~]# docker commit -h
+  Flag shorthand -h has been deprecated, please use --help
+  
+  Usage:  docker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]
+  
+  Create a new image from a container's changes
+  
+  Options:
+    -a, --author string    Author (e.g., "John Hannibal Smith
+                           <hannibal@a-team.com>")
+    -c, --change list      Apply Dockerfile instruction to the created image
+    -m, --message string   Commit message
+    -p, --pause            Pause container during commit (default true)
+  [root@spark01 ~]# 
+  
+  #做镜像的过程尽量让其暂停
+  docker commit -p comtainer_name
+  
+  docker commit -
+  
+  #标签管理
+  [root@spark01 ~]# docker tag --help
+  
+  Usage:  docker tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]
+  
+  Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
+  
+  #可以在已有的标签上打另一个标签
+  
+  docker tag container_id chenyansong/httpd:v0.1-1
+  
+  #查看标签
+  docker image ls
+  
+  docker tag chenyansong/httpd:v0.1-1 chenyansong/httpd:latest
+  
+  #删除一个镜像
+  docker image rm chenyansong/httpd:v0.1-1
+  #这里只是删除了镜像的tag而已，并没有真正的删除镜像，因为该镜像还有一个引用
+  
+  #在制作镜像时打标签
+  #镜像中定义了启动该容器时，默认运行的程序
+  docker inspect image_name|Id
+  #其中有一个cmd，如nginx的cmd
+              "Cmd": [
+                  "nginx",
+                  "-g",
+                  "daemon off;"#因为容器中只有一个进程，所以容器中的程序必须运行在前端，如果运行在后台，那么容器会立即结束
+              ],
+   #可以看到，启动镜像时默认运行的程序
+  
+  
+  #改变容器的默认启动程序
+  docker commit -a "chenyansong <chenyansong@gmail.com>" -c 'CMD ["/bin/httpd", "-f","-h", "/data/html"]' -p containername chenyansong/httpd:v0.2
+  
+  docker image ls
+  
+  #docker run --name t2 chenyansong/httpd:v0.2
+  
+  #另外一个终端
+  curl 
+  
+  #docker inspect t2
+  ```
 
-
-
-
+  
 
