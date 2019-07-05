@@ -168,3 +168,97 @@ docker start container1 container2 container3
   #iptalbes -L -n
   ```
 
+
+
+
+
+6种名称空间：UTS(主机名和域名)， User, mount, IPC,Pid,network
+
+名称空间超过了物理网卡的数量，可以使用虚拟网卡设备（使用软件的方式模拟），Linux支持二层设备和三层设备模拟
+
+单节点上的容器间通信
+
+![1562316696877](E:\git-workspace\note\images\docker\im9.png)
+
+在容器和宿主机上建立了一个软交换机，每个容器会虚拟出来一个连接（容器的网卡和交换机上的网卡）
+
+两个软交换机的连接
+
+![1562316882424](E:\git-workspace\note\images\docker\im10.png)
+
+连个节点上的容器通信
+
+snet, dnet
+
+overlay network(叠加网络)：基于隧道
+
+bridge：在本机上创建一个软交换机（docker0）
+
+docker会在宿主机上虚拟出来一个软交换机（网卡为docker0），每个新建的容器会有两个虚拟的网卡，一个在容器上，另一个在软交换机上（veth6d3205b）
+
+![1562319581021](E:\git-workspace\note\images\docker\im11.png)
+
+现在我们需要显示另外一半（在另外一半的容器中，需要进入容器中查看）
+
+![1562319714347](E:\git-workspace\note\images\docker\im12.png)
+
+
+
+查看nat表
+
+![1562319897325](E:\git-workspace\note\images\docker\im13.png)
+
+> MASQUERADE 地址伪装
+
+​	
+
+仅主机桥
+
+当我们外部的网络需要访问时，需要添加dnet的方式以便其他客户端能够访问
+
+![1562320957100](E:\git-workspace\note\images\docker\im14.png)
+
+对外使用同一个主机名和域名，使用同一个网络
+
+```shell
+[root@spark01 ~]# docker network ls
+NETWORK ID          NAME                DRIVER              SCOPE
+8091dcd66ac0        bin_default         bridge              local
+4c34b9fe4450        bridge              bridge              local
+#host让容器使用宿主机的网络名称空间
+8813cd1ab2ff        host                host                local
+
+#没有任何网络，即不能通信
+678c49b204c1        none                null                local
+[root@spark01 ~]# 
+
+```
+
+docker的网络模型
+
+![1562321355693](E:\git-workspace\note\images\docker\network6.png)
+
+查看某个容器使用的网络
+
+```shell
+docker container inspect web1
+
+            "Networks": {
+                "bridge": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": null,
+                    "NetworkID": "4c34b9fe4450836cb8e2f1fdc656e2b3aa1e2861e0d2569baff0f987f94ead8c",
+                    "EndpointID": "eaa5201e85aa2dccff07858ad6a7e4a23c0221252728fa72fc8810676f5ceaab",
+                    "Gateway": "172.17.0.1",
+                    "IPAddress": "172.17.0.2",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "02:42:ac:11:00:02",
+                    "DriverOpts": null
+                }
+            }
+```
+

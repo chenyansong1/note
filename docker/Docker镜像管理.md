@@ -186,7 +186,92 @@ Docker镜像含有启动容器所需要的文件系统及其内容，因此，�
   curl 
   
   #docker inspect t2
+  
+  #向仓库中推送镜像
+  [root@spark01 ~]# docker push --help
+  
+  Usage:  docker push [OPTIONS] NAME[:TAG]
+  
+  Push an image or a repository to a registry
+  
+  Options:
+        --disable-content-trust   Skip image signing (default true)
+  [root@spark01 ~]# 
+  
+  
+  #在推送之前，首先要登录到服务器上
+  docker login --help
+  [root@spark01 ~]# docker login --help
+  
+  Usage:  docker login [OPTIONS] [SERVER]
+  #server 是指定服务器（如果是docker hub的话，不用指定）
+  
+  Log in to a Docker registry
+  
+  Options:
+    -p, --password string   Password
+        --password-stdin    Take the password from stdin
+    -u, --username string   Username
+  [root@spark01 ~]# 
+  
+  #登录成功
+  [root@spark01 ~]# docker login -u chenyansongdocker
+  Password: 
+  WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
+  Configure a credential helper to remove this warning. See
+  https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+  
+  Login Succeeded
+  [root@spark01 ~]# 
+  
+  #向远程的docker hub中推送镜像
+  docker push chenyansongdocker/httpd
+  #可以去官网看一眼
+  
+  
+  ```
+
+  国内的镜像服务器平台：**建议阿里云**
+
+  ```shell
+  docker tag chenyansong/httpd:v2.1 server/chenyansongdocker/httpd:v2.1
+  
+  #如果不是docker hub必须配上服务器地址+仓库名+标签
+  
+  ```
+
+  镜像打包压缩，然后到另外一台主机上运行
+
+  ```shell
+  [root@spark01 ~]# docker save --help
+  
+  Usage:  docker save [OPTIONS] IMAGE [IMAGE...]
+  
+  Save one or more images to a tar archive (streamed to STDOUT by default)
+  
+  Options:
+    -o, --output string   Write to a file, instead of STDOUT
+  [root@spark01 ~]# 
+  
+  #-o 指定保存的路径
+  
+  docker save -o myimages.gz chenyansong/httd:v0.1-1 chenyansong/httpd:v0.2 
+  
+  #在另外一台主机加载
+  [root@spark01 ~]# docker load --help
+  
+  Usage:  docker load [OPTIONS]
+  
+  Load an image from a tar archive or STDIN
+  
+  Options:
+    -i, --input string   Read from tar archive file, instead of STDIN
+    -q, --quiet          Suppress the load output
+  [root@spark01 ~]# 
+  
+  docker load -i myimage.gz
+  #查看
+  docker image ls
   ```
 
   
-
