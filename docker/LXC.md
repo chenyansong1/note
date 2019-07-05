@@ -128,7 +128,7 @@ Registry
 
 images,container, networks volumes, plugins 对象，实现增删改查
 
-
+![1562242314389](E:\git-workspace\note\images\docker\instruc2.png)
 
 
 
