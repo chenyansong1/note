@@ -2,26 +2,9 @@
 
 # Docker容器的网络基础
 
-![1562144364227](E:\git-workspace\note\images\docker\network1.png)
-
-这里的docker0是Linux的虚拟网桥
-
 ![1562144459116](E:\git-workspace\note\images\docker\network2.png)
 
-* linux的虚拟网桥的特点
 
-  * 可以设置IP地址
-  * 相当于拥有一个影藏的虚拟网卡
-
-* docker0的地址划分
-
-  * IP：172.17.42.1 子网掩码：255.255.0.0
-  * MAC: 02:42:ac:11:00:00 到02:42：ac:11:ff:ff
-  * 总共提供了65534个地址
-
-* 为每一个容器提供一个Mac地址
-
-  ![1562144783425](E:\git-workspace\note\images\docker\network3.png)
 
 
 
@@ -32,9 +15,10 @@ yum install -y bridge-utils
 #查看网桥
 brctl show
 
+[root@spark01 ~]# brctl show
+docker0         8000.02420dd54da6       no              veth549ad8a
+[root@spark01 ~]# 
 ```
-
-![1562145564084](E:\git-workspace\note\images\docker\network4.png)
 
 * 修改docker0地址
 
@@ -170,6 +154,8 @@ docker start container1 container2 container3
 
 
 
+# docker网络类型
+
 
 
 6种名称空间：UTS(主机名和域名)， User, mount, IPC,Pid,network
@@ -194,6 +180,22 @@ overlay network(叠加网络)：基于隧道
 
 bridge：在本机上创建一个软交换机（docker0）
 
+
+
+docker有3中网络，默认是桥接网络（nat桥）
+
+```shell
+[root@spark01 ~]# docker network ls
+NETWORK ID          NAME                DRIVER              SCOPE
+49c87fe39fb9        bridge              bridge              local
+8813cd1ab2ff        host                host                local
+678c49b204c1        none                null                local
+[root@spark01 ~]# 
+#none表示没有网络，表示信息孤岛(在批处理任务中，他们只是进行了计算，然后得到了结果，加工得到的数据放到外部存储卷上即可)
+```
+
+## 桥接（bridge）
+
 docker会在宿主机上虚拟出来一个软交换机（网卡为docker0），每个新建的容器会有两个虚拟的网卡，一个在容器上，另一个在软交换机上（veth6d3205b）
 
 ![1562319581021](E:\git-workspace\note\images\docker\im11.png)
@@ -202,19 +204,33 @@ docker会在宿主机上虚拟出来一个软交换机（网卡为docker0），�
 
 ![1562319714347](E:\git-workspace\note\images\docker\im12.png)
 
+docker默认是桥接模式，所以没启动一个容器，在主机上都有一个虚拟的网卡（另外一半在容器内）
+
+![1563193278766](E:\git-workspace\note\images\docker\network7.png)
+
+这些虚拟的网卡被插入到了docker0上，下图我们知道在docker0上关联了1个接口
+
+![1563193636787](E:\git-workspace\note\images\docker\network8.png)
+
+我们进入容器中，查看容器的网卡
+
+![1563193705682](E:\git-workspace\note\images\docker\network9.png)
+
+![1562144783425](E:\git-workspace\note\images\docker\network3.png)
+
+![1563194287598](E:\git-workspace\note\images\docker\network11.png)
+
+docker 会为每一个容器在nat表中生成规则，如下
+
+![1563193988268](E:\git-workspace\note\images\docker\network10.png)
 
 
-查看nat表
 
-![1562319897325](E:\git-workspace\note\images\docker\im13.png)
+## 仅主机桥（host)
 
-> MASQUERADE 地址伪装
+让容器使用宿主机的网络名称空间
 
-​	
-
-仅主机桥
-
-当我们外部的网络需要访问时，需要添加dnet的方式以便其他客户端能够访问
+当我们外部的网络需要访问时，需要添加dnet的方式以便其他客户端能够访问，**每一个容器拥有自己独立的User,Mount, Pid, 但是他们共用UTS， Net， IPC**
 
 ![1562320957100](E:\git-workspace\note\images\docker\im14.png)
 
@@ -231,12 +247,69 @@ NETWORK ID          NAME                DRIVER              SCOPE
 #没有任何网络，即不能通信
 678c49b204c1        none                null                local
 [root@spark01 ~]# 
-
 ```
 
-docker的网络模型
+
+
+
+
+## docker的网络模型总结
 
 ![1562321355693](E:\git-workspace\note\images\docker\network6.png)
+
+## 查看网络详情，查看某容器的网络
+
+查看每种网络详情
+
+```shell
+[root@spark01 ~]# docker network inspect  bridge
+[
+    {
+        "Name": "bridge",
+        "Id": "49c87fe39fb92fd5397ee8807a9fc035f23acb7017d3a9f183c91ed4c92350fb",
+        "Created": "2019-07-15T20:07:07.881620154+08:00",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.17.0.0/16",
+                    "Gateway": "172.17.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {
+            "3774b05770463aea562cdcd653c542bce4b753d7442a02f2aa28558431671e74": {
+                "Name": "b3",
+                "EndpointID": "069355db7c3a5d2aa39aaf5d2445845fdb6a35a932e17f3b8a9ad49d796d54af",
+                "MacAddress": "02:42:ac:11:00:02",
+                "IPv4Address": "172.17.0.2/16",#使用网段
+                "IPv6Address": ""
+            }
+        },
+        "Options": {
+            "com.docker.network.bridge.default_bridge": "true",
+            "com.docker.network.bridge.enable_icc": "true",
+            "com.docker.network.bridge.enable_ip_masquerade": "true",
+            "com.docker.network.bridge.host_binding_ipv4": "0.0.0.0",
+            "com.docker.network.bridge.name": "docker0", #docker0使用的是bridge网络
+            "com.docker.network.driver.mtu": "1500"
+        },
+        "Labels": {}
+    }
+]
+[root@spark01 ~]# 
+```
 
 查看某个容器使用的网络
 
@@ -244,14 +317,14 @@ docker的网络模型
 docker container inspect web1
 
             "Networks": {
-                "bridge": {
+                "bridge": {#该容器使用的是bridge网络
                     "IPAMConfig": null,
                     "Links": null,
                     "Aliases": null,
                     "NetworkID": "4c34b9fe4450836cb8e2f1fdc656e2b3aa1e2861e0d2569baff0f987f94ead8c",
                     "EndpointID": "eaa5201e85aa2dccff07858ad6a7e4a23c0221252728fa72fc8810676f5ceaab",
-                    "Gateway": "172.17.0.1",
-                    "IPAddress": "172.17.0.2",
+                    "Gateway": "172.17.0.1",#网关
+                    "IPAddress": "172.17.0.2",#ip地址
                     "IPPrefixLen": 16,
                     "IPv6Gateway": "",
                     "GlobalIPv6Address": "",
