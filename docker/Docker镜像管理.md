@@ -138,10 +138,9 @@ Docker镜像含有启动容器所需要的文件系统及其内容，因此，�
     -p, --pause            Pause container during commit (default true)
   [root@spark01 ~]# 
   
-  #做镜像的过程尽量让其暂停
+  #做镜像的过程尽量让其暂停(使用-p选项)
   docker commit -p comtainer_name
   
-  docker commit -
   
   #标签管理
   [root@spark01 ~]# docker tag --help
@@ -151,12 +150,11 @@ Docker镜像含有启动容器所需要的文件系统及其内容，因此，�
   Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
   
   #可以在已有的标签上打另一个标签
-  
   docker tag container_id chenyansong/httpd:v0.1-1
   
   #查看标签
   docker image ls
-  
+  #再打一个标签
   docker tag chenyansong/httpd:v0.1-1 chenyansong/httpd:latest
   
   #删除一个镜像
@@ -181,11 +179,11 @@ Docker镜像含有启动容器所需要的文件系统及其内容，因此，�
   docker image ls
   
   #docker run --name t2 chenyansong/httpd:v0.2
+  #进行测试
+  curl IP 
   
-  #另外一个终端
-  curl 
-  
-  #docker inspect t2
+  #查看镜像的详情
+  docker inspect t2
   
   #向仓库中推送镜像
   [root@spark01 ~]# docker push --help
@@ -196,7 +194,7 @@ Docker镜像含有启动容器所需要的文件系统及其内容，因此，�
   
   Options:
         --disable-content-trust   Skip image signing (default true)
-  [root@spark01 ~]# 
+  [root@spark01 ~]#
   
   
   #在推送之前，首先要登录到服务器上
@@ -227,9 +225,11 @@ Docker镜像含有启动容器所需要的文件系统及其内容，因此，�
   #向远程的docker hub中推送镜像
   docker push chenyansongdocker/httpd
   #可以去官网看一眼
-  
-  
   ```
+
+  
+
+  
 
   国内的镜像服务器平台：**建议阿里云**
 
@@ -237,7 +237,7 @@ Docker镜像含有启动容器所需要的文件系统及其内容，因此，�
   docker tag chenyansong/httpd:v2.1 server/chenyansongdocker/httpd:v2.1
   
   #如果不是docker hub必须配上服务器地址+仓库名+标签
-  
+  参见：https://cr.console.aliyun.com/repository/cn-hangzhou/chenyansong/study/details
   ```
 
   镜像打包压缩，然后到另外一台主机上运行

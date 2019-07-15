@@ -1,2 +1,11 @@
+#docker’Àªß
+https://cloud.docker.com
 username:chenyansongdocker
 pwd:b***1
+
+
+#∞¢¿Ô‘∆’Àªß
+https://cr.console.aliyun.com/cn-hangzhou/instances/repositories
+username:1327401579@qq.com
+pwd:b***l
+
