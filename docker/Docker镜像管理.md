@@ -212,22 +212,39 @@ Docker镜像含有启动容器所需要的文件系统及其内容，因此，�
     -u, --username string   Username
   [root@spark01 ~]# 
   
-  #登录成功
-  [root@spark01 ~]# docker login -u chenyansongdocker
-  Password: 
-  WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
-  Configure a credential helper to remove this warning. See
-  https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+  #############################################
   
-  Login Succeeded
-  [root@spark01 ~]# 
+  #查看现有容器
+  docker image ls
+  #为阿里云容器打标签
+  docker tag chenyansong/httpd:v0.2  registry.cn-beijing.aliyuncs.com/chenyansong/httpd:v0.2
+  #先登出
+  docker logout
+  #登录阿里云
+  docker login --username=1327401579@qq.com registry.cn-beijing.aliyuncs.com
+  #push到阿里云
+  docker push registry.cn-beijing.aliyuncs.com/chenyansong/httpd:v0.2
+  ############################################# 
   
-  #向远程的docker hub中推送镜像
-  docker push chenyansongdocker/httpd
-  #可以去官网看一眼
   ```
 
+  ![1563184282872](E:\git-workspace\note\images\docker\push.png)
+
+  打标签`docker tag chenyansong/httpd:v0.2  registry.cn-beijing.aliyuncs.com/chenyansong/httpd:v0.2`
+
+  ![1563184338566](E:\git-workspace\note\images\docker\push2.png)
+
   
+
+  
+
+  设置Registry登录密码
+
+  ```
+  阿里云的默认密码是账户的登录密码
+  ```
+
+  ![1563184718840](E:\git-workspace\note\images\docker\push3.png)
 
   
 
@@ -240,7 +257,13 @@ Docker镜像含有启动容器所需要的文件系统及其内容，因此，�
   参见：https://cr.console.aliyun.com/repository/cn-hangzhou/chenyansong/study/details
   ```
 
-  镜像打包压缩，然后到另外一台主机上运行
+  
+
+  
+
+  * 镜像导入和导出
+
+    镜像打包压缩，然后到另外一台主机上运行
 
   ```shell
   [root@spark01 ~]# docker save --help
@@ -255,6 +278,7 @@ Docker镜像含有启动容器所需要的文件系统及其内容，因此，�
   
   #-o 指定保存的路径
   
+  #打包多个
   docker save -o myimages.gz chenyansong/httd:v0.1-1 chenyansong/httpd:v0.2 
   
   #在另外一台主机加载
@@ -269,6 +293,7 @@ Docker镜像含有启动容器所需要的文件系统及其内容，因此，�
     -q, --quiet          Suppress the load output
   [root@spark01 ~]# 
   
+  #scp将压缩文件传到另外一台机器，然后在该机器上load
   docker load -i myimage.gz
   #查看
   docker image ls
