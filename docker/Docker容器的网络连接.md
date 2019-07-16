@@ -344,34 +344,41 @@ docker container inspect web1
 rpm -q iproute
 ```
 
-![image-20190715224607977](/Users/chenyansong/Documents/note/images/docker/image-20190715224607977.png)
+![image-20190715224607977](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190715224607977.png)
 
 
 
 网络名称空间的相关操作
 
-![image-20190715224806629](/Users/chenyansong/Documents/note/images/docker/image-20190715224806629.png)
+![image-20190715224806629](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190715224806629.png)
 
 添加网络名称空间
 
-![image-20190715224843486](/Users/chenyansong/Documents/note/images/docker/image-20190715224843486.png)
+![image-20190715224843486](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190715224843486.png)
 
 查看网络名称空间的网卡
 
-![image-20190715224923651](/Users/chenyansong/Documents/note/images/docker/image-20190715224923651.png)
+![image-20190715224923651](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190715224923651.png)
 
 
 
 创建成对的网卡
 
-![image-20190715225143013](/Users/chenyansong/Documents/note/images/docker/image-20190715225143013.png)
+![image-20190715225143013](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190715225143013.png)
 
 
 
 将一个网络设备移动到一个名称空间
 
-![image-20190715225325398](/Users/chenyansong/Documents/note/images/docker/image-20190715225325398.png)
+![image-20190715225325398](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190715225325398.png)
 
 去对应的名称空间中看
 
-![image-20190715225426476](/Users/chenyansong/Documents/note/images/docker/image-20190715225426476.png)
+![image-20190715225426476](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190715225426476.png)
+
+
+
+
+
+
+
