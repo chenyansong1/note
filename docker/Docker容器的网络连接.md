@@ -481,5 +481,238 @@ docker run --name -it -p 80 --rm nginx
 
 ![1563259204003](E:\git-workspace\note\images\docker\1563259204003.png)
 
+指定容器开放的端口
 
+```shell
+[root@spark02 ~]# docker port nginx1
+80/tcp -> 0.0.0.0:32768
+[root@spark02 ~]# 
+
+```
+
+指定容器地址
+
+```shell
+#指定宿主机的IP
+docker run --name nginx_web --rm -p 172.16.110.174::80 nginx
+
+#宿主机上查看端口绑定的地址
+[root@spark02 ~]# docker port nginx_web
+80/tcp -> 172.16.110.174:32768
+[root@spark02 ~]#
+```
+
+指定宿主机的端口
+
+```shell
+docker run --name nginx_web --rm -p 80:80 nginx
+
+[root@spark02 ~]# docker port nginx_web
+80/tcp -> 0.0.0.0:80
+[root@spark02 ~]# 
+```
+
+既指定端口又指定地址
+
+```shell
+docker run --name nginx_web --rm -p 172.16.110.174:80:80 nginx
+
+[root@spark02 ~]# docker port nginx_web
+80/tcp -> 172.16.110.174:80
+[root@spark02 ~]# 
+```
+
+暴露所有的端口：-P(大写)
+
+
+
+共享式容器
+
+```shell
+#1.首先启动一个容器
+docker run --name b1 -it --rm busybox
+
+
+#2.启动另外一个容器，指定network为第一个容器的网络名称空间
+docker run --name b2 --network container:b1 -it --rm busybox
+
+
+```
+
+我们可以发现，**两个container是共用一个网络名称空间**
+
+![1563262859014](E:\git-workspace\note\images\docker\1563262859014.png)
+
+但是他们的文件系统是隔离的，如下
+
+![1563262984612](E:\git-workspace\note\images\docker\1563262984612.png)
+
+
+
+```shell
+#b2
+echo "hello world" >/tmp/index.html
+httpd -h /tmp/
+netstat -lantup
+
+#b1上访问
+wget -O - -q 127.0.0.1
+```
+
+![1563263157449](E:\git-workspace\note\images\docker\1563263157449.png)
+
+> 说明他们共享lo接口
+
+直接使用宿主机的网络名称空间
+
+```shell
+docker run --name b2 --network host -it --rm busybox
+```
+
+![1563263495993](E:\git-workspace\note\images\docker\1563263495993.png)
+
+![1563263722924](E:\git-workspace\note\images\docker\1563263722924.png)
+
+以往工作在宿主机上的进程，可以放入容器中，因为容器和宿主机共享的是同一套网络名称空间，所以不影响他们的访问
+
+
+
+改变docker默认的172.17网络
+
+自定义docker0桥的网络属性信息：
+
+```shell
+vim /etc/docker/daemon.json
+{
+	"bip":"192.168.1.5/24",
+	"fixed-cidr":"10.20.0.0/16",
+	"fixed-cidr-v6":"2001:bd8::/64",
+	"mtu":1500,
+	"default-gateway":"10.20.1.1",
+	"default-gateway-v6":"2001:bd8:abcd::89",
+	"dns":["10.20.1.2","10.20.1.3"]
+}
+
+#核心选项为bip, 即bridge ip之意，用于指定docker0桥自身的IP地址，其他选项可通过此地址计算得到
+```
+
+```shell
+#先停止docker
+systemctl stop docker
+
+#修改上面的配置
+[root@spark02 ~]# cat /etc/docker/daemon.json
+{
+ "registry-mirrors":["https://registry.docker-cn.com"],
+ "bip":"10.0.0.1/16"
+}
+
+#重新启动docker
+systemctl start  docker
+
+#查看docker0的ip
+[root@spark02 ~]# ifconfig
+docker0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
+        inet 10.0.0.1  netmask 255.255.0.0  broadcast 10.0.255.255
+        inet6 fe80::42:8ff:feff:ab5d  prefixlen 64  scopeid 0x20<link>
+        ether 02:42:08:ff:ab:5d  txqueuelen 0  (Ethernet)
+        RX packets 52  bytes 5784 (5.6 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 65  bytes 5447 (5.3 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+```
+
+docker默认的连接方式是sock
+
+```shell
+[root@spark02 ~]# ps -ef|grep docker
+root     31447     1  0 16:26 ?        00:00:00 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+```
+
+我们可以改变监听的方式，使用tcp套接字去监听
+
+```shell
+vi /etc/docker/daemon.json
+	"hosts":["tcp://0.0.0.0:2375", "unix://var/run/docker.sock"]
+```
+
+```shell
+#其他docker客户端连接
+docker -H 172.20.0.67:2379 ps
+
+#查看远端的docker服务上的镜像
+docker -H 172.20.0.67:2379 image ls
+```
+
+
+
+创建自定义的网络
+
+```shell
+[root@spark02 ~]# docker network --help
+
+Usage:  docker network COMMAND
+
+Manage networks
+
+Commands:
+  connect     Connect a container to a network
+  create      Create a network
+  disconnect  Disconnect a container from a network
+  inspect     Display detailed information on one or more networks
+  ls          List networks
+  prune       Remove all unused networks
+  rm          Remove one or more networks
+
+Run 'docker network COMMAND --help' for more information on a command.
+[root@spark02 ~]# docker network create --help
+
+Usage:  docker network create [OPTIONS] NETWORK
+
+Create a network
+
+Options:
+      --attachable           Enable manual container attachment
+      --aux-address map      Auxiliary IPv4 or IPv6 addresses used by Network driver (default map[])
+      --config-from string   The network from which copying the configuration
+      --config-only          Create a configuration only network
+  -d, --driver string        Driver to manage the Network (default "bridge")
+      --gateway strings      IPv4 or IPv6 Gateway for the master subnet
+      --ingress              Create swarm routing-mesh network
+      --internal             Restrict external access to the network
+      --ip-range strings     Allocate container ip from a sub-range
+      --ipam-driver string   IP Address Management Driver (default "default")
+      --ipam-opt map         Set IPAM driver specific options (default map[])
+      --ipv6                 Enable IPv6 networking
+      --label list           Set metadata on a network
+  -o, --opt map              Set driver specific options (default map[])
+      --scope string         Control the network's scope
+      --subnet strings       Subnet in CIDR format that represents a network segment
+[root@spark02 ~]# 
+
+
+#创建一个自定义的网络
+docker network create -d bridge --subnet "172.26.0.0/16" --gateway "172.26.0.1" mybr0
+```
+
+![1563267751496](E:\git-workspace\note\images\docker\1563267751496.png)
+
+然后我们创建容器时，可以将容器加入到此network
+
+```shell
+ docker run --name b2 -it --network  mybr0 --rm  busybox
+```
+
+![1563268679352](E:\git-workspace\note\images\docker\1563268679352.png)
+
+上面开启了两个network，一个是mybr0，一个是docker0，他们属于不同的网段，那么怎么通信呢，只需要打开核心转发即可
+
+打开核心转发，同时需要改下iptables
+
+```shell
+[root@spark02 ~]# cat /proc/sys/net/ipv4/ip_forward
+1
+[root@spark02 ~]# 
+```
 
