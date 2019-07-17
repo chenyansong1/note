@@ -48,10 +48,6 @@ ${variable:+word}  #variable有值则显示word
 
   在实践中，基准镜像可以是任何可用的镜像文件，默认情况下，docker build 会在docker主机上查找指定的镜像文件，在其不存在时，则会从Docker Hub Registry上拉取所需的镜像文件（如果找不到指定的文件，docker build会返回一个错误的信息）
 
-* Syntax
-
-  * FROM
-
   ```shell
   FROM <repository>[:<tag>]
   #or
@@ -61,9 +57,7 @@ ${variable:+word}  #variable有值则显示word
   	<digest>:每个镜像的hash码（使用镜像名称，如果别人将镜像名称所在的镜像替换为挖矿时，我们还是使用的是改镜像名称，那么就会有问题，但是使用md5值，就可以避免这个问题）	
   ```
 
-  
-
-  * MAINTAINER  LABEL
+* MAINTAINER  LABEL
 
   ```shell
   MAINTAINER(depreacted:废弃)
@@ -81,7 +75,7 @@ ${variable:+word}  #variable有值则显示word
   
   ```
 
-  * COPY
+* COPY
 
     从当前工作目录中复制文件到目标镜像文件系统中
 
@@ -110,23 +104,52 @@ ${variable:+word}  #variable有值则显示word
     #index.html一定要在Dockerfile所在的目录，或者是子目录中
     ```
 
-  * docker build 制作镜像
+* docker build 制作镜像
 
-    ```shell
-    See 'docker build --help'.
-    
-    Usage:  docker build [OPTIONS] PATH | URL | -
-    #PATH:Dockerfile所在的父目录
-    ```
+  ```shell
+  See 'docker build --help'.
+  
+  Usage:  docker build [OPTIONS] PATH | URL | -
+  #PATH:Dockerfile所在的父目录
+  ```
 
-    ![1563333953895](E:\git-workspace\note\images\docker\1563333953895.png)
+  ![1563333953895](E:\git-workspace\note\images\docker\1563333953895.png)
 
-    ![1563333998882](E:\git-workspace\note\images\docker\1563333998882.png)
+  ![1563333998882](E:\git-workspace\note\images\docker\1563333998882.png)
 
-    ![1563334125493](E:\git-workspace\note\images\docker\1563334125493.png)
+  ![1563334125493](E:\git-workspace\note\images\docker\1563334125493.png)
 
-    拷贝目录
+  拷贝目录
 
-    ![1563334666625](E:\git-workspace\note\images\docker\1563334666625.png)
+  ![1563334666625](E:\git-workspace\note\images\docker\1563334666625.png)
 
-    ![1563334756558](E:\git-workspace\note\images\docker\1563334756558.png)
+  ![1563334756558](E:\git-workspace\note\images\docker\1563334756558.png)
+
+* ADD
+
+  ```shell
+  ###################
+  ADD指令类似于COPY指令，ADD支持使用TAR文件和URI路径
+  #语法
+  ADD <SRC>... <DEST> 
+  #OR
+  ADD ["<SRC>",.."<DEST>"]
+  
+  #操作准则
+  如果<src>为URI且<dest>不以/结尾，则<src>指定的文件将被下载并直接被创建为<dest>；如果<dest>以/结尾，则文件名URI指定的文件将被直接下载并保存为<dest>/<filename>
+  
+  如果<src>是一个本地系统上的压缩格式的tar文件，他将被展开为一个目录，其行为类似于"tar x"命令，然后，通过URL获取到的tar文件将不会自动展开
+  
+  如果<src>有多个，或其 间接或直接使用了通配符，则<dest>必须是一个以/结尾的目录路径；如果<dest>不以/结尾，则其被视作一个普通文爱你，<src>的内容将被直接写入到<dest>中
+  ###################
+  ```
+
+  ```shell
+  #vim Dockerfile
+  ADD http://nginx.org/download/nginx-1.17.1.tar.gz /usr/local/src/
+  
+  #构建镜像
+  docker build -t tinyhttpd:v0.1-3 ./
+  ```
+
+  
