@@ -472,13 +472,159 @@ CMD只有参数，没有命令的情况
 
   ![1563357876896](E:\git-workspace\note\images\docker\1563357876896.png)
 
+* 通过配置文件生成镜像
+
+  ```shell
+  [root@spark02 img3]# cat Dockerfile 
+  FROM nginx:latest
+  LABEL maintainer="chenyansong <chenyansong@163.com>"
+  
+  
+  ENV NGX_DOC_ROOT="/data/web/html/"
+  ADD index.html ${NGX_DOC_ROOT}
+  #将脚本拷贝，然后通过entrypoint执行
+  ADD entrypoint.sh /bin/
+  
+  CMD ["/usr/sbin/nginx", "-g", "daemon off;"]
+  ENTRYPOINT ["/bin/entrypoint.sh"]
+  
+  
+  ###### entrypoint.sh ######
+  [root@spark02 img3]# cat entrypoint.sh 
+  #!/bin/sh
+  cat > /etc/nginx/conf.d/www.conf <<EOF
+  server {
+          server_name $HOSTNAME;
+          listen ${IP:-0.0.0.0}:${PORT:-80};
+          root ${NGX_DOC_ROOT:-/usr/share/nginx/html};
+  }
+  EOF
+  
+  #接着执行脚本后面的命令，让脚本后面的进程代替当前进程，称为主进程
+  exec "$@"
+  ```
+
+  ![1563365567131](E:\git-workspace\note\images\docker\1563365567131.png)
+
+  我们登陆到容器
+
+  ![1563365482023](E:\git-workspace\note\images\docker\1563365482023.png)
+
+  在启动容器的时候指定参数
+
+  ```shell
+  docker run --name myweb1 -e "PORT=8080" --rm myweb:v0.3-4
+  ```
+
+  ![1563365533868](E:\git-workspace\note\images\docker\1563365533868.png)
+
+  我们查看环境变量
+
+​	![1563365700442](E:\git-workspace\note\images\docker\1563365700442.png)
+
+
+
+
+
+* USER
+
+  用于指定运行image时的或运行Dockerfile中任何RUN，CMD，ENTRYPOINT 指令指定的程序时的用户或UID
+
+  默认情况下，container的运行身份为root用户
+
+  ```shell
+  #语法
+  USER <UID>|<UserName>
+  #需要注意的是：<UID>可以为任意数字，但实践中必须为/etc/passwd中某用户的有效UID，否则，docker run命令将运行失败
+  ```
+
+
+
+* HEALTHCHECK
+
+  测试容器是否正常运行（容器中的服务是否正常，并不是容器是否正常），用于检测主进程工作状态健康与否
+
+  ```shell
+  #在容器内部运行一个命令来检测服务是否正常
+  HEALTHCHECK [OPTIONS] CMD command
+  
+  #不做健康检测(包括默认的健康检测)
+  HEALTHCHECK NONE
+  
+  options
+  --start-period=30s
+  #在容器启动之后等待30s才开始检测
+  ```
+
+  ![1563366497645](E:\git-workspace\note\images\docker\1563366497645.png)
+
   
 
-​	
+* SHELL
+
+  默认是`/bin/sh -c`这个shell
+
+  ```shell
+  #linux
+  ["/bin/sh", "-c"]
+  
+  #windows
+  ["cmd", "/S", "/C"]
+  ```
+
+  
+
+* STOPSIGNAL
+
+  docker向主进程发送的信号
 
 
 
+* ARG
+
+  只是在build中使用，例如：我们的构建时基于一个基础的镜像进行的，如果一个基础镜像换了版本，我们也想跟着换呢，注意：我们的上面传的环境变量是在docker run时候指定的，而这里是在build中传递变量的
+
+  ```shell
+  vim Dockerfile
+  ARG author="chenyansong00 <chenyansong00@qq.com>"
+  LABEL maintainer="${author}"
+  
+  #build的时候传参
+  docker build --build-arg author="chenyansong <chenyansong@qq.com>" -t myweb:v0.3-10 ./
+  ```
+
+* ONBUILD
+
+  当你的镜像中使用onbuild的时候，别人将你的镜像当做基础镜像，别人在构建的时候，会执行这个onbuild
+
+  * 用于在Dockerfile中定义一个触发器
+
+  * Dockerfile用户build映像文件，此映像文件亦可作为base image被;领一个Dockerfile用作FROM指令的参数，并以之构建新的映像文件
+
+  * 在后面这个Dockerfile中的FROM指令在build过程中被执行时，将会“触发”创建其base image的Dockerfile文件中的ONBUILD指令定义的触发器
+
+  * 语法
+
+    ```shell
+    ONBUILD <COMMAND>
+    ```
+
+  * 尽管任何指令都可注册成为触发器指令，但是ONBUILD不能自我嵌套，且不会触发FROM和MAINTAINER 指令
+
+  * 使用包含ONBUILD指令的Dockerfile构建的镜像应该使用特殊的标签
+
+  * 在ONBUILD指令中使用ADD或COPY指令应该格外小心，因为新构建过程的上下文缺少指定的源文件时会失败，我们一般使用ADD，RUN命令
+
+  
+
+  ```shell
+  ONBUILD ADD http://ip/centos/xx.text /usr/local/src/
+  ```
 
 
 
-
+> 我们可以去github上，看别人的Dockfile
+>
+> https://github.com/docker-library/
+>
+> 例如MySQL的：https://github.com/docker-library/mysql/blob/master/5.7/Dockerfile
