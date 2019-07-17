@@ -289,13 +289,26 @@ RUN和CMD的区别
 * RUN
 
   ```shell
+  用于指定docker build过程中运行的程序
+  #语法
+  RUN <command> 
+  #or
+  RUN ["<executable>", "param1", "param2"]
+  
+  第一种格式中，<command>通常是一个shell命令，且以"/bin/sh -c" 来运行他，这意味着此进程在容器中的PID不为1，不能接受Unix信号，因此，当使用docker stop <container>命令停止容器时，此进程接收不到sigterm信号
+  
+  第二种格式语法中的参数是一个json格式的数组，其中<executable>为要运行的命令，后面的<paramN>为传递给命令的选项参数，然而，此种格式指定的命令不会以"/bin/sh -c" 来发起，因此常见的shell操作如变量替换以及通配符（？，*等）替换将不会进行，不过如果要运行的命令依赖于此shell特性的话，可以将其替换为类似下面的格式
+  RUN ["/bin/bash", "-c", "<executable>", "<param1>"]
+  executable是直接启动为pid=1的进程的，所以当docker stop的时候，是可以将其停止的
+  
+  #example
   ADD http://nginx.org/download/nginx-1.17.1.tar.gz /usr/local/src/
   RUN cd /usr/local/src && \
           tar -xf nginx-1.17.1.tar.gz && \
           mv nginx-1.17.1  webserver
           
-  #&&表示前一个成功，才会执行后一个
-  #\表示续行
+  # &&表示前一个成功，才会执行后一个
+  # \表示续行
   ```
 
   ![1563347022284](E:\git-workspace\note\images\docker\1563347022284.png)
@@ -316,5 +329,156 @@ COPY 配置文件
 
 * CMD
 
+  一般我们在shell中启动的进程，在shell退出之后，也会退出，因为这些进程的父进程是shell，所以我们需要再shell退出时，将启动的进程放到一个init的进程下面
+
+  cmd是可以给多个，但是只有最后一个生效
+
+  ```shell
+  类似于RUN指令，CMD指令也可用于运行任何命令或应用程序，不过二者运行时间点不同
   
+  RUN指令运行于映像文件构建过程中，而CMD指令运行于基于Dockerfile构建出的新映像文件启动一个容器时
+  
+  CMD指令的首要目的在于为启动的容器指定默认要运行的 程序，且其运行结束后，容器也将终止，不过，CMD指定的命令其可以被docker run的命令行选项所覆盖
+  
+  #语法
+  CMD <COMMAND>
+  #OR
+  CMD ["<executable>", "<param1>", "<param1>"]
+  #or
+  CMD ["<param1>", "<param2>"]
+  
+  #前两种语法格式的意义通RUN，第三种则用于为ENTRYPOINT指令提供默认参数
+  ```
+
+  ```shell
+  # cat Dockerfile 
+  FROM busybox
+  LABEL maintainer="chenyansong <chenyansong@163.com>" app="httpd"
+  ENV WEB_DOC_ROOT="/data/web/html"
+  
+  RUN mkdir $WEB_DOC_ROOT -p  && \
+      echo "<h1>busybox httpd server.</h1>" > ${WEB_DOC_ROOT}/index.html
+  
+  #启动httpd服务
+  CMD /bin/httpd -f -h ${WEB_DOC_ROOT}
+  ```
+
+  ![1563354475992](E:\git-workspace\note\images\docker\1563354475992.png)
+
+  容器启动之后，默认的执行的命令
+
+  ![1563354498771](E:\git-workspace\note\images\docker\1563354498771.png)
+
+  启动容器
+
+  ```shell
+  #我们发现程序会卡在启动的界面，因为默认启动的httpd,并不是shell
+  docker run --name tinyweb2 -it --rm -P tinyhttpd:v0.2-1
+  ```
+
+  ![1563354689402](E:\git-workspace\note\images\docker\1563354689402.png)
+
+  我们使用exec进入容器
+
+  ```shell
+  docker exec -it tinyweb2 /bin/sh
+  ```
+
+  ![1563354862462](E:\git-workspace\note\images\docker\1563354862462.png)
+
+
+
+​		如果我们将Dockerfile修改如下
+
+```shell
+# cat Dockerfile 
+FROM busybox
+LABEL maintainer="chenyansong <chenyansong@163.com>" app="httpd"
+ENV WEB_DOC_ROOT="/data/web/html"
+
+RUN mkdir $WEB_DOC_ROOT -p  && \
+    echo "<h1>busybox httpd server.</h1>" > ${WEB_DOC_ROOT}/index.html
+
+#启动httpd服务
+#CMD /bin/httpd -f -h ${WEB_DOC_ROOT}
+CMD ["/bin/httpd", "-f", "-h ${WEB_DOC_ROOT}"]
+```
+
+![1563355133369](E:\git-workspace\note\images\docker\1563355133369.png)
+
+​	此时是没有`/bin/sh`的
+
+​	我们启动容器，会报错
+
+![1563355235880](E:\git-workspace\note\images\docker\1563355235880.png)
+
+因为在这种情况下，并不会运行为shell的子进程，那么对于`${WEB_DOC_ROOT}`这样的变量是不会被识别的，我们手动设置为shell的子进程
+
+```shell
+# cat Dockerfile 
+FROM busybox
+LABEL maintainer="chenyansong <chenyansong@163.com>" app="httpd"
+ENV WEB_DOC_ROOT="/data/web/html"
+
+RUN mkdir $WEB_DOC_ROOT -p  && \
+    echo "<h1>busybox httpd server.</h1>" > ${WEB_DOC_ROOT}/index.html
+
+#启动httpd服务
+#CMD /bin/httpd -f -h ${WEB_DOC_ROOT}
+#CMD ["/bin/httpd", "-f", "-h ${WEB_DOC_ROOT}"]
+CMD ["/bin/sh", "-c","/bin/httpd", "-f", "-h ${WEB_DOC_ROOT}"]
+CMD ["/bin/sh", "-c","/bin/httpd", "-f", "-h /data/web/html"]
+```
+
+
+
+CMD只有参数，没有命令的情况
+
+* ENTRYPOINT
+
+  类似CMD指令的功能，用于为容器指定默认运行程序，从而使一个容器像是一个单独的可执行程序
+
+  与CMD不同的是，由ENTRYPOINT启动的程序不会被docker run命令行指定的参数所覆盖，而且，这些命令行参数会被当做参数传递给ENTRYPOINT指定的程序（不过，docker run 命令的--entrypoint选项的参数可覆盖ENTRYPOINT 指令指定的程序）
+
+  ```shell
+  #语法
+  ENTRYPOINT <command>
+  ENTRYPOINT ["<executable>", "param1", "param2"]
+  
+  #docker run命令传入的命令参数会覆盖CMD指令的内容并且附加到ENTRYPOINT命令最后作为其参数使用
+  
+  #Dockfile文件中也可以存在多个ENTRYPOINT指令，但仅有最后一个会生效
+  
+  
+  #最后的 ls /data/web/html/ 更改了镜像中默认的运行的程序（通过CMD)指定的
+  docker run --name tinyweb2 -it --rm -P tinyhttpd:v0.2-4 ls /data/web/html/
+  
+  #当我们如果不允许覆盖默认的CMD的命令，我们就要使用ENTRYPOINT
+  ```
+
+  我们使用entrypoint去设置默认运行的程序
+
+  ```shell
+  #CMD /bin/httpd -f -h ${WEB_DOC_ROOT}
+  #CMD ["/bin/httpd", "-f", "-h ${WEB_DOC_ROOT}"]
+  ENTRYPOINT /bin/httpd -f -h ${WEB_DOC_ROOT}
+  ```
+
+  然后我们启动容器的时候，给他默认的参数，但是我们发现并没有运行我们的参数，说明entrypoint是不会被修改的，而且将传过来的参数(ls /data)当做了entrypoint的参数
+
+  ![1563357512986](E:\git-workspace\note\images\docker\1563357512986.png)
+
+  如果使用的entrypoint，你还是想要覆盖，那么在docker run的时候使用--entrypoint参数
+
+  ![1563357876896](E:\git-workspace\note\images\docker\1563357876896.png)
+
+  
+
+​	
+
+
+
+
+
+
 
