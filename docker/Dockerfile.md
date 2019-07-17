@@ -152,4 +152,169 @@ ${variable:+word}  #variable有值则显示word
   docker build -t tinyhttpd:v0.1-3 ./
   ```
 
+  ![1563335633532](E:\git-workspace\note\images\docker\1563335633532.png)
+
+  ```shell
+  ADD nginx-1.17.1.tar.gz /usr/local/src/
+  docker build -t tinyhttpd:v0.1-4 ./
+  ```
+
+  ![1563335774729](E:\git-workspace\note\images\docker\1563335774729.png)
+
+* WORKDIR
+
+  ```shell
+  用于为Dockerfile中所有的RUN, CMD， ENTRYPOINT, COPY, ADD指定设定工作目录
   
+  #语法
+  WORKDIR <dirpath>
+  	在Dockerfile文件中，WORKDIR指令可出现多次，其路径也可以为相对路径，不过，其是相对此前一个WORKDIR指令指定的路径
+  	另外，WORKDIR也可调用ENV指定定义的变量
+  	
+  #example
+  WORKDIR /var/log
+  WORKDIER $STATEPATH
+  
+  WORKDIR /usr/local/src
+  #ADD nginx-1.17.1.tar.gz /usr/local/src/
+  ADD nginx-1.17.1.tar.gz ./
+  ```
+
+* VOLUME
+
+  ```shell
+  用于在image中创建一个挂载点目录（自动挂载卷），以挂载Docker host上的卷或其他容器上的卷
+  
+  #语法
+  VOLUME <mountpoint>
+  #or
+  VOLUME ["<mountpoint>"]
+  如果挂载点目录路径下此前文件存在，docker run命令会在卷挂载完成后将此前的所有文件复制到新挂载的卷中
+  
+  #example
+  VOLUME /data/mysql/
+  
+  ```
+
+  ![1563338401742](E:\git-workspace\note\images\docker\1563338401742.png)
+
+* EXPOSE
+
+  ```shell
+  用于为容器打开指定要监听的端口，实现与外部通信
+  #语法
+  EXPOSE <PORT>[/<protocol>][<PORT>[/<protocol>]...]
+  #<protocol>用于指定传输协议，可为tcp或udp二者之一，默认为TCP协议
+  
+  #EXPOSE指令可一次指定多个端口，例如：
+  EXPOSE 11211/udp 11211/tcp
+  #这里只是说要暴露的端口，但是是否真正要暴露，则需要-P来指定（表示暴露所有要暴露的端口）
+  ```
+
+  ![1563343831089](E:\git-workspace\note\images\docker\1563343831089.png)
+
+  ![1563343849209](E:\git-workspace\note\images\docker\1563343849209.png)
+
+  我们kill掉容器之后，指定 -P去暴露端口
+
+  ![1563343900888](E:\git-workspace\note\images\docker\1563343900888.png)
+
+  ![1563343916601](E:\git-workspace\note\images\docker\1563343916601.png)
+
+
+
+* ENV
+
+  用于为镜像定义所需的环境变量，并可被Dockerfile文件中位于其后的其他指令（如ENV，ADD， COPY等）所调用
+
+  ```shell
+  #调用格式
+  $variable_name 
+  #or
+  ${variable_name}
+  
+  #语法
+  ENV <KEY> <VALUE>
+  #OR
+  ENV <KEY>=<VALUE>...
+  第一种格式中，<key>之后的所有内容均会被视作<value>的组成部分，因此，一次只能设置一个变量
+  
+  第二种格式可用一次设置多个变量，么个变量为一个"<key>=<value>"的键值对，如果是<value>中包含空格，可以以反斜线(\)进行转义，也可通过对<value>加引号进行标识，另外，反斜线也可用于续行
+  
+  定义多个变量时，建议使用第二种方式，一遍在同一层中完成所有功能
+  ```
+
+  ```shell
+  ENV DOC_ROOT /data/web/html/
+  COPY index.html $DOC_ROOT
+  
+  #没有的话，会有一个默认值
+  COPY index.html ${DOC_ROOT:-/data/web/html/}
+  
+  ###########
+  ENV DOC_ROOT=/data/web/html/ \
+  	WEB_SERVER_PACKAGE="nginx-1.15.2"
+  ADD ${WEB_SERVER_PACKAGE}.tar.gz ./src/
+  ```
+
+  可以在容器启动之后，打印变量
+
+  ![1563345228233](E:\git-workspace\note\images\docker\1563345228233.png)
+
+  在`docker run `的时候是可以向变量传值的
+
+  ```shell
+  docker run -e, --env list 
+  docker run --name tinyweb1 --rm -P -e WEB_SERVER_PACKAGE="nginx-1.15.1" tinyhttpd:v0.1-7 printenv
+  ```
+
+  ![1563345633113](E:\git-workspace\note\images\docker\1563345633113.png)
+
+  但是我们看在build过程中产生的版本
+
+  ![1563345805535](E:\git-workspace\note\images\docker\1563345805535.png)
+
+  **因为这个是在build已经生成了，而在run的时候指定的环境变量只是改变了，环境变量本身**
+
+  ![1563345854693](E:\git-workspace\note\images\docker\1563345854693.png)
+
+
+
+RUN和CMD的区别
+
+![1563346056712](E:\git-workspace\note\images\docker\1563346056712.png)
+
+所有的命令是基于基础镜像所提供的环境运行的命令，如果在基础镜像中没有这样的命令，那么就不能执行这些命令，**如果多个命令是有关联关系，建议将多条命令放在一起，如下**
+
+* RUN
+
+  ```shell
+  ADD http://nginx.org/download/nginx-1.17.1.tar.gz /usr/local/src/
+  RUN cd /usr/local/src && \
+          tar -xf nginx-1.17.1.tar.gz && \
+          mv nginx-1.17.1  webserver
+          
+  #&&表示前一个成功，才会执行后一个
+  #\表示续行
+  ```
+
+  ![1563347022284](E:\git-workspace\note\images\docker\1563347022284.png)
+
+  ![1563347088365](E:\git-workspace\note\images\docker\1563347088365.png)
+
+我们的基础镜像一般是一个centos的系统，如下，是我们在一个基础镜像之上进行的构建镜像
+
+```shell
+FROM centos
+RUN yum -y install epel-release && yum install nginx
+COPY 配置文件
+
+#一般都是通过编译安装的，不使用yum安装
+```
+
+
+
+* CMD
+
+  
+
