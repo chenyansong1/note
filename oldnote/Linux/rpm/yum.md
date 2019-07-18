@@ -22,3 +22,11 @@ client
 
 ​		yum仓库的名称，位置，描述信息，是否使用
 
+
+
+# 配置epel
+
+```shell
+yum install epel-release -y
+```
+
