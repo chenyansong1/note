@@ -4,7 +4,7 @@
 
 * docker-compose：单机编排工具；docker-swarm：面向多主机;docker machine：预处理工具,上述就是docker的三剑客
 
-![1563433838923](E:\git-workspace\note\images\docker\1563433838923.png)
+![1563433838923](https://github.com/chenyansong1/note/blob/master/images/docker/1563433838923.png?raw=true)
 
 * mesos编排：IDC编排，容器编排的框架（marathon）
 
@@ -37,7 +37,7 @@ Borg是Google的内部系统，kubernetes是站在此的基础上，2015.7发布
 
 # 架构概述
 
-![1563438332254](E:\git-workspace\note\images\docker\1563438332254.png)
+![1563438332254](https://github.com/chenyansong1/note/blob/master/images/docker/1563438332254.png?raw=true)
 
 **在k8s上最小运行的单元为Pod**，可以理解为容器的外壳，给容器做了一层封装，一个Pod中可以有多个容器，多个容器之间共享网络名称空间，文件系统，对外一个Pod像一个虚拟机，通常一个Pod中只放一个容器（当然一个容器中是可以存在辅助容器的，如一个辅助的日志收集容器，sidecar）
 
@@ -62,7 +62,7 @@ pod
 
 service是一个dnat规则，下面是一个nginx-tomcat-MySQL的访问模型
 
-![1563443233537](E:\git-workspace\note\images\docker\1563443233537.png)
+![1563443233537](https://github.com/chenyansong1/note/blob/master/images/docker/1563443233537.png?raw=true)
 
 同一个pod内的多个容器间通信：lo
 
@@ -82,5 +82,140 @@ CNI：容器网络接口
 
 网络策略：定义名称空间之间的互相访问
 
-![1563445098519](E:\git-workspace\note\images\docker\1563445098519.png)
+![1563445098519](https://github.com/chenyansong1/note/blob/master/images/docker/1563445098519.png?raw=true)
+
+
+
+# kubeadm部署k8s
+
+https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md
+
+1. master, nodes : 安装kuberlet, kubeadm, docker
+2. master：kubeadm init
+3. nodes：kubeadm join
+
+
+
+1. 本地hosts做dns解析
+
+   ![image-20190718215825027](/Users/chenyansong/Documents/note/images/docker/image-20190718215825027.png)
+
+2. 各个节点时间同步
+
+3. 关闭iptables 和 firewalld，最后开机disable
+
+4. 下载k8s的包
+
+   ![image-20190718220316794](/Users/chenyansong/Documents/note/images/docker/image-20190718220316794.png)
+
+   ![image-20190718220444775](/Users/chenyansong/Documents/note/images/docker/image-20190718220444775.png)
+
+   ​	![image-20190718220610006](/Users/chenyansong/Documents/note/images/docker/image-20190718220610006.png)
+
+5. 安装k8s和Docker的yum配置（阿里云上有对应的仓库）
+
+   ![image-20190718221648871](/Users/chenyansong/Documents/note/images/docker/image-20190718221648871.png)
+
+   ![image-20190718221724120](/Users/chenyansong/Documents/note/images/docker/image-20190718221724120.png)
+
+   ![image-20190718221842590](/Users/chenyansong/Documents/note/images/docker/image-20190718221842590.png)
+
+   同时生成k8s的仓库
+
+   ```shell
+   #cd /etc/yum.repo.d/
+   #vim kubernetes.repo
+   [kubernetes]
+   name=Kubernates Repo
+   baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
+   gpgcheck=1
+   gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+   enabled=1
+   
+   #可能报错
+   wget https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+   wget https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
+   rpm --import rpm-package-key.gpg
+   rpm --import yum-key.gpg
+   ```
+
+   ```shell
+   #查看所有的repo
+   yum repolist
+   ```
+
+   ![image-20190718222706513](/Users/chenyansong/Documents/note/images/docker/image-20190718222706513.png)
+
+   **将上面的节点复制到其他的节点上**
+
+6. 安装docker-ce, kubelet, kebuadm, kubectl
+
+   ```shell
+   yum install -y docker-ce kubelet kubeadm kubectl
+   ```
+
+   ![image-20190718223020962](/Users/chenyansong/Documents/note/images/docker/image-20190718223020962.png)
+
+7. vim
+
+   ```shell
+   #vim /usr/lib/systemd/system/docker.service
+   ```
+
+   ![image-20190718223927397](/Users/chenyansong/Documents/note/images/docker/image-20190718223927397.png)
+
+   ![image-20190718224309103](/Users/chenyansong/Documents/note/images/docker/image-20190718224309103.png)
+
+   ```shell
+   #重新加载配置
+   systemctl daemon-reload
+   #设置开机自启
+   systemctl enable docker
+   systemctl start docker
+   ```
+
+8. 确保网络
+
+   ![image-20190718224504879](/Users/chenyansong/Documents/note/images/docker/image-20190718224504879.png)
+
+9. 查看kubelet生成的文件
+
+   ![image-20190718224557362](/Users/chenyansong/Documents/note/images/docker/image-20190718224557362.png)
+
+   我们查看一下配置文件
+
+   ![image-20190718224726683](/Users/chenyansong/Documents/note/images/docker/image-20190718224726683.png)
+
+10. 启动kubelet
+
+    ```shell
+    systemctl start kubelet
+    ```
+
+    ![image-20190718224940539](/Users/chenyansong/Documents/note/images/docker/image-20190718224940539.png)
+
+    此时，我们并不能直接启动kubelet服务，因为有好些文件没有配置，这里我们只需要设置一下开机自启就行了
+
+    ```shell
+    systemctl enable kubelet
+    ```
+
+11. kubeadm init
+
+    ![image-20190718230157182](/Users/chenyansong/Documents/note/images/docker/image-20190718230157182.png)
+
+    启动会有swap报错，我们需要忽略，解决的方法
+
+    ```shell
+    vim /etc/sysconfig/kubelet
+    KUBELET_EXTRA_ARGS="--fail-swap-on=false"
+    ```
+
+    我们再一次进行初始化
+
+    ![image-20190718230532224](/Users/chenyansong/Documents/note/images/docker/image-20190718230532224.png)
+
+    等待一两分钟之后，我们查看本地的docker镜像
+
+    ![image-20190718230924303](/Users/chenyansong/Documents/note/images/docker/image-20190718230924303.png)
 
