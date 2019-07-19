@@ -160,6 +160,8 @@ https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md
 
    ```shell
    #vim /usr/lib/systemd/system/docker.service
+   
+   #添加了代理，但是ik8s.io这个好像不能用
    ```
 
    ![image-20190718223927397](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718223927397.png?raw=true)
@@ -177,6 +179,18 @@ https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md
 8. 确保网络
 
    ![image-20190718224504879](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718224504879.png?raw=true)
+
+   如果是0的话，需要如下的修改
+
+   ```shell
+   [root@controller ~]# cat /etc/sysctl.conf
+   net.bridge.bridge-nf-call-iptables = 1
+   net.bridge.bridge-nf-call-ip6tables = 1
+   #使生效
+   sysctl –p
+   ```
+
+   
 
 9. 查看kubelet生成的文件
 
@@ -202,20 +216,62 @@ https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md
 
 11. kubeadm init
 
-    ![image-20190718230157182](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718230157182.png?raw=true)
-
-    启动会有swap报错，我们需要忽略，解决的方法
-
     ```shell
-    vim /etc/sysconfig/kubelet
-    KUBELET_EXTRA_ARGS="--fail-swap-on=false"
+#查看参数使用帮助
+    kubeadm init --help
+
+    #初始化
+    kubeadm init  --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12 --ignore-preflight-errors=Swap
     ```
-
-    我们再一次进行初始化
-
-    ![image-20190718230532224](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718230532224.png?raw=true)
-
+    
+![image-20190718230157182](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718230157182.png?raw=true)
+    
+启动会有swap报错，我们需要忽略，解决的方法
+    
+```shell
+    vim /etc/sysconfig/kubelet
+KUBELET_EXTRA_ARGS="--fail-swap-on=false"
+    ```
+    
+    还是会报错，无法下载镜像。因为无法访问谷歌镜像仓库。可以通过其他途径下载镜像到本地，再执行初始化
+    
+    ```shell
+    #我们可以指定镜像仓库，这样就解决了 无法访问谷歌镜像仓库 的问题
+    kubeadm init --image-repository registry.aliyuncs.com/google_containers  --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12 --ignore-preflight-errors=Swap
+    
+    #通过这个没有报错
+    kubeadm init --image-repository registry.aliyuncs.com/google_containers  --token-ttl=0 --ignore-preflight-errors=Swap  
+    ```
+    
     等待一两分钟之后，我们查看本地的docker镜像
-
+    
     ![image-20190718230924303](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718230924303.png?raw=true)
+    
+    ![1563506194811](E:\git-workspace\note\images\docker\1563506194811.png)
+
+
+
+```shell
+#创建目录及复制文件
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+#组件状态检查
+[root@es2 ~]# kubectl get cs
+NAME                 STATUS    MESSAGE             ERROR
+controller-manager   Healthy   ok                  
+scheduler            Healthy   ok                  
+etcd-0               Healthy   {"health":"true"}   
+[root@es2 ~]#  
+
+
+#get节点信息
+[root@es2 ~]#  kubectl get nodes
+NAME   STATUS     ROLES    AGE   VERSION
+es2    NotReady   master   17m   v1.15.0
+[root@es2 ~]# 
+```
+
+部署flannel
 
