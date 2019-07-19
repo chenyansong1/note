@@ -237,10 +237,10 @@ KUBELET_EXTRA_ARGS="--fail-swap-on=false"
     
     ```shell
     #我们可以指定镜像仓库，这样就解决了 无法访问谷歌镜像仓库 的问题
-    kubeadm init --image-repository registry.aliyuncs.com/google_containers  --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12 --ignore-preflight-errors=Swap
-    
     #通过这个没有报错
-    kubeadm init --image-repository registry.aliyuncs.com/google_containers  --token-ttl=0 --ignore-preflight-errors=Swap  
+    kubeadm init --image-repository registry.aliyuncs.com/google_containers  --token-ttl=0 --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12 --ignore-preflight-errors=Swap
+    
+    #pod-network-cidr=10.244.0.0/16 这个是flannel中的默认的网络配置
     ```
     
     等待一两分钟之后，我们查看本地的docker镜像
@@ -263,8 +263,7 @@ NAME                 STATUS    MESSAGE             ERROR
 controller-manager   Healthy   ok                  
 scheduler            Healthy   ok                  
 etcd-0               Healthy   {"health":"true"}   
-[root@es2 ~]#  
-
+[root@es2 ~]#
 
 #get节点信息
 [root@es2 ~]#  kubectl get nodes
@@ -274,4 +273,72 @@ es2    NotReady   master   17m   v1.15.0
 ```
 
 部署flannel
+
+```shell
+#For Kubernetes v1.7+ 
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+```
+
+![1563519701146](E:\git-workspace\note\images\docker\1563519701146.png)
+
+```shell
+#此时nodes是ready
+[root@es2 ~]# kubectl get nodes
+NAME   STATUS   ROLES    AGE   VERSION
+es2    Ready    master   50m   v1.15.0
+[root@es2 ~]# 
+
+#查看pod
+[root@es2 ~]# kubectl get pods -n kube-system
+NAME                          READY   STATUS              RESTARTS   AGE
+coredns-bccdc95cf-5sdg5       0/1     ContainerCreating   0          52m
+coredns-bccdc95cf-lbpdb       0/1     ContainerCreating   0          52m
+etcd-es2                      1/1     Running             0          51m
+kube-apiserver-es2            1/1     Running             0          51m
+kube-controller-manager-es2   1/1     Running             0          51m
+kube-flannel-ds-amd64-llknx   0/1     CrashLoopBackOff    5          4m35s
+kube-proxy-fp9zv              1/1     Running             0          52m
+kube-scheduler-es2            1/1     Running             0          51m
+[root@es2 ~]# 
+
+#查看名称空间
+[root@es2 ~]# kubectl get ns
+NAME              STATUS   AGE
+default           Active   53m
+kube-node-lease   Active   53m
+kube-public       Active   53m
+kube-system       Active   53m
+
+#查看名称空间下的所有的pod
+[root@es2 ~]# kubectl get pods -n kube-system
+NAME                          READY   STATUS    RESTARTS   AGE
+coredns-bccdc95cf-65hlf       1/1     Running   0          23m
+coredns-bccdc95cf-wlf2r       0/1     Running   0          23m
+etcd-es2                      1/1     Running   1          22m
+kube-apiserver-es2            1/1     Running   1          22m
+kube-controller-manager-es2   1/1     Running   0          23m
+kube-flannel-ds-amd64-xhzd5   1/1     Running   0          33s
+kube-proxy-zlppx              1/1     Running   0          23m
+kube-scheduler-es2            1/1     Running   1          22m
+```
+
+
+
+加入node节点
+
+```shell
+#安装docker ， kubelet
+
+#然后启动
+systemctl start docker
+
+#设置开机自启
+systemctl enable docker kubelet
+
+#加入集群
+kubeadm join 172.16.110.242:6443 --token bzfk1j.3nbzxav979qi3fcq \
+    --discovery-token-ca-cert-hash sha256:b22e4bffd32b17bb6966a22fa8bc70497d1cd3155be7dca70437a23b9a58876c --ignore-preflight-errors=Swap
+    
+    
+```
 
