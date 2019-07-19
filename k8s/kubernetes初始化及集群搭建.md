@@ -98,7 +98,7 @@ https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md
 
 1. 本地hosts做dns解析
 
-   ![image-20190718215825027](/Users/chenyansong/Documents/note/images/docker/image-20190718215825027.png)
+   ![image-20190718215825027](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718215825027.png?raw=true)
 
 2. 各个节点时间同步
 
@@ -106,19 +106,19 @@ https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md
 
 4. 下载k8s的包
 
-   ![image-20190718220316794](/Users/chenyansong/Documents/note/images/docker/image-20190718220316794.png)
+   ![image-20190718220316794](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718220316794.png?raw=true)
 
-   ![image-20190718220444775](/Users/chenyansong/Documents/note/images/docker/image-20190718220444775.png)
+   ![image-20190718220444775](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718220444775.png?raw=true)
 
-   ​	![image-20190718220610006](/Users/chenyansong/Documents/note/images/docker/image-20190718220610006.png)
+   ​	![image-20190718220610006](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718220610006.png?raw=true)
 
 5. 安装k8s和Docker的yum配置（阿里云上有对应的仓库）
 
-   ![image-20190718221648871](/Users/chenyansong/Documents/note/images/docker/image-20190718221648871.png)
+   ![image-20190718221648871](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718221648871.png?raw=true)
 
-   ![image-20190718221724120](/Users/chenyansong/Documents/note/images/docker/image-20190718221724120.png)
+   ![image-20190718221724120](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718221724120.png?raw=true)
 
-   ![image-20190718221842590](/Users/chenyansong/Documents/note/images/docker/image-20190718221842590.png)
+   ![image-20190718221842590](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718221842590.png?raw=true)
 
    同时生成k8s的仓库
 
@@ -144,7 +144,7 @@ https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md
    yum repolist
    ```
 
-   ![image-20190718222706513](/Users/chenyansong/Documents/note/images/docker/image-20190718222706513.png)
+   ![image-20190718222706513](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718222706513.png?raw=true)
 
    **将上面的节点复制到其他的节点上**
 
@@ -154,7 +154,7 @@ https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md
    yum install -y docker-ce kubelet kubeadm kubectl
    ```
 
-   ![image-20190718223020962](/Users/chenyansong/Documents/note/images/docker/image-20190718223020962.png)
+   ![image-20190718223020962](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718223020962.png?raw=true)
 
 7. vim
 
@@ -162,9 +162,9 @@ https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md
    #vim /usr/lib/systemd/system/docker.service
    ```
 
-   ![image-20190718223927397](/Users/chenyansong/Documents/note/images/docker/image-20190718223927397.png)
+   ![image-20190718223927397](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718223927397.png?raw=true)
 
-   ![image-20190718224309103](/Users/chenyansong/Documents/note/images/docker/image-20190718224309103.png)
+   ![image-20190718224309103](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718224309103.png?raw=true)
 
    ```shell
    #重新加载配置
@@ -176,15 +176,15 @@ https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md
 
 8. 确保网络
 
-   ![image-20190718224504879](/Users/chenyansong/Documents/note/images/docker/image-20190718224504879.png)
+   ![image-20190718224504879](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718224504879.png?raw=true)
 
 9. 查看kubelet生成的文件
 
-   ![image-20190718224557362](/Users/chenyansong/Documents/note/images/docker/image-20190718224557362.png)
+   ![image-20190718224557362](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718224557362.png?raw=true)
 
    我们查看一下配置文件
 
-   ![image-20190718224726683](/Users/chenyansong/Documents/note/images/docker/image-20190718224726683.png)
+   ![image-20190718224726683](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718224726683.png?raw=true)
 
 10. 启动kubelet
 
@@ -192,7 +192,7 @@ https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md
     systemctl start kubelet
     ```
 
-    ![image-20190718224940539](/Users/chenyansong/Documents/note/images/docker/image-20190718224940539.png)
+    ![image-20190718224940539](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718224940539.png?raw=true)
 
     此时，我们并不能直接启动kubelet服务，因为有好些文件没有配置，这里我们只需要设置一下开机自启就行了
 
@@ -202,7 +202,7 @@ https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md
 
 11. kubeadm init
 
-    ![image-20190718230157182](/Users/chenyansong/Documents/note/images/docker/image-20190718230157182.png)
+    ![image-20190718230157182](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718230157182.png?raw=true)
 
     启动会有swap报错，我们需要忽略，解决的方法
 
@@ -213,9 +213,9 @@ https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md
 
     我们再一次进行初始化
 
-    ![image-20190718230532224](/Users/chenyansong/Documents/note/images/docker/image-20190718230532224.png)
+    ![image-20190718230532224](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718230532224.png?raw=true)
 
     等待一两分钟之后，我们查看本地的docker镜像
 
-    ![image-20190718230924303](/Users/chenyansong/Documents/note/images/docker/image-20190718230924303.png)
+    ![image-20190718230924303](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718230924303.png?raw=true)
 
