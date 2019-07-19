@@ -217,13 +217,15 @@ https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md
 11. kubeadm init
 
     ```shell
+    
+    ```
 #查看参数使用帮助
     kubeadm init --help
-
+    
     #初始化
     kubeadm init  --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12 --ignore-preflight-errors=Swap
     ```
-    
+
 ![image-20190718230157182](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190718230157182.png?raw=true)
     
 启动会有swap报错，我们需要忽略，解决的方法
@@ -231,8 +233,8 @@ https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md
 ```shell
     vim /etc/sysconfig/kubelet
 KUBELET_EXTRA_ARGS="--fail-swap-on=false"
-    ```
-    
+```
+
     还是会报错，无法下载镜像。因为无法访问谷歌镜像仓库。可以通过其他途径下载镜像到本地，再执行初始化
     
     ```shell
@@ -400,3 +402,4 @@ openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outfor
 现在，我们登录到工作节点服务器，准备加入到集群。
 
 我们可以知道集群启动的时候，是启动的static pod
+
