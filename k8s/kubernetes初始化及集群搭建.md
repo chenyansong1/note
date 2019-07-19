@@ -279,7 +279,7 @@ es2    NotReady   master   17m   v1.15.0
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 ```
 
-![1563519701146](E:\git-workspace\note\images\docker\1563519701146.png)
+![1563519701146](https://github.com/chenyansong1/note/blob/master/images/docker/1563519701146.png?raw=true)
 
 ```shell
 #此时nodes是ready
