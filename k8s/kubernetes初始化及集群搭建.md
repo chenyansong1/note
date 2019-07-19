@@ -328,6 +328,33 @@ kube-scheduler-es2            1/1     Running   1          22m
 
 ```shell
 #安装docker ， kubelet
+#拷贝上面修改的配置
+scp /etc/sysconfig/kubelet spark02:/etc/sysconfig/kubelet 
+scp /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf spark02:/usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+###################################
+
+[root@spark02 ~]# cat /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
+# Note: This dropin only works with kubeadm and kubelet v1.11+
+[Service]
+
+Environment="KUBELET_SYSTEM_PODS_ARGS=--pod-manifest-path=/etc/kubernetes/manifests --allow-privileged=true --fail-swap-on=false"
+Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf"
+Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml"
+Environment="KUBELET_CGROUP_ARGS=--cgroup-driver=cgroupfs"
+
+
+# This is a file that "kubeadm init" and "kubeadm join" generates at runtime, populating the KUBELET_KUBEADM_ARGS variable dynamically
+EnvironmentFile=-/var/lib/kubelet/kubeadm-flags.env
+# This is a file that the user can use for overrides of the kubelet args as a last resort. Preferably, the user should use
+# the .NodeRegistration.KubeletExtraArgs object in the configuration files instead. KUBELET_EXTRA_ARGS should be sourced from this file.
+EnvironmentFile=-/etc/sysconfig/kubelet
+ExecStart=
+ExecStart=/usr/bin/kubelet $KUBELET_KUBECONFIG_ARGS $KUBELET_CONFIG_ARGS $KUBELET_KUBEADM_ARGS $KUBELET_EXTRA_ARGS
+[root@spark02 ~]# 
+###################################
+
+
 
 #然后启动
 systemctl start docker
@@ -342,3 +369,34 @@ kubeadm join 172.16.110.242:6443 --token bzfk1j.3nbzxav979qi3fcq \
     
 ```
 
+如果我们忘记了Master节点的加入token，可以使用如下命令来查看：
+
+```
+kubeadm token list
+
+# 输出：
+# TOKEN                     TTL       EXPIRES                USAGES                   DESCRIPTION   EXTRA GROUPS
+# abcdef.0123456789abcdef   22h       2018-11-10T14:24:51Z   authentication,signing   <none>        system:bootstrappers:kubeadm:default-node-token
+```
+
+默认情况下，token的有效期是24小时，如果我们的token已经过期的话，可以使用以下命令重新生成：
+
+```
+kubeadm token create
+
+# 输出：
+# 9w6mbu.3k2z7pprl3eaozk9
+```
+
+如果我们也没有`--discovery-token-ca-cert-hash`的值，可以使用以下命令生成：
+
+```
+openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
+
+# 输出：
+# 9fcb02a0f4ab216866f87986106437b7305474850f0de81b9ac9c36a468f7c67
+```
+
+现在，我们登录到工作节点服务器，准备加入到集群。
+
+我们可以知道集群启动的时候，是启动的static pod
