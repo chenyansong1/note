@@ -185,3 +185,57 @@ yum install -y bind-utils
 ```
 
 ![image-20190720143718569](/Users/chenyansong/Documents/note/images/docker/image-20190720143718569.png)
+
+
+
+创建一个新的pod，用这个pod访问上面的nginx-server
+
+```shell
+kubectl run client --image=busybox --replicas=1 -it --restart=Never
+```
+
+![image-20190720144914521](/Users/chenyansong/Documents/note/images/docker/image-20190720144914521.png)
+
+然后我们通过这个pod去访问NGINX服务
+
+![image-20190720145819043](/Users/chenyansong/Documents/note/images/docker/image-20190720145819043.png)
+
+如果我们删除NGINX服务所代理的pod，然后controller会重启一个pod，然后我们仍然通过上面pod client去访问，是仍然可以访问到的
+
+我们可以看service的详细信息，可以看到service关联到的后端pod
+
+![image-20190720152709627](/Users/chenyansong/Documents/note/images/docker/image-20190720152709627.png)
+
+这里有一个标签选择器(Selector)`run=nginx`，通过这个去选择对应的pod
+
+我们查看pods对应的标签
+
+![image-20190720153212059](/Users/chenyansong/Documents/note/images/docker/image-20190720153212059.png)
+
+
+
+![image-20190720155232401](/Users/chenyansong/Documents/note/images/docker/image-20190720155232401.png)
+
+我们改变pod的数量(可以指定比原来的数量少，或者比原来的数量多)
+
+```shell
+kubectl scale --help
+```
+
+
+
+![image-20190720155749475](/Users/chenyansong/Documents/note/images/docker/image-20190720155749475.png)
+
+
+
+更新image
+
+```shell
+kubectl set image --help
+```
+
+![image-20190720160523540](/Users/chenyansong/Documents/note/images/docker/image-20190720160523540.png)
+
+回滚：返回到上一种状态
+
+![image-20190720160726417](/Users/chenyansong/Documents/note/images/docker/image-20190720160726417.png)
