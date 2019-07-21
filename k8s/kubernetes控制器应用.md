@@ -1,5 +1,7 @@
 [TOC]
 
+# pod-yaml定义
+
 
 
 Pod资源
@@ -320,3 +322,94 @@ kubectl explain pod.spec.containers.lifecycle
 
 
 
+# Pod控制器
+
+* ReplicaSet： (ReplicationController的新一代，推荐使用)，不是我们直接使用的控制器
+
+  满足用户数量的副本
+
+  标签选择器：选择由自己管理和控制的副本
+
+  Pod资源模板来完成Pod的新建
+
+  扩缩容操作
+
+* Deployment(无状态)：建构在ReplicaSet之上，通过ReplicaSet来控制Pod
+
+  ReplicaSet的功能
+
+  滚动更新
+
+  回滚机制
+
+  申明式配置：随时改变资源的运行状态
+
+* DaemonSet(无状态)：集群中的每个节点只会运行一个特定的Pod副本
+* Job：只是为了完成某项任务，完成之后pod推出
+* CronJob:周期性的Job
+* StatefulSet：有状态controller
+
+
+
+## RelicaSet
+
+简称rs
+
+```shell
+#查看文档
+kubectl explain rs
+```
+
+![image-20190721210233497](/Users/chenyansong/Documents/note/images/docker/image-20190721210233497.png)
+
+我们来定义一个rs,在上面我们使用yaml文件去定义了一个Pod，但是这种Pod是不受controller管理的，所以如果我们要用controller去管理Pod，可以在controller中来定义Pod，定义的格式和Pod定义很相似
+
+![image-20190721211821480](/Users/chenyansong/Documents/note/images/docker/image-20190721211821480.png)
+
+然后我们根据定义去创建rs
+
+```shell
+kubectl create -f rs-demo.yaml
+
+#查看控制器创建的Pod
+#在pod中定义的名称是没有用的，他是以控制器的名称加一个字符串组成
+```
+
+![image-20190721212049630](/Users/chenyansong/Documents/note/images/docker/image-20190721212049630.png)
+
+我们删除一个Pod副本，controller会自动重建
+
+我们的rs控制器定义的副本数量为2，但是如果我们一个不相关的pod的标签，将rs中通过标签选择器选中的的Pod变为3，我们看看结果会如何
+
+
+
+![image-20190721212552053](/Users/chenyansong/Documents/note/images/docker/image-20190721212552053.png)
+
+![image-20190721212745013](/Users/chenyansong/Documents/note/images/docker/image-20190721212745013.png)
+
+我们发现rs会删除一个Pod，所以我们在定义标签的时候，需要复杂定义，避免冲突
+
+
+
+假如我们想要修改Pod的副本
+
+```shell
+kubectl edit rs myapp
+#我们将副本改成5
+```
+
+![image-20190721213818894](/Users/chenyansong/Documents/note/images/docker/image-20190721213818894.png)
+
+我们再查看副本数量
+
+![image-20190721213859278](/Users/chenyansong/Documents/note/images/docker/image-20190721213859278.png)
+
+然后我们修改Pod的image的版本，从v1改为v2
+
+![image-20190721214231139](/Users/chenyansong/Documents/note/images/docker/image-20190721214231139.png)
+
+我们看到现有的Pod的版本还是v1，因为只有重建的Pod，才会是v2版本的
+
+![image-20190721214408855](/Users/chenyansong/Documents/note/images/docker/image-20190721214408855.png)
+
+08 剩余12：
