@@ -122,7 +122,93 @@ kubectl get pods -l "release notin (canary,beta,alpha)"
 
 ```
 
-1：02：00
+
+
+节点也是可以打标签的
+
+```shell
+#查看节点的标签
+kubectl get nodes --show-labels
+
+#给node打标签
+kubectl label nodes node01.test.com disktype=ssd
+```
+
+![image-20190721081945136](/Users/chenyansong/Documents/note/images/docker/image-20190721081945136.png)
+
+```shell
+nodeSelector <map[String] string>	节点标签选择器
+
+nodeName <String> 运行在指定节点上
+```
+
+![image-20190721082319642](/Users/chenyansong/Documents/note/images/docker/image-20190721082319642.png)
+
+因为node01上有这个标签，所以我们重新创建pod的时候，这个pod是运行在node01上的
+
+![image-20190721082632829](/Users/chenyansong/Documents/note/images/docker/image-20190721082632829.png)
 
 
 
+```shell
+annotations:注解
+#与label不同的地方在于，他不能英语挑选资源对象，仅用于为对象提供“元数据”
+
+#查找pod的annotations
+kubectl describe pods pod-demo
+```
+
+![image-20190721083118944](/Users/chenyansong/Documents/note/images/docker/image-20190721083118944.png)
+
+为资源添加annotation
+
+![image-20190721083339583](/Users/chenyansong/Documents/note/images/docker/image-20190721083339583.png)
+
+之后再次通过yaml文件创建Pod，然后describe查看
+
+![image-20190721083441202](/Users/chenyansong/Documents/note/images/docker/image-20190721083441202.png)
+
+
+
+Pod的生命周期
+
+状态：
+
+​	Pending 调度尚未完成
+
+​	Running 运行状态
+
+​	Failed	失败
+
+​	Succeeded
+
+​	Unkown 为止
+
+![image-20190721085119829](/Users/chenyansong/Documents/note/images/docker/image-20190721085119829.png)
+
+容器的重启策略
+
+```shell
+restartPolicy
+# Always  ： default
+#OnFailure： when failure ,will restart
+#Never
+```
+
+
+
+探针类型三种：
+
+```shell
+ExecAction
+TCPSockcetAction
+HTTPGetAction
+
+#查看container的探针
+#kubectl explain pods.spec.containers
+
+```
+
+![image-20190721091732018](/Users/chenyansong/Documents/note/images/docker/image-20190721091732018.png)
+
+2：00
