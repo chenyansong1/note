@@ -211,4 +211,60 @@ HTTPGetAction
 
 ![image-20190721091732018](/Users/chenyansong/Documents/note/images/docker/image-20190721091732018.png)
 
-2：00
+livenessProbe：存活性探测
+
+```shell
+kubectl explain pods.spec.containers.livenessProbe
+#他下面可以定义这三种探针
+ExecAction
+TCPSockcetAction
+HTTPGetAction
+
+#探测几次
+failureThreshold <integer>
+#默认是探测3次，3次之后，就返回失败
+
+#在liveness 探测的延迟探测时间，需要等待的时间(等待初始化完成)
+initialDelaySeconds
+
+#每次间隔的时长
+periodSeconds <integer>
+#默认是10秒探测一次
+
+#每次探测如果没有响应，需要等待的时长，默认是1s
+timeoutSeconds
+
+```
+
+下面就exec探针进行说明
+
+```shell
+kubectl explain pods.spec.containers.livenessProbe.exec
+
+#返回0表示healthy, 返回非0白鸥是unhealthy
+```
+
+![image-20190721102840091](/Users/chenyansong/Documents/note/images/docker/image-20190721102840091.png)
+
+tcpSocket
+
+![image-20190721103415928](/Users/chenyansong/Documents/note/images/docker/image-20190721103415928.png)
+
+
+
+httpGet
+
+![image-20190721103509385](/Users/chenyansong/Documents/note/images/docker/image-20190721103509385.png)
+
+![image-20190721103825924](/Users/chenyansong/Documents/note/images/docker/image-20190721103825924.png)
+
+我们连接进入上面的Pod的容器
+
+```shell
+kubectl -it liveness-httpget-pod -- /bin/sh
+#手动删除文件
+```
+
+![image-20190721104120338](/Users/chenyansong/Documents/note/images/docker/image-20190721104120338.png)
+
+24:30
