@@ -470,5 +470,10 @@ kubectl apply -f deploy-demo.yaml
 
 ![1563777412745](E:\git-workspace\note\images\docker\1563777412745.png)
 
+默认是滚动更新，都是25%的更新
 
+![1563778845940](E:\git-workspace\note\images\docker\1563778845940.png)
 
+打补丁09 - 20：00
+
+![1563790658017](E:\git-workspace\note\images\docker\1563790658017.png)
