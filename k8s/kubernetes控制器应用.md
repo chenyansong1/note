@@ -27,9 +27,9 @@ spec.containers <[]object>
 		
 ```
 
-![image-20190720215028438](/Users/chenyansong/Documents/note/images/docker/image-20190720215028438.png)
+![image-20190720215028438](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190720215028438.png?raw=true)
 
-![image-20190720215250060](/Users/chenyansong/Documents/note/images/docker/image-20190720215250060.png)
+![image-20190720215250060](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190720215250060.png?raw=true)
 
 一个资源可以拥有多个标签，而一个标签可以被添加到多个对象上
 
@@ -45,7 +45,7 @@ key=value
 kubectl get pods --show-labels
 ```
 
-![image-20190720222258006](/Users/chenyansong/Documents/note/images/docker/image-20190720222258006.png)
+![image-20190720222258006](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190720222258006.png?raw=true)
 
 ```shell
 #过滤标签:查看有app标签
@@ -60,19 +60,19 @@ kubectl get pods -L app,run
 kubectl get pods -L app,run
 ```
 
-![image-20190720222932994](/Users/chenyansong/Documents/note/images/docker/image-20190720222932994.png)
+![image-20190720222932994](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190720222932994.png?raw=true)
 
 
 
 修改资源的标签
 
-![image-20190720223051545](/Users/chenyansong/Documents/note/images/docker/image-20190720223051545.png)
+![image-20190720223051545](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190720223051545.png?raw=true)
 
 ```shell
 kubectl label pods pod-demo release=canary
 ```
 
-![image-20190720223146251](/Users/chenyansong/Documents/note/images/docker/image-20190720223146251.png)
+![image-20190720223146251](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190720223146251.png?raw=true)
 
 修改已经存在的标签
 
@@ -80,7 +80,7 @@ kubectl label pods pod-demo release=canary
 kubectl label pods pod-demo release=stable --overwrite
 ```
 
-![image-20190720223359085](/Users/chenyansong/Documents/note/images/docker/image-20190720223359085.png)
+![image-20190720223359085](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190720223359085.png?raw=true)
 
 
 
@@ -136,7 +136,7 @@ kubectl get nodes --show-labels
 kubectl label nodes node01.test.com disktype=ssd
 ```
 
-![image-20190721081945136](/Users/chenyansong/Documents/note/images/docker/image-20190721081945136.png)
+![image-20190721081945136](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721081945136.png?raw=true)
 
 ```shell
 nodeSelector <map[String] string>	节点标签选择器
@@ -144,11 +144,11 @@ nodeSelector <map[String] string>	节点标签选择器
 nodeName <String> 运行在指定节点上
 ```
 
-![image-20190721082319642](/Users/chenyansong/Documents/note/images/docker/image-20190721082319642.png)
+![image-20190721082319642](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721082319642.png?raw=true)
 
 因为node01上有这个标签，所以我们重新创建pod的时候，这个pod是运行在node01上的
 
-![image-20190721082632829](/Users/chenyansong/Documents/note/images/docker/image-20190721082632829.png)
+![image-20190721082632829](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721082632829.png?raw=true)
 
 
 
@@ -160,15 +160,15 @@ annotations:注解
 kubectl describe pods pod-demo
 ```
 
-![image-20190721083118944](/Users/chenyansong/Documents/note/images/docker/image-20190721083118944.png)
+![image-20190721083118944](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721083118944.png?raw=true)
 
 为资源添加annotation
 
-![image-20190721083339583](/Users/chenyansong/Documents/note/images/docker/image-20190721083339583.png)
+![image-20190721083339583](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721083339583.png?raw=true)
 
 之后再次通过yaml文件创建Pod，然后describe查看
 
-![image-20190721083441202](/Users/chenyansong/Documents/note/images/docker/image-20190721083441202.png)
+![image-20190721083441202](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721083441202.png?raw=true)
 
 
 
@@ -186,7 +186,7 @@ Pod的生命周期
 
 ​	Unkown 为止
 
-![image-20190721085119829](/Users/chenyansong/Documents/note/images/docker/image-20190721085119829.png)
+![image-20190721085119829](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721085119829.png?raw=true)
 
 容器的重启策略
 
@@ -211,7 +211,7 @@ HTTPGetAction
 
 ```
 
-![image-20190721091732018](/Users/chenyansong/Documents/note/images/docker/image-20190721091732018.png)
+![image-20190721091732018](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721091732018.png?raw=true)
 
 livenessProbe：存活性探测
 
@@ -246,19 +246,19 @@ kubectl explain pods.spec.containers.livenessProbe.exec
 #返回0表示healthy, 返回非0白鸥是unhealthy
 ```
 
-![image-20190721102840091](/Users/chenyansong/Documents/note/images/docker/image-20190721102840091.png)
+![image-20190721102840091](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721102840091.png?raw=true)
 
 tcpSocket
 
-![image-20190721103415928](/Users/chenyansong/Documents/note/images/docker/image-20190721103415928.png)
+![image-20190721103415928](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721103415928.png?raw=true)
 
 
 
 httpGet
 
-![image-20190721103509385](/Users/chenyansong/Documents/note/images/docker/image-20190721103509385.png)
+![image-20190721103509385](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721103509385.png?raw=true)
 
-![image-20190721103825924](/Users/chenyansong/Documents/note/images/docker/image-20190721103825924.png)
+![image-20190721103825924](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721103825924.png?raw=true)
 
 我们连接进入上面的Pod的容器
 
@@ -267,33 +267,33 @@ kubectl -it liveness-httpget-pod -- /bin/sh
 #手动删除文件
 ```
 
-![image-20190721104120338](/Users/chenyansong/Documents/note/images/docker/image-20190721104120338.png)
+![image-20190721104120338](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721104120338.png?raw=true)
 
 
 
 readinessProbe
 
-![image-20190721122647088](/Users/chenyansong/Documents/note/images/docker/image-20190721122647088.png)
+![image-20190721122647088](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721122647088.png?raw=true)
 
 我们删除readinessProbe探测的文件
 
-![image-20190721122832459](/Users/chenyansong/Documents/note/images/docker/image-20190721122832459.png)
+![image-20190721122832459](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721122832459.png?raw=true)
 
 我们再次查看创建pod的状态
 
-![image-20190721122921648](/Users/chenyansong/Documents/note/images/docker/image-20190721122921648.png)
+![image-20190721122921648](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721122921648.png?raw=true)
 
 我们进入pod内部，看NGINX服务是存在的
 
-![image-20190721123127168](/Users/chenyansong/Documents/note/images/docker/image-20190721123127168.png)
+![image-20190721123127168](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721123127168.png?raw=true)
 
 我们重新创建删除的文件
 
-![image-20190721123157622](/Users/chenyansong/Documents/note/images/docker/image-20190721123157622.png)
+![image-20190721123157622](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721123157622.png?raw=true)
 
 我们可以看到pod又就绪了
 
-![image-20190721123216746](/Users/chenyansong/Documents/note/images/docker/image-20190721123216746.png)
+![image-20190721123216746](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721123216746.png?raw=true)
 
 
 
@@ -304,21 +304,21 @@ kubectl explain pod.spec.containers.lifecycle
 
 ```
 
-![image-20190721123530982](/Users/chenyansong/Documents/note/images/docker/image-20190721123530982.png)
+![image-20190721123530982](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721123530982.png?raw=true)
 
 对于启动后，或者是终止前，我们可以看到也是有三种探针
 
-![image-20190721123621336](/Users/chenyansong/Documents/note/images/docker/image-20190721123621336.png)
+![image-20190721123621336](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721123621336.png?raw=true)
 
 我们创建一个postStart的Pod
 
-![image-20190721125857115](/Users/chenyansong/Documents/note/images/docker/image-20190721125857115.png)
+![image-20190721125857115](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721125857115.png?raw=true)
 
 
 
 进入容器内部，查看是否创建了目录
 
-![image-20190721125529545](/Users/chenyansong/Documents/note/images/docker/image-20190721125529545.png)
+![image-20190721125529545](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721125529545.png?raw=true)
 
 
 
@@ -360,11 +360,11 @@ kubectl explain pod.spec.containers.lifecycle
 kubectl explain rs
 ```
 
-![image-20190721210233497](/Users/chenyansong/Documents/note/images/docker/image-20190721210233497.png)
+![image-20190721210233497](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721210233497.png?raw=true)
 
 我们来定义一个rs,在上面我们使用yaml文件去定义了一个Pod，但是这种Pod是不受controller管理的，所以如果我们要用controller去管理Pod，可以在controller中来定义Pod，定义的格式和Pod定义很相似
 
-![image-20190721211821480](/Users/chenyansong/Documents/note/images/docker/image-20190721211821480.png)
+![image-20190721211821480](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721211821480.png?raw=true)
 
 然后我们根据定义去创建rs
 
@@ -375,7 +375,7 @@ kubectl create -f rs-demo.yaml
 #在pod中定义的名称是没有用的，他是以控制器的名称加一个字符串组成
 ```
 
-![image-20190721212049630](/Users/chenyansong/Documents/note/images/docker/image-20190721212049630.png)
+![image-20190721212049630](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721212049630.png?raw=true)
 
 我们删除一个Pod副本，controller会自动重建
 
@@ -383,9 +383,9 @@ kubectl create -f rs-demo.yaml
 
 
 
-![image-20190721212552053](/Users/chenyansong/Documents/note/images/docker/image-20190721212552053.png)
+![image-20190721212552053](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721212552053.png?raw=true)
 
-![image-20190721212745013](/Users/chenyansong/Documents/note/images/docker/image-20190721212745013.png)
+![image-20190721212745013](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721212745013.png?raw=true)
 
 我们发现rs会删除一个Pod，所以我们在定义标签的时候，需要复杂定义，避免冲突
 
@@ -398,18 +398,18 @@ kubectl edit rs myapp
 #我们将副本改成5
 ```
 
-![image-20190721213818894](/Users/chenyansong/Documents/note/images/docker/image-20190721213818894.png)
+![image-20190721213818894](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721213818894.png?raw=true)
 
 我们再查看副本数量
 
-![image-20190721213859278](/Users/chenyansong/Documents/note/images/docker/image-20190721213859278.png)
+![image-20190721213859278](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721213859278.png?raw=true)
 
 然后我们修改Pod的image的版本，从v1改为v2
 
-![image-20190721214231139](/Users/chenyansong/Documents/note/images/docker/image-20190721214231139.png)
+![image-20190721214231139](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721214231139.png?raw=true)
 
 我们看到现有的Pod的版本还是v1，因为只有重建的Pod，才会是v2版本的
 
-![image-20190721214408855](/Users/chenyansong/Documents/note/images/docker/image-20190721214408855.png)
+![image-20190721214408855](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721214408855.png?raw=true)
 
 08 剩余12：
