@@ -330,7 +330,7 @@ kubectl explain pod.spec.containers.lifecycle
 
   标签选择器：选择由自己管理和控制的副本
 
-  Pod资源模板来完成Pod的新建
+  根据Pod资源模板来完成Pod的新建
 
   扩缩容操作
 
@@ -389,8 +389,6 @@ kubectl create -f rs-demo.yaml
 
 我们发现rs会删除一个Pod，所以我们在定义标签的时候，需要复杂定义，避免冲突
 
-
-
 假如我们想要修改Pod的副本
 
 ```shell
@@ -412,4 +410,65 @@ kubectl edit rs myapp
 
 ![image-20190721214408855](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721214408855.png?raw=true)
 
-08 剩余12：
+我们使用Deployment帮我们自动实现上述过程
+
+![1563764257495](E:\git-workspace\note\images\docker\1563764257495.png)
+
+![1563774855399](E:\git-workspace\note\images\docker\1563774855399.png)
+
+![1563775166188](E:\git-workspace\note\images\docker\1563775166188.png)
+
+Deployment还可以控制更新节奏和更新逻辑（根据流量请求），允许多出来m个：
+
+1. 最少5个，可以允许多出来k个
+2. 最多5个，可以少出来k个
+3. 最大允许多m1个，最少允许少m2个
+
+```shell
+#
+kubectl explain deployment
+
+kubectl explain deployment.spec
+#更新策略
+kubectl explain deployment.spec.strategy
+#滚动更新
+kubectl explain deployment.spec.strategy.rollingUpdate
+   maxSurge       <string>     #最多有多少个pod；可以是数量or百分比
+   maxUnavailable       <string> #最多多少个不可用;可以是数量or百分比
+
+#保存多少个历史版本
+kubectl explain deployment.spec.revisionHistoryLimit
+
+
+#创建定义Pod的模板
+kubectl explain deployment.spec.template
+
+```
+
+下面是我们定义的一个Deployment
+
+![1563776972242](E:\git-workspace\note\images\docker\1563776972242.png)
+
+```shell
+#apply表示一种申明式更新，申明式创建的命令
+kubectl apply -f deploy-demo.yaml
+```
+
+![1563777126093](E:\git-workspace\note\images\docker\1563777126093.png)
+
+因为deployment是构建在replicaSet之上的，所以我们也是可以看到rs的存在的
+
+![1563777183623](E:\git-workspace\note\images\docker\1563777183623.png)
+
+> 69b47..是template的hash值
+
+我们查看生成的Pod
+
+![1563777254217](E:\git-workspace\note\images\docker\1563777254217.png)
+
+现在我们想要改变副本的数量，我们直接编辑配置文件即可，在配置文件中将副本数改为3，然后`kubectl apply -f deploy-demo.yaml`
+
+![1563777412745](E:\git-workspace\note\images\docker\1563777412745.png)
+
+
+
