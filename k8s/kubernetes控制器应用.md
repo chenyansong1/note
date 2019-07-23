@@ -527,3 +527,7 @@ kubectl explain ds
 kubectl apply -f ds-demo.yaml
 ```
 
+在一个yaml中定义多个资源`使用---隔开每个资源`
+
+![1563844695501](E:\git-workspace\note\images\docker\1563844695501.png)
+
