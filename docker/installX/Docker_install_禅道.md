@@ -20,7 +20,17 @@
 
 注意：需要关闭下selinux
 
-### 1、构建镜像
+## 1.创建数据目录
+
+```shell
+useradd docker
+cd /home/docker
+mkdir -p /home/docker/data/{mysql,chandao}
+```
+
+
+
+## 2.构建镜像
 
 下载安装包，解压缩。 进入docker_zentao目录，执行命令 docker build -t [镜像名称] [Dockerfile所在目录]
 
@@ -28,7 +38,7 @@
 docker build -t zentao ./
 ```
 
-### 2、运行镜像
+## 3.运行镜像
 
 ```
 docker run --name [容器名称] -p [主机端口]:80 -v [主机代码目录]:/app/zentaopms -v [主机数据目录]:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=[数据库密码] -d [镜像名]:latest
@@ -66,6 +76,7 @@ docker run --privileged=true --name zentao -p 8088:80 -v /home/docker/data/:/app
 
 ![img](https://github.com/chenyansong1/note/blob/master/images/docker/file.png?raw=true)
 
-### 3、安装禅道
+## 4.安装禅道
 
 ![](https://github.com/chenyansong1/note/blob/master/images/docker/file-1563860347709.png?raw=true)
+
