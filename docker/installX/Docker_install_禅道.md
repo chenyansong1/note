@@ -4,7 +4,7 @@
 
 
 
-#### 一、下载地址
+# 一、下载地址
 
 禅道开源版：     http://dl.cnezsoft.com/zentao/docker/docker_zentao.zip
 
@@ -16,11 +16,11 @@
 
 **/var/lib/mysql**:该目录为数据库的数据目录。
 
-#### 二、安装使用
+# 二、安装使用
 
 注意：需要关闭下selinux
 
-**1、构建镜像**
+### 1、构建镜像
 
 下载安装包，解压缩。 进入docker_zentao目录，执行命令 docker build -t [镜像名称] [Dockerfile所在目录]
 
@@ -28,7 +28,7 @@
 docker build -t zentao ./
 ```
 
-**2、运行镜像**
+### 2、运行镜像
 
 ```
 docker run --name [容器名称] -p [主机端口]:80 -v [主机代码目录]:/app/zentaopms -v [主机数据目录]:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=[数据库密码] -d [镜像名]:latest
@@ -64,10 +64,8 @@ docker run --privileged=true --name zentao -p 8088:80 -v /home/docker/data/:/app
 
 运行成功
 
-![img](E:\git-workspace\note\images\docker\file.png)
+![img](https://github.com/chenyansong1/note/blob/master/images/docker/file.png?raw=true)
 
-**3、安装禅道**
+### 3、安装禅道
 
-
-
-![通过浏览器访问http://ip，系统会自动转入安装程序。](E:\git-workspace\note\images\docker\file-1563860347709.png)
+![](https://github.com/chenyansong1/note/blob/master/images/docker/file-1563860347709.png?raw=true)
