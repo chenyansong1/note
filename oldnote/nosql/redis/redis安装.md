@@ -7,6 +7,10 @@ tags: [redis]
 
 
 
+
+
+另一种方式的安装：https://blog.csdn.net/hello_junz/article/details/78135718
+
 # 1.下载
 
 ```

@@ -410,6 +410,8 @@ kubectl edit rs myapp
 
 ![image-20190721214408855](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190721214408855.png?raw=true)
 
+## Deployment
+
 我们使用Deployment帮我们自动实现上述过程
 
 ![1563764257495](E:\git-workspace\note\images\docker\1563764257495.png)
@@ -474,6 +476,54 @@ kubectl apply -f deploy-demo.yaml
 
 ![1563778845940](E:\git-workspace\note\images\docker\1563778845940.png)
 
-打补丁09 - 20：00
+打补丁
 
-![1563790658017](E:\git-workspace\note\images\docker\1563790658017.png)
+![1563792404953](E:\git-workspace\note\images\docker\1563792404953.png)
+
+查看Pod
+
+![1563792438667](E:\git-workspace\note\images\docker\1563792438667.png)
+
+```shell
+#最多不可用0，最大可用数量为6
+#kubectl rollout pause --help
+
+kubectl rollout pause --help
+#打补丁
+kubectl patch deployment myapp-deploy -p '{"spec":{"strategy":{"rollingUpdate":{"maxSurge":1, "maxUnavailable":0}}}}'
+```
+
+![1563792837818](E:\git-workspace\note\images\docker\1563792837818.png)
+
+回滚
+
+```shell
+kubectl rollout undo --help
+
+#查看版本
+kubectl rollout history deployment myapp-depoy
+```
+
+![1563796819431](E:\git-workspace\note\images\docker\1563796819431.png)
+
+```shell
+#回滚到第一版
+kubectl rollout undo deployment myapp-deploy -to-revision=1
+```
+
+![1563796895662](E:\git-workspace\note\images\docker\1563796895662.png)
+
+
+
+## DaemonSet
+
+```shell
+kubectl explain ds
+```
+
+![1563797982115](E:\git-workspace\note\images\docker\1563797982115.png)
+
+```shell
+kubectl apply -f ds-demo.yaml
+```
+
