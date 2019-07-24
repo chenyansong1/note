@@ -32,7 +32,7 @@ hosts文件的格式：
 
 中国.上海.徐汇.西藏路.35.小明，这样我们就定位到了一个人，但是老外的写法是喜欢，从后向前写，小明.35.西藏路.徐汇.上海.中国，类似的，我们的域名也是这样，比如：www.baidu.com. (注意后面有一个点)，首先是最后面的一个点（表示根服务器），然后就是com(顶级域)，再然后是baidu，最后才是www。如下图：
 
-![image-20181010220141859](/Users/chenyansong/Documents/note/images/linux/dns/dns-1.png)
+![image-20181010220141859](https://github.com/chenyansong1/note/blob/master/images/linux/dns/dns-1.png?raw=true)
 
 
 

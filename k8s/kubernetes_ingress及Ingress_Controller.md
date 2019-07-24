@@ -1,6 +1,6 @@
 [TOC]
 
-
+参见：https://www.cnblogs.com/justmine/p/8991379.html
 
 # Ingress原理
 
@@ -100,11 +100,15 @@ metadata:
    kubectl apply -f ./
    ```
 
-4. 
+4. 创建ingress
 
+   ```shell
+   #
+   kubectl explain ingress.spec
+   
+   ```
 
-
-
+   ![1563935896678](E:\git-workspace\note\images\docker\1563935896678.png)
 
 
 
