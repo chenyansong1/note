@@ -350,3 +350,7 @@ spec:
 Ingress可能是发布服务最强大的方式，同时也是最复杂的。Ingress控制器的类型很多，如 Google Cloud Load Balancer，Nginx，Contour，Istio等等。还有一些Ingress控制器插件，比如证书管理器，可以自动为服务提供SSL认证。
 
 如果想在同一个IP地址下发布多个服务，并且这些服务使用相同的第 7 层协议（通常是 HTTP），Ingress是最有用的。如果使用原生的GCP集成，只需要支付一个负载均衡器的费用。因为Ingress是“智能”的，你可以得到很多开箱即用的特性（比如SSL、认证、路由等）
+
+
+
+service： 22：00:22
