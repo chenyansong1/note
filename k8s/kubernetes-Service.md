@@ -193,4 +193,160 @@ kubectl apply -f myapp-svc.yaml
   		targetPort: 80
   ```
 
-  
+
+
+
+# NodePort，LoadBalancer还是Ingress？我该如何选择 
+
+转自：https://www.cnblogs.com/justmine/p/8628465.html
+
+当我们使用k8s集群部署好应用的Service时，默认的Service类型是ClusterIP，这种类型只有 Cluster 内的节点和 Pod 可以访问。如何将应用的Service暴露给Cluster外部访问呢，Kubernetes 提供了多种类型的 Service，如下：
+
+## ClusterIP
+
+ClusterIP服务是Kuberntets的默认服务。它在集群内部生成一个服务，供集群内的其他应用访问。外部无法访问。
+
+ClusterIP服务的 YAML 文件如下：
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:  
+  name: my-internal-service
+selector:    
+  app: my-app
+spec:
+  type: ClusterIP
+  ports:  
+  - name: http
+    port: 80
+    targetPort: 80
+    protocol: TCP
+```
+
+如果不能从互联网访问ClusterIP服务，那我们还介绍它干啥？其实，我们可以使用Kubernetes proxy来访问它！
+
+![img](E:\git-workspace\note\images\docker\1082769-20180323092525525-1026425.png)
+
+ 
+
+开启Kubernetes Proxy：
+
+```
+$ kubectl proxy --port=8080
+```
+
+现在可以通过Kubernetes API使用下面这个地址来访问这个服务：
+
+```
+http://localhost:8080/api/v1/proxy/namespaces/<NAMESPACE>/services/<SERVICE-NAME>:<PORT-NAME>/
+```
+
+为了访问上面定义的服务，可以使用下面这个地址：
+
+```
+http://localhost:8080/api/v1/proxy/namespaces/default/services/my-internal-service:http/
+```
+
+使用场景
+
+在某些场景下，你会使用Kubernetes proxy来访问服务：
+
+1. 调试服务，或者是因为某些原因需要从电脑直接连接服务；
+2. 允许内部流量，显示内部仪表盘等。
+
+这个访问需要你作为一个已验证的用户去运行kubectl，所以不要通过这种方式将服务发布到互联网，或者是在生产环境下使用。
+
+## NodePort
+
+NodePort服务是让外部流量直接访问服务的最原始方式。NodePort，顾名思义，在所有的节点（虚拟机）上开放指定的端口，所有发送到这个端口的流量都会直接转发到服务。
+
+![img](data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==)
+
+NodePort服务的YAML文件如下：
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:  
+ name: my-nodeport-service
+selector:   
+ app: my-app
+spec:
+ type: NodePort
+ ports:  
+ - name: http
+  port: 80
+  targetPort: 80
+  nodePort: 30036
+  protocol: TCP
+```
+
+从本质上来看，NodePort服务有两个地方不同于一般的“ClusterIP”服务。首先，它的类型是“NodePort”。还有一个叫做“nodePort"的端口，能在节点上指定开放哪个端口。如果没有指定端口，它会选择一个随机端口。大多数时候应该让Kubernetes选择这个端口，就像谷歌领导人Thockin说的，关于能使用哪些端口，有很多注意事项。
+
+使用场景
+
+这种方式有一些不足：
+
+1. 一个端口只能供一个服务使用；
+2. 只能使用30000–32767的端口；
+3. 如果节点 / 虚拟机的IP地址发生变化，需要进行处理。
+
+因此，我不推荐在生产环境使用这种方式来直接发布服务。如果不要求运行的服务实时可用，或者在意成本，这种方式适合你。例如用于演示的应用或是临时运行就正好用这种方法。
+
+## LoadBalancer
+
+LoadBalancer服务是发布服务到互联网的标准方式。在GKE中，它会启动一个Network Load Balancer，分配一个单独的IP地址，将所有流量转发到服务中。
+
+![img](E:\git-workspace\note\images\docker\1082769-20180323092559041-1827526722.png)
+
+ 
+
+使用场景
+
+如果你想直接发布服务，这是默认方式。指定端口的所有流量都会转发到服务中，没有过滤，也没有路由。这意味着你几乎可以发送任意类型的流量到服务中，比如HTTP、TCP、UDP、Websockets、gRPC等等。
+
+这里最大的不足是，使用LoadBalancer发布的每个服务都会有一个自己的IP地址，你需要支付每个服务的LoadBalancer 费用，这是一笔不小的开支。
+
+## Ingress 
+
+Ingress实际上不是一种服务。相反，它在多个服务前面充当“智能路由”的角色，或者是集群的入口。
+
+使用Ingress可以做很多事情，不同类型的Ingress控制器有不同的功能。
+
+默认的GKE ingress控制器会启动一个 HTTP(S) Load Balancer，可以通过基于路径或者是基于子域名的方式路由到后端服务。例如，可以通过foo.yourdomain.com 发送任何东西到foo服务，或者是发送yourdomain.com/bar/路径下的任何东西到bar服务。
+
+![img](E:\git-workspace\note\images\docker\1082769-20180323092723446-545194130.png)
+
+对于使用第 7 层HTTP Load Balancer 的GKE上的Ingress对象，其YAML文件如下：
+
+```yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: my-ingress
+spec:
+  backend:
+    serviceName: other
+    servicePort: 8080
+  rules:
+  - host: foo.mydomain.com
+    http:
+      paths:
+      - backend:
+          serviceName: foo
+          servicePort: 8080
+  - host: mydomain.com
+    http:
+      paths:
+      - path: /bar/*
+        backend:
+          serviceName: bar
+          servicePort: 8080
+```
+
+使用场景
+
+Ingress可能是发布服务最强大的方式，同时也是最复杂的。Ingress控制器的类型很多，如 Google Cloud Load Balancer，Nginx，Contour，Istio等等。还有一些Ingress控制器插件，比如证书管理器，可以自动为服务提供SSL认证。
+
+如果想在同一个IP地址下发布多个服务，并且这些服务使用相同的第 7 层协议（通常是 HTTP），Ingress是最有用的。如果使用原生的GCP集成，只需要支付一个负载均衡器的费用。因为Ingress是“智能”的，你可以得到很多开箱即用的特性（比如SSL、认证、路由等）
