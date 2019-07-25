@@ -203,6 +203,30 @@ spec:
 		targetPort: 80
 ```
 
+我们解析一下，这个无头的service域名，
+
+
+
+![image-20190725215826376](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190725215826376.png?raw=true)
+
+我们查看Pod的IP
+
+![image-20190725215955896](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190725215955896.png?raw=true)
+
+
+
+我们查看dns服务的地址
+
+![image-20190725215850302](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190725215850302.png?raw=true)
+
+
+
+但是对于有头的服务，解析出来的一定是clusterIP自己的地址
+
+![image-20190725220050742](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190725220050742.png?raw=true)
+
+
+
 
 
 
