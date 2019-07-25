@@ -104,12 +104,14 @@ kubectl get svc
 
 
 
-资源记录的格式：SVC_NAME.NS_NAME.DOMAIN.LTD
+资源记录的格式：
 
 ```shell
+SVC_NAME.NS_NAME.DOMAIN.LTD.
 #默认的格式
-svc.cluster.local
-redis.default.svc.cluster.local
+svc.cluster.local.
+#eg
+redis.default.svc.cluster.local.
 ```
 
 ## NodePort类型的service
@@ -132,7 +134,7 @@ spec:
 	ports:
 	-	port: 80  #service端口
 		targetPort: 80 #Pod端口
-		nodePort: 30080 #节点端口,确保不会和其他进程冲突
+		nodePort: 30080 #节点端口,确保不会和其他进程冲突,type=NodePort是需要指定这个参数
 ```
 
 创建
@@ -141,17 +143,23 @@ spec:
 kubectl apply -f myapp-svc.yaml
 ```
 
+下图，可以看到，service上的端口映射为node上的30080
+
 ![1563867144303](https://github.com/chenyansong1/note/blob/master/images/docker/1563867144303.png?raw=true)
 
-这样我们就可以在集群机器外访问
+这样我们就可以在集群机器外访问：访问的顺序是：node:port->service:port->Pod:port
 
 ![1563867210671](https://github.com/chenyansong1/note/blob/master/images/docker/1563867210671.png?raw=true)
 
 
 
-* ExternalName
+## ExternalName
 
-  通过service请求外部服务
+集群内的pod想要请求集群外的服务(如互联网上，或者是本地局域网中)
+
+通过service请求外部服务
+
+![image-20190725205559725](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190725205559725.png?raw=true)
 
   ```yaml
   #CNAME记录
@@ -168,30 +176,32 @@ kubectl apply -f myapp-svc.yaml
 
   ![1563868114482](https://github.com/chenyansong1/note/blob/master/images/docker/1563868114482.png?raw=true)
 
-* 无头service
 
-  此时的service是没有cluster_ip的，直接解析service的name到Pod的IP
 
-  ```shell
-  kubectl explain svc.spec.clusterIP
-  ```
+## 无头service
 
-  ```yaml
-  #vim myapp-svc-headless.yaml
-  apiVersion: v1
-  kind: Service
-  metadata:
-  	name: myapp
-  	namespace: default
-  spec:
-  	selector: 
-  		app: myapp
-  		role: canary
-  	clusterIP: None
-  	ports:
-  	-	port: 80
-  		targetPort: 80
-  ```
+此时的service是没有cluster_ip的，直接解析service的name到Pod的IP
+
+```shell
+kubectl explain svc.spec.clusterIP
+```
+
+```yaml
+#vim myapp-svc-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+	name: myapp
+	namespace: default
+spec:
+	selector: 
+		app: myapp
+		role: canary
+	clusterIP: None
+	ports:
+	-	port: 80
+		targetPort: 80
+```
 
 
 
