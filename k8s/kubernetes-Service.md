@@ -29,7 +29,7 @@ ipvs:1.11+
 2. ServiceIP通过规则，转发到kube-proxy
 3. kube-proxy通过调度将请求转发到对应的Pod（此时还是会走内核空间的ServiceIP规则）
 
-![1563955572514](E:\git-workspace\note\images\docker\1563955572514.png)
+![1563955572514](https://github.com/chenyansong1/note/blob/master/images/docker/1563955572514.png?raw=true)
 
 
 
@@ -37,7 +37,7 @@ ipvs:1.11+
 
 1. Client Pod 直接请求ServiceIP，然后ServiceIP将请求转发到对应的Pod
 
-![1563955926922](E:\git-workspace\note\images\docker\1563955926922.png)
+![1563955926922](https://github.com/chenyansong1/note/blob/master/images/docker/1563955926922.png?raw=true)
 
 
 
@@ -45,7 +45,7 @@ ipvs:1.11+
 
 增加或者删除一个Pod，都会被apiserver的etcd检测到，然后kube-proxy通过watch到apiserver的变化，kube-proxy通知ipvs
 
-![1563862678106](E:\git-workspace\note\images\docker\1563862678106.png)
+![1563862678106](https://github.com/chenyansong1/note/blob/master/images/docker/1563862678106.png?raw=true)
 
 # 使用清单创建service
 
@@ -96,11 +96,11 @@ kubectl apply -f redis-svc.yaml
 kubectl get svc
 ```
 
-![1563866549311](E:\git-workspace\note\images\docker\1563866549311.png)
+![1563866549311](https://github.com/chenyansong1/note/blob/master/images/docker/1563866549311.png?raw=true)
 
 * endpoint 与 service 与 pod的关系，我们可以简单的理解为：service到pod
 
-![1563866652862](E:\git-workspace\note\images\docker\1563866652862.png)
+![1563866652862](https://github.com/chenyansong1/note/blob/master/images/docker/1563866652862.png?raw=true)
 
 
 
@@ -141,11 +141,11 @@ spec:
 kubectl apply -f myapp-svc.yaml
 ```
 
-![1563867144303](E:\git-workspace\note\images\docker\1563867144303.png)
+![1563867144303](https://github.com/chenyansong1/note/blob/master/images/docker/1563867144303.png?raw=true)
 
 这样我们就可以在集群机器外访问
 
-![1563867210671](E:\git-workspace\note\images\docker\1563867210671.png)
+![1563867210671](https://github.com/chenyansong1/note/blob/master/images/docker/1563867210671.png?raw=true)
 
 
 
@@ -166,7 +166,7 @@ kubectl apply -f myapp-svc.yaml
   kubectl patch svc myapp -p '{"spec":{"sessionAffinity":"ClientIP"}}'
   ```
 
-  ![1563868114482](E:\git-workspace\note\images\docker\1563868114482.png)
+  ![1563868114482](https://github.com/chenyansong1/note/blob/master/images/docker/1563868114482.png?raw=true)
 
 * 无头service
 
@@ -226,7 +226,7 @@ spec:
 
 如果不能从互联网访问ClusterIP服务，那我们还介绍它干啥？其实，我们可以使用Kubernetes proxy来访问它！
 
-![img](E:\git-workspace\note\images\docker\1082769-20180323092525525-1026425.png)
+![img](https://github.com/chenyansong1/note/blob/master/images/docker/1082769-20180323092525525-1026425.png?raw=true)
 
  
 
@@ -298,7 +298,7 @@ spec:
 
 LoadBalancer服务是发布服务到互联网的标准方式。在GKE中，它会启动一个Network Load Balancer，分配一个单独的IP地址，将所有流量转发到服务中。
 
-![img](E:\git-workspace\note\images\docker\1082769-20180323092559041-1827526722.png)
+![img](https://github.com/chenyansong1/note/blob/master/images/docker/1082769-20180323092559041-1827526722.png?raw=true)
 
  
 
@@ -316,7 +316,7 @@ Ingress实际上不是一种服务。相反，它在多个服务前面充当“�
 
 默认的GKE ingress控制器会启动一个 HTTP(S) Load Balancer，可以通过基于路径或者是基于子域名的方式路由到后端服务。例如，可以通过foo.yourdomain.com 发送任何东西到foo服务，或者是发送yourdomain.com/bar/路径下的任何东西到bar服务。
 
-![img](E:\git-workspace\note\images\docker\1082769-20180323092723446-545194130.png)
+![img](https://github.com/chenyansong1/note/blob/master/images/docker/1082769-20180323092723446-545194130.png?raw=true)
 
 对于使用第 7 层HTTP Load Balancer 的GKE上的Ingress对象，其YAML文件如下：
 
