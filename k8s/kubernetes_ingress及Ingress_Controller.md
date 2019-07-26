@@ -149,14 +149,14 @@ kubectl explain ingress.spec.backend
 
 ![1563875899219](E:\git-workspace\note\images\docker\1563875899219.png)
 
-创建名称空间
+## 名称空间增删改查
 
 ```shell
 #创建
 kubectl create namespace dev
 #查看
 kubectl get ns
-#删除
+#删除：删除名称空间，会删除下面的所有的Pod
 kubectl delete ns/dev
 
 #或者通过yaml文件创建
@@ -164,6 +164,7 @@ apiVersion:v1
 kind: Namespace
 metadata:
 	name: ingress-nginx
+	
 ```
 
 
@@ -181,20 +182,146 @@ metadata:
 3. 创建所有的yaml清单
 
    ```shell
+   #将所有的下载回来的yaml文件apply
    kubectl apply -f ./
    ```
-
-4. 创建ingress
-
-   ```shell
-   #
-   kubectl explain ingress.spec
    
+5. 创建Pod，Service
+
+   ```yaml
+   #vim deploy-demo.yaml
+   #Service
+   apiVersion: v1
+   kind: Service
+   metadata:
+   	name: myapp
+   	namespace: default
+   spec:
+   	selector:
+       	app: myapp
+   		release: canary
+   	ports:
+   	- 	name: http
+   		port: 80
+   		targetPort: 80
+   
+   ---
+   #Pod
+   apiVersion: apps/v1
+   kind: Deployment
+   metadata:
+   	name: myapp-deploy
+   	namespace: default
+   spec:
+   	replicas:3
+   	selector:
+   		matchLabels:
+   			app: myapp
+   			release: canary
+   	template:
+   		metadata:
+   			app: myapp
+   			release: canary
+   		spec:
+   			containers:
+   			-	name: myapp
+   				image: ikubernetes/myapp:v2
+   				ports:
+   				-	name: http
+   					containerPort: 80
+   					
+   
+   #kubectl apply -f deploy-demo.yaml
    ```
 
-   ![1563935896678](E:\git-workspace\note\images\docker\1563935896678.png)
+   ![1564133459379](E:\git-workspace\note\images\docker\1564133459379.png)
 
+   我们查看上面定义的名称空间（ingress-nginx）下的Pod
 
+   ![1564134150933](E:\git-workspace\note\images\docker\1564134150933.png)
 
+   为了让接入集群外部的流量，需要创建一个NodePort
 
+   ```yaml
+   #wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/baremetal/service-nodeport.yaml
+   
+   apiVersion: v1
+   kind: Service
+   metadata:
+     name: ingress-nginx
+     namespace: ingress-nginx
+     labels:
+       app.kubernetes.io/name: ingress-nginx
+       app.kubernetes.io/part-of: ingress-nginx
+   spec:
+     type: NodePort
+     ports:
+       - name: http
+         port: 80
+         targetPort: 80
+         protocol: TCP
+       - name: https
+         port: 443
+         targetPort: 443
+         protocol: TCP
+         nodePort: 30443
+     selector:
+       app.kubernetes.io/name: ingress-nginx
+       app.kubernetes.io/part-of: ingress-nginx
+   
+   ---
+   
+   #kubectl apply -f service-nodeport.yaml
+   ```
 
+   ![](E:\git-workspace\note\images\docker\1564134756188.png)
+
+5. 创建ingress
+
+```yaml
+#kubectl explain ingress.spec
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+	name: ingress-myapp
+	annotations:
+		kubernetes.io/ingress.class: "nginx"
+spec:
+	rules:
+	-	host: myapp.magedu.com
+		http:
+			paths:
+			-	path: 
+				backend:
+					serviceName: myapp
+                      servicePort: 80
+                      
+#kubectl apply -f ingress-myapp.yaml
+```
+
+​	![1564135333258](E:\git-workspace\note\images\docker\1564135333258.png)
+
+我们进入到nginx-controller中，查看他的配置文件`nginx.conf `是否因为ingress的修改，而改变了
+
+![1564135629071](E:\git-workspace\note\images\docker\1564135629071.png)
+
+ ![1564135506828](E:\git-workspace\note\images\docker\1564135506828.png)
+
+可以看到配置文件中的upstream有后端的Pod地址
+
+ ![1564135559567](E:\git-workspace\note\images\docker\1564135559567.png)
+
+# ingress-nginx另外的安装方式
+
+[官网](https://kubernetes.github.io/ingress-nginx/deploy/#prerequisite-generic-deployment-command)提供的安装方式
+
+```shell
+# 将上面所有的文件都集中到一个文件中进行安装
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/mandatory.yaml
+
+#需要额外的步骤，是集群外部能够访问到ingress-controller
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/baremetal/service-nodeport.yaml
+
+```
+
+01:36:21
