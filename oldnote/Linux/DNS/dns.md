@@ -1,14 +1,10 @@
 [TOC]
 
-
-
 DNS : Domain Name service 域名服务
 
 域名：www.baidu.com(主机名，FQDN：full Qualified Domain Name 完全限定域名)；baidu.com(域名)
 
 DNS：名称解析（name resolving)
-
-
 
 ```
 hosts:files dns
@@ -175,3 +171,7 @@ Target:   host地址。
 bind
 
 ​	/etc/named.conf
+
+
+
+参见：http://www.ruanyifeng.com/blog/2016/06/dns.html

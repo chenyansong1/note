@@ -13,4 +13,9 @@ def getEcharData():
 # 去掉行为的换行符 "\n"
 line=line.strip('\n')
 
+
+#判断文件是否存在
+import os
+os.path.exists(test_file.txt)
+#True
 ```

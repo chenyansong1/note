@@ -178,7 +178,7 @@ kubectl apply -f myapp-svc.yaml
 
 
 
-## 无头service
+## 无头service(headless service)
 
 此时的service是没有cluster_ip的，直接解析service的name到Pod的IP
 
@@ -294,8 +294,6 @@ http://localhost:8080/api/v1/proxy/namespaces/default/services/my-internal-servi
 ## NodePort
 
 NodePort服务是让外部流量直接访问服务的最原始方式。NodePort，顾名思义，在所有的节点（虚拟机）上开放指定的端口，所有发送到这个端口的流量都会直接转发到服务。
-
-![img](data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==)
 
 NodePort服务的YAML文件如下：
 
