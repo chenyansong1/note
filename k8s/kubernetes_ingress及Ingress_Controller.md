@@ -2,47 +2,131 @@
 
 参见：https://www.cnblogs.com/justmine/p/8991379.html
 
+
+
 # Ingress原理
 
+现在有这样一个需求，我们需要在一个web中加上HTTPS的证书验证，但是我们的请求是下图的样子：
+
+![1564127582810](E:\git-workspace\note\images\docker\1564127582810.png)
+
+我们需要在Pod中卸载HTTPS的证书验证，但是Pod是有生命周期的并且没有状态，所以这种方式是：既贵且慢，我们想要在Pod的前面，service的后面放一个Pod来统一卸载证书，如下图：
+
+![1564127803999](E:\git-workspace\note\images\docker\1564127803999.png)
+
+但是这种方式增加中间层的访问，于是有了下面的方式，将**证书卸载Pod**共享Node的网络名称空间，这样外面可以直接访问这个Pod，而不用通过service进行转发，如下图
+
+![1564128006390](E:\git-workspace\note\images\docker\1564128006390.png)
+
+这样每个Node上只需要有一个这样的Pod即可，但是怎么保证这种Pod的单节点问题，使用DaemonSet（在有限的节点上运行此类Pod，并将这几个节点设置为污点，这样只能这些Pod在上面运行），我们将这样的Pod命名为**Ingress Controller**，这种controller的目前的实现方式有如下的几种：Envoy， Traefik， nginx，他们都能实现调度
+
+调度的配置文件实时更新是通过ingress资源实现的，服务（service）其实是帮忙分组的功能，并没有其他的用处，Ingress资源通过service得到后端Pod的信息，然后将这些信息动态注入到Ingress Controller中
+
+![](E:\git-workspace\note\images\docker\1564120148053.png)
+
+1. 客户端首先对`kubia.example.com`执行DNS查询，DNS服务器(或本地操作系统)返回了Ingress控制器的IP
+2. 客户端然后向Ingress控制器发送HTTP请求
+3. 并在Host头中指定`kubia.example.com`
+4. 控制器从该头部确定客户端访问的是哪个服务，通过与该服务关联的Endpoint对象查看Pod IP，并将客户端的请求转发给其中一个Pod
+
+> 如上图，Ingress控制器不会将请求转发给该服务，只用他来选择一个Pod，大多数控制器都是这样来工作的
 
 
-* ClusterIP只能在集群内部访问边界不可达
+# 创建Ingress资源
 
-* NodePort（在ClusterIP的基础上增强）：client->NodeIP:NodePort->ClusterIP:ServicePort->PodIP:containerPort 此时的NodeIP是有多个的，所以前面需要加上一个负载均衡器，k8s如果部署在公有云上，并且公有云支持lbaas
-* LoadBalancer
-* ExternalName
-  * FQDN
-    * CNAME->FQDN
-* 无头服务（No ClusterIP , Headless Service）
-  * ServiceName -> PodIP(不进过serviceIP)
-
-4层调度，7层调度
-
-使用一个独立的Pod（HTTPS明文卸载器），反向代理后端的Pod
-
-![1563873209072](E:\git-workspace\note\images\docker\1563873209072.png)
-
-打上污点，让别的Pod都不能运行在此，然后在指定的几个节点上运行独立的Pod，并将这些Pod指定为DaemonSet的模式
-
-上面的Pod在k8s中有一个专门的称呼：Ingress Controller
+```yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+	name: kubia
+spec:
+	rules:
+	-	host: kubia.example.com #Ingress将域名映射到你的服务
+		http:
+			paths:
+			-	path: /
+				backend:
+					serviceName: kubia-nodeport	#将所有的请求都发送到kubia-nodeport:80
+					servicePort: 80
+```
 
 
 
-常见的调度器
+# 通过Ingress暴露多个服务
 
-HAProxy(不用)
+一个Ingress可以将多个**主机和路径**映射到多个服务
 
-Traefik
+## 将不同的服务映射到相同主机的不同路径
 
-Nginx
+```yaml
+- 	host: kubia.example.com
+	http: 
+	- 	path: /kubia
+		backend:
+			serviceName: kubia #kubia.example.com/kubia的请求将会转发至kubia服务
+			servicePort: 80
+	-	path: /foo
+		backend:
+			serviceName: bar #kubia.example.com/bar的请求将会转发至bar服务
+			servicePort: 80
+```
 
-Envoy（微服务）
 
 
+## 将不同的服务映射到不同的主机上
 
-Ingress资源
+```yaml
+spec:
+	rules:
+	-	host: foo.example.com
+		http:
+			paths:
+			-	path: /
+				backend:
+					serviceName: foo #对foo.example.com的请求将会转发至foo服务
+					servicePort: 80
+	-	host: bar.example.com
+		http:
+			paths:
+			-	path: /
+				backend:
+					serviceName: bar #bar.example.com的请求将会转发至bar服务
+					servicePort: 80
+```
 
-![1563874552941](E:\git-workspace\note\images\docker\1563874552941.png)
+# 配置Ingress处理TLS
+
+当客户端创建到Ingress控制器的TLS连接时，控制器将终止TLS连接，**客户端和控制器之间的通信是加密的，而控制器和后端Pod之间的通信则不是，运行在Pod上的应用程序不需要支持TLS**，例如，如果Pod运行web服务器，则他只能接收HTTP通信，并让Ingress控制器负责处理与TLS相关的所有内容，要控制器能够这样做，**需要将控制器和私钥附加到Ingress**，这两个必需资源在称为Secret的Kubernetes资源中，然后在Ingress manifest中引用他
+
+iptables, ipvs是四层调度器，工作在TCP/IP协议栈，只能对IP做调度，这里是没法解除SSL回话的，这就需要再Pod中解除SSL，但是SSL回话既贵且慢，所以应该尽可能让前端调度器（service）卸载
+
+![1564122131277](E:\git-workspace\note\images\docker\1564122131277.png)
+
+```yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+	name: kubia
+spec:
+	tls:
+	-	hosts:
+		-	kubia.example.com #将接收来自kubia.example.com主机的TLS连接
+		secretName: tls-secret #从tls-secret中获得之前创立的私钥和证书
+	rules:
+	-	host: kubia.example.com 
+		http:
+			paths:
+			-	path: /
+				backend:
+					serviceName: kubia-nodeport
+					servicePort: 80
+```
+
+配置证书之后，我们可以访问，如下的结果
+
+![1564122489486](E:\git-workspace\note\images\docker\1564122489486.png)
+
+
 
 
 

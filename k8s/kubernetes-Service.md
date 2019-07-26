@@ -116,6 +116,8 @@ redis.default.svc.cluster.local.
 
 ## NodePort类型的service
 
+NodePort（在ClusterIP的基础上增强）：client->NodeIP:NodePort->ClusterIP:ServicePort->PodIP:containerPort 此时的NodeIP是有多个的，所以前面需要加上一个负载均衡器，k8s如果部署在公有云上，并且公有云支持lbaas
+
 * 生成一个类型为NodePort的service
 
 ```yaml
@@ -179,6 +181,8 @@ kubectl apply -f myapp-svc.yaml
 
 
 ## 无头service(headless service)
+
+无头服务（No ClusterIP , Headless Service）：ServiceName -> PodIP(不进过serviceIP)
 
 此时的service是没有cluster_ip的，直接解析service的name到Pod的IP
 
