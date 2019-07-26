@@ -8,21 +8,21 @@
 
 现在有这样一个需求，我们需要在一个web中加上HTTPS的证书验证，但是我们的请求是下图的样子：
 
-![1564127582810](E:\git-workspace\note\images\docker\1564127582810.png)
+![1564127582810](https://github.com/chenyansong1/note/blob/master/images/docker/1564127582810.png?raw=true)
 
 我们需要在Pod中卸载HTTPS的证书验证，但是Pod是有生命周期的并且没有状态，所以这种方式是：既贵且慢，我们想要在Pod的前面，service的后面放一个Pod来统一卸载证书，如下图：
 
-![1564127803999](E:\git-workspace\note\images\docker\1564127803999.png)
+![1564127803999](https://github.com/chenyansong1/note/blob/master/images/docker/1564127803999.png?raw=true)
 
 但是这种方式增加中间层的访问，于是有了下面的方式，将**证书卸载Pod**共享Node的网络名称空间，这样外面可以直接访问这个Pod，而不用通过service进行转发，如下图
 
-![1564128006390](E:\git-workspace\note\images\docker\1564128006390.png)
+![1564128006390](https://github.com/chenyansong1/note/blob/master/images/docker/1564128006390.png?raw=true)
 
 这样每个Node上只需要有一个这样的Pod即可，但是怎么保证这种Pod的单节点问题，使用DaemonSet（在有限的节点上运行此类Pod，并将这几个节点设置为污点，这样只能这些Pod在上面运行），我们将这样的Pod命名为**Ingress Controller**，这种controller的目前的实现方式有如下的几种：Envoy， Traefik， nginx，他们都能实现调度
 
 调度的配置文件实时更新是通过ingress资源实现的，服务（service）其实是帮忙分组的功能，并没有其他的用处，Ingress资源通过service得到后端Pod的信息，然后将这些信息动态注入到Ingress Controller中
 
-![](E:\git-workspace\note\images\docker\1564120148053.png)
+![](https://github.com/chenyansong1/note/blob/master/images/docker/1564120148053.png?raw=true)
 
 1. 客户端首先对`kubia.example.com`执行DNS查询，DNS服务器(或本地操作系统)返回了Ingress控制器的IP
 2. 客户端然后向Ingress控制器发送HTTP请求
@@ -100,7 +100,7 @@ spec:
 
 iptables, ipvs是四层调度器，工作在TCP/IP协议栈，只能对IP做调度，这里是没法解除SSL回话的，这就需要再Pod中解除SSL，但是SSL回话既贵且慢，所以应该尽可能让前端调度器（service）卸载
 
-![1564122131277](E:\git-workspace\note\images\docker\1564122131277.png)
+![1564122131277](https://github.com/chenyansong1/note/blob/master/images/docker/1564122131277.png?raw=true)
 
 ```yaml
 apiVersion: extensions/v1beta1
@@ -124,9 +124,11 @@ spec:
 
 配置证书之后，我们可以访问，如下的结果
 
-![1564122489486](E:\git-workspace\note\images\docker\1564122489486.png)
+![1564122489486](https://github.com/chenyansong1/note/blob/master/images/docker/1564122489486.png?raw=true)
 
+其实在ingress-nginx的NGINX中的nginx.conf中有对应的证书配置生成
 
+![image-20190726221621871](/Users/chenyansong/Documents/note/images/docker/image-20190726221621871.png)
 
 
 
@@ -147,7 +149,7 @@ kubectl explain ingress.spec.backend
 
 在k8s的[github](https://github.com/kubernetes)上搜索[ingress-nginx](https://github.com/kubernetes/ingress-nginx)
 
-![1563875899219](E:\git-workspace\note\images\docker\1563875899219.png)
+![1563875899219](https://github.com/chenyansong1/note/blob/master/images/docker/1563875899219.png?raw=true)
 
 ## 名称空间增删改查
 
@@ -171,7 +173,7 @@ metadata:
 
 1. 下载文件
 
-   ![1563876179324](E:\git-workspace\note\images\docker\1563876179324.png)
+   ![1563876179324](https://github.com/chenyansong1/note/blob/master/images/docker/1563876179324.png?raw=true)
 
 2. 创建名称空间
 
@@ -234,11 +236,11 @@ metadata:
    #kubectl apply -f deploy-demo.yaml
    ```
 
-   ![1564133459379](E:\git-workspace\note\images\docker\1564133459379.png)
+   ![1564133459379](https://github.com/chenyansong1/note/blob/master/images/docker/1564133459379.png?raw=true)
 
    我们查看上面定义的名称空间（ingress-nginx）下的Pod
 
-   ![1564134150933](E:\git-workspace\note\images\docker\1564134150933.png)
+   ![1564134150933](https://github.com/chenyansong1/note/blob/master/images/docker/1564134150933.png?raw=true)
 
    为了让接入集群外部的流量，需要创建一个NodePort
 
@@ -274,7 +276,7 @@ metadata:
    #kubectl apply -f service-nodeport.yaml
    ```
 
-   ![](E:\git-workspace\note\images\docker\1564134756188.png)
+   ![](https://github.com/chenyansong1/note/blob/master/images/docker/1564134756188.png?raw=true)
 
 5. 创建ingress
 
@@ -299,17 +301,17 @@ spec:
 #kubectl apply -f ingress-myapp.yaml
 ```
 
-​	![1564135333258](E:\git-workspace\note\images\docker\1564135333258.png)
+​	![1564135333258](https://github.com/chenyansong1/note/blob/master/images/docker/1564135333258.png?raw=true)
 
 我们进入到nginx-controller中，查看他的配置文件`nginx.conf `是否因为ingress的修改，而改变了
 
-![1564135629071](E:\git-workspace\note\images\docker\1564135629071.png)
+![1564135629071](https://github.com/chenyansong1/note/blob/master/images/docker/1564135629071.png?raw=true)
 
- ![1564135506828](E:\git-workspace\note\images\docker\1564135506828.png)
+ ![1564135506828](https://github.com/chenyansong1/note/blob/master/images/docker/1564135506828.png?raw=true)
 
 可以看到配置文件中的upstream有后端的Pod地址
 
- ![1564135559567](E:\git-workspace\note\images\docker\1564135559567.png)
+ ![1564135559567](https://github.com/chenyansong1/note/blob/master/images/docker/1564135559567.png?raw=true)
 
 # ingress-nginx另外的安装方式
 
