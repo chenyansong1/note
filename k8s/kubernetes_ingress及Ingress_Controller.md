@@ -128,7 +128,7 @@ spec:
 
 其实在ingress-nginx的NGINX中的nginx.conf中有对应的证书配置生成
 
-![image-20190726221621871](/Users/chenyansong/Documents/note/images/docker/image-20190726221621871.png)
+![image-20190726221621871](https://github.com/chenyansong1/note/blob/master/images/docker/image-20190726221621871.png?raw=true)
 
 
 
@@ -149,7 +149,7 @@ kubectl explain ingress.spec.backend
 
 在k8s的[github](https://github.com/kubernetes)上搜索[ingress-nginx](https://github.com/kubernetes/ingress-nginx)
 
-![1563875899219](https://github.com/chenyansong1/note/blob/master/images/docker/1563875899219.png?raw=true)
+ ![1563875899219](https://github.com/chenyansong1/note/blob/master/images/docker/1563875899219.png?raw=true)
 
 ## 名称空间增删改查
 
