@@ -83,6 +83,9 @@ NAME                     READY   STATUS    RESTARTS   AGE     IP           NODE 
 nginx-7c45b84548-pvm4q   1/1     Running   0          3m24s   10.244.1.2   spark02   <none>           <none>
 [root@es2 ~]# 
 
+#如果Pod中有多个容器，我们进入某一个容器(myapp)
+kubectl exec -it pod-demo -c myapp -- /bin/sh
+
 ```
 
 我们创建的pod的IP地址属于cni0桥，cni0属于10.244.0.0/16下的一个地址，每个node中会有一个cni0地址（比如在另外一个node上，可能的cni0桥的地址为10.244.0.1/24）
