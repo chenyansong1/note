@@ -38,9 +38,9 @@ object:
 	non-resource url
 ```
 
-![1564385873059](E:\git-workspace\note\images\docker\1564385873059.png)
+![1564385873059](https://github.com/chenyansong1/note/blob/master/images/docker/1564385873059.png?raw=true)
 
-![1564380652162](E:\git-workspace\note\images\docker\1564380652162.png)
+![1564380652162](https://github.com/chenyansong1/note/blob/master/images/docker/1564380652162.png?raw=true)
 
 # 创建role
 
@@ -53,13 +53,13 @@ kubectl create role --help
 vim role.demo.yaml
 ```
 
-![1564381530650](E:\git-workspace\note\images\docker\1564381530650.png)
+![1564381530650](https://github.com/chenyansong1/note/blob/master/images/docker/1564381530650.png?raw=true)
 
 ```shell
 kubectl get role
 ```
 
-![1564381730436](E:\git-workspace\note\images\docker\1564381730436.png)
+![1564381730436](https://github.com/chenyansong1/note/blob/master/images/docker/1564381730436.png?raw=true)
 
 # rolebinding
 
@@ -72,11 +72,11 @@ Usage:
 #kubectl create rolebinding maedu-read-pods --role=pods-reader --user=magedu  -o yaml --dry-run >./rolebinding-demo.yaml
 ```
 
-![1564382136168](E:\git-workspace\note\images\docker\1564382136168.png)
+![1564382136168](https://github.com/chenyansong1/note/blob/master/images/docker/1564382136168.png?raw=true)
 
 切换用户，进行测试
 
-![1564382459649](E:\git-workspace\note\images\docker\1564382459649.png)
+![1564382459649](https://github.com/chenyansong1/note/blob/master/images/docker/1564382459649.png?raw=true)
 
 # clusterRole
 
@@ -100,7 +100,7 @@ Usage:
 kubectl create clusterrolebinding magedu-read-all-pods --clusterrole=cluster-reader --user=magedu --dry-run -o yaml
 ```
 
-![1564383256468](E:\git-workspace\note\images\docker\1564383256468.png)
+![1564383256468](https://github.com/chenyansong1/note/blob/master/images/docker/1564383256468.png?raw=true)
 
 # 使用rolebinding绑定clusterrole
 
@@ -110,9 +110,9 @@ kubectl create clusterrolebinding magedu-read-all-pods --clusterrole=cluster-rea
 kubectl create rolebinding magedu-read-pods --clusterrole=cluster-reader --user=magedu --dry-run -o yaml
 ```
 
-![1564383870475](E:\git-workspace\note\images\docker\1564383870475.png)
+![1564383870475](https://github.com/chenyansong1/note/blob/master/images/docker/1564383870475.png?raw=true)
 
 不能访问其他名称空间下的资源
 
-![](E:\git-workspace\note\images\docker\1564383937617.png)
+![](https://github.com/chenyansong1/note/blob/master/images/docker/1564383937617.png?raw=true)
 
