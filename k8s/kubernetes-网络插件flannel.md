@@ -94,5 +94,3 @@ ls /etc/cni/net.d/
 ```
 
 ![image-20190731224327146](/Users/chenyansong/Documents/note/images/docker/image-20190731224327146.png)
-
-
