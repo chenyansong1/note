@@ -311,3 +311,116 @@ spec:
 
 ## 污点(容忍)调度
 
+给了节点选择的主动权，是否要Pod在其上运行
+
+```shell
+#定义node的污点
+#kubectl explain nodes.spec.taints
+#effect 定义对Pod对象的排斥等级
+	# NoSchedule : 如果不容忍就不能调度过来，仅影响调度过程，对现存的Pod对象不产生影响
+	# NoExecute : 不仅影响调度，而且影响现存的Pod对象，不容忍的Pod对象将会被驱逐
+	# PreferNoSchedule : 不能容忍就不能调度过来，但是实在没地方运行了，也是可以调度过来的
+```
+
+在集群的master这个node上，有如下的污点
+
+![image-20190803215219472](/Users/chenyansong/Documents/note/images/docker/image-20190803215219472.png)
+
+我们看这个node上的Pod，是可以容忍这个污点的
+
+![image-20190803215707213](/Users/chenyansong/Documents/note/images/docker/image-20190803215707213.png)
+
+
+
+```shell
+#管理污点
+kubectl taint --help
+kubectl taint NODE NAME key_1=val_1:Taint_effect_1...key_n=val_n:Taint_effect_n [options]
+
+
+#给node01用于生产环境
+kubectl taint node  node01.magedu.com node-type=producton:NoSchedule
+```
+
+创建pod
+
+```yaml
+apiVerson: v1
+kind: Deployment
+metadata:
+	name: myapp-deploy
+	namespace: default
+spec:
+	replicas: 3
+	selector:
+		matchLabels:
+			app: myapp
+			release: canary
+	template:
+		metadata:
+			labels:
+				app: myapp
+				release: canary
+		spec:
+			containers:
+			-	name: myapp
+				image: ikubernetes/myapp:v2
+				ports:
+				-	name: http
+					containerPort: 80
+```
+
+接node01上有污点，所以没有Pod运行在上面
+
+![image-20190803220722420](/Users/chenyansong/Documents/note/images/docker/image-20190803220722420.png)
+
+现在将node01上的污点改为不能容忍就驱逐
+
+```shell
+kubectl taint node node02.magedu.com node-type=dev:NoExecute
+```
+
+我们再次查看Pod的状态
+
+![image-20190803220945529](/Users/chenyansong/Documents/note/images/docker/image-20190803220945529.png)
+
+
+
+现在给Pod加上容忍的污点
+
+```yaml
+apiVerson: v1
+kind: Deployment
+metadata:
+	name: myapp-deploy
+	namespace: default
+spec:
+	replicas: 3
+	selector:
+		matchLabels:
+			app: myapp
+			release: canary
+	template:
+		metadata:
+			labels:
+				app: myapp
+				release: canary
+		spec:
+			containers:
+			-	name: myapp
+				image: ikubernetes/myapp:v2
+				ports:
+				-	name: http
+					containerPort: 80
+			tolerations: 
+			-	key: "node-type"
+				operator: "Equal"
+				value: "production"
+				effect: "NoSchedule"  # "" 表示容忍所有的效果 
+				#tolerationSeconds: 3600	#多长时间之后被驱逐,秒
+```
+
+我们会发现刚刚Pending的容器又Running
+
+![image-20190803222004979](/Users/chenyansong/Documents/note/images/docker/image-20190803222004979.png)
+
