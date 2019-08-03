@@ -130,9 +130,9 @@ kubectl label nodes node02.magedu.com disktype=harddisk
 ```yaml
 #kubectl explain pods.spec.affinity
 
-#nodeAffinity
-#podAffinity
-#podAntAffinity
+#nodeAffinity		 #节点亲和
+#podAffinity		 #pod亲和
+#podAntAffinity  #pod反亲和
 
 #kubectl explain pods.spec.affinity.nodeAffinity
 #preferredDuringSchedulingIgnoredDuringExecution 尽量满足的条件
@@ -152,7 +152,7 @@ spec:
 		image: ikubenetes/myapp:v1
 	affinity:
 		nodeAffinity:
-			requiredDuringSchedulingIgnoredDuringExecution
+			requiredDuringSchedulingIgnoredDuringExecution:
 				nodeSelectorTerms:
 				-	matchExpressions:
 					-	key: zone			# zone in (foo, bar)
@@ -203,7 +203,111 @@ spec:
 
 ## Pod亲和调度
 
+### 亲和
+
 单独的Pod亲和性：一组Pod中，最先调度的一个Pod(或一组Pod中的几个)会随机的进入一个节点，然后一组Pod中剩下的Pod会尽可能的调度到和第一个Pod相同的位置(如在同一个机架上，或者在同一个机房，这样就可以让一组Pod的通信更加的高效)
 
+```yaml
+#kubectl explain pods.spec.affinity.podAffinity
+#preferredDuringSchedulingIgnoredDuringExecution 尽量满足的条件: 软亲和
+#requiredDuringSchedulingIgnoredDuringExecution 必须满足的条件：硬亲和性
+```
 
+
+
+```yaml
+#kubectl explain pods.spec.affinity.podAffinity.requiredDuringSchedulingIgnoredDuringExecution
+#labelSelector #用于选定一组Pod
+#topologyKey: 判定是属于同一位置的node
+
+apiVersion: v1
+kind: Pod
+metadata:
+	name: pod-first
+	namespace: default
+	labels:
+		app: myapp
+		tier: frontend
+spec:
+	containers:
+	-	name: myapp
+		image: ikubenetes/myapp:v1
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+	name: pod-second
+	namespace: default
+	labels:
+		app: db
+		tier: db
+spec:
+	containers:
+	-	name: busybox
+		image: busybox:latest
+		imagePullPolicy: IfNotPresent
+		command: ["sh", "-c", "sleep 3600"]
+	affinity:
+		podAffinity:
+			requiredDuringSchedulingIgnoredDuringExecution:
+			-	labelSelector: 
+					matchExpressions: #当前Pod需要和 app in (myapp)的Pod放置在一个位置
+					-	{key: app, operator: In, values: ["myapp"]}
+				topologyKey: kubenetes.io/hostname  #使用节点的名字作为key
+```
+
+我们创建Pod，发现他们是在同一个Pod上
+
+![image-20190803190932204](/Users/chenyansong/Documents/note/images/docker/image-20190803190932204.png)
+
+### 反亲和
+
+topologyKey不同就是反亲和
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+	name: pod-first
+	namespace: default
+	labels:
+		app: myapp
+		tier: frontend
+spec:
+	containers:
+	-	name: myapp
+		image: ikubenetes/myapp:v1
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+	name: pod-second
+	namespace: default
+	labels:
+		app: db
+		tier: db
+spec:
+	containers:
+	-	name: busybox
+		image: busybox:latest
+		imagePullPolicy: IfNotPresent
+		command: ["sh", "-c", "sleep 3600"]
+	affinity:
+		podAntAffinity:  # 反亲和
+			requiredDuringSchedulingIgnoredDuringExecution:
+			-	labelSelector: 
+					matchExpressions: #当前Pod需要和 app in (myapp)的Pod放置在一个位置
+					-	{key: app, operator: In, values: ["myapp"]}
+				topologyKey: kubenetes.io/hostname  #使用节点的名字作为key
+```
+
+我们发现创建的Pod是不在同一个节点上
+
+![image-20190803191643229](/Users/chenyansong/Documents/note/images/docker/image-20190803191643229.png)
+
+
+
+## 污点(容忍)调度
 
