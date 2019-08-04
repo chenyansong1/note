@@ -424,3 +424,9 @@ spec:
 
 ![image-20190803222004979](/Users/chenyansong/Documents/note/images/docker/image-20190803222004979.png)
 
+
+
+最后如果我们要去掉节点的污点
+
+![image-20190804093050609](/Users/chenyansong/Documents/note/images/docker/image-20190804093050609.png)
+
