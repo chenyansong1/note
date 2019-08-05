@@ -219,3 +219,8 @@ spec:
 
 ![1565008519020](E:\git-workspace\note\images\docker\1565008519020.png)
 
+## 自定义指标
+
+考虑并发连接数，增加或者减少Pod的数量
+
+![1565010110637](E:\git-workspace\note\images\docker\1565010110637.png)
