@@ -145,18 +145,77 @@ kubectl proxy --port=8080
    
       ![1564999774510](E:\git-workspace\note\images\docker\1564999774510.png)
    
-7. 
+   5. 部署yaml
+   
+      ![1564999857362](E:\git-workspace\note\images\docker\1564999857362.png)
+   
+   6. 查看是否存在对应的api
+   
+      ![1565006542292](E:\git-workspace\note\images\docker\1565006542292.png)
+   
+   ​      
+   
+   
+   
+## 整合grafana
+
+   我们不用自己定义模板，去grafana的官网去下载，然后导入
+
+​	[官网](https://grafana.com/grafana/dashboards)
+
+# 自动伸缩hpa
+
+## 手动设置伸缩
+
+设置资源上限
+
+![1565007719851](E:\git-workspace\note\images\docker\1565007719851.png)
+
+设置自动伸缩
+
+![1565007816569](E:\git-workspace\note\images\docker\1565007816569.png)
+
+![1565007867331](E:\git-workspace\note\images\docker\1565007867331.png)
+
+ab测试
+
+```shell
+ab -c 1000 -n 500000 http://172.20.0.67:31190/index.html
+```
 
 
-​      
 
-​      
+查看Pod是否有变化
 
-​      
-
+![1565008122840](E:\git-workspace\note\images\docker\1565008122840.png)
 
 
 
+## 文件设置伸缩
 
+```yaml
+apiVersoin: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+	name: myapp-hpa-v2
+spec:
+	scaleTargetDef:
+		apiVersion: apps/v1
+		kind: Deployment
+		name: myapp
+	minReplicas: 1
+	maxReplicas: 10
+	metrics:
+	-	type: Resource		#通过CPU评估
+		resource:
+			name: cpu
+			targetAverageUtilization: 55
+	-	type: Resource  #通过内存去评估
+		resource:
+			name: memory
+			targetAverageValue: 50Mi
+			
+```
 
+![1565008519020](E:\git-workspace\note\images\docker\1565008519020.png)
 
