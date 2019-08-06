@@ -359,6 +359,16 @@ $start_tomcat
 
 2.crontab中要写全路径，因为path环境变量的问题
 
+3.转义问题
+
+```shell
+#
+*/1 * * * * /usr/bin/curl  -XDELETE soc60:9200/netflow_$(date +"%Y%m%d" -d "-1day") >/dev/null  2>&1 
+
+# %需要转义为如下的格式
+*/1 * * * * /usr/bin/curl  -XDELETE soc60:9200/netflow_$(date +"\%Y\%m\%d" -d "-1day") >/dev/null  2>&1 
+```
+
 
 
 

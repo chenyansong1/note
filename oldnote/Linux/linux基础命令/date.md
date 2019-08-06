@@ -45,7 +45,7 @@ date [OPTION]... [+FORMAT]
 ```
 
 # 3.date -d 获取过去或者未来的时间
-```
+```shell
 [root@lamp01 ~]# date
 2017年 02月 12日 星期日 17:24:17 CST
 
@@ -62,6 +62,10 @@ date [OPTION]... [+FORMAT]
 2017-02-12-17
 [root@lamp01 ~]# date +%F-%H -d "+2hour"
 2017-02-12-19
+
+#当前日志的前多少天
+[root@soc60 elasticsearch-2.4.3]# echo $(date +"%Y%m%d" -d "-1day")
+20190805
 
 #类似的还有分钟,秒
 -d "-2min"
