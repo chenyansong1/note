@@ -199,11 +199,51 @@ chart管理
 
 # 修改默认的值文件
 
-
-
-
-
 # 创建自定义chart
+
+## chart文件的目录结构
+
+我们可以看到一个chart文件的结构如下
+
+![1565142311510](E:\git-workspace\note\images\docker\1565142311510.png)
+
+```shell
+#定义依赖关系
+requirements.yaml
+#目录，定义各种资源清单
+templates
+#安装完成chart之后，显示的提示信息
+templates/NOTES.txt
+
+#默认的值文件
+values.yaml
+#目录,被其他chart依赖的chart的tgz
+charts
+
+```
+
+
+
+## go模板语法
+
+
+
+```shell
+#创建一个chart的结构
+helm create myapp 
+```
+
+我们查看myapp的结构
+
+![1565160704173](E:\git-workspace\note\images\docker\1565160704173.png)
+
+我们编辑Chart.yaml
+
+![](E:\git-workspace\note\images\docker\1565160841227.png)
+
+
+
+
 
 
 
