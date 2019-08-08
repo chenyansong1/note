@@ -241,9 +241,82 @@ helm create myapp
 
 ![](E:\git-workspace\note\images\docker\1565160841227.png)
 
+语法检查
+
+```shell
+#需要进入到myapp的父目录
+helm lint myapp
+```
+
+![1565178891437](E:\git-workspace\note\images\docker\1565178891437.png)
+
+根据上面的信息排错，直到没有错误为止
+
+![1565178994442](E:\git-workspace\note\images\docker\1565178994442.png)
+
+打包chart
+
+```shell
+#进入chart的父目录
+helm package myapp/
+```
+
+![1565179089244](E:\git-workspace\note\images\docker\1565179089244.png)
+
+在本地开一个web服务，这样就可以搜索到刚刚创建的chart
+
+![1565179239723](E:\git-workspace\note\images\docker\1565179239723.png)
+
+![1565179213627](E:\git-workspace\note\images\docker\1565179213627.png)
+
+最后需要修改NOTE.txt中的帮助信息，提示用于如何验证服务 是否成功部署
+
+部署应用chart
+
+```shell
+helm install --name myapp3 local/myapp
+```
+
+![1565179482688](E:\git-workspace\note\images\docker\1565179482688.png)
+
+同时，我们也是可以通过status获取NOTE.txt中的信息
+
+![1565179522408](E:\git-workspace\note\images\docker\1565179522408.png)
+
+删除chart
+
+```shell
+helm delete --purge myapp3 
+#使用了--purge之后，myapp3这个名称以后还可以重复使用
+```
 
 
 
+# 日志统一收集平台
 
+ELK ： elasticsearch， logstash（如果用作收集日志，有点重量级），Kibana 
 
+EFK：elasticsearch， filebeat，Kibana 
 
+下载elasticsearch
+
+```shell
+helm fetch incubator/elasticsearch
+#展开
+tar xf elasticsearch-1.4.1.tgz
+```
+
+安装
+
+```shell
+#创建名称空间
+kubectl create namespace efk
+#安装chart
+helm install --name els1 --namespace=efk values.yaml incubator/elasticsearch
+```
+
+![1565182557925](E:\git-workspace\note\images\docker\1565182557925.png)
+
+![1565182692733](E:\git-workspace\note\images\docker\1565182692733.png)
+
+01:22:00

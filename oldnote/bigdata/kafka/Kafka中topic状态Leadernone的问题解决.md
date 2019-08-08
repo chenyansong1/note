@@ -53,3 +53,5 @@ bin/kafka-topics.sh --zookeeper hdfmaster:2181 --describe opic:test PartitionCou
 https://ask.hellobi.com/blog/seng/15495
 
 https://community.hortonworks.com/content/supportkb/210187/errorpartition-0-leader-none-replicas-100310011002.html
+
+https://blog.csdn.net/love910809/article/details/79977275
