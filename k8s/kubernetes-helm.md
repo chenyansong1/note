@@ -319,4 +319,3 @@ helm install --name els1 --namespace=efk values.yaml incubator/elasticsearch
 
 ![1565182692733](E:\git-workspace\note\images\docker\1565182692733.png)
 
-01:22:00
