@@ -42,6 +42,16 @@ Settings for eno1:
 
 
 
+自动协商
+
+网卡设置
+
+https://service.tp-link.com.cn/detail_article_3522.html
+
+设置网卡自动协商：
+
+https://blog.csdn.net/wodeyuer125/article/details/50498369
+
 
 
 
