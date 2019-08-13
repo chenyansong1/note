@@ -20,7 +20,7 @@ C		192.168.0.0-192.168.255.0
 
 
 
-# 子网划分
+# 等长子网划分
 
 等长子网，子网掩码向后移动1位，变成2个网段
 
@@ -31,3 +31,17 @@ C		192.168.0.0-192.168.255.0
 子网掩码向后移动2位，变成四个网段
 
 ![image-20190812223832750](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190812223832750.png)
+
+
+
+# 变长子网划分
+
+直接将对应的台数放到对应的区域
+
+![image-20190813204544463](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190813204544463.png)
+
+![image-20190812221156039](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190812221156039.png)
+
+# 子网合并
+
+![image-20190813211203427](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190813211203427.png)
