@@ -18,7 +18,7 @@ https://blog.csdn.net/zhangpeterx/article/details/86407065
 
 
 * SecureCRT集成
-![1565831836834](E:\git-workspace\note\images\computeNetwork\1565831836834.png)
+![1565831836834](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/1565831836834.png)
 
 
 
@@ -33,6 +33,9 @@ ip address 192.168.0.254 255.255.255.0
 #生效
 no shutdown
 
+#查看网络邻居:使用CDP 思科发现协议 使用二层地址通信
+show cdp neighbors 
+show cdp neighbors detail
 #保存配置
 #running-config 是内存中存在的配置
 #startup-config 是磁盘中存在的配置
@@ -40,7 +43,18 @@ Router1#copy running-config startup-config
 
 #如果我们修改了配置，但是我们想要放弃这些修改
 Router#copy startup-config running-config
+
+#设置加密的enable密码
+R1#config t  
+Enter configuration commands, one per line.  End with CNTL/Z.
+R1(config)#enable secret 123456
 ```
+
+![image-20190815215650752](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190815215650752.png)
+
+将所有的密码都加密
+
+![image-20190815215913726](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190815215913726.png)
 
 
 
@@ -115,5 +129,15 @@ R1(config)#ip http server
 
 #然后
 curl ip:80
+```
+
+
+
+# 设置路由器进行名称解析
+
+```shell
+config t
+ip host R2 192.168.0.2
+ping R2
 ```
 
