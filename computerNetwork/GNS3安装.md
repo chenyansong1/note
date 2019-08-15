@@ -10,6 +10,19 @@ https://blog.csdn.net/zhangpeterx/article/details/86407065
 
 
 
+# 集成wireshark和SecureCRT
+
+* wireshark集成
+
+  
+
+
+* SecureCRT集成
+![1565831836834](E:\git-workspace\note\images\computeNetwork\1565831836834.png)
+
+
+
+
 # 路由器常用命令行配置
 
 ```shell
@@ -39,19 +52,19 @@ Router#copy startup-config running-config
 
 3. 拖拽出来一个PC，设置PC绑定上面的物理机的虚拟网卡
 
-   ![image-20190814214729650](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190814214729650.png)
+   ![image-20190814214729650](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190814214729650.png?raw=true)
 
    注意：选择绑定的网卡和路由器的网卡相连
 
-   ![image-20190814215051449](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190814215051449.png)
+   ![image-20190814215051449](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190814215051449.png?raw=true)
 
 4. 配置路由器对应网卡的IP
 
-   ![image-20190814215256386](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190814215256386.png)
+   ![image-20190814215256386](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190814215256386.png?raw=true)
 
 5. 在虚拟机上测试ping路由器的网卡IP
 
-   ![image-20190814215334134](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190814215334134.png)
+   ![image-20190814215334134](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190814215334134.png?raw=true)
 
 
 
@@ -72,28 +85,35 @@ login
 
 
 
-![image-20190814220733993](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190814220733993.png)
+![image-20190814220733993](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190814220733993.png?raw=true)
 
 在虚拟机上Telnet
 
-![image-20190814220952257](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190814220952257.png)
+![image-20190814220952257](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190814220952257.png?raw=true)
 
 然后要求输入账号密码
 
-![image-20190814221223572](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190814221223572.png)
+![image-20190814221223572](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190814221223572.png?raw=true)
 
 查看路由器上有哪些人登录，我们可以看到，有一个是console连接的，有一个是用vty(virtual telnet )
 
-![image-20190814221419063](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190814221419063.png)
+![image-20190814221419063](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190814221419063.png?raw=true)
 
 禁止Telnet
 
 1. 需要登录
 2. 但是有没有给密码，这两者矛盾就实现了禁止Telnet
 
-![image-20190814221721987](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190814221721987.png)
+![image-20190814221721987](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190814221721987.png?raw=true)
 
 
 
+# 设置路由器可浏览器访问
 
+```shell
+R1(config)#ip http server
+
+#然后
+curl ip:80
+```
 
