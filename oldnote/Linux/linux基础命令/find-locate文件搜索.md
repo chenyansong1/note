@@ -126,7 +126,18 @@ find [查找路径] [查找标准] [处理动作]
 /cys_test/cy1/cy1/error.txt
 ```
 
+
+
+# 查找文件内容
+
+```shell
+find . -name “*.in” | xargs grep “thermcontact”
+```
+
+
+
 # 3.根据文件大小搜索
+
 ``` shell
 在Linux中是以数据块来区分文件大小的，一个数据块是512 字节，即0.5k
 find /cys_test/ -size +n    #+n 大于；-n小于；n等于
