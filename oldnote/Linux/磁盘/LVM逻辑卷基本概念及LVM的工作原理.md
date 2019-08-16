@@ -22,7 +22,7 @@ LVM最大的特点就是可以对磁盘进行动态管理。因为逻辑卷的�
 
 在一个硬盘上创建多个逻辑卷，对创建好的卷调整大小,然后将它们挂载在’/home,/var,/tmp’目录。
 
-![](E:\note\images\linux\filesystem\lvm-yuanli.png)
+![](https://github.com/chenyansong1/note/blob/master/images/linux/filesystem/lvm-yuanli.png?raw=true)
 
 
 
@@ -54,9 +54,9 @@ LV：也就是从VG中划分的逻辑分区
 
 
 
-![](E:\note\images\linux\filesystem\lvm-yuanli2.png)
+![](https://github.com/chenyansong1/note/blob/master/images/linux/filesystem/lvm-yuanli2.png?raw=true)
 
-![](E:\note\images\linux\filesystem\lvm-yuanli3.png)
+![](https://github.com/chenyansong1/note/blob/master/images/linux/filesystem/lvm-yuanli3.png?raw=true)
 
 
 
