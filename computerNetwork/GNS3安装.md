@@ -53,11 +53,11 @@ Enter configuration commands, one per line.  End with CNTL/Z.
 R1(config)#enable secret 123456
 ```
 
-![image-20190815215650752](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190815215650752.png)
+![image-20190815215650752](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190815215650752.png?raw=true)
 
 将所有的密码都加密
 
-![image-20190815215913726](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190815215913726.png)
+![image-20190815215913726](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190815215913726.png?raw=true)
 
 
 
