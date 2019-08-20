@@ -10,15 +10,18 @@ https://blog.csdn.net/zhangpeterx/article/details/86407065
 
 
 
+
+
+
 # 集成wireshark和SecureCRT
 
 * wireshark集成
 
-  
+  ![1565843074186](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/1565843074186.png?raw=true)
 
 
 * SecureCRT集成
-![1565831836834](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/1565831836834.png)
+![1565831836834](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/1565831836834.png?raw=true)
 
 
 
