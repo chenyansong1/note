@@ -165,6 +165,28 @@ a1.sinks.k1.channel = c1
 
 
 
+过滤指定字符串
+
+```shell
+## source 拦截器
+a1.sources.r1.interceptors = i1 i2
+#是否配置时间戳
+a1.sources.r1.interceptors.i1.type = com.bluedon.flume.FlumeInterCeptor$Builder
+#a1.sources.r1.interceptors.i1.timestamp = true
+#a1.sources.r1.interceptors.i1.staicfield = 4
+
+#配置过滤特定日志格式拦截器
+a1.sources.r1.interceptors.i1.type = regex_filter
+a1.sources.r1.interceptors.i1.regex = .*ACK.*
+a1.sources.r1.interceptors.i1.excludeEvents = true
+
+a1.sources.r1.interceptors.i2.type = regex_filter
+a1.sources.r1.interceptors.i2.regex = .*TTL.*
+a1.sources.r1.interceptors.i2.excludeEvents = true
+```
+
+
+
 # 5.Search and Replace Interceptor
 
 该拦截器用于将events中的正则匹配到的内容做相应的替换。

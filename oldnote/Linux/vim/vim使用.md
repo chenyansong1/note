@@ -436,6 +436,9 @@ vim + filename
 
 # 打开文件，定位至第一次被Pattern匹配的行的行首
 vim +/Pattern filename
+
+#打开文件，并跳转到指定的行
+vim ./Plugin/eventreport/EventReport.cpp +155
 ```
 
 

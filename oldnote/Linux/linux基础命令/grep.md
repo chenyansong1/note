@@ -31,6 +31,16 @@ grep [options] PATTERN [FILE...]
 
 
 
+# 文件内容搜索
+
+```shell
+#搜索当前目录下的所有的文件中有包含nodeip的文件
+#r recursive 递归目录， n显示行号
+d
+```
+
+
+
 # 基本正则说明
 
 ## 字符匹配
