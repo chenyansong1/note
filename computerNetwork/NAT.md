@@ -104,3 +104,32 @@ debug ip nat
 
 ![image-20190824133744308](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190824133744308.png)
 
+
+
+# 端口映射
+
+外面的人想要访问内网的服务，但是外面的人只能访问到公司的路由器的外网IP，端口映射允许你使用公网地址访问内网服务器
+
+路由器配置端口映射
+
+```shell
+en
+config t
+#131.107.0.1 80 -> 10.0.0.6 80
+ip nat inside source static tcp 10.0.0.6 80 131.107.0.1 80
+
+#配置网卡所属的内外网
+interface serial 0/0
+ip nat outside
+
+interface fastEthernet 0/1
+ip nat inside 
+
+#测试
+curl http://131.107.0.1:80
+```
+
+
+
+
+
