@@ -21,9 +21,9 @@ Switch(config-if)#no shutdown
 Switch#
 ```
 
-![image-20190826220848615](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190826220848615.png)
+![image-20190826220848615](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190826220848615.png?raw=true)
 
-![image-20190826220908969](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190826220908969.png)
+![image-20190826220908969](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190826220908969.png?raw=true)
 
 
 
@@ -31,11 +31,11 @@ Switch#
 
 1. 还是给交换机配置一个IP地址，保证交换机和TFTP服务器之间能够ping通
 
-   ![image-20190826221042851](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190826221042851.png)
+   ![image-20190826221042851](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190826221042851.png?raw=true)
 
 2. 从TFTP服务器恢复配置
 
-   ![image-20190826221240027](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190826221240027.png)
+   ![image-20190826221240027](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190826221240027.png?raw=true)
 
 3. 同理，我们也可以备份startup-config，同时也可以copy TFTP到running-config
 
@@ -48,7 +48,7 @@ Switch#
 Switch#show flash
 ```
 
-![image-20190826221528203](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190826221528203.png)
+![image-20190826221528203](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190826221528203.png?raw=true)
 
 备份交换机的操作系统
 
@@ -56,9 +56,9 @@ Switch#show flash
 Switch#copy flash tftp
 ```
 
-![image-20190826221737230](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190826221737230.png)
+![image-20190826221737230](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190826221737230.png?raw=true)
 
-![image-20190826221834360](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190826221834360.png)
+![image-20190826221834360](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190826221834360.png?raw=true)
 
 恢复操作系统
 
@@ -70,19 +70,19 @@ copy tftp flash
 
 1. copy新的操作系统到flash中
 
-   ![image-20190826222132598](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190826222132598.png)
+   ![image-20190826222132598](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190826222132598.png?raw=true)
 
 2. 再次查看flash中存在的操作系统
 
-   ![image-20190826222301818](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190826222301818.png)
+   ![image-20190826222301818](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190826222301818.png?raw=true)
 
 3. 指定使用EA8启动交换机
 
-   ![image-20190826222407215](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190826222407215.png)
+   ![image-20190826222407215](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190826222407215.png?raw=true)
 
 4. 删除EA4操作系统
 
-   ![image-20190826222515325](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190826222515325.png)
+   ![image-20190826222515325](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190826222515325.png?raw=true)
 
 
 
