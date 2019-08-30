@@ -136,5 +136,23 @@ lvextend指令用于在线扩展逻辑卷的空间大小，而不中断应用程
 
 扩展的空间的时候，首先扩展的是物理边界（也就是逻辑卷），然后再扩展逻辑边界（resize2fs）
 
+8、逻辑卷扩展后并不会马上生效，需要使用resize2fs命令重新加载逻辑卷的大小
 
+eg：
+
+```
+centos6：
+resize2fs /dev/mapper/vg_zgate192-LogVol01   
+centos7：
+xfs_growfs  /dev/mapper/vg_zgate192-LogVol01
+```
+
+9、查看磁盘分区：
+
+```
+fdisk -l
+df -lh
+```
+
+10、可以看到扩容成功。
 
