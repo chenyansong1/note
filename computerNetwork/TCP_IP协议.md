@@ -2,6 +2,23 @@
 
 ![image-20190811084720415](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190811084720415.png)
 
+![image-20190831221615587](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190831221615587.png)
+
+```shell
+802.3 以太网
+802.5 令牌环
+802.11 无线
+FDDI 光纤分布式数据接口
+```
+
+![image-20190831222149693](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190831222149693.png)
+
+
+
+根据上面的协议，就有了对应层的网络设备，如交换机工作于数据链路层，属于二层设备，路由器工作于网络层，属于三层设备
+
+![image-20190831223445984](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190831223445984.png)
+
 常见的协议
 
 ```shell

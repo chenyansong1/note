@@ -8,6 +8,13 @@
 
 ![image-20190825082548831](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190825082548831.png)
 
+```shell
+802.3 以太网
+802.5 令牌环
+802.11 无线
+FDDI 光纤分布式数据接口
+```
+
 ![image-20190825082922622](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190825082922622.png)
 
 下面是典型的几个协议的封装
@@ -24,7 +31,11 @@
 
 应用层封装：HTTP消息
 
+根据上面的协议，就有了对应层的网络设备，如交换机工作于数据链路层，属于二层设备，路由器工作于网络层，属于三层设备
 
+![image-20190831223445984](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190831223445984.png)
+
+常见的协议
 
 # TCP/IP体系封装数据单元的名称
 
