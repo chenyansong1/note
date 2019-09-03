@@ -1,5 +1,23 @@
 [TOC]
 
+# VLAN技术简介
+
+虚拟局域网是一种将局域网LAN从逻辑上划分成一个个网段，从而实现虚拟工作组的数据交换技术
+
+* 基于网络性能考虑：可以把一个LAN划分成多个逻辑的VLAN，每个VLAN是一个广播域，这样广播被限制在一个VLAN内
+* 基于组织结构考虑：网络管理者将一个无聊的LAN按照组织结构划分成不同的LAN
+* 值得注意的是：既然VLAN隔离了广播风暴，同时也隔离了不同的VLAN之间的通信，**所以不同的VLAN之间的通讯需要有三层的设备（如三层交换机，路由器）来完成转发**
+
+![image-20190903204418342](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190903204418342.png)
+
+
+
+# vlan划分方式
+
+![image-20190903205140569](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190903205140569.png)
+
+
+
 # 单交换机配置
 
 ## 配置要求
@@ -68,8 +86,8 @@ show
 % Incomplete command.
 #再次查看VLAN
 Switch#show vlan
-
-VLAN Name                             Status    Ports
+#vlan编号		VLAN名称										VLAN状态	 VLAN端口成员
+VLAN 				Name                       Status    Ports
 ---- -------------------------------- --------- -------------------------------
 1    default                          active    Fa0/5, Fa0/6, Fa0/7, Fa0/8
                                                 Fa0/9, Fa0/10, Fa0/11, Fa0/12
