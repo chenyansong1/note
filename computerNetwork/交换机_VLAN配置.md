@@ -116,6 +116,8 @@ VLAN 				Name                       Status    Ports
 
 # 跨交换机VLAN配置
 
+![](/Users/chenyansong/Desktop/)
+
 ## 配置交换机VLAN
 
 ![image-20190827213432885](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190827213432885.png)
