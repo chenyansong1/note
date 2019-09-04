@@ -8,13 +8,13 @@
 * 基于组织结构考虑：网络管理者将一个无聊的LAN按照组织结构划分成不同的LAN
 * 值得注意的是：既然VLAN隔离了广播风暴，同时也隔离了不同的VLAN之间的通信，**所以不同的VLAN之间的通讯需要有三层的设备（如三层交换机，路由器）来完成转发**
 
-![image-20190903204418342](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190903204418342.png)
+![image-20190903204418342](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190903204418342.png?raw=true)
 
 
 
 # vlan划分方式
 
-![image-20190903205140569](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190903205140569.png)
+![image-20190903205140569](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190903205140569.png?raw=true)
 
 
 
@@ -22,13 +22,13 @@
 
 ## 配置要求
 
-![image-20190827204720494](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190827204720494.png)
+![image-20190827204720494](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190827204720494.png?raw=true)
 
-![image-20190827212059765](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190827212059765.png)
+![image-20190827212059765](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190827212059765.png?raw=true)
 
 在创建VLAN之前，交换机的所有口默认都是属于VLAN1的，如下图
 
-![image-20190827204916656](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190827204916656.png)
+![image-20190827204916656](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190827204916656.png?raw=true)
 
 ## 创建VLAN10和VLAN20，并命名
 
@@ -112,17 +112,27 @@ VLAN 				Name                       Status    Ports
 
 2. VLAN可以隔离广播域：我们在ping一个未知主机的时候，ARP会广播，但是这个广播只会在主机所在的VLAN中进行广播，VLAN之间无法通过二层设备互相访问，VLAN之间的通信需要依靠三层设备，比如：路由器，三层交换机等等
 
-
-
 # 跨交换机VLAN配置
 
-![](/Users/chenyansong/Desktop/)
+![1567556054289](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/1567556054289.png?raw=true)
+
+## IEEE802.1q标记格式
+
+![1567556410735](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/1567556410735.png?raw=true)
+
+由于帧的结构变了，所有帧校验需要重新计算
+
+
 
 ## 配置交换机VLAN
 
-![image-20190827213432885](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190827213432885.png)
+![1567556608678](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/1567556608678.png?raw=true)
 
-![image-20190827213847163](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190827213847163.png)
+![1567556705286](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/1567556705286.png?raw=true)
+
+![image-20190827213432885](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190827213432885.png?raw=true)
+
+![image-20190827213847163](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190827213847163.png?raw=true)
 
 ```shell
 #在switch1上配置
@@ -162,7 +172,7 @@ show vlan
 
 我们没有做trunk，看看跨交换机的情况下，VLAN中的计算机能否通
 
-![image-20190827214853274](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190827214853274.png)
+![image-20190827214853274](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190827214853274.png?raw=true)
 
 我们可以看到即使2台交换机是在同一个VLAN中，但是因为他们跨交换机了，所以还是不能通信
 
@@ -193,13 +203,13 @@ switchport mode trunk
 
 设定完trunk之后，我们再次ping，我们发现是可以ping通的
 
-![image-20190827215546237](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190827215546237.png)
+![image-20190827215546237](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190827215546237.png?raw=true)
 
 
 
 
 
-![image-20190827220124701](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190827220124701.png)
+![image-20190827220124701](https://github.com/chenyansong1/note/blob/master/images/computeNetwork/image-20190827220124701.png?raw=true)
 
 
 
