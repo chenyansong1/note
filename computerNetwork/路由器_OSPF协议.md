@@ -64,4 +64,69 @@ OSPF的代价值的计算公式：$10^8/(链路带宽)$，对于100Mbps快速以
 
 * 链路状态公告
 
-  链路状态
+  链路状态公告LSA是链路状态信息的统称，也就是说链路状态数据库LDSB实际上是由链路状态公告LSA条目组成，链路状态公告LSA条目是链路状态数据库LSDB的基本元素
+  
+  ![image-20190907192800525](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907192800525.png)
+
+* 指定路由器DR，备份指定路由器BDR，非指定路由器DRother
+
+  **为了减少泛洪的数据量，我们采用DR和BDR**
+
+  ![image-20190907192958056](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907192958056.png)
+
+  * DR的选择原则：路由器优先级高的路由器将被选举为DR，网络中的所有路由器的优先级默认为1，最大为255，在路由器优先级相同的情况下，具有最大路由器ID的路由器将成为DR
+
+  * BDR的选择原则：路由器优先级次高的被选定，如果路由器优先级相同的情况下，具有第二大路由器ID的路由器将成为BDR，如果路由器优先级为0，则表示路由器不参加DR、BDR选举过程，也不会成为DR，BDR
+
+  * 除了DR，BDR之外的所有的路由器成为非指定路由器DRother
+
+* OSPF中邻居关系和邻接关系
+
+  DRother之间形成邻居关系（Neighbors)，DRother与DR、BDR之间不但是邻居关系还是邻接关系（Adjacency)
+
+  ![image-20190907193938374](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907193938374.png)
+
+  邻居关系的路由器之间只会定时传递OSPF的问候hello报文
+
+  邻接关系的路由器之间不但定时传递OSPF的问候hello报文，**同时还可以发送链路状态公告LSA泛洪**
+
+* SPF计算
+
+  当同区域所有路由器的链路状态数据库LSDB同步只会，每台服务器以自己为根计算出到达每个网络的最优路径，图中假设所有链路的代价均相同
+
+  ![image-20190907194320435](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907194320435.png)
+
+
+
+# OSPF报文
+
+![image-20190907194454876](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907194454876.png)
+
+![image-20190907194513608](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907194513608.png)
+
+## OSPF报文首部结构
+
+![image-20190907194603213](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907194603213.png)
+
+ OSPF的**类型**如下
+
+![image-20190907194659078](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907194659078.png)
+
+## OSPF的五种报文工作流程
+
+![image-20190907195110425](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907195110425.png)
+
+## LSA首部（LSA摘要）
+
+![image-20190907195415243](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907195415243.png)
+
+LSA类型有如下的几种：
+
+![image-20190907195523820](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907195523820.png)
+
+# OSPF网络类型
+
+![image-20190907195850745](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907195850745.png)
+
+![image-20190907195922450](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907195922450.png)
+

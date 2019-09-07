@@ -70,7 +70,10 @@ no shutdown
 ```shell
 #c2811a
 config t
+#本地OSPF的进程编号，路由器之间可以不同
 route ospf 10
+#通配符掩码，如果是0的位置，必须匹配
+#area 1 ：表示某一个区域
 network 10.10.10.10 0.0.0.0 area 1
 network 192.168.1.0 0.0.0.255 area 1	
 network 192.168.3.0 0.0.0.255 area 1
@@ -89,7 +92,6 @@ route ospf 10
 network 30.30.30.30 0.0.0.0 area 1
 network 192.168.2.0 0.0.0.255 area 1	
 network 192.168.3.0 0.0.0.255 area 1
-
 ```
 
 通过上面的配置之后，我们重新查看路由器学习到的路由信息
@@ -114,10 +116,12 @@ show ip protocols
 show ip ospf neighbor
 #full:表示两台路由器的链路状态数据库已经同步
 #在同一区域内的各台路由器，他们的链路状态数据库是完全一致的
-#在opf中，默认各台路由器的优先级均为0
+#在ospf中，默认各台路由器的优先级均为0
 ```
 
 ![image-20190831164847653](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190831164847653.png)
+
+![image-20190907201748467](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907201748467.png)
 
 查看链路状态数据库
 
@@ -126,6 +130,8 @@ show ip ospf database
 ```
 
 ![image-20190831165124839](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190831165124839.png)
+
+![image-20190907202017373](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907202017373.png)
 
 查看ospf的接口情况
 
@@ -139,9 +145,15 @@ show ip ospf interface serial 0/0/0
 
 代价值问题
 
+serial的代价值为$10^8/(1.544Mbps)=64$,lookback口的代价值为$10^8/100Mbps=1$
+
 ![image-20190831170227569](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190831170227569.png)
 
 ![image-20190831170502055](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190831170502055.png)
+
+ospf的管理距离都是110
+
+
 
 查看链路带宽
 
@@ -255,3 +267,32 @@ show ip ospf database
 ```
 
 ![image-20190831213349798](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190831213349798.png)
+
+![image-20190907203646177](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907203646177.png)
+
+查看接口
+
+![image-20190907203957498](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907203957498.png)
+
+# 多区域OSPF配置
+
+![image-20190907204045002](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907204045002.png)
+
+OSPF是面向接口的
+
+![image-20190907204222064](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907204222064.png)
+
+路由来源O IA（OSPF inter area ，OSPF区域间路由）表示通过OSPF学习到的**跨区域路由**
+
+![image-20190907204458705](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907204458705.png)
+
+查看链路状态数据库
+
+![image-20190907204746431](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907204746431.png)
+
+我们查看B路由器的链路数据库
+
+![image-20190907205009352](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907205009352.png)
+
+区域边界状态数据库上，是他连接的区域的链路数据库的一个汇总
+
