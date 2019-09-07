@@ -125,6 +125,12 @@ show ip protocols
 
 
 
+![image-20190907104001649](/Users/chenyansong/Documents/note/images/computeNetwork/image-20190907104001649.png)
+
+
+
+
+
 # RIP认证
 
 在各个厂家产品的rip协议验证中，没有一个统一的标准认证方法，需要了解相关的产品信息，此处是Cisco的rip认证配置
