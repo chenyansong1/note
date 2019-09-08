@@ -1,0 +1,12 @@
+[TOC]
+
+# HSRP简介
+
+热备份路由器协议（hot standby router protocol, hsrp)，可以实现路由器之间的冗余备份，防止由于单台路由器故障而影响网络的连通
+
+热备份路由器协议HSRP是Cisco公司的专有协议，而虚拟路由器冗余协议（Virtual Router Redundancy Protocol, VRRP)是一种标准化的协议
+
+
+
+
+
