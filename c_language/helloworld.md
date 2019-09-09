@@ -1,5 +1,7 @@
 [TOC]
 
+# 第一个helloworld说明
+
 在Windows下使用gcc的条件
 
 1. 必须是提前安装了gcc这个程序
@@ -33,4 +35,23 @@ int main()
 //printf("\n"); // \n回车换行
 //return之后，后面的语句就不会执行
 ```
+
+
+
+# 系统调用
+
+```c
+#include "stdlib.h"
+
+int main()
+{
+  //执行系统调用
+	system("ls");
+	return 0;
+}
+```
+
+
+
+
 
