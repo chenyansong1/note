@@ -304,6 +304,28 @@ home_www   VolGroup -wi-a----- 1.95g
 
 **Tip：每创建好一个逻辑卷，都会在 /dev 目录下出现一个以该卷组命名的文件夹，基于该卷组创建的所有的逻辑卷都是存放在这个文件夹下面。**
 
+同时也是可以按照百分比的方式指定空间大小
+
+```sh
+       -l, --extents LogicalExtentsNumber[%{VG|PVS|FREE|ORIGIN}]
+              Gives the number of logical extents to allocate for the new logical volume.  The total number of physical extents allocated will be greater than this, for
+              example,  if  the  volume  is mirrored.  The number can also be expressed as a percentage of the total space in the Volume Group with the suffix %VG, as a
+              percentage of the remaining free space in the Volume Group with the suffix %FREE, as a percentage of the remaining free space  for  the  specified  Physi‐
+              calVolume(s)  with  the  suffix  %PVS,  or  (for a snapshot) as a percentage of the total space in the Origin Logical Volume with the suffix %ORIGIN (i.e.
+              100%ORIGIN provides space for the whole origin).  When expressed as a percentage, the number is treated as an approximate upper limit for the total number
+              of physical extents to be allocated (including extents used by any mirrors, for example).
+		%VG
+		%PVS   
+		%FREE  使用剩余空间的百分比
+		%ORIGIN  原始的容量的百分比
+		
+//vcreate -l 100%FREE -L 100G -n root volGroup
+```
+
+
+
+
+
 现在逻辑卷已经准备好了，我们可以格式化和挂载逻辑卷，就像其它ext2/3/4分区一样！
 
 ```
