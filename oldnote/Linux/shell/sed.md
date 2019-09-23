@@ -147,6 +147,10 @@ chenyansong6
  
 // -i 表示改变文件内容，s 表示search，g表示global
 [root@linux-study cys_test]# sed -i 's#song#he#g' sed_tst.txt
+
+#使用变量替换，一定要使用双引号，不能使用单引号
+sed "s/$a/$b/" filename
+
 [root@linux-study cys_test]# cat sed_tst.txt
 chenyanhe2
 chenyanhe3
