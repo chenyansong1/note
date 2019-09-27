@@ -21,3 +21,6 @@ log4j.appender.LOGFILE.layout.ConversionPattern=%d{yyyy-MM-dd HH\:mm\:ss.SSS} %-
 
 ![1569493292636](E:\git-workspace\note\images\bigdata\flume\1569493292636.png)
 
+flume如果有多个slf4j的jar可能会jar包冲突，需要删除对应的jar
+
+![1569549577348](E:\git-workspace\note\images\bigdata\flume\1569549577348.png)
