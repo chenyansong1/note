@@ -50,6 +50,8 @@ sudo umount /dev/disk2s4
 
 ```
 sudo mount_ntfs -o rw,nobrowse /dev/disk2s4 ~/Desktop/Windows
+#or
+sudo mount_ntfs -o rw /dev/disk2s4 ~/Desktop/Windows
 ```
 
 成功，磁盘可以正常读写了！！！
