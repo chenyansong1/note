@@ -28,7 +28,12 @@ tcpdump
 (9)-n 以数字显示主机及端口：tcpdump -n
 
 
+-n     Don't convert host addresses to names.  This can be used to avoid DNS lookups.
+-nn    Don't convert protocol and port numbers etc. to names either.
 
+
+#一般的web服务器都会有80的包
+tcpdump -i eno1 -nn -n -s 3000 tcp and dst port 80
 ```
 
 
