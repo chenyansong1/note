@@ -5,6 +5,7 @@ toc: true
 tags: [Linux重要配置文件]
 ---
 
+[TOC]
 
 &emsp;设置文件系统挂载信息的文件，开机能够自动挂载磁盘分区
 
@@ -46,6 +47,36 @@ mount -t ext4 -o noexec /dev/sda1 /mnt
 /dev/sdb1               /mnt                    ext4    defaults        0 0
  #需要执行mount -a 加载/etc/fstab 文件使挂载生效
 
-
 ```
 
+
+
+#  /etc/fstab文件出错,无法进入Linux系统
+
+转自：https://blog.csdn.net/zjf280441589/article/details/39503479
+
+## 问题描述
+
+今天复习Linux文件系统管理，在Linux系统上挂载了一块新硬盘之后，然后分区，格式化，一步步走下来，为了能够使该硬盘在系统启动时自动挂载，于是将之写入了/etc/fstab文件，然而在reboot之后，Linux系统无法正常启动，系统显示的情况与下图类似(因为当时急于处理该故障,因此并未未截图,后来在网上找了几张图片,大体记录下自己的处理思路)
+
+![img](E:\git-workspace\note\images\linux\command\fstab.png)
+
+根据系统提示，可以看出是系统不能启动的真正原因是 /etc/fstab给写错了，系统启动报告Checking filesystems 失败,此时,根据系统提示,输入root密码进入repair filesystem模式
+
+## 修复过程
+
+
+尝试修改 /etc/fstab 发现系统是read-only模式
+
+![img](E:\git-workspace\note\images\linux\command\fstab2.png)
+
+```shell
+#以可读写方式重新挂载文件系统
+mount -o remount,rw /
+```
+
+重新修改/etc/fstab,修改出错处,如图[注意,最新的CentOS版本已经不再支持以该方式书写卷标了
+
+![img](E:\git-workspace\note\images\linux\command\fstab3.png)
+
+然后使用reboot命令重启系统
