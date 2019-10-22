@@ -10,9 +10,9 @@
 
   * 配色方案
 
-    ![1571629749501](C:\Users\landun\AppData\Roaming\Typora\typora-user-images\1571629749501.png)
+    ![](E:\git-workspace\note\images\vim\1571629749501.png)
 
-    ![1571627410970](C:\Users\landun\AppData\Roaming\Typora\typora-user-images\1571627410970.png)
+    ![](E:\git-workspace\note\images\vim\1571627410970.png)
 
   **使用默认的配色 ：default**
 
@@ -71,6 +71,46 @@ function! ClosePair(char)
     endif
 endfunction
 filetype plugin indent on 
+
+
+" 自动缩进
+set autoindent
+set cindent
+" Tab键的宽度
+set tabstop=4
+" 统一缩进为4
+set softtabstop=4
+set shiftwidth=4
+" 不要用空格代替制表符
+set noexpandtab
+" 在行和段开始处使用制表符
+set smarttab
+
+
+```
+
+
+
+
+
+taglist
+
+```shell
+#参见：https://www.cnblogs.com/willsonli/p/6559705.html
+
+
+#tags, tagslist的使用
+#https://blog.csdn.net/daniel_ustc/article/details/8299096
+
+#taglist的使用
+#https://www.cnblogs.com/luosongchao/p/3163468.html
+
+#vim打造教程
+#https://blog.csdn.net/wooin/article/details/1858917
+
+#对于我们需要查看源码的时候，在源码的工程目录下，使用 tags -R  对当前源码生成一份 tags
+#如果修改了源码，需要重新生成一份tags，不然修改的部分不会被tag到
+#tag每次都要去对应的目录下重新生成，不然，找不到
 
 ```
 
