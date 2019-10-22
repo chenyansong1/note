@@ -87,6 +87,42 @@ set noexpandtab
 set smarttab
 
 
+
+
+
+
+map <F5> :call CompileRunGcc()<CR>
+func! CompileRunGcc()
+    exec "w" 
+    if &filetype == 'c' 
+        exec "!g++ % -o %<"
+        exec "! ./%<"
+    elseif &filetype == 'cpp'
+        exec "!g++ % -o %<"
+        exec "! ./%<"
+    elseif &filetype == 'java' 
+        exec "!javac %" 
+        exec "!java %<"
+    elseif &filetype == 'sh'
+        :!./%
+    endif
+endfunc
+"C,C++的调试
+map <F8> :call Rungdb()<CR>
+func! Rungdb()
+    exec "w" 
+    exec "!g++ % -g -o %<"
+    exec "!gdb ./%<"
+endfunc
+
+" 设置当文件被改动时自动载入
+set autoread
+" quickfix模式
+autocmd FileType c,cpp map <buffer> <leader><space> :w<cr>:make<cr>
+
+
+
+
 ```
 
 
