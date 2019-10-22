@@ -535,6 +535,19 @@ man_db.conf.linux: ASCII text
 
 
 
+vim中粘贴出现乱码的问题
+
+```
+在vi/vim普通模式下执行:set paste命令，再按 i 插入就会保留原文件格式
+
+:set paste 打开粘贴命令
+:set nopaste 关闭命令
+:h paste 帮助
+
+```
+
+
+
  
 
 
