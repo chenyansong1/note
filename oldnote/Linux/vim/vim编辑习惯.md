@@ -148,6 +148,14 @@ taglist
 #如果修改了源码，需要重新生成一份tags，不然修改的部分不会被tag到
 #tag每次都要去对应的目录下重新生成，不然，找不到
 
+#quickfix
+https://vimjc.com/vim-quickfix.html
+
+#缓冲区的概念
+https://vimjc.com/vim-file-buffer.html
+
+
+
 ```
 
 
