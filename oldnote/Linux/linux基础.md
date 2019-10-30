@@ -1,4 +1,4 @@
-[toc]
+[TOC]
 
 
 
@@ -85,4 +85,40 @@ ctrl+u
   
   ```
 
+* 查看文件内容
+
+  ```shell
+  #cat 查看文件所有内容
   
+  #more 一页一页查看,回车跳一行，空格每次翻一页，不能向前翻页，q退出（或者ctrl+c）
+  
+  #less 回车跳一行，空格每次翻一页，ctrl+p（往前一行），ctrl+n(向后一行), ctrl+b（向前翻页），ctrl+f(向后翻页)
+  
+  #head ： head -5 filename :显示前5行，默认是10行
+  
+  #tail ：tail -20 filename 显示尾部20行，tail -f 监听文件变化
+  ```
+
+* 软链接
+
+  ```shell
+  ln -s hello.c new_hello.soft
+  
+  #我们也可以给目录创建快捷方式
+  ln -s ~/dir-test dir.soft
+  ll dir.soft
+  ```
+  
+* 硬链接
+
+  ```shell
+  ln hello.c hello.hard
+  #增加的是硬链接计数
+  #硬链接，并不占用实际的存储空间
+  ```
+
+  ![1572396898157](E:\git-workspace\note\images\linux\command\1572396898157.png)
+
+  ![1572397158970](E:\git-workspace\note\images\linux\command\1572397158970.png)
+
+
