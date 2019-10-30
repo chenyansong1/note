@@ -114,7 +114,8 @@ ctrl+u
   ```shell
   ln hello.c hello.hard
   #增加的是硬链接计数
-  #硬链接，并不占用实际的存储空间
+  #硬链接，并不占用实际的存储空间，硬链接之间使用的是同一个inode
+  #不能给目录创建硬链接
   ```
 
   ![1572396898157](E:\git-workspace\note\images\linux\command\1572396898157.png)
