@@ -122,4 +122,22 @@ ctrl+u
 
   ![1572397158970](E:\git-workspace\note\images\linux\command\1572397158970.png)
 
+```shell
+#行统计
+wc -l
 
+#
+wc filename
+
+7 19 83
+#7row
+#19 words
+#83 byte
+
+#二进制文件
+od
+```
+
+![image-20191030224557720](/Users/chenyansong/Documents/note/images/linux/command/image-20191030224557720.png)
+
+![image-20191030224635680](/Users/chenyansong/Documents/note/images/linux/command/image-20191030224635680.png)
