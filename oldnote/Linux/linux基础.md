@@ -141,3 +141,117 @@ od
 ![image-20191030224557720](/Users/chenyansong/Documents/note/images/linux/command/image-20191030224557720.png)
 
 ![image-20191030224635680](/Users/chenyansong/Documents/note/images/linux/command/image-20191030224635680.png)
+
+* 文件查找
+
+  ```shell
+  find / -name filname #按文件名查找(支持通配符: hel*, hel?,)
+  		 / -type f  #按文件类型查找(f:file， 目录d, b, c,p,  s)
+  		 / -size +10k  (-10k 小于10k, 单位M)
+  		 / -size +10M -size -100M  (>10M && <100M)
+  		 
+  ```
+
+* 文件内容查找
+
+  ```shell
+  #找到对应的文件
+  grep "xxx" -rn dir/
+  ```
+
+* 软件安装
+
+  ```shell
+  
+  sudo apt-get install tree
+  
+  sudo apt-get remove tree
+  
+  #更新的是软件列表
+  sudo apt-get update
+  ```
+
+  ![image-20191031194155378](/Users/chenyansong/Documents/note/images/linux/command/image-20191031194155378.png)
+
+  ![image-20191031194217371](/Users/chenyansong/Documents/note/images/linux/command/image-20191031194217371.png)
+
+  ```shell
+  #删除下载的安装包
+  sudo apt-get clean
+  # /var/cache/apt/archives
+  ```
+
+  ```shell
+  #deb包安装
+  sudo dpkg -i xxx.deb #安装
+  sudo dpkg -r xxx #卸载
+  ```
+
+  ```shell
+  #源码安装
+  ```
+
+  ![](/Users/chenyansong/Documents/note/images/linux/command/image-20191031194815769.png)
+
+* 挂载
+
+  ```shell
+  mount /dev/sdb1 /mnt
+  umount /mnt
+  ```
+
+  
+
+* 压缩解压缩
+
+  ```shell
+  gzip  # .gz 格式的压缩包
+  bzip  # .bz2 格式的压缩包
+  
+  #tar 不适用z / j 参数，只能对文件或目录进行打包
+  tar zcvf #c-- 创建
+  				 #x -- 释放
+  				 #v -- 显示详情
+  				 #f --指定压缩文件的名字
+  				 #z -- 使用gzip的方式压缩文件 -- .gz
+  				 #j -- 使用bzip2的方式压缩文件 -- .bz2
+  
+  tar zcvf xxx.tar.gz dir/
+  tar zcvf xxx.tar.gz *.txt
+  
+  tar jcvf xxx.tar.bz2 dir/
+  
+  #解压缩
+  tar jxvf xxx.tar.bz2
+  tar zxvf xxx.tar.gz
+  
+  #解压到指定的目录中
+  tar zxvf xxx.tar.gz -C test-dir
+  
+  #rar, 需要安装 apt-get install rar
+  ##参数
+  a #压缩
+  x #解压缩
+  
+  ##压缩
+  rar a xxxx(tmp) 压缩的文件或目录 #最终生成的是xxxx.rar 
+  
+  ##解压缩
+  rar x xxx.rar [解压缩目录]
+  
+  
+  #zip
+  ##参数
+  -r #递归操作
+  
+  ##压缩
+  zip 压缩包的名字  压缩的文件或目录
+  
+  ##解压缩
+  unzip  压缩包的名字
+  unzip  压缩包的名字 -d 解压的目录
+  ```
+
+  ![](/Users/chenyansong/Documents/note/images/linux/command/image-20191031205234421.png)
+
+  ![](/Users/chenyansong/Documents/note/images/linux/command/image-20191031205438683.png)
