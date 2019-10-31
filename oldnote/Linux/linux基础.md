@@ -255,3 +255,11 @@ od
   ![](/Users/chenyansong/Documents/note/images/linux/command/image-20191031205234421.png)
 
   ![](/Users/chenyansong/Documents/note/images/linux/command/image-20191031205438683.png)
+
+* 终端
+
+  ```shell
+  
+  ```
+
+  
