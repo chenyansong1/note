@@ -259,7 +259,85 @@ od
 * 终端
 
   ```shell
+  who
+  tty7    桌面终端
+tty1--tty6  文字终端
+  ctrl+alt+f1-f7
   
+  #设备终端
+  pts/0-#  
+  ```
+  
+* ps
+
+  ```shell
+  #查看登录用户
+  ps -a 
+  [hadoop@db ~]$ ps -a
+    PID TTY          TIME CMD
+   2892 pts/2    00:00:00 ps
+  
+  #ps -u
+  [hadoop@db ~]$ ps -u
+  USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+  hadoop    1413  0.0  0.0 115432  1800 pts/0    Ss+  Oct31   0:00 -bash
+  hadoop    1522  0.0  0.0 115432  2084 pts/2    Ss   Oct31   0:00 -bash
+  hadoop    2894  0.0  0.0 155324  1848 pts/2    R+   08:15   0:00 ps -u
+  
+  [hadoop@db ~]$ ps -au
+  USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+  hadoop    1413  0.0  0.0 115432  1800 pts/0    Ss+  Oct31   0:00 -bash
+  root      1492  0.0  0.0 110088   848 tty1     Ss+  Oct31   0:00 /sbin/agetty --noclear tty1 linux
+  hadoop    1522  0.0  0.0 115432  2084 pts/2    Ss   Oct31   0:00 -bash
+  hadoop    2899  0.0  0.0 155324  1844 pts/2    R+   08:17   0:00 ps -au
+  
+  #x 查看没有终端的应用程序
+  ps -aux
+  
+  ps -aux|grep 
+  ```
+
+* kill
+
+  ```shell
+  #查看所有的sig
+  kill -l
+  
+  kill -SIGKILL pid
+  
+  ```
+
+* 查看当前进程的环境变量
+
+  ```shell
+  env
+  env|grep PATH
+  ```
+
+* 网络相关命令
+
+  ```shell
+  ip addr
+  ifconfig
+  
+  #4条之后，结束
+  ping  192.168.1.11 -c 4
+  
+  #dns解析
+  nslookup baidu.com
+  
+  ```
+
+* 用户管理
+
+  ![1572569290680](E:\git-workspace\note\images\linux\command\1572569290680.png)
+
+  ```shell
+  #-r删除对应的目录
+  sudo userdel -r lisi
+  
+  #查看所有的用户
+  cat /etc/passwd
   ```
 
   
