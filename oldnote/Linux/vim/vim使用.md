@@ -332,22 +332,20 @@ vim test.py test2.py test3.py
 
 通常用于将一个文件多窗口打开，进行对比
 
-```
+```shell
 vim file1.log
 # 水平分隔
-ctrl+w 然后松开；按下s, 此时就进入到了2个分屏的界面
-
-ctrl+w可以切换光标到上下屏幕
+#:sp  进入水平分屏
+ctrl+w*2 #进行屏幕切换
 
 
 #垂直分隔
-ctrl+w 然后松开；按下v, 此时就进入到了2个分屏的界面
+#:vsp
+ctrl+w*2 #进行屏幕切换
 
 
-# 切换
-ctrl+w+左右箭头可以切换光标到上下屏幕
-ctrl+w+w可以循环切换光标到各个屏幕
-
+#分屏的同时打开新的文件
+#:vsp xxx.file
 
 # 退出
 :q	#退出当前
@@ -495,6 +493,9 @@ vim ./Plugin/eventreport/EventReport.cpp +155
 ```shell
 #行跳转
 :100
+
+#执行命令,比如，查看当前目录
+:!pwd
 ```
 
 
@@ -522,6 +523,10 @@ vim ~/.vimrc
 ```
 
 
+
+# 将vim打造成IDE
+
+![](/Users/chenyansong/Documents/note/images/linux/command/image-20191102112359946.png)
 
 
 
