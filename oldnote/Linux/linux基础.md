@@ -339,5 +339,3 @@ tty1--tty6  文字终端
   #查看所有的用户
   cat /etc/passwd
   ```
-
-  
