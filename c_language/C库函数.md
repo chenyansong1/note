@@ -458,3 +458,10 @@ int main(int argc, char* argv[])
 ```
 
 ![](/Users/chenyansong/Documents/note/images/c_languge/5_链接的追踪.png)
+
+
+
+## access函数
+
+![](/Users/chenyansong/Documents/note/images/c_languge/image-20191103212836954.png)
+
