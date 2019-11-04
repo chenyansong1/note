@@ -1,8 +1,8 @@
-[toc]
+[TOC]
 
 # C库函数
 
-![](/Users/chenyansong/Documents/note/images/c_languge/C库IO函数工作流程.png)
+![](https://github.com/chenyansong1/note/blob/master/images/c_languge/C库IO函数工作流程.png?raw=true)
 
 > C库函数是在内部封装了一个I/O缓冲区，但是如果是系统的I/O函数是没有这样的缓冲区的
 
@@ -10,9 +10,9 @@
 
 # 虚拟地址空间
 
-![](/Users/chenyansong/Documents/note/images/c_languge/pcb和文件描述符.png)
+![](https://github.com/chenyansong1/note/blob/master/images/c_languge/pcb和文件描述符.png?raw=true)
 
-![](/Users/chenyansong/Documents/note/images/c_languge/虚拟地址空间.png)
+![](https://github.com/chenyansong1/note/blob/master/images/c_languge/虚拟地址空间.png?raw=true)
 
 查看文件的格式
 
@@ -24,7 +24,7 @@ chenyansongdeMacBook-Pro:c_language chenyansong$ file /tmp//sunlogin_helper.log
 chenyansongdeMacBook-Pro:c_language chenyansong$ 
 ```
 
-![image-20191103111757079](/Users/chenyansong/Documents/note/images/c_languge/image-20191103111757079.png)
+![image-20191103111757079](https://github.com/chenyansong1/note/blob/master/images/c_languge/image-20191103111757079.png?raw=true)
 
 
 
@@ -43,13 +43,13 @@ chenyansongdeMacBook-Pro:c_language chenyansong$
    
       		
 
-![](/Users/chenyansong/Documents/note/images/c_languge/image-20191103114054898.png)
+![](https://github.com/chenyansong1/note/blob/master/images/c_languge/image-20191103114054898.png?raw=true)
 
 
 
 # C库函数与系统函数的关系
 
-![7_库函数与系统函数的关系](/Users/chenyansong/Documents/note/images/c_languge/库函数与系统函数的关系.png)
+![7_库函数与系统函数的关系](https://github.com/chenyansong1/note/blob/master/images/c_languge/库函数与系统函数的关系.png?raw=true)
 
 
 
@@ -76,11 +76,11 @@ int open(const *pathname, int flags, mode_t mode);
 
 ## errno
 
-![image-20191103144732114](/Users/chenyansong/Documents/note/images/c_languge/image-20191103144732114.png)
+![image-20191103144732114](https://github.com/chenyansong1/note/blob/master/images/c_languge/image-20191103144732114.png?raw=true)
 
 
 
-![image-20191103144909912](/Users/chenyansong/Documents/note/images/c_languge/image-20191103144909912.png)
+![image-20191103144909912](https://github.com/chenyansong1/note/blob/master/images/c_languge/image-20191103144909912.png?raw=true)
 
 ## 使用
 
@@ -338,7 +338,7 @@ int main()
 
 ## stat函数
 
-![](/Users/chenyansong/Documents/note/images/c_languge/image-20191103163846065.png)
+![](https://github.com/chenyansong1/note/blob/master/images/c_languge/image-20191103163846065.png?raw=true)
 
 ```c
 #include <sys/types.h>
@@ -350,15 +350,15 @@ int fstat(int fd, struct stat *buf);
 int lstat(const char *path, struct stat *buf);
 ```
 
-![image-20191103164733805](/Users/chenyansong/Documents/note/images/c_languge/image-20191103164733805.png)
+![image-20191103164733805](https://github.com/chenyansong1/note/blob/master/images/c_languge/image-20191103164733805.png?raw=true)
 
-![image-20191103164832416](/Users/chenyansong/Documents/note/images/c_languge/image-20191103164832416.png)
+![image-20191103164832416](https://github.com/chenyansong1/note/blob/master/images/c_languge/image-20191103164832416.png?raw=true)
 
-![3_st_mode](/Users/chenyansong/Documents/note/images/c_languge/st_mode.png)
+![3_st_mode](https://github.com/chenyansong1/note/blob/master/images/c_languge/st_mode.png?raw=true)
 
-![image-20191103165609239](/Users/chenyansong/Documents/note/images/c_languge/image-20191103165609239.png)
+![image-20191103165609239](https://github.com/chenyansong1/note/blob/master/images/c_languge/image-20191103165609239.png?raw=true)
 
-![](/Users/chenyansong/Documents/note/images/c_languge/image-20191103170006135.png)
+![](https://github.com/chenyansong1/note/blob/master/images/c_languge/image-20191103170006135.png?raw=true)
 
 ```c
 #include <stdio.h>
@@ -457,11 +457,98 @@ int main(int argc, char* argv[])
 
 ```
 
-![](/Users/chenyansong/Documents/note/images/c_languge/5_链接的追踪.png)
+![](https://github.com/chenyansong1/note/blob/master/images/c_languge/5_链接的追踪.png?raw=true)
 
 
 
 ## access函数
 
-![](/Users/chenyansong/Documents/note/images/c_languge/image-20191103212836954.png)
+![](https://github.com/chenyansong1/note/blob/master/images/c_languge/image-20191103212836954.png?raw=true)
+
+## chown函数
+
+```c
+#include <sys/stat.h>
+
+// mode = 0777
+int chmod(const char *path, mode_t mode);
+int fchmod(int fd, mode_t mode);
+```
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+
+int main(int argc, char* argv[])
+{
+    if(argc < 2)
+    {
+        printf("a.out filename!\n");
+        exit(1);
+    }
+
+    // user->ftp  group->ftp
+    int ret = chown(argv[1], 116, 125);
+    if(ret == -1)
+    {
+        perror("chown");
+        exit(1);
+    }
+    return 0;
+}
+```
+
+## truncate 函数
+
+![](E:\git-workspace\note\images\c_languge\1572827628991.png?raw=true)
+
+## link
+
+![1572827793798](E:\git-workspace\note\images\c_languge\1572827793798.png?raw=true)
+
+## unlink
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+int main(void)
+{
+    int fd = open("tempfile", O_CREAT | O_RDWR, 0755);
+    if(fd == -1)
+    {
+        perror("open");
+        exit(1);
+    }
+
+    //因为文件还存在，等文件关闭的时候，文件才会被删除
+    int ret = unlink("tempfile");
+    if(ret == -1)
+    {
+        perror("unlink");
+        exit(1);
+    }
+
+    //write file
+    write(fd, "hello", 5);
+    
+    //重置文件指针
+    lseek(fd, 0, SEEK_SET);
+    //read file
+    char buf[512] = {0};
+    int len = read(fd, buf, sizeof(buf));
+    
+    //将读取的内容写入屏幕：STDOUT_FILENO==1
+    write(STDOUT_FILENO, buf, len);
+
+    close(fd);
+
+    return 0;
+}
+```
 
