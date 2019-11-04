@@ -501,11 +501,11 @@ int main(int argc, char* argv[])
 
 ## truncate 函数
 
-![](E:\git-workspace\note\images\c_languge\1572827628991.png?raw=true)
+![](https://github.com/chenyansong1/note/blob/master/images/c_languge/1572827628991.png?raw=true)
 
 ## link
 
-![1572827793798](E:\git-workspace\note\images\c_languge\1572827793798.png?raw=true)
+![1572827793798](https://github.com/chenyansong1/note/blob/master/images/c_languge/1572827793798.png?raw=true)
 
 ## unlink
 
@@ -546,6 +546,304 @@ int main(void)
     //将读取的内容写入屏幕：STDOUT_FILENO==1
     write(STDOUT_FILENO, buf, len);
 
+    close(fd);
+
+    return 0;
+}
+```
+
+## rename函数
+
+![](https://github.com/chenyansong1/note/blob/master/images/c_languge/image-20191104191520937.png?raw=true)
+
+# 目录操作
+
+## chdir,getcwd,mkdir,rmdir
+
+![](https://github.com/chenyansong1/note/blob/master/images/c_languge/image-20191104192029234.png?raw=true)
+
+```c
+#include <stdio.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main(int argc, char* argv[])
+{
+    if(argc < 2)
+    {
+        printf("a.out dir\n");
+        exit(1);
+    }
+
+  	//改变process的路径
+    int ret = chdir(argv[1]);
+    if(ret == -1)
+    {
+        perror("chdir");
+        exit(1);
+    }
+
+    int fd = open("chdir.txt", O_CREAT | O_RDWR, 0777);
+    if(fd == -1)
+    {
+        perror("open");
+        exit(1);
+    }
+    close(fd);
+
+    char buf[128];
+  	//当前process的工作目录
+    getcwd(buf, sizeof(buf));
+    printf("current dir: %s\n", buf);
+
+    return 0;
+}
+```
+
+
+
+## opendir,readdir
+
+![](https://github.com/chenyansong1/note/blob/master/images/c_languge/image-20191104192444422.png?raw=true)
+
+![image-20191104192951768](https://github.com/chenyansong1/note/blob/master/images/c_languge/c_languge/image-20191104192951768.png?raw=true)
+
+![image-20191104193249078](/Users/chenyansong/Documents/note/images/c_languge/image-20191104193249078.png)
+
+```c
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <dirent.h>
+
+int getFileNum(char* root)
+{
+    // 打开目录
+    DIR* dir = opendir(root);
+    if(dir == NULL)
+    {
+        perror("opendir");
+        exit(0);
+    }
+
+    // 读目录
+    int total = 0;
+    char path[1024] = {0};
+    struct dirent* ptr = NULL;
+    while((ptr = readdir(dir)) != NULL)
+    {
+        // 跳过 . 和 ..
+        if(strcmp(ptr->d_name, ".") == 0 || strcmp(ptr->d_name, "..") == 0)
+        {
+            continue;
+        }
+        // 判断是不是文件
+        if(ptr->d_type == DT_REG)
+        {
+            total ++;
+        }
+        // 如果是目录
+        if(ptr->d_type == DT_DIR)
+        {
+            // 递归读目录,拼接新的path
+            sprintf(path, "%s/%s", root, ptr->d_name);
+            total += getFileNum(path);
+        }
+    }
+    closedir(dir);
+  
+    return total;
+}
+
+int main(int argc, char* argv[])
+{
+    // 读目录， 统计文件个数
+    int total = getFileNum(argv[1]);
+    // 打印
+    printf("%s has file number: %d\n", argv[1], total);
+    return 0;
+}
+```
+
+
+
+## 文件描述符的复制(重定向)
+
+默认情况下，一个文件描述符对应一个文件，但是可以有多个文件描述符指向同一个文件，这就是文件描述符的复制
+
+```c
+#include <unistd.h>
+
+int dup(int oldfd);//返回的就是一个新的文件描述符(文件描述符表中没有被占用的最小的文件描述符)
+
+int dup2(int oldfd, int newfd);
+int dup2(int oldfd, int newfd, int flags);
+
+```
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+
+int main()
+{
+    int fd = open("a.txt", O_RDWR);
+    if(fd == -1)
+    {
+        perror("open");
+        exit(1);
+    }
+
+    printf("file open fd = %d\n", fd);
+
+    // 找到进程文件描述表中 ==第一个== 可用的文件描述符
+    // 将参数指定的文件复制到该描述符后，返回这个描述符
+    int ret = dup(fd);
+    if(ret == -1)
+    {
+        perror("dup");
+        exit(1);
+    }
+    printf("dup fd = %d\n", ret);
+    char* buf = "你是猴子派来的救兵吗？？？？\n";
+    char* buf1 = "你大爷的，我是程序猿！！！\n";
+    write(fd, buf, strlen(buf));
+    write(ret, buf1, strlen(buf1));
+
+    close(fd);
+    return 0;
+}
+```
+
+![image-20191104200244080](https://github.com/chenyansong1/note/blob/master/images/c_languge/image-20191104200244080.png?raw=true)
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+
+int main()
+{
+    int fd = open("english.txt", O_RDWR);
+    if(fd == -1)
+    {
+        perror("open");
+        exit(1);
+    }
+
+    int fd1 = open("a.txt", O_RDWR);
+    if(fd1 == -1)
+    {
+        perror("open");
+        exit(1);
+    }
+
+    printf("fd = %d\n", fd);
+    printf("fd1 = %d\n", fd1);
+
+  	//此时fd会被关掉，指向fd1
+    int ret = dup2(fd1, fd);
+    if(ret == -1)
+    {
+        perror("dup2");
+        exit(1);
+    }
+    printf("current fd = %d\n", ret);
+    char* buf = "主要看气质 ^_^！！！！！！！！！！\n";
+    write(fd, buf, strlen(buf));
+    write(fd1, "hello, world!", 13);
+
+    close(fd);
+    close(fd1);
+    return 0;
+}
+
+```
+
+
+
+## fcntl函数
+
+改变已经打开的文件的属性
+
+比如：打开文件的时候，只读，然后后面发现需要向文件中写内容，此时就必须修改文件的属性(添加写属性)
+
+![image-20191104201142306](https://github.com/chenyansong1/note/blob/master/images/c_languge/image-20191104201142306.png?raw=true)
+
+![image-20191104201008593](https://github.com/chenyansong1/note/blob/master/images/c_languge/image-20191104201008593.png?raw=true)
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <string.h>
+
+
+int main(void)
+{
+    int fd;
+    int flag;
+
+    // 测试字符串
+    char *p = "我们是一个有中国特色的社会主义国家！！！！！！";
+    char *q = "呵呵, 社会主义好哇。。。。。。";
+    
+
+    // 只写的方式打开文件
+    fd = open("test.txt", O_WRONLY);
+    if(fd == -1)
+    {
+        perror("open");
+        exit(1);
+    }
+
+    // 输入新的内容，该部分会覆盖原来旧的内容
+    if(write(fd, p, strlen(p)) == -1)
+    {
+        perror("write");
+        exit(1);
+    }
+
+    // 使用 F_GETFL 命令得到文件状态标志
+    flag = fcntl(fd, F_GETFL, 0);
+    if(flag == -1)
+    {
+        perror("fcntl");
+        exit(1);
+    }
+
+    // 将文件状态标志添加 ”追加写“ 选项
+    flag |= O_APPEND;//按位或
+    // 将文件状态修改为追加写，此时会在文件的末尾添加
+    if(fcntl(fd, F_SETFL, flag) == -1)
+    {
+        perror("fcntl -- append write");
+        exit(1);
+    }
+
+    // 再次输入新内容，该内容会追加到旧内容的后面
+    if(write(fd, q, strlen(q)) == -1)
+    {
+        perror("write again");
+        exit(1);
+    }
+
+    // 关闭文件
     close(fd);
 
     return 0;
