@@ -155,10 +155,25 @@ https://vimjc.com/vim-quickfix.html
 https://vimjc.com/vim-file-buffer.html
 
 
+#自动补全快捷键
+#https://blog.csdn.net/henpat/article/details/42077561
+
 
 ```
 
 
+
+[转]http://blog.csdn.net/wooin/archive/2007/10/31/1858917.aspx
+此时有一些快捷键可以用:
+
+| Ctrl+P | 向前切换成员                             |
+| ------ | ---------------------------------------- |
+| Ctrl+N | 向后切换成员                             |
+| Ctrl+E | 表示退出下拉窗口, 并退回到原来录入的文字 |
+| Ctrl+Y | 表示退出下拉窗口, 并接受当前选项         |
+
+
+如果你增加了一些成员变量, 全能补全还不能马上将新成员补全, 需要你重新生成一下tags文件, 但是你不用重启vim, 只是重新生成一下tags文件就行了, 这时全能补全已经可以自动补全了, 还真够"全能"吧.
 
 
 
