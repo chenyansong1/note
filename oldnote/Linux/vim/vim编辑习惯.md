@@ -177,5 +177,9 @@ https://vimjc.com/vim-file-buffer.html
 
 
 
+```shell
+#在同一个文件中，快速定位到函数定义部分快捷方式为：gd
+```
+
 
 
