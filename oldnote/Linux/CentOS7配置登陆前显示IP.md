@@ -42,6 +42,7 @@ lrwxrwxrwx 1 root root 13 Nov  1 11:47 /etc/rc.local -> rc.d/rc.local
 
 #1.查看/etc/rc.local是否有执行权限，没有就加上
 chmod +x /etc/rc.local
+#记住，必须运行“chmod +x/etc/rc.d/rc.local”命令来确保启动过程中执行此脚本 .
 ```
 
 
