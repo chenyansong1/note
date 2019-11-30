@@ -31,6 +31,19 @@ chmod a+x /etc/init.d/show_ip.sh
 
 ![img](E:\git-workspace\note\images\linux\command\show_ip2.png)
 
+注意：rc.local可能没有执行
+
+```shell
+[hadoop@SSA ~]$ ll /etc/rc.local       
+lrwxrwxrwx 1 root root 13 Nov  1 11:47 /etc/rc.local -> rc.d/rc.local
+
+[hadoop@SSA ~]$ ll /etc/rc.d/rc.local
+-rwxr-xr-x 1 root root 597 Nov 26 14:44 /etc/rc.d/rc.local
+
+#1.查看/etc/rc.local是否有执行权限，没有就加上
+chmod +x /etc/rc.local
+```
+
 
 
 参考：
