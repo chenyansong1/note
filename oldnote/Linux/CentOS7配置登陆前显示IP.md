@@ -13,11 +13,15 @@
 创建脚本 /etc/init.d/show_ip.sh
 
 ```bash
+[root@SSA home]# cat  /etc/init.d/show_ip.sh
 #!/bin/bash
 
 cp /etc/issue_standard /etc/issue
-/usr/sbin/ip addr | grep "inet" |grep -v "inet6" | grep -v "127.0.0.1" | awk '{print $2}' >> /etc/issue
+echo -e "this host ip:\c">>/etc/issue
+/usr/sbin/ip addr | grep "inet" |grep -v "inet6" | grep -v "virbr" | grep -v "127.0.0.1" | awk '{print $2}' >> /etc/issue
 echo "" >> /etc/issue
+
+echo "web: https://192.168.10.24" >> /etc/issue
 ```
 
 配置脚本开机自启动。
