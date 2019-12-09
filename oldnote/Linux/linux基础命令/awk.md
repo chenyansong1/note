@@ -157,3 +157,28 @@ hchen, 6020KB
 ```
 
 
+
+# 9.循环遍历行
+
+```shell
+[root@VM_0_84_centos ~]# cat sshd.txt
+1 2 3
+4 5 6
+7 8 9
+#循环打印上述文本
+
+#for 循环的固定格式   i=1设置i的初始变量  i<=NF i变量小于等于 NF变量的值（每行的字段数） i++ 表示i递增+1，
+[root@VM_0_84_centos ~]# cat sshd.txt |awk '{for(i=1;i<=NF;i++){print $i}}'
+1
+2
+3
+4
+5
+6
+7
+8
+9
+```
+
+
+
