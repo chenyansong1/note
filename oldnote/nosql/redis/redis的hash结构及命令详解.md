@@ -24,11 +24,11 @@ redis>
 
 ```
 
- 
+
 # hget/hgetall 获取值
 HGET key field
 HGETALL key
- 
+
 ```
  redis> HSET myhash field1 "foo"
 (integer) 1
@@ -70,7 +70,7 @@ redis>
 
 # 同时获取多个值
 HMGET key field [field ...]
- 
+
 ```
  redis> HSET myhash field1 "Hello"
 (integer) 1
@@ -87,7 +87,7 @@ redis>
 
 # 删除hdel
 HDEL key field [field ...]
- 
+
 ```
 redis> HSET myhash field1 "foo"
 (integer) 1
@@ -103,7 +103,7 @@ redis> HDEL myhash field2
 
 # hlen指定key的长度
 HLEN key
- 
+
 ```
 redis> HSET myhash field1 "Hello"
 (integer) 1
@@ -129,10 +129,10 @@ redis> HEXISTS myhash field2
 ```
 
 
- 
+
 # 对指定的域进行增长hincrby
 HINCRBY key field increment
- 
+
 ```
  redis> HSET myhash field 5
 (integer) 1
@@ -149,7 +149,7 @@ redis>
 
 # 增长浮点数：hincrbyfloat
 HINCRBYFLOAT key field increment
- 
+
 ```
  redis> HSET mykey field 10.50
 (integer) 1
@@ -169,7 +169,7 @@ redis>
 
 # 返回所有的域:hkeys
 HKEYS key
- 
+
 ```
  redis> HSET myhash field1 "Hello"
 (integer) 1
@@ -185,7 +185,7 @@ redis>
 
 # 返回所有域对应的值：hvals
 HVALS key
- 
+
 ```
  redis> HSET myhash field1 "Hello"
 (integer) 1
@@ -196,3 +196,42 @@ redis> HVALS myhash
 2) "World"
 redis>
 ```
+
+插入hash
+
+```shell
+[root@db ~]# cat ip_loc_info.data 
+172.16.110.24 中国 湖北 武汉4 23.125178 113.280637
+172.16.110.25 中国 湖北 武汉5 23.125178 113.280637
+172.16.110.26 中国 湖北 武汉6 23.125178 113.280637
+172.16.110.27 中国 湖北 武汉7 23.125178 113.280637
+172.16.110.28 中国 湖北 武汉8 23.125178 113.280637
+
+#=====================================================================
+
+
+[root@db ~]# cat read_data_2redis.sh
+#!/bin/bash
+
+echo "parse data to redis start"
+#172.16.110.24 country province city latitude longitude
+
+while read line;do
+        #echo $line
+        ip=`echo $line|cut -d " " -f1`
+        country=`echo $line|cut -d " " -f2`
+        province=`echo $line|cut -d " " -f3`
+        city=`echo $line|cut -d " " -f4`
+        latitude=`echo $line|cut -d " " -f5`
+        longitude=`echo $line|cut -d " " -f6`
+
+        ip_info="{\"country\":\"$country\";\"province\":\"$province\";\"city\":\"$city\";\"latitude\":\"$latitude\";\"longitude\":\"$longitude\"}"
+
+        #echo $ip_info
+        echo -en  "auth B@#dk0s7GEs\r\nHSET specialInerIp $ip '$ip_info'\r\n"|nc 192.168.10.21 6379
+
+done < ip_loc_info.data
+
+echo "parse data to redis end"
+```
+
