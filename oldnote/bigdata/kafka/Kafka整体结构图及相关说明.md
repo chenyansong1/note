@@ -41,7 +41,7 @@ tag: [kafka]
 ## 1：发送消息，并会等待leader 收到消息之后发送ack
 ## -1：发送消息，当所有的follower都同步消息成功后发送ack（follower是partition的副本）
 ```
-	
+
 # broker如何保存数据
 	在理论环境下，broker按照顺序读写的机制，可以每秒保存600M的数据。主要通过pagecache机制，尽可能的利用当前物理机器上的空闲内存来做缓存。
 	当前topic所属的broker，必定有一个该topic的partition，partition是一个磁盘目录。partition的目录中有多个segment组合(index,log)
@@ -56,7 +56,7 @@ tag: [kafka]
 		hostName = list.get(brIndex)
 	}
 ```
-	
+
 # consumerGroup的组员和partition之间如何做负载均衡
 ```
 	最好是一一对应，一个partition对应一个consumer。
@@ -90,7 +90,23 @@ tag: [kafka]
 
 
 
+- Consumer Group：
 
+- - Consumer Group由多个Consumer组成
+  - Consumer Group里的每个Consumer都会从不同的Partition中读取消息
+  - 如果Consumer的数量大于Partition的数量，那么多出来的Consumer就会空闲下来（浪费资源）
+
+![img](E:\git-workspace\note\images\bigdata\kafka\v2-d0a20fc668e167cd3d689fdab6b6c5f8_hd.jpg)
+
+- Consumer offset：
+
+- - Kafka会为Consumer Group要消费的每个Partion保存一个offset，这个offset标记了该Consumer Group最后消费消息的位置
+  - 这个offset保存在Kafka里一个名为“__consumer_offsets”的Topic中；当Consumer从Kafka拉取消息消费时，同时也要对这个offset提交修改更新操作。这样若一个Consumer消费消息时挂了，其他Consumer可以通过这个offset值重新找到上一个消息再进行处理
+
+![img](E:\git-workspace\note\images\bigdata\kafka\v2-9b97bcfdf357b0724f4ca123c75d8907_hd.jpg)
+
+
+  
 
 
 
