@@ -44,3 +44,15 @@ nasm -h
 
 ```
 
+
+
+# 使用dd对拷mbr
+
+```shell
+#编译生成二进制机器码
+nasm demo/first.asm -o demo/mbr.bin
+
+#使用dd，需要加上参数 notrunc 不要截断输出文件（不将文件长度缩短为0），不然of文件会被if文件覆盖
+dd if=demo/mbr.bin of=/Users/chenyansong/Desktop/NASM/LEECHUNG.vhd bs=512 count=1 conv=notrunc
+```
+
