@@ -1,5 +1,13 @@
 [toc]
 
+* 面向处理器的调试工具
+
+* bochs本省就是一个虚拟机，类似于VirtualBox
+
+* 作用：跟踪硬盘的启动过程，查看寄存器的内容和机器的状态
+
+
+
 # 安装bochs
 
 
@@ -10,11 +18,6 @@ cd bochs-2.4.5/
 make
 make install
 which bximage 
-
-
-
-
-
 
 ```
 
@@ -55,6 +58,14 @@ keyboard_mapping: enabled=1, map=/usr/share/bochs/keymaps/x11-pc-us.map
 hadoop@oprator:~$ 
 
 ```
+
+
+
+# 使用
+
+
+
+
 
 # mac下安装出现的问题
 
