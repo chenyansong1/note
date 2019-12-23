@@ -1,4 +1,4 @@
-[toc]
+[TOC]
 
 * 面向处理器的调试工具
 
@@ -63,9 +63,18 @@ hadoop@oprator:~$
 
 # 使用
 
+bochs下有两个程序
+
+*  bochs.exe：作为类似于 VirtualBox 的虚拟机来使用，
+* bochsdbg.exe： 来调试程序
 
 
 
+https://www.jianshu.com/p/742a61ce3e58
+
+
+
+https://www.okcode.net/article/71934
 
 # mac下安装出现的问题
 
