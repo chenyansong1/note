@@ -191,10 +191,6 @@ https://www.okcode.net/article/71934
 # mac下安装出现的问题
 
 ```shell
- 
-
-
-
 但是就当我make的时候，去突然报错了，报错如下：
 
 cdrom_osx.cc:194:18: error: assigning to 'char ' from incompatible type 'const ch
