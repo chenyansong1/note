@@ -159,23 +159,23 @@ https://www.okcode.net/article/71934
 
 ## 显示信息
 
-| 命令          | 说明                                            |
-| :------------ | :---------------------------------------------- |
-| show mode     | 显示模式切换                                    |
-| show int      | 显示中断                                        |
-| show call     | 显示call调用                                    |
-| trace on      | 显示指令反编译                                  |
-| info ivt      | 显示ivt（中断向量表）信息                       |
-| info idt      | 显示idt（中断描述符表）信息                     |
-| info gdt      | 显示gdt信息                                     |
-| info ldt      | 显示ldt信息                                     |
-| info tss      | 显示tss信息                                     |
-| info tab      | 页表映射                                        |
-| reg           | **通用寄存器信息 + 标志寄存器 + eip寄存器信息** |
-| sreg          | **段寄存器信息**                                |
-| creg          | 控制寄存器信息                                  |
-| dreg          | 调试寄存器信息                                  |
-| print-stack N | 堆栈信息                                        |
+| 命令          | 说明                                                         |
+| :------------ | :----------------------------------------------------------- |
+| show mode     | 显示模式切换                                                 |
+| show int      | 显示中断                                                     |
+| show call     | 显示call调用                                                 |
+| trace on      | 显示指令反编译                                               |
+| info ivt      | 显示ivt（中断向量表）信息                                    |
+| info idt      | 显示idt（中断描述符表）信息                                  |
+| info gdt      | 显示gdt信息                                                  |
+| info ldt      | 显示ldt信息                                                  |
+| info tss      | 显示tss信息                                                  |
+| info tab      | 页表映射                                                     |
+| reg           | **通用寄存器信息 + 标志寄存器 + eip寄存器信息**              |
+| sreg          | **段寄存器信息**                                             |
+| creg          | 控制寄存器信息                                               |
+| dreg          | 调试寄存器信息                                               |
+| print-stack N | **堆栈信息,默认只是栈顶以下（sp 到sp+2 方向， 即sp到ss的方向上，以sp为顶）打印16个字，可以使用N指定多少字** |
 
 ## 内存信息
 
