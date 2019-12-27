@@ -35,13 +35,13 @@
          5. 前端性能优化、跨域资产共享CORS；
          6. 微信小程序、H5页面制作、数据结构（Node.js）
 
-         ![1577415513909](C:\Users\landun\AppData\Roaming\Typora\typora-user-images\1577415513909.png)
+         ![a](https://github.com/chenyansong1/note/blob/master/plan/1577415513909.png?raw=true)
 
-         ![1577415537444](C:\Users\landun\AppData\Roaming\Typora\typora-user-images\1577415537444.png)
+         ![b](https://github.com/chenyansong1/note/blob/master/plan/1577415537444.png?raw=true)
 
-         ![1577415610908](E:\git-workspace\note\plan\1577415610908.png)
+         ![c](https://github.com/chenyansong1/note/blob/master/plan/1577415610908.png?raw=true)
 
-         ![1577415664609](E:\git-workspace\note\plan\1577415664609.png)
+         ![d](https://github.com/chenyansong1/note/blob/master/plan/1577415664609.png?raw=true)
 
          
 
