@@ -11,22 +11,39 @@
    1. 关键是找到一条路线
 
       1. 问下大佬
+
       2. 看网上专业人的推荐
+
       3. 尝试下全栈
+
       4. 看下招聘网站需要什么技术
+
       5. 下面是我看网上列出来的一些
+
          1. HTML，CSS，JS
          2. web性能（TCP/HTTP)
          3. 常用框架（原理，源码理解）
          4. 多端适配（Web,PC,小程序等）
          5. 熟悉一门或者多门后台语言
+
       6. 下面是我问身边的人的一些，他如果想在前端走下去，基础必须要很牢固（如果以前不是学计算机的，建议他看看js书）
+
          1. 熟练应用jQuery、HTML5和CSS3等基础
          2. 熟悉主流前端框架React/Vue，对其中一种框架原理有深入了解；
          3. 熟练使用ES6，熟悉webpack配置（或其他打包工具Grunt、Gulp）；
          4. 可视化工具懂一些，比如echarts、d3等；
          5. 前端性能优化、跨域资产共享CORS；
          6. 微信小程序、H5页面制作、数据结构（Node.js）
+
+         ![1577415513909](C:\Users\landun\AppData\Roaming\Typora\typora-user-images\1577415513909.png)
+
+         ![1577415537444](C:\Users\landun\AppData\Roaming\Typora\typora-user-images\1577415537444.png)
+
+         ![1577415610908](E:\git-workspace\note\plan\1577415610908.png)
+
+         ![1577415664609](E:\git-workspace\note\plan\1577415664609.png)
+
+         
 
    2. 关于做笔记
 
