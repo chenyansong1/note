@@ -41,9 +41,9 @@
 
          ![c](https://github.com/chenyansong1/note/blob/master/plan/1577415610908.png?raw=true)
 
-         ![d](https://github.com/chenyansong1/note/blob/master/plan/1577415664609.png?raw=true)
+         [JavaScript高级程序设计第三版（文字版）.pdf](https://github.com/chenyansong1/books/blob/master/js/JavaScript高级程序设计第三版（文字版）.pdf)
 
-         
+         ![d](https://github.com/chenyansong1/note/blob/master/plan/1577415664609.png?raw=true)
 
    2. 关于做笔记
 
