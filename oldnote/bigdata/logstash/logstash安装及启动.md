@@ -7,8 +7,7 @@ tag: [logstash]
 
 # 架构
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/bigdata/logstash/1.png)
-
+![](https://github.com/chenyansong1/note/blob/master/img/bigdata/logstash/1.png?raw=true)
 
 <!--more-->
 
@@ -40,7 +39,7 @@ bin/logstash -f logstash-simple.conf
 
 **https://www.elastic.co/guide/en/logstash/current/config-examples.html**
 
-
+https://blog.csdn.net/songfeihu0810232/article/details/94406608
 
 
 官方文档:
