@@ -180,3 +180,15 @@ done
 
 参看：https://www.cnblogs.com/seaspring/p/9231774.html
 
+# 清除查询缓存
+
+这个只是治标不治本
+
+```shell
+#清除指定的缓存
+curl -XPOST es:9200/syslog_20200101/_cache/clear
+
+#清除所有的缓存
+curl -XPOST es:9200/_cache/clear
+```
+
