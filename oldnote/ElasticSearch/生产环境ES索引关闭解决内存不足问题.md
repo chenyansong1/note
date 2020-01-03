@@ -192,3 +192,24 @@ curl -XPOST es:9200/syslog_20200101/_cache/clear
 curl -XPOST es:9200/_cache/clear
 ```
 
+
+
+
+
+索引优化策略：
+
+1. ES中的字段能不能精简
+2. 默认所有的索引都建模板，模板中，所有的字段不分词，个别需要分词的，只是单独分词
+3. 进行一天一次的段合并
+4. genlog不存储
+5. syslog,event只存储7天，其他的默认关闭，有用到再打开
+6. netflow，http只存储一天数据，提供统计
+7. 修改了ES中原来的配置文件参数，待观察是否有效
+8. 修改了JVM的参数，保持一半内存在JVM，一个给机器的Lucene使用
+
+
+
+参见：
+
+https://www.cnblogs.com/seaspring/p/9231774.html
+
