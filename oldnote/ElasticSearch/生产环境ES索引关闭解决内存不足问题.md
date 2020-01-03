@@ -216,3 +216,29 @@ curl -XPOST es:9200/_cache/clear
 
 https://www.cnblogs.com/seaspring/p/9231774.html
 
+
+
+
+
+https://elasticsearch.cn/question/5279
+
+https://elasticsearch.cn/question/3838
+
+https://elasticsearch.cn/question/4136
+
+https://www.elastic.co/guide/en/elasticsearch/reference/6.2/cluster-allocation-explain.html
+
+https://elasticsearch.cn/question/4714
+
+https://elasticsearch.cn/question/3135
+
+https://elasticsearch.cn/question/9090
+
+https://www.wenyuanblog.com/blogs/elasticsearch-memory-considerations.html
+
+
+
+
+
+
+
