@@ -155,3 +155,13 @@ or 下标访问
 [root@node-test ~]# 
 ```
 
+
+
+* 字符串转数组
+
+  ```shell
+  index_array=`curl es:9200/_cat/indices|grep -v close|grep open|uniq |sort -n|awk -F " " '{print $3}'`
+  index_array=($index_array)
+  ```
+
+  
