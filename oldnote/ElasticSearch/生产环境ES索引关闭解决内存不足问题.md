@@ -1,5 +1,9 @@
 [TOC]
 
+
+
+![1578557351762](E:\git-workspace\note\images\jvm\1578557351762.png)
+
 # segment memory占用
 
 ## 删除段
