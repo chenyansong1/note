@@ -53,6 +53,17 @@ log4j.logger.org.apache.hadoop.hive = ERROR
 # Define the root logger to the system property "flume.root.logger".
 log4j.rootLogger=${flume.root.logger}
 
+#INFO
+log4j.appender.INFO=org.apache.log4j.RollingFileAppender
+log4j.appender.INFO.MaxFileSize=50MB
+log4j.appender.INFO.MaxBackupIndex=5
+log4j.appender.INFO.File=${flume.log.dir}/flume_info.log   
+log4j.appender.INFO.Append=true   
+log4j.appender.INFO.Threshold =INFO
+log4j.appender.INFO.layout=org.apache.log4j.PatternLayout   
+log4j.appender.INFO.layout.ConversionPattern=[ %p ]  %-d{yyyy-MM-dd HH:mm:ss.SSS} [%F:%L]  %m%n
+
+
 #ERROR
 log4j.appender.ERROR=org.apache.log4j.RollingFileAppender
 log4j.appender.ERROR.MaxFileSize=50MB
@@ -93,5 +104,42 @@ log4j.appender.console.target=System.err
 log4j.appender.console.layout=org.apache.log4j.PatternLayout
 log4j.appender.console.layout.ConversionPattern=%d (%t) [%p - %l] %m%n
 [root@master apache-flume-1.8.0-bin]#
+```
+
+
+
+flume的启动脚本
+
+```shell
+[hadoop@tomcat apache-flume-1.8.0-bin]$ cat /home/hadoop/start_flume.sh 
+#!/bin/bash
+
+/home/hadoop/apache-flume-1.8.0-bin/bin/flume-ng agent \
+-c /home/hadoop/apache-flume-1.8.0-bin/conf \
+-f /home/hadoop/apache-flume-1.8.0-bin/conf/example.conf \
+-n a1 -Dflume.monitoring.type=http -Dflume.monitoring.port=34546 &
+
+
+
+
+
+
+[hadoop@tomcat ~]$ cat /home/hadoop/start_flume.sh
+#!/bin/bash
+
+#./apache-flume-1.8.0-bin/bin/flume-ng agent \
+#-c ./apache-flume-1.8.0-bin/conf \
+#-f ./apache-flume-1.8.0-bin/conf/example.conf \
+#-n a1 -Dflume.monitoring.type=http -Dflume.monitoring.port=34545 > ./apache-flume-1.8.0-bin/logs/flume-server.log 2>&1 &
+
+#可以在启动时指定需要的日志级别
+#-Dflume.root.logger=LOGFILE,ERROR,INFO
+
+/home/hadoop/apache-flume-1.8.0-bin/bin/flume-ng agent \
+-c /home/hadoop/apache-flume-1.8.0-bin/conf \
+-f /home/hadoop/apache-flume-1.8.0-bin/conf/example.conf \
+-n a1 -Dflume.monitoring.type=http -Dflume.monitoring.port=34546 \
+-Dflume.root.logger=LOGFILE,ERROR &
+[hadoop@tomcat ~]$ 
 ```
 
