@@ -24,3 +24,12 @@ export SPARK_LOCAL_DIRS=/home/hadoop/spark-2.0.2-bin-hadoop2.6/sparktmp
 
 ```
 
+
+
+# master和work的pid目录
+
+```shell
+vim $saprk_home/conf/spark-env.sh
+export SPARK_PID_DIR=/home/hadoop/spark-2.0.2-bin-hadoop2.6/sparktmp
+```
+
