@@ -1,4 +1,4 @@
-[toc]
+[TOC]
 
 # nasm安装
 
