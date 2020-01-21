@@ -125,8 +125,6 @@ dd if=demo/boot.bin of=a.img bs=512 count=1 conv=notrunc
 #dd if=demo/mbr.bin of=/Users/chenyansong/Desktop/NASM/LEECHUNG.vhd bs=512 count=1 conv=notrunc
 ```
 
-
-
 # 使用镜像启动虚拟机
 
 ```shell
@@ -136,8 +134,6 @@ dd if=demo/boot.bin of=a.img bs=512 count=1 conv=notrunc
 #4.启动虚拟机
 bochs -f bochsrc
 ```
-
-
 
 # 使用bochs调试操作系统
 
