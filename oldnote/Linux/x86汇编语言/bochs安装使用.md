@@ -19,6 +19,7 @@ make
 make install
 which bximage 
 
+#--enable-debugger --enable-disasm 打开调试功能
 ```
 
 
@@ -71,7 +72,7 @@ romimage: file=/Users/chenyansong/Desktop/NASM/install/bochs/share/bochs/BIOS-bo
 # 设置VGA BIOS镜像
 vgaromimage: file=/Users/chenyansong/Desktop/NASM/install/bochs/share/bochs/VGABIOS-lgpl-latest
 
-# 设置从硬盘启动
+# 设置从硬盘启动，如果是软盘，那么是floppy
 boot: disk
 
 # 设置日志文件
@@ -94,39 +95,51 @@ chenyansongdeMacBook-Pro:bochs chenyansong$
 
 
 
-# 创建一块磁盘镜像
-
-![image-20191223200244120](/Users/chenyansong/Documents/note/images/linux/tixijiegou/image-20191223200244120.png)
-
-
+# 制作一块磁盘镜像
 
 参见：http://imushan.com/2018/07/11/os/Bochs学习-安装配置篇/
 
+> 在上面安装的Bochs组件中，有一个工具叫做bximage，它不但可以生成虚拟软盘，还能生成虚拟硬盘，生成的文件称之为磁盘映像，过程如下：
 
+![](E:\git-workspace\note\images\linux\x86\1579576631761.png)
 
 # nasm编译源文件
 
 ```shell
 #编译生成二进制机器码
-nasm demo/first.asm -o demo/mbr.bin
+nasm demo/first.asm -o demo/boot.bin
 ```
 
 
 
+现在我们有了计算机（bochs），有了硬盘（a.img），可以将引导扇区写进硬盘，我们使用dd命令
 
-
-# 将MBR拷贝到磁盘的0扇区
+# 将MBR拷贝到磁盘的零扇区
 
 ```shell
 #使用dd，需要加上参数 notrunc 不要截断输出文件（不将文件长度缩短为0），不然of文件会被if文件覆盖
-dd if=demo/mbr.bin of=/Users/chenyansong/Desktop/NASM/LEECHUNG.vhd bs=512 count=1 conv=notrunc
+dd if=demo/boot.bin of=a.img bs=512 count=1 conv=notrunc
+#这里有一个参数“conv=notrunc” 如果不加上他的话，映像文件a.img会被截断（truncated)，因为boot.bin比a.img要小，如果是写入真实的磁盘，当然不会被截断，但是现在a.img是一个文件来模拟硬盘，所以真的和假的还是有一点区别的
+
+
+#dd if=demo/mbr.bin of=/Users/chenyansong/Desktop/NASM/LEECHUNG.vhd bs=512 count=1 conv=notrunc
 ```
 
 
 
+# 使用镜像启动虚拟机
+
+```shell
+#1.生成了镜像文件
+#2.拷贝dd编译之后的二进制文件到镜像
+#3.配置bochsrc配置文件（指定镜像文件的位置）
+#4.启动虚拟机
+bochs -f bochsrc
+```
 
 
-# 使用
+
+# 使用bochs调试操作系统
 
 bochs下有两个程序
 
