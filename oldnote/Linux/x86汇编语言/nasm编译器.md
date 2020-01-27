@@ -42,6 +42,21 @@ chenyanongdeMBP:bin chenyansong$
 ;想要获取更多的关于NASM的使用信息，请输入：
 nasm -h
 
+nasm -hf ;列出可以生成的文件格式
+
+valid output formats for -f are (`*' denotes default):
+  * bin       flat-form binary files (e.g. DOS .COM, .SYS);默认是这个
+    aout      Linux a.out object files
+    aoutb     NetBSD/FreeBSD a.out object files
+    coff      COFF (i386) object files (e.g. DJGPP for DOS)
+    elf       ELF32 (i386) object files (e.g. Linux)
+    as86      Linux as86 (bin86 version 0.3) object files
+    obj       MS-DOS 16-bit/32-bit OMF object files
+    win32     Microsoft Win32 (i386) object files
+    rdf       Relocatable Dynamic Object File Format v2.0
+    ieee      IEEE-695 (LADsoft variant) object file format
+    macho     NeXTstep/OpenStep/Rhapsody/Darwin/MacOS X object files
+;默认情况下，nasm将生成一个纯二进制文件(也称为Raw Binary File或Flat-form Binary File),也就是说，生成的二进制中除了你写的源代码之外不包含其他任何东西，这意味着，程序执行时的内存映像和二进制文件映像是一样的
 ```
 
 
