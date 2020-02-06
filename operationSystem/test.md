@@ -1,3 +1,5 @@
+
+
 整理自
 
 [慕课中国-哈工大-李治军-操作系统](https://www.icourse163.org/course/HIT-1002531008)
@@ -73,4 +75,36 @@
 
 
 将人计算3+2=5的过程，通过上图的机器进行模拟，也就是出来了最早期的图灵机
+
+
+
+
+
+# BIOS(x86 PC)启动
+
+1. x86 PC刚开机时CPU处于实模式
+2. 开机时，CS=0xFFFF;IP=0x0000
+3. 寻址0xFFFF0(ROM BIOS映射区)
+4. 检查RAM，键盘，显示器，软硬磁盘
+5. 将磁盘0磁道0扇区读入0x7c00处
+6. 设置CS=0x07c0;IP=0x0000
+
+![](/Users/chenyansong/Documents/note/images/os/image-20200206180129553.png)
+
+实模式的寻址CS:IP (CS 左移4位+IP)
+
+
+
+# 引导扇区
+
+## 加载引导扇区代码
+
+![](/Users/chenyansong/Documents/note/images/os/image-20200206181204450.png)
+
+## 加载setup代码
+
+![](/Users/chenyansong/Documents/note/images/os/image-20200206182652616.png)
+
+
+![](/Users/chenyansong/Documents/note/images/os/image-20200206183641986.png)
 
