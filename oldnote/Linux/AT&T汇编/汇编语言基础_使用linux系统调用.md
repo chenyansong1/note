@@ -122,8 +122,3 @@ _start:
 系统调用的返回值存放在EAX寄存器中
 
 
-
-
-
-![](C:\Users\landun\AppData\Roaming\Typora\typora-user-images\1582074737804.png)
-
