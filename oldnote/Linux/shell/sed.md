@@ -352,9 +352,37 @@ sed --expression='s/test/check/' --expression='/love/d' file
 
 
 ### 匹配某一行开头，替换整行内容
+```shell
+sed -i '/^cloud_server_ip/c cloud_server_ip = update.skyeye.360safe.com' name.txt
+#cloud_server_ip 前面的c是表示取代，关键点
 ```
-sed -i '/^cloud_server_ip/ccloud_server_ip = update.skyeye.360safe.com' name.txt
+
+sed 替换文件中匹配行头的一行
+
+```shell
+#首先定义一个新版本号的变量
+var="version=6.1.1"
+sed -i '/^version=/c'$var'' /etc/config.txt
+#注意这里使用了一个变量，放在单引号中
+#注意$var前面是有一个c ,表示取代
 ```
+
+sed -i命令详解
+
+```shell
+function：
+a ：新增， a 的后面可以接字串，而这些字串会在新的一行出现(目前的下一行)～
+c ：取代， c 的后面可以接字串，这些字串可以取代 n1,n2 之间的行！
+d ：删除，因为是删除啊，所以 d 后面通常不接任何咚咚；
+i ：插入， i 的后面可以接字串，而这些字串会在新的一行出现(目前的上一行)；
+p ：列印，亦即将某个选择的数据印出。通常 p 会与参数 sed -n 一起运行～
+s ：取代，可以直接进行取代的工作哩！通常这个 s 的动作可以搭配正规表示法！例如 1,20s/old/new/g 就是啦！
+```
+
+
+
+参见：https://www.cnblogs.com/ev-zhk/p/4277023.html
+
 
 
 ### 脚本scriptfile 
