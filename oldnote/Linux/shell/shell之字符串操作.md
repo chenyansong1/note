@@ -76,6 +76,23 @@ chenyansongdeMacBook-Pro:shell chenyansong$
 
 
 
+* 字符串转数组
+
+  ```shell
+  [root@host ~]# str="ONE,TWO,THREE,FOUR"
+  [root@host ~]# arr=(`echo $str | tr ',' ' '`) 
+  [root@host ~]# echo ${arr[@]}
+  ONE TWO THREE FOUR
+  
+  #循环遍历
+  for service_name in "${arr[@]}";do
+      #echo $service_name"############"
+      systemctl enable $service_name
+  done
+  ```
+
+  
+
 * 字符串分割为字符数组，然后遍历
 
 ```shell
