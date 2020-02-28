@@ -5,7 +5,7 @@ toc: true
 tags: [rsync]
 ---
 
-
+[TOC]
 
 # 1.什么是rsync
 &emsp;Rsync是一款开源的、快速的额、多功能的、可实现全量及增量的本地货远程数据同步备份的优秀工具
@@ -22,14 +22,14 @@ https://www.samba.org/ftp/rsync/rsync.html
 * 实时数据同步：rsync + inotify 或sersync
 
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/rsync/1.png)
+![](E:\git-workspace\note\img\linux\rsync\1.png)
 
 
 # 3. rsync工作方式
 
 Rsync大致使用三种主要的传输数据的方式，man rsync看：
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/rsync/2.png)
+![](E:\git-workspace\note\img\linux\rsync\2.png)
 
 
 ## 3.1.单个主机本地传输数据（此时类似于cp命令的功能）
@@ -48,8 +48,8 @@ rm -rf /tmp/
 
 ## 3.2.借助rcp，ssh等通道来传输数据（此时类似于scp命令的功能）
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/rsync/3.png)
- 
+![](E:\git-workspace\note\img\linux\rsync\3.png)
+
 ## 3.3以守护进程（socket）的方式传输数据（这个是Rsync自身的重要的功能）
 见7.2节详细的例子
 /tmp/ 表示tmp下内容，如果是/tmp则表示是tmp目录以及tmp下的所有内容
@@ -81,7 +81,7 @@ path = /backup
 
 ```
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/rsync/4.png)
+![](E:\git-workspace\note\img\linux\rsync\4.png)
 
 # 5.服务端配置步骤
 ## 5.1.vim /etc/rsyncd.conf 加入一堆配置文件
@@ -132,15 +132,15 @@ chmod 600 /etc/rsync.password
 ## 6.2 rsync
 ### 6.2.1 push(推)
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/rsync/5.png)
+![](E:\git-workspace\note\img\linux\rsync\5.png)
 
 
 ```
 rsync -avz /tmp/ rsync_backup@192.168.0.103::backup --password-file=/etc/rsync.password
 ```
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/rsync/6.png)
- 
+![](E:\git-workspace\note\img\linux\rsync\6.png)
+
 
 ### 6.2.2 pull（拉）
 
@@ -149,9 +149,9 @@ rsync -avz rsync_backup@192.168.0.103::backup  /tmp/  --password-file=/etc/rsync
 
 ```
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/rsync/7.png)
+![](E:\git-workspace\note\img\linux\rsync\7.png)
 
- 
+
 ### 6.2.3注意推拉都是客户端的操作
 
 # 7. rsync常用参数
@@ -190,12 +190,12 @@ rsync -avz  --delete  /tm/  rsync:rsync_backup@192.168.0.104/back  --password-fi
 
 ## 7.2 --exclude
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/rsync/8.png)
+![](E:\git-workspace\note\img\linux\rsync\8.png)
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/rsync/9.png)
+![](E:\git-workspace\note\img\linux\rsync\9.png)
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/rsync/10.png)
- 
+![](E:\git-workspace\note\img\linux\rsync\10.png)
+
  跨地域数据同步：1.使用一条专线连接两地或者2.使用VPN形成局域网，然后同步
 
 # 8.定时备份（cron + rsync）
@@ -208,9 +208,9 @@ rsync -avz  --delete  /tm/  rsync:rsync_backup@192.168.0.104/back  --password-fi
 
 ```
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/rsync/11.png)
+![](E:\git-workspace\note\img\linux\rsync\11.png)
 
- 
+
 然后将ip+date的目录推到服务端即可
 
 ## 8.2准备要同步的文件（目录下的文件）
@@ -223,10 +223,10 @@ rsync -avz  --delete  /tm/  rsync:rsync_backup@192.168.0.104/back  --password-fi
 
 &emsp;将所有的脚本文件放在一个特定的目录下（这里是/server/scripts），这是一个好的习惯
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/rsync/12.png)
+![](E:\git-workspace\note\img\linux\rsync\12.png)
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/rsync/13.png)
- 
+![](E:\git-workspace\note\img\linux\rsync\13.png)
+
 
 ## 8.4测试脚本
 
@@ -268,20 +268,20 @@ crontab -e
 
 ### 9.3.1 auth failed on module xxxx
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/rsync/14.png)
- 
+![](E:\git-workspace\note\img\linux\rsync\14.png)
+
 
 ### 9.3.2服务端没有指定共享目录（如：backup目录）
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/rsync/15.png)
+![](E:\git-workspace\note\img\linux\rsync\15.png)
 
 ### 9.3.3 password file must not be other-accessible
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/rsync/16.png)
- 
+![](E:\git-workspace\note\img\linux\rsync\16.png)
+
 ### 9.3.4chroot failed
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/rsync/17.png)
+![](E:\git-workspace\note\img\linux\rsync\17.png)
 
  
 
@@ -289,11 +289,11 @@ chown -R rsync /backup/
 
 ### 9.3.5 从客户端推送报错
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/rsync/18.png)
+![](E:\git-workspace\note\img\linux\rsync\18.png)
 
 ### 9.3.6 客户端@ERROR：chdir failed
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/rsync/19.png)
+![](E:\git-workspace\note\img\linux\rsync\19.png)
 
 ### 9.3.7查看log
 ```
