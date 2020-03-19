@@ -138,10 +138,18 @@ taglist
 #tags, tagslist的使用
 #https://blog.csdn.net/daniel_ustc/article/details/8299096
 
-
-
 #taglist的使用
 #https://www.cnblogs.com/luosongchao/p/3163468.html
+```
+
+taglist常见使用：
+
+1. 打开侧面窗口：输入:TlistToggle来打开侧面窗口 (或者直接:Tlist、TlistOpen也可以)
+2. 窗口切换：使用ctr 和两次w在侧窗口和主窗口之间进行切换
+3. 查看函数定义：在左侧对应tag上，按下空格键
+
+```
+
 
 #vim打造教程
 #https://blog.csdn.net/wooin/article/details/1858917
