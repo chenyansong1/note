@@ -328,27 +328,377 @@ output { stdout { codec => rubydebug } }
 
 ```shell
 sudo systemctl start logstash.service
+
+
 ```
 
 
+
+## 关闭logstash
+
+```shell
+sudo systemctl stop logstash
+
+#or
+kill -TERM {logstash_pid}
+
+#if you are console 
+Alternatively, enter Ctrl-C in the console.
+```
+
+
+
+
+logstash关闭的时候做了什么
+
+- Stop all input, filter and output plugins
+- Process all in-flight events
+- Terminate the Logstash process
+
+
+
+The following conditions affect the shutdown process:
+
+- An input plugin receiving data at a slow pace.
+- A slow filter, like a Ruby filter executing `sleep(10000)` or an Elasticsearch filter that is executing a very heavy query.
+- A disconnected output plugin that is waiting to reconnect to flush in-flight events.
+
+如果需要强制关闭logstash (会丢数据)
+
+ use the `--pipeline.unsafe_shutdown` flag when you start Logstash
 
 # 日志logging
 
 你能够为某个子系统，module，或者plugin单独配置日志
 
+```shell
+#1.首先设置日志级别是DEBUG
+
+#2.只为一个单独的组件设置日志级别，减少其他日志的带来的干扰，修改了log4j2需要重启logstash ,例如下面我们要定位elasticsearch的output的问题，修改log4j2.properties
+logger.elasticsearchoutput.name = logstash.outputs.elasticsearch
+logger.elasticsearchoutput.level = debug
+```
 
 
 
+#  logstash配置
+
+写一个我们自己的配置文件，使用-f去指定执行改配置文件
+
+## 配置文件的结构
+
+```properties
+# This is a comment. You should use comments to describe
+# parts of your configuration.
+input {
+  ...
+}
+
+filter {
+  ...
+}
+
+output {
+  ...
+}
+
+#可以给每个插件配置多个值，具体的配置参见每个plugin
+input {
+  file {
+    path => "/var/log/messages"
+    type => "syslog"
+  }
+
+  file {
+    path => "/var/log/apache/access.log"
+    type => "apache"
+  }
+}
+```
+
+## 值类型
+
+### Array
+
+过时了，不推荐使用
+
+```properties
+  users => [ {id => 1, name => bob}, {id => 2, name => jane} ]
+```
 
 
 
+### Lists
+
+```properties
+  path => [ "/var/log/messages", "/var/log/*.log" ]
+  uris => [ "http://elastic.co", "http://example.net" ]
+```
+
+### Boolean
+
+```properties
+  ssl_enable => true  #没有引号
+```
 
 
 
+### Bytes
+
+```properties
+#Both SI (k M G T P E Z Y) and Binary (Ki Mi Gi Ti Pi Ei Zi Yi) units are supported. Binary units are in base-1024 and SI units are in base-1000
+#不区分大小写
+
+  my_bytes => "1113"   # 1113 bytes
+  my_bytes => "10MiB"  # 10485760 bytes
+  my_bytes => "100kib" # 102400 bytes
+  my_bytes => "180 mb" # 180000000 bytes
+```
+
+### Codes
+
+参见插件：https://www.elastic.co/guide/en/logstash/7.2/codec-plugins.html
+
+```
+codec => "json"
+```
+
+### Hash
+
+```properties
+#格式 "field1" => "value1"
+
+match => {
+  "field1" => "value1"
+  "field2" => "value2"
+  ...
+}
+# or as a single line. No commas between entries:
+match => { "field1" => "value1" "field2" => "value2" }
+#Note that multiple key value entries are separated by spaces rather than commas. 
+#多个key-value ,使用空格而不是逗号分隔
+```
+
+### Number
+
+Numbers must be valid numeric values (floating point or integer).
+
+Example:
+
+```js
+  port => 33
+```
+
+### Password
+
+A password is a string with a single value that is not logged or printed.
+
+Example:
+
+```js
+  my_password => "password"
+```
+
+### URI
+
+A URI can be anything from a full URL like *http://elastic.co/* to a simple identifier like *foobar*. If the URI contains a password such as *http://user:pass@example.net* the password portion of the URI will not be logged or printed.
+
+Example:
+
+```js
+  my_uri => "http://foo:bar@example.net"
+```
+
+### Path
+
+A path is a string that represents a valid operating system path.
+
+Example:
+
+```js
+  my_path => "/tmp/logstash"
+```
+
+### String
+
+可以使用单引号，或者双引号
 
 
 
+### 转义字符
 
+you will need to set `config.support_escapes: true` in your `logstash.yml`
+
+| Text | Result                     |
+| ---- | -------------------------- |
+| \r   | carriage return (ASCII 13) |
+| \n   | new line (ASCII 10)        |
+| \t   | tab (ASCII 9)              |
+| \\   | backslash (ASCII 92)       |
+| \"   | double quote (ASCII 34)    |
+| \'   | single quote (ASCII 39)    |
+
+Example:
+
+```js
+  name => "Hello world"
+  name => 'It\'s a beautiful day'
+```
+
+
+
+# 在配置文件中访问事件数据和字段
+
+logstash是使用inputs->filters->outputs来处理事件
+
+input:生成事件
+
+filters:修改事件
+
+outputs:发送event到 elsewhere
+
+因为input时，event还没有生成，所以所有的field只能适用于filter和output
+
+## 字段引用
+
+顶级字段直接使用[fieldname] 或者 fieldname；嵌套字段使用`[top-level field][nested field]`.
+
+```js
+{
+  "agent": "Mozilla/5.0 (compatible; MSIE 9.0)",
+  "ip": "192.168.24.44",
+  "request": "/index.html"
+  "response": {
+    "status": 200,
+    "bytes": 52353
+  },
+  "ua": {
+    "os": "Windows 7"
+  }
+}
+
+#To reference the os field, you specify [ua][os]. To reference a top-level field such as request, you can simply specify the field name.
+```
+
+
+
+## 格式化输出字段
+
+```js
+output {
+  statsd {
+    increment => "apache.%{[response][status]}"
+  }
+}
+```
+
+## 时间字段
+
+```js
+output {
+  file {
+    path => "/var/log/%{type}.%{+yyyy.MM.dd.HH}"
+  }
+}
+
+#具体的格式，参见：http://joda-time.sourceforge.net/apidocs/org/joda/time/format/DateTimeFormat.html
+```
+
+
+
+## 条件Conditions
+
+如果你想过滤filter或者output一个event在一个确定的条件下
+
+```js
+if EXPRESSION {
+  ...
+} else if EXPRESSION {
+  ...
+} else {
+  ...
+}
+```
+
+
+
+You can use the following comparison operators:
+
+- equality: `==`, `!=`, `<`, `>`, `<=`, `>=`
+- regexp: `=~`, `!~` (checks a pattern on the right against a string value on the left)
+- inclusion: `in`, `not in`
+
+The supported boolean operators are:
+
+- `and`, `or`, `nand`, `xor`
+
+The supported unary operators are:
+
+- `!`
+
+
+
+```js
+filter {
+    #这里会有字段的引用[action]
+  if [action] == "login" {
+    mutate { remove_field => "secret" }
+  }
+}
+
+# and
+output {
+  # Send production errors to pagerduty
+  if [loglevel] == "ERROR" and [deployment] == "production" {
+    pagerduty {
+    ...
+    }
+  }
+}
+ 
+    
+#in
+filter {
+  if [foo] in [foobar] {
+    mutate { add_tag => "field in field" }
+  }
+  if [foo] in "foo" {
+    mutate { add_tag => "field in string" }
+  }
+  if "hello" in [greeting] {
+    mutate { add_tag => "string in field" }
+  }
+  if [foo] in ["hello", "world", "foo"] {
+    mutate { add_tag => "field in list" }
+  }
+  if [missing] in [alsomissing] {
+    mutate { add_tag => "shouldnotexist" }
+  }
+  if !("foo" in ["hello", "world"]) {
+    mutate { add_tag => "shouldexist" }
+  }
+}
+    
+
+#not in
+output {
+  if "_grokparsefailure" not in [tags] {
+    elasticsearch { ... }
+  }
+}
+    
+#判断某个字段是否存在
+#The expression if [foo] returns false when
+[foo] doesn’t exist in the event,
+[foo] exists in the event, but is false, or
+[foo] exists in the event, but is null
+```
+
+
+
+## @metadata字段
+
+logstash1.5之后，就有了这个特殊的字段@metadata，这个字段的内容不是你output的一部分（官网是这么说，但是我测试的时候还是看到了@version ， @timestamp）
 
 
 
@@ -369,4 +719,4 @@ arm架构-问题：
 
 
 
-![1585032026981](C:\Users\landun\AppData\Roaming\Typora\typora-user-images\1585032026981.png)
+![](C:\Users\landun\AppData\Roaming\Typora\typora-user-images\1585032026981.png)
