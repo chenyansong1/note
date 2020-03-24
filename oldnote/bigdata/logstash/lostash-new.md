@@ -700,10 +700,107 @@ output {
 
 logstash1.5之后，就有了这个特殊的字段@metadata，这个字段的内容不是你output的一部分（官网是这么说，但是我测试的时候还是看到了@version ， @timestamp）
 
+```ruby
+input { stdin { } }
+
+#添加了三条元数据字段
+filter {
+  mutate { add_field => { "show" => "This data will be in the output" } }
+  mutate { add_field => { "[@metadata][test]" => "Hello" } }
+  mutate { add_field => { "[@metadata][no_show]" => "This data will not be in the output" } }
+}
+
+output {
+  if [@metadata][test] == "Hello" {
+    stdout { codec => rubydebug }
+  }
+}
+```
+
+输出是这样的
+
+```ruby
+$ bin/logstash -f ../test.conf
+Pipeline main started
+asdf
+{
+    "@timestamp" => 2016-06-30T02:42:51.496Z,
+      "@version" => "1",
+          "host" => "example.com",
+          "show" => "This data will be in the output",
+       "message" => "asdf"
+}
+```
+
+如果想要输出@metadat的内容，如下配置
+
+```ruby
+ stdout { codec => rubydebug { metadata => true } }
+```
+
+那么输出如下
+
+```ruby
+$ bin/logstash -f ../test.conf
+Pipeline main started
+asdf
+{
+    "@timestamp" => 2016-06-30T02:46:48.565Z,
+     "@metadata" => {
+           "test" => "Hello",
+        "no_show" => "This data will not be in the output"
+    },
+      "@version" => "1",
+          "host" => "example.com",
+          "show" => "This data will be in the output",
+       "message" => "asdf"
+}
+```
+
+关于元数据最常用的是提供模板
+
+```ruby
+input { stdin { } }
+
+filter {
+  grok { match => [ "message", "%{HTTPDATE:[@metadata][timestamp]}" ] }
+  date { match => [ "[@metadata][timestamp]", "dd/MMM/yyyy:HH:mm:ss Z" ] }
+}
+
+output {
+  stdout { codec => rubydebug }
+}
+```
+
+输出如下
+
+```ruby
+$ bin/logstash -f ../test.conf
+Pipeline main started
+02/Mar/2014:15:36:43 +0100
+{
+    "@timestamp" => 2014-03-02T14:36:43.000Z,
+      "@version" => "1",
+          "host" => "example.com",
+       "message" => "02/Mar/2014:15:36:43 +0100"
+}
+```
+
+
+
+## 配置实例
 
 
 
 
+
+
+
+
+
+
+
+别人写好的grok ： https://github.com/logstash-plugins/logstash-patterns-core/tree/master/patterns
 
 
 
