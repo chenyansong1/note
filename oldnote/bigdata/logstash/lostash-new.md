@@ -418,7 +418,7 @@ input {
 
 ## 值类型
 
-### Array
+* Array
 
 过时了，不推荐使用
 
@@ -428,14 +428,14 @@ input {
 
 
 
-### Lists
+* Lists
 
 ```properties
   path => [ "/var/log/messages", "/var/log/*.log" ]
   uris => [ "http://elastic.co", "http://example.net" ]
 ```
 
-### Boolean
+* Boolean
 
 ```properties
   ssl_enable => true  #没有引号
@@ -443,7 +443,7 @@ input {
 
 
 
-### Bytes
+* Bytes
 
 ```properties
 #Both SI (k M G T P E Z Y) and Binary (Ki Mi Gi Ti Pi Ei Zi Yi) units are supported. Binary units are in base-1024 and SI units are in base-1000
@@ -455,7 +455,7 @@ input {
   my_bytes => "180 mb" # 180000000 bytes
 ```
 
-### Codes
+* Codes
 
 参见插件：https://www.elastic.co/guide/en/logstash/7.2/codec-plugins.html
 
@@ -463,7 +463,7 @@ input {
 codec => "json"
 ```
 
-### Hash
+* Hash
 
 ```properties
 #格式 "field1" => "value1"
@@ -479,7 +479,7 @@ match => { "field1" => "value1" "field2" => "value2" }
 #多个key-value ,使用空格而不是逗号分隔
 ```
 
-### Number
+* Number
 
 Numbers must be valid numeric values (floating point or integer).
 
@@ -489,7 +489,7 @@ Example:
   port => 33
 ```
 
-### Password
+* Password
 
 A password is a string with a single value that is not logged or printed.
 
@@ -499,7 +499,7 @@ Example:
   my_password => "password"
 ```
 
-### URI
+* URI
 
 A URI can be anything from a full URL like *http://elastic.co/* to a simple identifier like *foobar*. If the URI contains a password such as *http://user:pass@example.net* the password portion of the URI will not be logged or printed.
 
@@ -509,7 +509,7 @@ Example:
   my_uri => "http://foo:bar@example.net"
 ```
 
-### Path
+* Path
 
 A path is a string that represents a valid operating system path.
 
@@ -519,13 +519,13 @@ Example:
   my_path => "/tmp/logstash"
 ```
 
-### String
+* String
 
 可以使用单引号，或者双引号
 
 
 
-### 转义字符
+* 转义字符
 
 you will need to set `config.support_escapes: true` in your `logstash.yml`
 
