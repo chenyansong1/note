@@ -790,6 +790,185 @@ Pipeline main started
 
 ## 配置实例
 
+```js
+input {
+  #指定读取文件
+  file {
+    path => "/tmp/access_log"
+    #path => "/tmp/*_log"  #一类文件
+    start_position => "beginning"
+  }
+}
+
+filter {
+  if [path] =~ "access" {
+    mutate { replace => { "type" => "apache_access" } }
+    grok {
+      match => { "message" => "%{COMBINEDAPACHELOG}" }
+    }
+  }
+  date {
+    match => [ "timestamp" , "dd/MMM/yyyy:HH:mm:ss Z" ]
+  }
+}
+
+output {
+  elasticsearch {
+    hosts => ["localhost:9200"]
+  }
+  stdout { codec => rubydebug }
+}
+```
+
+添加条件判断
+
+```ruby
+input {
+  file {
+    path => "/tmp/*_log"
+  }
+}
+
+filter {
+    #这里有字段引用，条件判断
+  if [path] =~ "access" {
+    mutate { replace => { type => "apache_access" } }
+    grok {
+      match => { "message" => "%{COMBINEDAPACHELOG}" }
+    }
+    date {
+      match => [ "timestamp" , "dd/MMM/yyyy:HH:mm:ss Z" ]
+    }
+  } else if [path] =~ "error" {
+    mutate { replace => { type => "apache_error" } }
+  } else {
+    mutate { replace => { type => "random_logs" } }
+  }
+}
+
+output {
+  elasticsearch { hosts => ["localhost:9200"] }
+  stdout { codec => rubydebug }
+}
+```
+
+正则匹配
+
+```js
+output {
+  if [type] == "apache" {
+    if [status] =~ /^5\d\d/ {
+      nagios { ...  }
+    } else if [status] =~ /^4\d\d/ {
+      elasticsearch { ... }
+    }
+    statsd { increment => "apache.%{status}" }
+  }
+}
+```
+
+定义处理syslog日志
+
+```ruby
+input {
+  tcp {
+    port => 5000
+    type => syslog
+  }
+  udp {
+    port => 5000
+    type => syslog
+  }
+}
+
+filter {
+  if [type] == "syslog" {
+    grok {
+      match => { "message" => "%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}" }
+      add_field => [ "received_at", "%{@timestamp}" ]
+      add_field => [ "received_from", "%{host}" ]
+    }
+    date {
+      match => [ "syslog_timestamp", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss" ]
+    }
+  }
+}
+
+output {
+  elasticsearch { hosts => ["localhost:9200"] }
+  stdout { codec => rubydebug }
+}
+```
+
+# 配置文件中使用环境变量
+
+* 格式`${var}`
+* 环境变量是大小写敏感的
+* 对于没有定义的环境变量，logstash会报错
+* 可以给出一个默认值，这样没有定义，也不会报错，格式：`${var: default value}`
+* 环境变量的类型可以是：string,number,boolean, array, hash
+* 环境变量是不可以被更改的，一旦更改，需要restart logstash 才能生效
+
+设置tcp的端口
+
+```shell
+export TCP_PORT=12345
+
+input {
+  tcp {
+    port => "${TCP_PORT}"
+  }
+}
+
+input {
+  tcp {
+    port => 12345
+  }
+}
+
+input {
+  tcp {
+    port => "${TCP_PORT:54321}"
+  }
+}
+```
+
+设置文件路径
+
+```ruby
+export HOME="/path"
+
+filter {
+  mutate {
+    add_field => {
+      "my_path" => "${HOME}/file.log"
+    }
+  }
+}
+```
+
+# 多管道
+
+类似于多线程
+
+```yaml
+#vim pipelines.yml
+#下面定义了多个pipeline
+- pipeline.id: my-pipeline_1
+  path.config: "/etc/path/to/p1.config"
+  pipeline.workers: 3
+- pipeline.id: my-other-pipeline
+  path.config: "/etc/different/path/p2.cfg"
+  queue.type: persisted
+```
+
+在pipelines.yml文件中没有明确指定的，那么将会使用logstash.yml中的值
+
+如果你启动logstash的时候没有指定任何参数，那么他会读取pipelines.yml文件，然后来实例化pipelines，但是如果你使用了-e or -f 那么logstash会忽略pipelines.yml文件，日志会有关于这个的警告
+
+注意事项：
+
+1. 对于input,filter
 
 
 
@@ -797,6 +976,12 @@ Pipeline main started
 
 
 
+
+
+
+
+
+# 安装过程中遇到的问题
 
 
 
