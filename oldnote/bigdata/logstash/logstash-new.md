@@ -33,6 +33,9 @@ bin/logstash -f first-pipeline.conf --config.reload.automatic
 
 #The --config.reload.automatic option（修改配置文件自动重启选项） enables automatic config reloading so that you don’t have to stop and restart Logstash every time you modify the configuration file.
 
+# 重新加载配置，多久检查一次，默认3秒
+--config.reload.interval <interval>
+
 ```
 
 # 常用的插件
@@ -968,7 +971,218 @@ filter {
 
 注意事项：
 
-1. 对于input,filter
+1. 对于input,filter ， output不同的event流，使用多管道是特别有用的，同时可以使用tags and conditionals 进行操作
+2. 可以给每个不同的管道配置不同的性能参数
+
+# pipeline-to-pipeline 通信
+
+## 简介
+
+1. 采用 client-server的方式
+
+2. pipeline input是server，启动一个监听虚拟地址
+
+3. pipeline output是client，发送event到input
+
+```yaml
+# config/pipelines.yml
+- pipeline.id: upstream
+  config.string: input { stdin {} } output { pipeline { send_to => [myVirtualAddress] } }
+- pipeline.id: downstream
+  config.string: input { pipeline { address => myVirtualAddress } }
+```
+
+   
+
+1. 只能相同进程的output能发送数据到虚拟地址
+2. output能够发送数据到一个虚拟地址list
+3. logstash会复制每个event，所以使用这种方式会有java heap增大的问题
+
+
+
+## 几种不同的模式
+
+### distributor pattern
+
+一种数据的输入，输入的数据是复杂的，需要分拣到不同的管道中，进行不同的逻辑处理
+
+![](E:\git-workspace\note\images\bigdata\logstash\1585105245641.png)
+
+```yaml
+# config/pipelines.yml
+- pipeline.id: beats-server
+  config.string: |
+    input { beats { port => 5044 } }
+    output {
+        if [type] == apache {
+          pipeline { send_to => weblogs }
+        } else if [type] == system {
+          pipeline { send_to => syslog }
+        } else {
+          pipeline { send_to => fallback }
+        }
+    }
+- pipeline.id: weblog-processing
+  config.string: |
+    input { pipeline { address => weblogs } }
+    filter {
+       # Weblog filter statements here...
+    }
+    output {
+      elasticsearch { hosts => [es_cluster_a_host] }
+    }
+- pipeline.id: syslog-processing
+  config.string: |
+    input { pipeline { address => syslog } }
+    filter {
+       # Syslog filter statements here...
+    }
+    output {
+      elasticsearch { hosts => [es_cluster_b_host] }
+    }
+- pipeline.id: fallback-processing
+    config.string: |
+    input { pipeline { address => fallback } }
+    output { elasticsearch { hosts => [es_cluster_b_host] } }
+```
+
+
+
+### The output isolator pattern模式
+
+lostash将会阻塞，如果多个output中的一个output挂了的话，使用这种模式将会避免这个问题，例如下面如果http挂了，那么还是会发送数据到ES
+
+```yaml
+# config/pipelines.yml
+- pipeline.id: intake
+  queue.type: persisted
+  config.string: |
+    input { beats { port => 5044 } }
+    output { pipeline { send_to => [es, http] } }
+- pipeline.id: buffered-es
+  queue.type: persisted
+  config.string: |
+    input { pipeline { address => es } }
+    output { elasticsearch { } }
+- pipeline.id: buffered-http
+  queue.type: persisted
+  config.string: |
+    input { pipeline { address => http } }
+    output { http { } }
+```
+
+
+
+### The forked path pattern
+
+好像和上一种相同
+
+
+
+### the collector pattern
+
+```yaml
+# config/pipelines.yml
+- pipeline.id: beats
+  config.string: |
+    input { beats { port => 5044 } }
+    output { pipeline { send_to => [commonOut] } }
+- pipeline.id: kafka
+  config.string: |
+    input { kafka { ... } }
+    output { pipeline { send_to => [commonOut] } }
+- pipeline.id: partner
+  # This common pipeline enforces the same logic whether data comes from Kafka or Beats
+  config.string: |
+    input { pipeline { address => commonOut } }
+    filter {
+      # Always remove sensitive data from all input sources
+      mutate { remove_field => 'sensitive-data' }
+    }
+    output { elasticsearch { } }
+```
+
+
+
+# 多行事件（multiline event)
+
+如果需要将多行当做一条event，参见：https://www.elastic.co/guide/en/logstash/7.2/multiline.html
+
+
+
+
+
+# 全局模式匹配
+
+```shell
+*conf
+
+*apache*
+
+** Match directories recursively.
+? Match any one character.
+
+[set] Match any one character in a set. For example, [a-z]. Also supports set negation ([^a-z]).
+
+{p,q}
+Match either literal p or literal q. regular expressions (foo|bar).
+
+\ Escape the next metacharacter.
+
+
+#example
+"/path/to/*.conf"
+Matches config files ending in .conf in the specified path.
+"/var/log/**/*.log
+Matches log files ending in .log in subdirectories under the specified path.
+"/path/to/logs/{app1,app2,app3}/data.log"
+Matches app log files in the app1, app2, and app3 subdirectories under the specified path.
+
+```
+
+# ls-to-ls 通信
+
+需要通过证书进行认证
+
+https://www.elastic.co/guide/en/logstash/7.2/ls-to-ls.html
+
+
+
+# ls-node monitor
+
+https://www.elastic.co/guide/en/logstash/7.2/configuring-logstash.html
+
+# 两种队列方式
+
+* Persistent Queeus ：存储数据在磁盘上的一个队列
+* Dead Letter Queues ：存储不能处理的数据在磁盘上的一个队列上
+
+- [Persistent Queues](https://www.elastic.co/guide/en/logstash/7.2/persistent-queues.html) protect against data loss by storing events in an internal queue on disk.
+- [Dead Letter Queues](https://www.elastic.co/guide/en/logstash/7.2/dead-letter-queues.html) provide on-disk storage for events that Logstash is unable to process. You can easily reprocess events in the dead letter queue by using the `dead_letter_queue` input plugin.
+
+默认没有开启这些特性的
+
+
+
+## Persistent Queues
+
+ls默认是使用的memory存储数据，这种方式如果ls临时挂了，那么数据就会丢失
+
+优势：
+
+1. 
+
+
+
+
+
+## Dead Letter Queues
+
+
+
+
+
+
 
 
 
