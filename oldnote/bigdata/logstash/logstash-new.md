@@ -1166,11 +1166,79 @@ https://www.elastic.co/guide/en/logstash/7.2/configuring-logstash.html
 
 ## Persistent Queues
 
-ls默认是使用的memory存储数据，这种方式如果ls临时挂了，那么数据就会丢失
+ls默认是使用的memory存储数据，这种方式如果ls临时挂了，那么数据就会丢失，同时持久化队列可以用来替代如Redis，MQ，kafka等这些publish-subscriber模型
 
-优势：
+优点：
 
-1. 
+1. 不需要消耗机器buffer，可以实现像Redis or kafka这样的消息队列
+2. 提供至少一次的发送数据，保证数据在logstash短暂故障之后不会丢失数据
+
+
+
+缺点：
+
+1. 存储在disk上的数据是没有副本的，disk坏了，那么数据也一样会丢失
+
+
+
+persistent Queue work
+
+input → queue → filter + output
+
+当写队列成功之后，input send 一条消息到 data source，当一条event被filter和output处理完成之后，被标记为ack，没有被标记为ack的事件下一次还是会被filter和output继续处理
+
+
+
+配置
+
+```shell
+queue.type: persisted. By default, persistent queues are disabled (default: queue.type: memory).
+
+path.queue: The directory path where the data files will be stored. By default, the files are stored in path.data/queue.
+
+queue.page_capacity: The maximum size of a queue page in bytes. The queue data consists of append-only files called "pages". The default size is 64mb. 
+Changing this value is unlikely to have performance benefits.
+
+queue.drain: Specify true if you want Logstash to wait until the persistent queue is drained before shutting down. The amount of time it takes to drain the queue depends on the number of events that have accumulated in the queue. 
+Therefore, you should avoid using this setting unless the queue, even when full, is relatively small and can be drained quickly.建议不要设置
+
+queue.max_events: The maximum number of events that are allowed in the queue. The default is 0 (unlimited).默认是0，表示没有限制
+
+queue.max_bytes: The total capacity of the queue in number of bytes. The default is 1024mb (1gb). Make sure the capacity of your disk drive is greater than the value you specify here.
+
+If you are using persistent queues to protect against data loss, but don’t require much buffering, you can set queue.max_bytes to a smaller value, such as 10mb, to produce smaller queues and improve queue performance.
+如果只是为了保护数据不丢失，那么不需要太大的buffer，设置set queue.max_bytes to a smaller value, such as 10mb, to produce smaller queues and improve queue performance.
+
+
+#example
+queue.type: persisted
+queue.max_bytes: 4gb
+```
+
+如果Queue满了，那么logstash的input将不再接受数据，After the filter and output stages finish processing existing events in the queue and ACKs them, Logstash automatically starts accepting new events.
+
+
+
+* 持久化控制
+  1. persistent queue有一系列的page去存储数据（每一个page是一个文件），其中有两类page，head page（只有一个） 和 tail page（有很多个），input是向head page写数据的，在head page写满数据之后会将这个head page变成tail page（queue.page_capacity 达到），一个新的head page创建
+  2. head page只是添加数据，而tail page是不能改变的
+  3. the queue records details about itself (pages, acknowledgements, etc) in a separate file called a checkpoint file.当记录一个checkpoint的时候，logstash将会做如下的几件事：
+     1. Call fsync on the head page.
+     2. Atomically write to disk the current state of the queue.
+  4. 任何没有进入checkpoint的数据，即使进入了queue，也是会丢失
+  5. 为了保证checkpoint记录的实时性，可以频繁的checkpoint，这里就有一个参数`queue.checkpoint.writes`，如果设置为1，那么force a checkpoint after each event is written. 默认这个值的1024，**需要说明的是这样会有性能消耗，因为频繁的写磁盘**
+
+
+
+* page 数据回收
+
+  each page is one file，Pages are deleted (garbage collected) after all events in that page have been ACKed
+
+
+
+
+
+
 
 
 
