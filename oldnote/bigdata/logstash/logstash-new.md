@@ -1234,34 +1234,539 @@ queue.max_bytes: 4gb
 
   each page is one file，Pages are deleted (garbage collected) after all events in that page have been ACKed
 
-
-
-
-
-
-
-
-
-
-
 ## Dead Letter Queues
 
+* 原理
+
+  Dead Letter：当一条event不能成功处理（要么是mapping问题，要么是其他问题），此时ls的处理方式，要么是挂起，要么是drop the event，如果配置了这个特性，那么write unsuccessful events to a dead letter queue instead of dropping them，这个特性目前只是支持ES，并且只是在特定的ls中有
+
+  
+
+  每条没有写成功的event的格式是：原始的event，和meta数据（用来描述event没有被成功处理的原因，以及某个plugin的信息和入库的timestamp）
+
+![](E:\git-workspace\note\images\bigdata\logstash\dead_letter_queue.png)
+
+
+
+* 配置
+
+  ```yaml
+  #默认的关闭的
+  dead_letter_queue.enable: true
+  
+  #配置文件的存储路径
+  path.dead_letter_queue: "path/to/data/dead_letter_queue"
+  #By default, the dead letter queue files are stored in path.data/dead_letter_queue. 
+  #Each pipeline has a separate queue. For example, the dead letter queue for the main pipeline is stored in LOGSTASH_HOME/data/dead_letter_queue/main by default. The queue files are numbered sequentially: 1.log, 2.log, and so on.
+  #不能将使用相同的路径在两个不同的logstash实例中
+  
+  #文件回滚策略
+  ##当文件达到file size的阈值的时候，一个新的文件会自动创建
+  ##默认的dead letter的最大size是1024mb，可以改变
+  dead_letter_queue.max_bytes
+  #如果超过这个设定，那么整个文件将会被删除
+  ```
+
+* 处理在dead letter queue中的event
+
+  通过dead letter input plugin来处理dead event，可以根据不同的需求来处理这些dead event，例如如果是mapping引起的error，那么读dead event，然后删除mapping的error的field，然后重新入到ES中
+
+  ```yaml
+  input {
+    dead_letter_queue {
+      path => "/path/to/data/dead_letter_queue" #队列的存储路径
+      commit_offsets => true 	#设置offset，下次从这里消费，这样不会重复执行
+      pipeline_id => "main"  #处理dead letter queue数据的pipeline 的ID，默认的main
+    }
+  }
+  
+  output {
+    stdout {
+      codec => rubydebug { metadata => true }
+    }
+  }
+  ```
+
+  ![1585184295816](E:\git-workspace\note\images\bigdata\logstash\1585184295816.png)
+
+  处理dead queue的数据是不需要停下系统单独处理的，如果这次还是没有成功处理，那么这条event就会被忽略了，不会重复提交到dead letter queue中再次被处理
+
+* 处理指定时间后的数据
+
+  当dead queue里面的数据比较多的时候，我们只想从指定的地方开始读取数据，此时是可以指定时间戳的
+
+  ```yaml
+  input {
+    dead_letter_queue {
+      path => "/path/to/data/dead_letter_queue"
+      start_timestamp => "2017-06-06T23:40:37"
+      pipeline_id => "main"
+    }
+  }
+  ```
+
+
+
+* Example
+
+  ```json
+  {"geoip":{"location":"home"}}
+  ```
+
+  ```json
+  {
+     "@metadata" => {
+      "dead_letter_queue" => {
+         "entry_time" => #<Java::OrgLogstash::Timestamp:0x5b5dacd5>,
+          "plugin_id" => "fb80f1925088497215b8d037e622dec5819b503e-4",
+        "plugin_type" => "elasticsearch",
+             "reason" => "Could not index event to Elasticsearch. status: 400, action: [\"index\", {:_id=>nil, :_index=>\"logstash-2017.06.22\", :_type=>\"doc\", :_routing=>nil}, 2017-06-22T01:29:29.804Z My-MacBook-Pro-2.local {\"geoip\":{\"location\":\"home\"}}], response: {\"index\"=>{\"_index\"=>\"logstash-2017.06.22\", \"_type\"=>\"doc\", \"_id\"=>\"AVzNayPze1iR9yDdI2MD\", \"status\"=>400, \"error\"=>{\"type\"=>\"mapper_parsing_exception\", \"reason\"=>\"failed to parse\", \"caused_by\"=>{\"type\"=>\"illegal_argument_exception\", \"reason\"=>\"illegal latitude value [266.30859375] for geoip.location\"}}}}"
+      }
+    },
+    "@timestamp" => 2017-06-22T01:29:29.804Z,
+      "@version" => "1",
+         "geoip" => {
+      "location" => "home"
+    },
+          "host" => "My-MacBook-Pro-2.local",
+       "message" => "{\"geoip\":{\"location\":\"home\"}}"
+  }
+  ```
+
+  ```json
+  input {
+    dead_letter_queue {
+      path => "/path/to/data/dead_letter_queue/" 
+    }
+  }
+  filter {
+    mutate {
+      remove_field => "[geoip][location]" 
+    }
+  }
+  output {
+    elasticsearch{
+      hosts => [ "localhost:9200" ] 
+    }
+  }
+  ```
 
 
 
 
 
+# 转换数据的plugin
+
+## 核心操作
+
+* date filter
+
+  Parses dates from fields to use as Logstash timestamps for events.
+
+  ```json
+  filter {
+    date {
+      #设置logdate为ls的时间戳
+      match => [ "logdate", "MMM dd yyyy HH:mm:ss" ]
+    }
+  }
+  ```
+
+* drop filter
+
+  和条件配合使用，用来删除event
+
+  ```json
+  filter {
+    if [loglevel] == "debug" {
+      drop { }
+    }
+  }
+  ```
+
+* 生成一致性hash
+
+  The following config fingerprints the `IP`, `@timestamp`, and `message` fields and adds the hash to a metadata field called `generated_id`:
+
+  ```json
+  filter {
+    fingerprint {
+      source => ["IP", "@timestamp", "message"]
+      method => "SHA1"
+      key => "0123"
+      target => "[@metadata][generated_id]"
+    }
+  }
+  ```
+
+* mutate filter
+
+  You can rename, remove, replace, and modify fields in your events.
+
+  The following config renames the `HOSTORIP` field to `client_ip`:
+
+  ```json
+  filter {
+    mutate {
+      rename => { "HOSTORIP" => "client_ip" }
+    }
+  }
+  ```
+
+  删除字符两端的空格
+
+  ```json
+  filter {
+    mutate {
+      strip => ["field1", "field2"]
+    }
+  }
+  ```
+
+## 序列化数据
+
+这部分涉及到数据的反序列化
+
+https://www.elastic.co/guide/en/logstash/7.2/data-deserialization.html
 
 
 
+## 提取字段
+
+提取字段，and 解析非结构化的字段
+
+* dissect filter 解析
+
+  解析非结构化的数据，通过分隔符解析，并不使用正则表达式，如果要使用正则表达式，那么可以使用grok filter
+
+  ```json
+  Apr 26 12:20:02 localhost systemd[1]: Starting system activity accounting tool...
+  ```
+
+  ```json
+  filter {
+    dissect {
+      mapping => { "message" => "%{ts} %{+ts} %{+ts} %{src} %{prog}[%{pid}]: %{msg}" }
+    }
+  }
+  ```
+
+  解析结果如下
+
+  ```json
+  {
+    "msg"        => "Starting system activity accounting tool...",
+    "@timestamp" => 2017-04-26T19:33:39.257Z,
+    "src"        => "localhost",
+    "@version"   => "1",
+    "host"       => "localhost.localdomain",
+    "pid"        => "1",
+    "message"    => "Apr 26 12:20:02 localhost systemd[1]: Starting system activity accounting tool...",
+    "type"       => "stdin",
+    "prog"       => "systemd",
+    "ts"         => "Apr 26 12:20:02"
+  }
+  ```
+
+* kv filter
+
+  键值对解析
+
+  ```json
+  ip=1.2.3.4 error=REFUSED
+  ```
+
+  ```json
+  filter {
+    kv { }
+  }
+  ```
+
+  After the filter is applied, the event in the example will have these fields:
+
+  - `ip: 1.2.3.4`
+  - `error: REFUSED`
 
 
 
+* grok filter
+
+  可以使用正则表达式解析日志
+
+  ```json
+  55.3.244.1 GET /index.html 15824 0.043
+  ```
+
+  ```json
+  filter {
+    grok {
+      match => { "message" => "%{IP:client} %{WORD:method} %{URIPATHPARAM:request} %{NUMBER:bytes} %{NUMBER:duration}" }
+    }
+  }
+  ```
+
+  After the filter is applied, the event in the example will have these fields:
+
+  - `client: 55.3.244.1`
+  - `method: GET`
+  - `request: /index.html`
+  - `bytes: 15824`
+  - `duration: 0.043`
 
 
 
+## 添加额外数据到event中
+
+* geoip filter
+
+  ```json
+  filter {
+    geoip {
+      source => "clientip"
+    }
+  }
+  ```
+
+* jdbc_static filter
+
+  提前加载database的数据，来enrich event
+
+  ```json
+  filter {
+    jdbc_static {
+      loaders => [ 
+      #指定查询缓存在本地的数据
+        {
+          id => "remote-servers"
+          query => "select ip, descr from ref.local_ips order by ip"
+          local_table => "servers"
+        },
+        {
+          id => "remote-users"
+          query => "select firstname, lastname, userid from ref.local_users order by userid"
+          local_table => "users"
+        }
+      ]
+  	#Defines the columns, types, and indexes used to build the local database structure. The column names and types should match the external database
+      local_db_objects => [ 
+        {
+          name => "servers"
+          index_columns => ["ip"]
+          columns => [
+            ["ip", "varchar(15)"],
+            ["descr", "varchar(255)"]
+          ]
+        },
+        {
+          name => "users"
+          index_columns => ["userid"]
+          columns => [
+            ["firstname", "varchar(255)"],
+            ["lastname", "varchar(255)"],
+            ["userid", "int"]
+          ]
+        }
+      ]
+      local_lookups => [ 
+        {
+          id => "local-servers"
+          query => "select descr as description from servers WHERE ip = :ip"
+          parameters => {ip => "[from_ip]"}
+          target => "server"  # Specifies the event field that will store the looked-up data. If the lookup returns multiple columns, the data is stored as a JSON object within the field.
+        },
+        {
+          id => "local-users"
+          query => "select firstname, lastname from users WHERE userid = :id"
+          parameters => {id => "[loggedin_userid]"}
+          target => "user" 
+        }
+      ]
+      # using add_field here to add & rename values to the event root
+      add_field => { server_name => "%{[server][0][description]}" }
+      add_field => { user_firstname => "%{[user][0][firstname]}" } 
+      add_field => { user_lastname => "%{[user][0][lastname]}" }
+      remove_field => ["server", "user"]
+      jdbc_user => "logstash"
+      jdbc_password => "example"
+      jdbc_driver_class => "org.postgresql.Driver"
+      jdbc_driver_library => "/tmp/logstash/vendor/postgresql-42.1.4.jar"
+      jdbc_connection_string => "jdbc:postgresql://remotedb:5432/ls_test_2"
+    }
+  }
+  ```
 
 
+
+* jdbc_streaming filter
+
+  The following example executes a SQL query and stores the result set in a field called `country_details`:
+
+  ```json
+  filter {
+    jdbc_streaming {
+      jdbc_driver_library => "/path/to/mysql-connector-java-5.1.34-bin.jar"
+      jdbc_driver_class => "com.mysql.jdbc.Driver"
+      jdbc_connection_string => "jdbc:mysql://localhost:3306/mydatabase"
+      jdbc_user => "me"
+      jdbc_password => "secret"
+      statement => "select * from WORLD.COUNTRY WHERE Code = :code"
+      parameters => { "code" => "country_code"}
+      target => "country_details"
+    }
+  }
+  ```
+
+* translate filter
+
+  The [translate filter](https://www.elastic.co/guide/en/logstash/7.2/plugins-filters-translate.html) replaces field contents based on replacement values specified in a hash or file. Currently supports these file types: YAML, JSON, and CSV.
+
+  The following example takes the value of the `response_code` field, translates it to a description based on the values specified in the dictionary, and then removes the `response_code` field from the event:
+
+  ```json
+  filter {
+    translate {
+      field => "response_code"
+      destination => "http_response"
+      dictionary => {
+        "200" => "OK"
+        "403" => "Forbidden"
+        "404" => "Not Found"
+        "408" => "Request Timeout"
+      }
+      remove_field => "response_code"
+    }
+  }
+  ```
+
+# 性能调节
+
+## troubleshooting
+
+1. CPU
+
+   如果CPU is high， 需要调节worker 的settings
+
+2. IO
+
+   1. 检查磁盘是否饱和：iostat
+   2. 检查network是否饱和：iftop
+
+3. JVM heap
+
+   当heap是too low的时候，会造成jvm的垃圾回收，此时CPU会居高不下，需要增加heap的大小，不要让heap大小超过物理内存，**至少要留1G的内存给物理的OS和其他进程**
+
+   可以使用jmap或者VisualVM 去测量jvm的使用情况
+
+   调整minimum (Xms) and maximum (Xmx) heap allocation size to the same value
+
+4. worker settings
+
+
+
+## 调整性能问题
+
+```shell
+#这个值是增加filter和output的线程数，当发现event在积累，或者CPU是空闲的时候
+#增加这个值会增加IO
+pipeline.workers
+
+#每次发送到filter和output之前的event数量（单个worker），增加这个会增加内存
+pipeline.batch.size
+
+#filter and output最大延时处理event的时间，一般不怎么设定
+pipeline.batch.delay
+
+```
+
+# ls性能监控
+
+The metrics collected by Logstash include:
+
+- Logstash node info, like pipeline settings, OS info, and JVM info.
+- Plugin info, including a list of installed plugins.
+- Node stats, like JVM stats, process stats, event-related stats, and pipeline runtime stats.
+- Hot threads.
+
+https://www.elastic.co/guide/en/logstash/7.2/logstash-monitoring-overview.html
+
+
+
+# 插件
+
+## 代理
+
+The majority of the plugin manager commands require access to the internet to reach [RubyGems.org](https://rubygems.org/). If your organization is behind a firewall you can set these environments variables to configure Logstash to use your proxy.
+
+```shell
+export http_proxy=http://localhost:3128
+export https_proxy=http://localhost:3128
+```
+
+## Listing plugins
+
+```shell
+bin/logstash-plugin list 
+bin/logstash-plugin list --verbose 
+bin/logstash-plugin list '*namefragment*'  #Will list all installed plugins containing a namefragment
+
+#Will list all installed plugins for a particular group (input, filter, codec, output)
+bin/logstash-plugin list --group output
+
+```
+
+
+
+## add plugin
+
+能访问网络时
+
+```shell
+bin/logstash-plugin install logstash-output-kafka
+```
+
+如果不能访问网络
+
+```shell
+bin/logstash-plugin install /path/to/logstash-output-kafka-1.0.0.gem
+```
+
+自定义插件
+
+The path needs to be in a specific directory hierarchy: `PATH/logstash/TYPE/NAME.rb`, where TYPE is *inputs* *filters*, *outputs* or *codecs* and NAME is the name of the plugin.
+
+```shell
+# supposing the code is in /opt/shared/lib/logstash/inputs/my-custom-plugin-code.rb
+bin/logstash --path.plugins /opt/shared/lib
+```
+
+
+
+## update or remove plugin
+
+```shell
+bin/logstash-plugin update 
+bin/logstash-plugin update logstash-output-kafka
+```
+
+```shell
+bin/logstash-plugin remove logstash-output-kafka
+```
+
+
+
+## 自定义插件
+
+https://www.elastic.co/guide/en/logstash/7.2/plugin-generator.html
+
+```sh
+bin/logstash-plugin generate --type input --name xkcd --path ~/ws/elastic/plugins
+```
+
+- `--type`: Type of plugin - input, filter, output, or codec
+- `--name`: Name for the new plugin
+- `--path`: Directory path where the new plugin structure will be created. If not specified, it will be created in the current directory.
+
+  
 
 # 安装过程中遇到的问题
 
