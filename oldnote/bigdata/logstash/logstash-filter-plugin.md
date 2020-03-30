@@ -409,6 +409,51 @@ geoip {
 
 # grok
 
+Grok or Dissect Or both?
+
+Dissect：一些常规的分隔符，推荐使用，没有使用正则表达式，比较grok更快
+
+Grok：如果是line to line ,使用正则表达式
+
+Dissect and Grok：可以混合使用
+
+
+
+* 基本语法
+
+  ```shell
+  %{SYNTAX:SEMANTIC}
+  #syntax是pattern的名字
+  #semantic：是字段名称
+  
+  
+  # 55.3.244.1 GET /index.html 15824 0.043
+   %{IP:client} %{WORD:method} %{URIPATHPARAM:request} %{NUMBER:bytes} %{NUMBER:duration}
+  
+  #产生如下的字段
+  client: 55.3.244.1
+  method: GET
+  request: /index.html
+  bytes: 15824
+  duration: 0.043
+  
+  
+  
+  # 类型转换
+  %{NUMBER:num:int}
+  #which converts the num semantic from a string to an integer. 
+  ```
+
+  
+
+* Custom Patterns
+
+  Sometimes logstash doesn’t have a pattern you need. so 你必须自己写正则表达式
+
+  
+
+
+
 
 
 
