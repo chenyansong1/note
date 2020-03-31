@@ -764,17 +764,227 @@ filter {
 
 ## mutate filter configuration options
 
+```shell
+#Convert a field’s value to a different type, like turning a string to an integer.
+#If the field value is an array, all members will be converted. If the field is a hash no action will be taken.
+convert
+	#字段Type
+	integer #strings are parsed; comma-separators are supported (e.g., the string "1,000" produces an integer with value of one thousand)
+	interger_eu	#same as integer, except string values support dot-separators and comma-decimals (e.g., "1.000" produces an integer with value of one thousand)	
+	float	#
+	float_eu
+	string
+	boolean
+	
+	
+    filter {
+      mutate {
+        convert => {
+          "fieldname" => "integer"
+          "booleanfield" => "boolean"
+        }
+      }
+    }
+
+
+#############
+copy #Copy an existing field to another field. Existing target field will be overriden.
+    filter {
+      mutate {
+         copy => { "source_field" => "dest_field" }
+      }
+    }
+    
+    
+#############
+gsub  #用指定字符串去替换匹配中的字符串
+
+    filter {
+      mutate {
+        gsub => [
+          # replace all forward slashes with underscore
+          "fieldname", "/", "_",
+          # replace backslashes, question marks, hashes, and minuses
+          # with a dot "."
+          "fieldname2", "[\\?#-]", "."
+        ]
+      }
+    }
+
+#############
+join #Join an array with a separator character. Does nothing on non-array fields.
+
+   filter {
+     mutate {
+       join => { "fieldname" => "," }
+     }
+   }
+
+
+#############
+lowercase => array #Convert a string to its lowercase equivalent.
+    filter {
+      mutate {
+        lowercase => [ "fieldname" ]
+      }
+    }
+
+uppercase
+
+#############
+merge
+#Merge two fields of arrays or hashes. String fields will be automatically be converted into an array, so:
+`array` + `string` will work
+`string` + `string` will result in an 2 entry array in `dest_field`
+`array` and `hash` will not work
+
+    filter {
+      mutate {
+         merge => { "dest_field" => "added_field" }
+      }
+    }
+
+
+
+#############
+#Set the default value of a field that exists but is null
+coerce
+    filter {
+      mutate {
+        # Sets the default value of the 'field1' field to 'default_value'
+        coerce => { "field1" => "default_value" }
+      }
+    }
+
+#############
+rename	 #Rename one or more fields.
+    filter {
+      mutate {
+        # Renames the 'HOSTORIP' field to 'client_ip'
+        rename => { "HOSTORIP" => "client_ip" }
+      }
+    }
+
+
+#############
+replace => hash
+#Replace the value of a field with a new value. The new value can include %{foo} strings to help you build a new value from other parts of the event.
+    filter {
+      mutate {
+        replace => { "message" => "%{source_host}: My new message" }
+      }
+    }
+
+
+#############
+split #Split a field to an array using a separator character. Only works on string fields.
+
+    filter {
+      mutate {
+         split => { "fieldname" => "," }
+      }
+    }
+
+
+#############
+strip => array
+#去掉两端的空格
+#Strip whitespace from field. NOTE: this only works on leading and trailing whitespace.
+    filter {
+      mutate {
+         strip => ["field1", "field2"]
+      }
+    }
+
+
+#############
+update #Update an existing field with a new value. If the field does not exist, then no action will be taken.
+    filter {
+      mutate {
+        update => { "sample" => "My new message" }
+      }
+    }
+
+```
+
+# prune
+
+The prune filter is for removing fields from events based on whitelists or blacklist of field names or their values (names and values can also be regular expressions).
+
+基于event的字段名或者字段值，移除指定的字段，只支持顶级字段
+
+```ruby
+    filter {
+      prune {
+        whitelist_names => [ "msg" ]
+      }
+    }
+Allows both `"msg"` and `"msg_short"` through.
+  
+
+
+    filter {
+      prune {
+        whitelist_names => ["^msg$"]
+      }
+    }
+Allows only `"msg"` through.
+```
+
+```ruby
+#blacklist_names #Exclude fields whose names match specified regexps, by default exclude unresolved %{field} strings.
+
+		filter {
+      prune {
+        blacklist_names => [ "method", "(referrer|status)", "${some}_field" ]
+      }
+    }
+
+
+
+#Exclude specified fields if their values match one of the supplied regular expressions. In case field values are arrays, each array item is matched against the regular expressions and matching array items will be excluded.
+
+    filter {
+      prune {
+        blacklist_values => [ "uripath", "/index.php",
+                              "method", "(HEAD|OPTIONS)",
+                              "status", "^[^2]" ]
+      }
+    }
+
+```
 
 
 
 
 
+# range
+
+检查number or string是否在指定的范围内，如果是那么执行指定的action，Supported actions are drop event, add tag, or add field with specified value
+
+```ruby
+    filter {
+      range {
+        ranges => [ "message", 0, 10, "tag:short",
+                    "message", 11, 100, "tag:medium",
+                    "message", 101, 1000, "tag:long",
+                    "message", 1001, 1e1000, "drop",
+                    "duration", 0, 100, "field:latency:fast",
+                    "duration", 101, 200, "field:latency:normal",
+                    "duration", 201, 1000, "field:latency:slow",
+                    "duration", 1001, 1e1000, "field:latency:outlier",
+                    "requests", 0, 10, "tag:too_few_%{host}_requests" ]
+      }
+    }
+```
+
+
+
+# ruby
 
 
 
 
-
-range
 
 syslog_pri
 
