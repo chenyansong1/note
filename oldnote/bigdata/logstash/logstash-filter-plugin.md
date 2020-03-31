@@ -417,6 +417,8 @@ Grok：如果是line to line ,使用正则表达式
 
 Dissect and Grok：可以混合使用
 
+这里有一些通用的匹配：https://github.com/logstash-plugins/logstash-patterns-core/blob/master/patterns/grok-patterns
+
 
 
 * 基本语法
@@ -450,8 +452,317 @@ Dissect and Grok：可以混合使用
 
   Sometimes logstash doesn’t have a pattern you need. so 你必须自己写正则表达式
 
+  ```shell
+  #方式一
+  (?<field_name>the pattern here)
+  (?<queue_id>[0-9A-F]{10,11})
+  
+  
+  
+  
+  #方式二
+  #you can create a custom patterns file.
+  #创建一个目录patterns，创建一个文件 extra(这个文件随意命名)
+  #In that file, write the pattern you need as the pattern name, a space, then the regexp for that pattern.
+  # contents of ./patterns/postfix:
+  POSTFIX_QUEUEID [0-9A-F]{10,11}
+  
+  
+  filter {
+    grok {
+      patterns_dir => ["./patterns"] #指定自定义的pattern的所在目录
+      match => { "message" => "%{SYSLOGBASE} %{POSTFIX_QUEUEID:queue_id}: %{GREEDYDATA:syslog_message}" }
+      #The timestamp, logsource, program, and pid fields come from the SYSLOGBASE pattern which itself is defined by other patterns.
+    }
+  }
+  
+  
+  #方式三
+  #Another option is to define patterns inline in the filter using pattern_definitions.
+  
+  ```
+
+
+
+* 配置选项
+
+  ```shell
+  break_on_match
+  filter {
+  	grok {
+  		#Break on first match. The first successful match by grok will result in the filter being finished. If you want grok to try all patterns (maybe you are parsing different things), then set this to false
+  		break_on_match => true
+  		
+  		#If true, keep empty captures as event fields.
+  		keep_empty_captures => false
+  		
+  		# 去匹配哪个字段
+  		match => {
+  			"message" => "Duration: %{NUMBER:duration}"
+  		}
+  		
+  		#If you need to match multiple patterns against a single field, the value can be an array of patterns:
+  		match => {
+            "message" => [
+              "Duration: %{NUMBER:duration}",
+              "Speed: %{NUMBER:speed}"
+            ]
+          }
+          
+          #This allows you to overwrite a value in a field that already exists.
+          #overwrite => array
+          match => { "message" => "%{SYSLOGBASE} %{DATA:message}" }
+          overwrite => [ "message" ]
+          
+          
+          #
+          pattern_definitions => hash
+         	
+          
+          # ls有很多自定义的Pattern，除非必须，我们没必要自己定义pattern
+          patterns_dir => array
+          patterns_dir => ["/opt/logstash/patterns", "/opt/logstash/extra_patterns"]
+  
+  	    #一个Pattern file如下
+  	    #NAME PATTERN
+  	    NUMBER \d+
+  
+          
+          #匹配的文件
+          #Glob pattern, used to select the pattern files in the directories specified by patterns_dir
+          patterns_files_glob => "*"
+          
+  	}
+  }
+  ```
+
   
 
+# http
+
+The HTTP filter provides integration with external web services/REST APIs.
+
+
+
+# i18n
+
+The i18n filter allows you to remove special characters from a field
+
+# java_uuid
+
+# jdbc_static
+
+This filter enriches events with data pre-loaded from a remote database.
+
+This filter is best suited for enriching events with reference data that is static or does not change very often, such as environments, users, and products.
+
+你能缓存remote data在本地本地，内存中，可以周期性的加载remote data到本地，以下三部分需要定义：
+
+* local_db_objects
+
+  定义colums, type, index ，其中列名和type 和external database的数据列相对应，定义这些就是为了构建本地数据结构
+
+  ```shell
+      local_db_objects => [ 
+        {
+          name => "servers"
+          index_columns => ["ip"]
+          columns => [
+            ["ip", "varchar(15)"],
+            ["descr", "varchar(255)"]
+          ]
+        },
+        {
+          name => "users"
+          index_columns => ["userid"]
+          columns => [
+            ["firstname", "varchar(255)"],
+            ["lastname", "varchar(255)"],
+            ["userid", "int"]
+          ]
+        }
+      ]
+  ```
+
+  
+
+* loaders
+
+  查询remote data到本地的查询语句
+
+  ```shell
+      loaders => [ 
+        {
+          id => "remote-servers"
+          query => "select ip, descr from ref.local_ips order by ip"
+          local_table => "servers"
+        },
+        {
+          id => "remote-users"
+          query => "select firstname, lastname, userid from ref.local_users order by userid"
+          local_table => "users"
+        }
+      ]
+      
+      #Make sure the column names and datatypes in the loader SQL statement match the columns defined under local_db_objects. 
+      #Each loader has an independent remote database connection.
+  ```
+
+  
+
+* lookups
+
+  理想状态下只返回一行
+
+  ```json
+      local_lookups => [ 
+        {
+          id => "local-servers"
+          query => "select descr as description from servers WHERE ip = :ip"
+          parameters => {ip => "[from_ip]"}
+          target => "server"
+        },
+        {
+          id => "local-users"
+          query => "select firstname, lastname from users WHERE userid = :id"
+          parameters => {id => "[loggedin_userid]"}
+          target => "user" 
+        }
+      ]
+  
+  #如果返回多列，那么会被store为一个车json对象
+  ```
+
+* 整理数据到event的root级别下
+
+  Takes data from the JSON object and stores it in top-level event fields for easier analysis in Kibana.
+
+  ```json
+  # using add_field here to add & rename values to the event root
+      add_field => { server_name => "%{[server][0][description]}" }
+      add_field => { user_firstname => "%{[user][0][firstname]}" } 
+      add_field => { user_lastname => "%{[user][0][lastname]}" } 
+      remove_field => ["server", "user"]
+      staging_directory => "/tmp/logstash/jdbc_static/import_data"
+      loader_schedule => "* */2 * * *" # run loaders every 2 hours
+      jdbc_user => "logstash"
+      jdbc_password => "example"
+      jdbc_driver_class => "org.postgresql.Driver"
+      jdbc_driver_library => "/tmp/logstash/vendor/postgresql-42.1.4.jar"
+      jdbc_connection_string => "jdbc:postgresql://remotedb:5432/ls_test_2"
+  ```
+
+
+
+下面是一个完整的例子
+
+```json
+input {
+  generator {
+    lines => [
+      '{"from_ip": "10.2.3.20", "app": "foobar", "amount": 32.95}',
+      '{"from_ip": "10.2.3.30", "app": "barfoo", "amount": 82.95}',
+      '{"from_ip": "10.2.3.40", "app": "bazfoo", "amount": 22.95}'
+    ]
+    count => 200
+  }
+}
+
+filter {
+  json {
+    source => "message"
+  }
+
+  jdbc_static {
+    loaders => [
+      {
+        id => "servers"
+        query => "select ip, descr from ref.local_ips order by ip"
+        local_table => "servers"
+      }
+    ]
+    local_db_objects => [
+      {
+        name => "servers"
+        index_columns => ["ip"]
+        columns => [
+          ["ip", "varchar(15)"],
+          ["descr", "varchar(255)"]
+        ]
+      }
+    ]
+    local_lookups => [
+      {
+        query => "select descr as description from servers WHERE ip = :ip"
+        parameters => {ip => "[from_ip]"}
+        target => "server"
+      }
+    ]
+    staging_directory => "/tmp/logstash/jdbc_static/import_data"
+    loader_schedule => "*/30 * * * *"
+    jdbc_user => "logstash"
+    jdbc_password => "logstash??"
+    jdbc_driver_class => "org.postgresql.Driver"
+    jdbc_driver_library => "/Users/guy/tmp/logstash-6.0.0/vendor/postgresql-42.1.4.jar"
+    jdbc_connection_string => "jdbc:postgresql://localhost:5432/ls_test_2"
+  }
+}
+
+output {
+  stdout {
+    codec => rubydebug {metadata => true}
+  }
+}
+```
+
+
+
+# json
+
+
+
+# kv
+
+# mutate
+
+The mutate filter allows you to perform general mutations on fields. You can rename, remove, replace, and modify fields in your events.
+
+Mutations in a config file are executed in this order:
+
+- coerce
+- rename
+- update
+- replace
+- convert
+- gsub
+- uppercase
+- capitalize
+- lowercase
+- strip
+- remove
+- split
+- join
+- merge
+- copy
+
+
+
+You can control the order by using separate mutate blocks.
+
+```ruby
+filter {
+    mutate {
+        split => ["hostname", "."]
+        add_field => { "shortHostname" => "%{hostname[0]}" }
+    }
+
+    mutate {
+        rename => ["shortHostname", "hostname" ]
+    }
+}
+```
+
+## mutate filter configuration options
 
 
 
@@ -462,23 +773,6 @@ Dissect and Grok：可以混合使用
 
 
 
-
-
-
-
-http
-
-i18n
-
-java_uuid
-
-jdbc_static
-
-json
-
-kv
-
-mutate
 
 range
 
