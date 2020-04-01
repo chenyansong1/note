@@ -982,31 +982,64 @@ Allows only `"msg"` through.
 
 # ruby
 
+执行ruby code逻辑
+
+## inline ruby code
+
+To inline ruby in your filter, place all code in the `code` option. This code will be executed for every event the filter receives. You can also place ruby code in the `init` option - it will be executed only once during the plugin’s register phase.
+
+```ruby
+    filter {
+      ruby {
+        # Cancel 90% of events
+        code => "event.cancel if rand <= 0.90"
+      }
+    }
+```
 
 
 
+## using a ruby script file
 
-syslog_pri
+As the inline code can become complex and hard to structure inside of a text string in `code`, it’s then preferrable to place the Ruby code in a .rb file, using the `path` option.
 
-threats_classifier
-
-throttle
-
-tld
-
-translate
-
-truncate
-
-urldecode
-
-uuid
-
-xml
+```ruby
+    filter {
+      ruby {
+        # Cancel 90% of events
+        path => "/etc/logstash/drop_percentage.rb"
+        script_params => { "percentage" => 0.9 }
+      }
+    }
+```
 
 
 
+The ruby script file should define the following methods:
 
+- `register(params)`: An optional register method that receives the key/value hash passed in the `script_params` configuration option
+- `filter(event)`: A mandatory Ruby method that accepts a Logstash event and must return an array of events
 
+Below is an example implementation of the `drop_percentage.rb` ruby script that drops a configurable percentage of events:
+
+```ruby
+# the value of `params` is the value of the hash passed to `script_params`
+# in the logstash configuration
+def register(params)
+	@drop_percentage = params["percentage"]
+end
+
+# the filter method receives an event and must return a list of events.
+# Dropping an event means not including it in the return array,
+# while creating new ones only requires you to add a new instance of
+# LogStash::Event to the returned array
+def filter(event)
+	if rand >= @drop_percentage
+		return [event]
+	else
+		return [] # return empty array to cancel event
+	end
+end
+```
 
 
