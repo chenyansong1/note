@@ -11,19 +11,19 @@ tags: [python]
 * 线程池：用来解决线程生命周期开销问题和资源不足问题，通过对多个任务重用线程，线程创建的开销就被分摊到了多个任务上了，线程池中的所有线程主动从工作队列中寻找需要执行的工作。
 * 如何实现线程池
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/python/thread_pool/1.png)
+![](https://github.com/chenyansong1/note/blob/master/img/python/thread_pool/1.png?raw=true)
 
 # 2.原理图
 1. 在线程池中创建了5个线程
 2. 创建了N个任务列表
 3. 让线程池中的每个线程循环去取任务列表中的任务
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/python/thread_pool/2.png)
-![](http://ols7leonh.bkt.clouddn.com//assert/img/python/thread_pool/3.png)
+![](https://github.com/chenyansong1/note/blob/master/img/python/thread_pool/2.png?raw=true)
+![](https://github.com/chenyansong1/note/blob/master/img/python/thread_pool/3.png?raw=true)
 
 
- 
- 
+
+
 # 3. 代码实现
 ```
 [root@backup python]# cat pool.py
