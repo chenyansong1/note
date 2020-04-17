@@ -63,6 +63,15 @@ Even the smallest of words can have the deepest effect on our **subconscious**  
 [subconscious]
 adj. 下意识的;潜意识的
 
+[conscious] 
+adj 注意到的，意识清醒的
+conscious of 意识到
+become conscious of 观察到
+safety conscious adj. 有安全意识的
+
+[consciousness]
+n 知觉；意识
+
 [be eager to]
 渴望做某事
 
@@ -70,16 +79,27 @@ adj. 下意识的;潜意识的
 int. 请
 vt. & vi. (使…)高兴; (使…)满意 （取悦某人）
 想要; 喜欢
+The aim of poetry is to please.
+诗的目的在于使人愉悦。
+"I'd like to pay by cheque, please."
+我想用支票支付。
 
 [be willing to]
 愿意做某事
 
 [carry out]
+抬出去; 拿出去；
 执行
 
 [knowingly]
 adv. 会意地
 故意地;着意地
+
+[knowing]
+adj. (对别人不知道的秘密)知悉的,心照不宣的
+世故的,狡猾的
+There is no knowing where she's gone.
+无法知道她到哪去了
 
 [be up to]
 be up to sb 取决于某人
@@ -129,7 +149,7 @@ a sense of direction 方向感
 a sense of humor 幽默感
 the sixth sense 第六感
 
-[eliminate]
+[eliminate] (to remove or take away someone or something)
 vt. 消除, 排除忽略;淘汰;〈口〉干掉
 =rub out
 eliminate = e limin ate 界限之外(清除)
@@ -143,16 +163,21 @@ elimination n 清除
 This is another small word with a big impact. It **disempowers**  us, makes us feel weak and helpless, and damages our **self-esteem**. It limits our **infinite**  abilities and **stifles**  **creativity** . **Rub** it out from your internal dictionary and replace it with something that makes you feel great.
 
 ```
-[disempowers]
-vt. 剥夺权力；力量剥夺；使失去影响力
+[disempower] (to take away someone's confidence and feeling of being in control of their life)
+vt. 剥夺权力；力量剥夺；使失去影响力；使失去自信
+
 
 [self-esteem]
 自尊
 
-[infinite]
-adj. 无限的，无穷的；无数的；极大的
+[esteem]  /ɪˈstiːm/ (respect for or a good opinion of someone)
+vt. 尊敬；
+考虑；估价
 
-[stifles]
+[infinite]  /ˈɪn.fə.nət/ (without limits; extremely large or great)
+adj. 无限的，无穷的；极大的
+
+[stifles] /ˈstaɪ.fəl/ (to (cause to) be unable to breathe because you have no air)
 vt. 使窒息；扼杀；藏匿
 vi. 窒息；被扼杀
 
@@ -164,6 +189,9 @@ create(v)-> creative(adj 有创造力的) -> creativity(n)->creator(n 创造者)
 vt. 擦；摩擦；惹怒
 vi. 摩擦；擦；擦破
 n. 摩擦；障碍；磨损处
+
+rub sb out 干掉某人
+
 ```
 
 
@@ -175,7 +203,7 @@ Words may appear small and **insignificant**, yet they have a deep and **lasting
 What words do you use a lot that disempower you? Make a list of words you commonly use and then write next to them some **alternatives**  you can use. Make these alternatives words that make you feel **fabulous**, not only about yourself, but about life and what you are doing!
 
  ```
-[insignificant]
+[insignificant]  /ˌɪn.sɪɡˈnɪf.ə.kənt/
 adj. 无价值的, 无意义的, 无用的
 
 [lasting]
