@@ -1,8 +1,9 @@
 **Text B The Language of Confidence**
 
 ```
+confidence 
 n 自信
-adj  confident
+confident adj  自信的
 ```
 
 >常用例句
@@ -19,7 +20,7 @@ adj  confident
 | confidence   | confident          |
 | difference   | different          |
 | independence | independent 独立的 |
-| ignorance    | ignorance 无知的   |
+| ignorance    | ignorant 无知的    |
 
 
 
