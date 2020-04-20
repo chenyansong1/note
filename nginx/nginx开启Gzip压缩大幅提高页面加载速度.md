@@ -128,3 +128,13 @@ Accept-Ranges: bytes
 参见：https://www.cnblogs.com/mitang/p/4477220.html
 
 
+
+效果如下图：
+
+没有压缩之前的
+
+![1587366576766](E:\git-workspace\note\images\nginx\1587366576766.png)
+
+压缩之后的
+
+![1587366615404](E:\git-workspace\note\images\nginx\1587366615404.png)
