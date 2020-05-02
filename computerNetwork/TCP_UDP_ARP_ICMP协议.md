@@ -17,7 +17,7 @@ FIN：请求断开连接
 
  
 
-一、TCP报文格式
+## TCP报文格式
 
 ​        TCP/IP协议的详细信息参看《TCP/IP协议详解》三卷本。下面是TCP报文格式图：
 
@@ -125,11 +125,54 @@ ARQ特点：
 
   2. 确定合理的重传时间
 
-     
+     ![](/Users/chenyansong/Documents/note/images/computeNetwork/image-20200502192738067.png)
+
+     ![](/Users/chenyansong/Documents/note/images/computeNetwork/image-20200502192832905.png)
+
+     ![](/Users/chenyansong/Documents/note/images/computeNetwork/image-20200502193003695.png)
+
+     ![](/Users/chenyansong/Documents/note/images/computeNetwork/image-20200502193541291.png)
+
+     ![](/Users/chenyansong/Documents/note/images/computeNetwork/image-20200502193727567.png)
+
+
+
+* 发送缓存和接收缓存的作用
+
+  发送缓存用来暂时存放：
+
+  1. 发送应用程序发送给发送方TCP准备发送的数据
+  2. TCP已发送出但尚未收到确认的数据
+
+  接收缓存用来暂时存放：
+
+  1. 按序到达的、但尚未被接收应用程序读取的数据
+  2. 未按序到达的数据
+
+  ![](/Users/chenyansong/Documents/note/images/computeNetwork/image-20200502194853578.png)
+
+  ![](/Users/chenyansong/Documents/note/images/computeNetwork/image-20200502194953125.png)
+
+> 注意：
+>
+> 1. 发送窗口并不等于接收窗口，可能还要考虑拥塞和网络的情况
+> 2. 未按序到达的数据，先临时存放在接收窗口中
+> 3. 连续发送，累积确认的机制
+
+
+
+## 流量控制
+
+让发送方的发送速率不要太快，既要让接收方来得及接收，也不要使网络发生拥塞，利用滑动窗口机制可以很方便的在TCP连接上实现流量控制，接收方通过改变接收窗口 “rwnd" 来控制发送方的发送窗口
+
+![](/Users/chenyansong/Documents/note/images/computeNetwork/image-20200502202019572.png)
+
+![](/Users/chenyansong/Documents/note/images/computeNetwork/image-20200502202051276.png)
 
 
 
 
+## 拥塞控制
 
 
 
