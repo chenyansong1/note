@@ -55,6 +55,84 @@ FIN：请求断开连接
 
 ## 停止等待协议ARQ
 
+* 超时重传
+
+  ![image-20200502162549668](/Users/chenyansong/Documents/note/images/computeNetwork/image-20200502162549668.png)
+
+
+
+​		必须：
+
+* 暂时保留已发送的分组的副本
+* 分组和确认分组都必须进行编号
+* 超时计时器的重传时间应当比数据在分组传输的平均往返时间更长一些
+
+
+
+![](/Users/chenyansong/Documents/note/images/computeNetwork/image-20200502163103433.png)
+
+情况三：对于重复的数据包，直接丢掉，但是还是会发一个确认给A
+
+自动重传ARQ(Automatic Repeat reQuest)，ARQ表明重传的请求是自动进行的嗯，接收方不需要请求发送方重传某个出错的分组
+
+ARQ特点：
+
+* 优点是简单；缺点是信道利用率太低
+
+  ![](/Users/chenyansong/Documents/note/images/computeNetwork/image-20200502164240666.png)
+
+  ![image-20200502164423797](/Users/chenyansong/Documents/note/images/computeNetwork/image-20200502164423797.png)
+
+
+
+如何提高信道利用率？流水线传输
+
+![image-20200502164606526](/Users/chenyansong/Documents/note/images/computeNetwork/image-20200502164606526.png)
+
+
+
+## 连续ARQ协议
+
+* 发送窗口(及接收窗口)
+
+  可连续发送而不需要等待确认的分组数
+
+  ![](/Users/chenyansong/Documents/note/images/computeNetwork/image-20200502165815425.png)
+
+
+
+* 累积确认
+
+  ![image-20200502165922791](/Users/chenyansong/Library/Application Support/typora-user-images/image-20200502165922791.png)
+
+  接收方不必对收到的分组逐个发送确认，而是对按序到达的最后一个分组发送确认，这样就表示：到这个分组为止的所有分组都已经正确收到了
+
+  优点：实现容易，即使确认丢失也不必重传
+
+  缺点：不能向发送方反映出接收方已经正确收到的所有分组的信息---go-back-N
+
+* Go-back-N(回退N)
+
+  如果发送方发送了前5个分组，而中间的第三个分组丢失了，这时接收方只能对前两个分组发出确认，发丧方无法知道后面三个分组的下落，而只好把后面的三个分组都再重传一次，这就是go-back-N (回退N)，表示需要再退回来重传已发送的N个分组
+
+  **可见当通信线路质量不好时，连续ARQ协议会带来负面的影响**
+
+* TCP可靠通信的具体实现
+
+  1. 窗口大小的动态确定
+
+     以**字节为单位**的滑动窗口
+
+  2. 确定合理的重传时间
+
+     
+
+
+
+
+
+
+
 
 
 
