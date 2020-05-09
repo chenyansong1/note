@@ -39,7 +39,7 @@ gitee地址：https://gitee.com/cyscys/note_images/tree/master/imgs
 
 ![image-20200508182512650](https://gitee.com/cyscys/note_images/raw/master/imgs/image-20200508182512650.png)
 
-
+> typora中图片的处理：首先在本地保存一份，然后上传图片到图床服务器上，此时图片的地址变成了服务器地址，这样mac和windows就能同事访问
 
 
 
