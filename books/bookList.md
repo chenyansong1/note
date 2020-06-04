@@ -16,7 +16,7 @@
 
   - [x] [x86汇编语言-从实模式到保护模式](https://book.douban.com/subject/20492528/)
   - [x] [Orange'S:一个操作系统的实现](https://book.douban.com/subject/3735649/)
-  - [ ] [Linux内核完全剖析-赵炯](https://book.douban.com/subject/3229243/)
+  - [x] [Linux内核完全剖析-赵炯](https://book.douban.com/subject/3229243/)
   - [ ] [C程序设计语言](https://book.douban.com/subject/1139336/)
   - [ ] [TCP/IP详解 卷1：协议](https://book.douban.com/subject/1088054/)
   - [ ] [Wireshark网络分析就这么简单](https://book.douban.com/subject/26268767/)
