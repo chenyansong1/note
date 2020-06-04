@@ -23,8 +23,7 @@
   - [ ] [Wireshark网络分析就这么简单](https://book.douban.com/subject/26268767/)
   - [ ] [wireshark网络分析的艺术](https://book.douban.com/subject/26710788/)
   - [ ] [TCP/IP详解 卷2：实现](https://book.douban.com/subject/1087767/)
-- [ ] [深入理解LINUX网络技术内幕](https://book.douban.com/subject/4015134/)
-  
+  - [ ] [深入理解LINUX网络技术内幕](https://book.douban.com/subject/4015134/)
   
   
 * 文学
