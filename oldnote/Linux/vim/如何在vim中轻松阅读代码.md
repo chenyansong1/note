@@ -59,3 +59,23 @@ which ctags
 
 ```
 
+
+
+
+
+# vim使用手册--找到 tag：1/3 或更多
+
+
+
+我们在vim中加载了ctag+taglist+winmanager后
+
+我们在关联一个函数或者一个变量定义的时候，经常有多处地方定义了相同名字，需要定位正确的定义地方。
+
+```shell
+：ts 或 tselect 查看有相同地方的定义
+：tn或tnext   查找下一个定义地方。
+：tp   查找上一个地方。
+：tfirst  到第一个匹配
+：tlast 到最后一个匹配
+```
+
