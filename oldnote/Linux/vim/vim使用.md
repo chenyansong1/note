@@ -526,7 +526,7 @@ vim ~/.vimrc
 
 # 将vim打造成IDE
 
-![](/Users/chenyansong/Documents/note/images/linux/command/image-20191102112359946.png)
+![](../../../images/linux/command/image-20191102112359946.png)
 
 
 
