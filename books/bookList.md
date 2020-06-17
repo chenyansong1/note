@@ -49,3 +49,29 @@
 * 专栏
   
   - [ ] [趣谈Linux操作系统](https://time.geekbang.org/column/intro/164)
+
+
+
+
+
+todo list
+
+1. linux-内核
+   1. 线程
+   2. 网络
+2. 数据库
+   1. 数据库基础知识：慕课
+   2. MySQL的那两本书
+   3. SQL提高
+3. 网络
+   1. 赵炯的邮件
+   2. OSI的7层模型：慕课
+   3. TCP/IP那两本书
+   4. 内核计算机网络内幕
+4. java
+   1. JVM的书-周志明
+   2. java的代码的书
+   3. 大数据的框架源码（kafka，spark，other）
+   4. java的框架源码（spring，mybatis）
+5. 数据结构
+   1. 慕课
