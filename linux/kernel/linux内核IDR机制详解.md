@@ -211,11 +211,8 @@ idr_pre_get() 就是实际执行获取 UID 的函数了，它的C语言代码如
 
 
 
+参考：
 
+https://www.cnblogs.com/linhaostudy/p/10535455.html
 
-
-
-
-
-
-
+https://blog.popkx.com/linux-learning-20-mapping-idr-mechanism-in-kernel/
