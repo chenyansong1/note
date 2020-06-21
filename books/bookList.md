@@ -8,8 +8,6 @@
 
 多少事,从来急,天地转,光阴迫...
 
-
-
 # 2020
 
 * 技术
@@ -17,6 +15,7 @@
   - [x] [x86汇编语言-从实模式到保护模式](https://book.douban.com/subject/20492528/)
   - [x] [Orange'S:一个操作系统的实现](https://book.douban.com/subject/3735649/)
   - [x] [Linux内核完全剖析-赵炯](https://book.douban.com/subject/3229243/)
+  - [ ] [深入Linux设备驱动程序内核机制-陈学松](https://book.douban.com/subject/10433743/)
   - [ ] [Linux内核设计与实现(原书第3版)-陈莉君/ 康华](https://book.douban.com/subject/6097773/)
   - [ ] [Linux内核源代码情景分析-毛德操/胡希明](https://book.douban.com/subject/1231584/)
   - [ ] [深入Linux内核架构](https://book.douban.com/subject/4843567/)
