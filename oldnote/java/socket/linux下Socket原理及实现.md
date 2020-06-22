@@ -10,7 +10,7 @@ tags: [socket]
 
 
 
-![img](E:\note\images\socket\socket-procol.png)
+![img](..\..\..\images\socket\socket-procol.png)
 
 
 
@@ -33,7 +33,7 @@ tags: [socket]
 
 
 
-![img](E:\note\images\socket\socket-procol2.png) 
+![img](..\..\..\images\socket\socket-procol2.png) 
 
 * 服务器socket创建过程端说明
   * socket() :  用来指定创建的socket是的类型（套接字通信的类型）：SOCK_STREAM (tcp), SOCK_DGRAM (udp)
