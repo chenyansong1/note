@@ -84,6 +84,10 @@ task_struct -> mm_struct是对进程地址空间描述的结构体，主要包�
 
 ![img](https://pic2.zhimg.com/80/v2-c355ecf2f4c0ae01806075ae7f032799_720w.jpg)
 
+![](../../images/linux/kernel/image-20200624112433050.png)
+
+![img](../../images/linux/kernel/memory-area.png)
+
 进程地址空间的地址是向上增长的。可以看到有几个radom offset，其在段与段之间缝隙，防止固定的内存布局被黑客黑掉。
 
 vm_area_struct是描述每个段具体信息结构体，其实一个单链表，通过task_struct- > mm_struct -> mmap表示，由于每次分配内存时会要到vm_area_struct，需要快速寻找，所以task_struct- > mm_struct -> mm_rb是根据vm_area_struct -> vm_start字段，构建vm_area_struct的一棵红黑树。
