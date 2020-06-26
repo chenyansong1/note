@@ -28,10 +28,10 @@
   
 * 文学
   - [x] [权力密码——当历史遇见经济学](https://book.douban.com/subject/30364261/)
-
   - [x] [邓小平时代](https://book.douban.com/subject/20424526/)
   - [x] [红墙深处](https://book.douban.com/subject/26670865/)
   - [x] [蒋介石与现代中国](https://book.douban.com/subject/10797092/)
+  - [ ] [穷查理宝典](https://book.douban.com/subject/26831789/)
   - [ ] [金瓶梅](https://book.douban.com/subject/1916451/)
   - [ ] [坐龙椅：明清帝王的风雨人生](https://book.douban.com/subject/30238062/)
   - [ ] [东周列国志]()
