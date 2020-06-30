@@ -6,6 +6,8 @@ https://www.jeanleo.com/2018/09/07/[linux内存源码分析]slub分配算法（1
 
 http://www.wowotech.net/memory_management/426.html
 
+https://time.geekbang.org/column/article/96623
+
 
 
 首先鸟瞰全局，由下图进行入手分析slub内存分配算法的管理框架：
@@ -26,14 +28,14 @@ slub就相当于零售商，它向伙伴系统“批发”内存，然后在零�
 struct kmem_cache kmalloc_caches[PAGE_SHIFT] __cacheline_aligned;
 ```
 
-每个数组元素对应一种大小的内存，可以把一个kmem_cache结构体看做是一个特定大小内存的零售商，整个slub系统中共有12个这样的零售商，每个“零售商”只“零售”特定大小的内存，例如：有的“零售商”只"零售"8Byte大小的内存，有的只”零售“16Byte大小的内存。
+**每个数组元素对应一种大小的内存**，可以把一个kmem_cache结构体看做是一个特定大小内存的零售商，整个slub系统中共有12个这样的零售商，**每个“零售商”只“零售”特定大小的内存**，例如：有的“零售商”只"零售"8Byte大小的内存，有的只”零售“16Byte大小的内存。
 
-每个零售商(kmem_cache)有两个“部门”，一个是“仓库”：kmem_cache_node，一个“营业厅”：kmem_cache_cpu。“营业厅”里只保留一个slab，只有在营业厅(kmem_cache_cpu)中没有空闲内存的情况下才会从仓库中换出其他的slab。
-所谓slab就是零售商(kmem_cache)批发的连续的整页内存，零售商把这些整页的内存分成许多小内存，然后分别“零售”出去，一个slab可能包含多个连续的内存页。slab的大小和零售商有关。
+每个零售商(kmem_cache)有两个“部门”，一个是“仓库”：kmem_cache_node，一个“营业厅”：kmem_cache_cpu。**“营业厅”里只保留一个slab**，只有在营业厅(kmem_cache_cpu)中没有空闲内存的情况下才会从仓库中换出其他的slab。
+所谓slab就是零售商(kmem_cache)批发的连续的整页内存，零售商把**这些整页**的内存分成许多小内存，然后分别“零售”出去，**一个slab可能包含多个连续的内存页。slab的大小和零售商有关**。
 
 相关数据结构：
 
-物理页按照对象(object)大小组织成单向链表，对象大小时候objsize指定的。例如16字节的对象大小，每个object就是16字节，每个object包含指向下一个object的指针，该指针的位置是每个object的起始地址+offset。每个object示意图如下：
+**物理页按照对象(object)大小组织成单向链表**，对象大小时候objsize指定的。例如16字节的对象大小，每个object就是16字节，每个object包含指向下一个object的指针，该指针的位置是每个object的起始地址+offset。每个object示意图如下：
 
 ![slub2](../../images/linux/kernel/slub2.png)
 
