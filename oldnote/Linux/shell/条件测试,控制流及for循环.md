@@ -359,12 +359,12 @@ fi
 
 ### 2.3.1.语法
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/shell/8.png)
+![](../../../img/linux/shell/8.png)
 
 
 ### 2.3.2.书写格式
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/shell/9.png)
+![](../../../img/linux/shell/9.png)
 
 
 ### 2.3.3.通过while读文件的方式

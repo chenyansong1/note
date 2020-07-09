@@ -19,8 +19,23 @@ export SPARK_LOCAL_DIRS=/home/hadoop/spark-2.0.2-bin-hadoop2.6/sparktmp
 # 日志文件说明
 
 ```shell
+https://blog.csdn.net/ZMC921/article/details/80238392
+
+#excutor or driver的日志问题
+https://blog.csdn.net/ZMC921/article/details/80238392
+https://juejin.im/post/5b02934a51882542af043286
 
 
+#以下是个提交的模板
+[hadoop@spark ~]$ cat /home/workspace/spark.sh
+#!/bin/sh
+
+# 格式：应用名 —— 启动脚本
+
+#======================日志===================
+
+#SyslogAnalyzeServer
+/home/hadoop/spark-2.0.2-bin-hadoop2.6/bin/spark-submit --supervise --class com.bluedon.kafka.SyslogAnalyzeServer  --master spark://spark:7077  --executor-memory 2G   --driver-memory 1G  --total-executor-cores 2 --executor-cores 2  --deploy-mode cluster --driver-java-options "-Dlog4j.configuration=file:/home/hadoop/spark-2.0.2-bin-hadoop2.6/conf/log4j-driver.properties" --conf spark.executor.extraJavaOptions="-Dlog4j.configuration=file:/home/hadoop/spark-2.0.2-bin-hadoop2.6/conf/log4j-executor.properties" /home/workspace/AnalyzeServer-Bigdata.jar
 
 ```
 
