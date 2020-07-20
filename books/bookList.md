@@ -44,7 +44,8 @@
   
   - [ ] [趣谈Linux操作系统](https://time.geekbang.org/column/intro/164)
 
-
+* 鸡汤（用来间歇性励志）
+  - [ ] [你从未真正拼过](https://book.douban.com/subject/26882462/)
 
 
 todo list
