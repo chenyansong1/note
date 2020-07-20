@@ -33,6 +33,7 @@
   - [x] [红墙深处](https://book.douban.com/subject/26670865/)
   - [x] [蒋介石与现代中国](https://book.douban.com/subject/10797092/)
   - [x] [未来世界的幸存者](https://book.douban.com/subject/30259509/)
+  - [x] [俗世奇人（足本）](https://book.douban.com/subject/26691462/)
   - [ ] [穷查理宝典](https://book.douban.com/subject/26831789/)
   - [ ] [金瓶梅](https://book.douban.com/subject/1916451/)
   - [ ] [坐龙椅：明清帝王的风雨人生](https://book.douban.com/subject/30238062/)
@@ -42,7 +43,6 @@
 * 专栏
   
   - [ ] [趣谈Linux操作系统](https://time.geekbang.org/column/intro/164)
-
 
 
 
