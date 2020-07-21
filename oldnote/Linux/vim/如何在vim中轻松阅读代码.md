@@ -61,6 +61,32 @@ which ctags
 
 ```
 
+自动补全
+
+```shell
+# 自动补齐CTRL+N/CTRL+P
+
+#单词自动补全：(常用)
+CTRL+n ：当你输入第一个字母的时候，再CTRL+n，自动出现下拉菜单，单词默认选中第一个，继续CTRL+n，CTRL+p可以上下切换，或者用方向键（太慢）
+CTRL+p ：同上，只是默认的选中的是列表中最后一个单词
+
+#行自动补全：
+CTRL+x CTRL+l (l指小写的L )：两个命令组合使用。在插入模式下输入已经存在行的第一个单词，再按这两个键，就会列出该整行出来
+
+#文件名自动补全：
+CTRL+x CTRL+f ：插入模式下，按这两个组合键，可以插入当前目录下的文件名。处用在哪里呢，当然是有时候我们要指定默认执行文件的路径，这样就方便啦。
+
+#字典补全：
+#首先在~/.vimrc加入如下代码，注意这是在Linux，windows下应该是C:\Users\$username(用户名）
+
+set dictionary-=$VIM/dic.txt dictionary+=$VIM/dic.txt
+
+dic.txt中的单词一每行一个单词来分割的
+CTRL+x CTRL+k 就能看到dic.txt中定义的单词的，如果你还麻烦，想直接CTRL+n就显示其中的列表的话，再配置一下.vimrc文件：
+
+set complete-=k complete+=k
+```
+
 
 
 
@@ -159,7 +185,7 @@ set cscopequickfix=s-,c-,d-,i-,t-,e-
 
 > 注意：如果有多个匹配项，cscope会弹出窗口显示多个匹配项，输入数字即可跳转到对应匹配项。而设置cscope结果输出到quickfix后，cscope只会显示第一个匹配项，如果想要查看其它匹配项，需要输入cw，进入quickfix的窗口进行查看。
 
-## 使用
+## 
 
 ```shell
 0或者s   —— 查找这个C符号
@@ -182,4 +208,6 @@ set cscopequickfix=s-,c-,d-,i-,t-,e-
 #在vim中，使用如下：比如查找某一个函数的定义
 ：cs find g fn_name  
 ```
+
+
 
