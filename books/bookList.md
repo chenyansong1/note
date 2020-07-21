@@ -32,6 +32,8 @@
   
   - [ ] [C程序设计语言](https://book.douban.com/subject/1139336/)
   
+  - [ ] [UNIX环境高级编程-3edition](https://book.douban.com/subject/25900403/)
+  
   - [ ] [TCP/IP详解 卷1：协议](https://book.douban.com/subject/1088054/)
   
   - [ ] [Wireshark网络分析就这么简单](https://book.douban.com/subject/26268767/)
