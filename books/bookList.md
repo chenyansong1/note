@@ -20,7 +20,7 @@
   
   - [x] [深入Linux设备驱动程序内核机制-陈学松](https://book.douban.com/subject/10433743/)
   
-  - [ ] [Linux内核设计与实现(原书第3版)-陈莉君/ 康华](https://book.douban.com/subject/6097773/)
+  - [x] [Linux内核设计与实现(原书第3版)-陈莉君/ 康华](https://book.douban.com/subject/6097773/)
   
   - [ ] [Linux内核源代码情景分析-毛德操/胡希明](https://book.douban.com/subject/1231584/)
   
@@ -30,7 +30,7 @@
   
     看不下去了，很痛苦，缓一阵再来看吧（2020年7月20日）
   
-  - [ ] [C程序设计语言](https://book.douban.com/subject/1139336/)
+  - [ ] [C程序设计语言(第2版·新版)-The_C_Programming_Language](https://book.douban.com/subject/1139336/)
   
   - [ ] [UNIX环境高级编程-3edition](https://book.douban.com/subject/25900403/)
   
