@@ -56,6 +56,7 @@
   - [ ] [坐龙椅：明清帝王的风雨人生](https://book.douban.com/subject/30238062/)
   - [ ] [东周列国志]()
   - [ ] [一生的旅程](https://book.douban.com/subject/35009826/)
+  - [ ] [进化心理学(第4版)-戴维·巴斯](https://book.douban.com/subject/26683297/)
   
 * 专栏
   
