@@ -207,7 +207,11 @@ set cscopequickfix=s-,c-,d-,i-,t-,e-
 
 #在vim中，使用如下：比如查找某一个函数的定义
 ：cs find g fn_name  
+
+
+#查找历史
+： + (ctrl+F) ; 然后就可以jkl翻页查看历史
 ```
 
-
+![image-20200805101002509](../../../images/vim/image-20200805101002509.png)
 
