@@ -32,6 +32,8 @@
   
   - [ ] [C程序设计语言(第2版·新版)-The_C_Programming_Language](https://book.douban.com/subject/1139336/)
   
+  - [ ] [C和指针](https://book.douban.com/subject/3012360/)
+  
   - [ ] [UNIX环境高级编程-3edition](https://book.douban.com/subject/25900403/)
   
   - [ ] [TCP/IP详解 卷1：协议](https://book.douban.com/subject/1088054/)
