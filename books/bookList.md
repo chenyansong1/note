@@ -44,7 +44,9 @@
   
   - [ ] [TCP/IP详解 卷2：实现](https://book.douban.com/subject/1087767/)
   
-  - [ ] [深入理解LINUX网络技术内幕](https://book.douban.com/subject/4015134/)
+  - [ ] [深入理解LINUX网络技术内幕](https://book.douban.com/subject/1834459/)
+  
+  - [ ] [Linux网络内核分析与开发](https://book.douban.com/subject/5064721/)
   
 * 文学
   - [x] [权力密码——当历史遇见经济学](https://book.douban.com/subject/30364261/)
