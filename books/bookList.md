@@ -48,6 +48,8 @@
   
   - [ ] [Linux网络内核分析与开发](https://book.douban.com/subject/5064721/)
   
+  - [ ] [嵌入式Linux网络体系结构设计与TCP/IP协议栈](https://book.douban.com/subject/6116393/)
+  
 * 文学
   - [x] [权力密码——当历史遇见经济学](https://book.douban.com/subject/30364261/)
   - [x] [邓小平时代](https://book.douban.com/subject/20424526/)
