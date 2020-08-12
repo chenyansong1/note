@@ -38,47 +38,70 @@
    git push origin master
    ```
 
+4. 常见错误
 
+   Remote "origin" does not support the LFS locking API. Consider disabling it with
 
-4. lfs的常见操作
+   
 
-   ```c
-   常用命令
-   
-   git lfs help // 查看git lfs的帮助
-   
-   git lfs version  // 查看git lfs的版本号
-   
-   git lfs track // 查看git lfs的文件追踪信息
-   
-   git lfs track '*.dll' // dll文件用lfs来管理，会在根目录的.gitattributes文件中添加：*.dll filter=lfs diff=lfs merge=lfs -text
-   
-   git lfs track "*.a" "*.dylib" "*.so" "*.lib" "*.dll"  // a、dylib、so、lib、dll文件用lfs来管理，会在根目录的.gitattributes文件中添加
-   
-   *.dylib filter=lfs diff=lfs merge=lfs -text
-   *.so filter=lfs diff=lfs merge=lfs -text
-   *.lib filter=lfs diff=lfs merge=lfs -text
-   *.dll filter=lfs diff=lfs merge=lfs -text
-   *.a filter=lfs diff=lfs merge=lfs -text
-   
-   git lfs track 'Guid.upk' // Guid.upk文件用lfs来管理，会在根目录的.gitattributes文件中添加：Guid.upk filter=lfs diff=lfs merge=lfs -text
-   
-   git lfs track 'maps/*' // 根目录下maps文件夹中的所有文件用lfs来管理，会在根目录的.gitattributes文件中添加：maps/* filter=lfs diff=lfs merge=lfs -text
-   
-   git lfs untrack 'Guid.upk' // Guid.upk文件不再使用lfs来管理
-   
-   git lfs status  // 查看当前git lfs对象的状态
-   
-   git lfs ls-files  // 查看当前哪些文件是使用lfs管理的
-   
-   git lfs clone https://github.com/kekec/Test.git // 克隆包含Git LFS的远程仓库到本地
-   
-   git lfs env  // 查看环境信息
-   
-    
+   ```shell
+   # 在最后一步push的时候
+   git push -u origin develop1.0
+   Remote "origin" does not support the LFS locking API. Consider disabling it with:
+     $ git config lfs.https://git.oschina.net/harrydeng/xxx.git/info/lfs.locksverify false
+   Git LFS: (0 of 1 files) 0 B / 207.25 MB                                                                                                    
+   batch request: Access denied
+   exec request failed on channel 0: exit status 255
+   error: failed to push some refs to 'git@git.oschina.net:harrydeng/xxx.git'
+   ```
+
+   解决方式
+
+   ```shell
+   git config lfs.https://git.oschina.net/harrydeng/xxx.git/info/lfs.locksverify false
    ```
 
    
+
+5. lfs的常见操作
+
+```c
+常用命令
+
+git lfs help // 查看git lfs的帮助
+
+git lfs version  // 查看git lfs的版本号
+
+git lfs track // 查看git lfs的文件追踪信息
+
+git lfs track '*.dll' // dll文件用lfs来管理，会在根目录的.gitattributes文件中添加：*.dll filter=lfs diff=lfs merge=lfs -text
+
+git lfs track "*.a" "*.dylib" "*.so" "*.lib" "*.dll"  // a、dylib、so、lib、dll文件用lfs来管理，会在根目录的.gitattributes文件中添加
+
+*.dylib filter=lfs diff=lfs merge=lfs -text
+*.so filter=lfs diff=lfs merge=lfs -text
+*.lib filter=lfs diff=lfs merge=lfs -text
+*.dll filter=lfs diff=lfs merge=lfs -text
+*.a filter=lfs diff=lfs merge=lfs -text
+
+git lfs track 'Guid.upk' // Guid.upk文件用lfs来管理，会在根目录的.gitattributes文件中添加：Guid.upk filter=lfs diff=lfs merge=lfs -text
+
+git lfs track 'maps/*' // 根目录下maps文件夹中的所有文件用lfs来管理，会在根目录的.gitattributes文件中添加：maps/* filter=lfs diff=lfs merge=lfs -text
+
+git lfs untrack 'Guid.upk' // Guid.upk文件不再使用lfs来管理
+
+git lfs status  // 查看当前git lfs对象的状态
+
+git lfs ls-files  // 查看当前哪些文件是使用lfs管理的
+
+git lfs clone https://github.com/kekec/Test.git // 克隆包含Git LFS的远程仓库到本地
+
+git lfs env  // 查看环境信息
+
+ 
+```
+
+
 
 参考：
 
