@@ -42,7 +42,8 @@
     * [ ] [Linux网络内核分析与开发](https://book.douban.com/subject/5064721/)
     * [ ] [嵌入式Linux网络体系结构设计与TCP/IP协议栈](https://book.douban.com/subject/6116393/)
     * [ ] [深入理解LINUX网络技术内幕](https://book.douban.com/subject/1834459/)
-
+  * [ ] [Linux内核源码剖析（套装上下册）](https://book.douban.com/subject/5914256/)
+    
   * C语言
   	* [ ] [C程序设计语言(第2版·新版)-The_C_Programming_Language](https://book.douban.com/subject/1139336/)
   	* [ ] [C和指针](https://book.douban.com/subject/3012360/)
