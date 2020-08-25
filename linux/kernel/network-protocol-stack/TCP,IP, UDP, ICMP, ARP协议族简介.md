@@ -58,6 +58,8 @@
 
 ![44](../../../images/linux/kernel/network/497865-20170113230428056-1706654910.png)
 
+![img](../../../images/linux/kernel/network/tcp_2.png)
+
 　　TCP数据传输过程
 
 ![33](../../../images/linux/kernel/network/497865-20170113230230666-1204923277.png)
