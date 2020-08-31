@@ -52,23 +52,23 @@ logrotate:日志切割
 
 在 /etc/cron.daily/logrotate 下有一个天执行的任务，如下：
 
-![image-20181005222800450](/Users/chenyansong/Documents/note/images/linux/log/logrotage.png)
+![image-20181005222800450](../../../images/linux/log/logrotage.png)
 
 配置文件如下
 
-![image-20181005223112362](/Users/chenyansong/Documents/note/images/linux/log/logrotage2.png)
+![image-20181005223112362](../../../images/linux/log/logrotage2.png)
 
 
 
 会包含 /etc/logrotate.d下的配置文件，**这个目录下的配置文件会包含每个子系统的日志配置信息**
 
-![image-20181005223241528](/Users/chenyansong/Documents/note/images/linux/log/logrotage3.png)
+![image-20181005223241528](../../../images/linux/log/logrotage3.png)
 
 
 
 我们随便看一个CPU的日志配置
 
-![image-20181005223632906](/Users/chenyansong/Documents/note/images/linux/log/logrotage4.png)
+![image-20181005223632906](../../../images/linux/log/logrotage4.png)
 
 
 
@@ -76,7 +76,7 @@ logrotate:日志切割
 
 登录信息
 
-![image-20181005224105550](/Users/chenyansong/Documents/note/images/linux/log/secure.png)
+![image-20181005224105550](../../../images/linux/log/secure.png)
 
 
 
@@ -86,19 +86,19 @@ logrotate:日志切割
 
 
 
-![image-20181005224940297](/Users/chenyansong/Documents/note/images/linux/log/syslog-format0.png)
+![image-20181005224940297](../../../images/linux/log/syslog-format0.png)
 
 
 
 下面是可选的子系统，即：我们可以为下面的子系统配置日志
 
-![image-20181005224608736](/Users/chenyansong/Documents/note/images/linux/log/syslog-format.png)
+![image-20181005224608736](../../../images/linux/log/syslog-format.png)
 
 
 
 下面是可选的日志级别
 
-![image-20181005225322032](/Users/chenyansong/Documents/note/images/linux/log/syslog-level.png)
+![image-20181005225322032](../../../images/linux/log/syslog-level.png)
 
 
 
@@ -106,7 +106,7 @@ logrotate:日志切割
 
 执行的动作（action），日志记录的位置
 
-![image-20181005225446957](/Users/chenyansong/Documents/note/images/linux/log/syslog_action.png)
+![image-20181005225446957](../../../images/linux/log/syslog_action.png)
 
 
 
@@ -114,7 +114,7 @@ logrotate:日志切割
 
 
 
-![image-20181005225809448](/Users/chenyansong/Documents/note/images/linux/log/syslog-example.png)
+![image-20181005225809448](../../../images/linux/log/syslog-example.png)
 
 
 
@@ -177,13 +177,13 @@ service syslog restart
 
 /etc/rc.d/init.d/syslog 程序会**加载一个配置文件****，**如下：
 
-![image-20181005231807594](/Users/chenyansong/Documents/note/images/linux/log/syslog-config.png)
+![image-20181005231807594](../../../images/linux/log/syslog-config.png)
 
 
 
 我们可以看一下syslog程序的配置文件（有了-r就可以作为日志服务器，接收remote的syslog）
 
-![image-20181005232050852](/Users/chenyansong/Documents/note/images/linux/log/syslog-config2.png)
+![image-20181005232050852](../../../images/linux/log/syslog-config2.png)
 
 
 
