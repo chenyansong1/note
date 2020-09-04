@@ -1,0 +1,13 @@
+
+#从pg导出数据
+pg_dump -h 10.252.47.214 -U postgres NXSOC5 > /home/workspace/postgresqlData/NXSOC5.bak
+
+--导入表数据
+psql -d NXSOC_MG -U postgres -f /home/hjw/pg_data/migu/migu_pgdata/t_siem_ne_log_regex_lib.sql
+
+
+
+#导入数据到pg
+/usr/local/pgsql/bin/psql -U postgres -d BDSSA1 < /home/workspace/BDSSA1.bak.20181213 
+
+
