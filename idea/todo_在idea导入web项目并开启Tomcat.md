@@ -5,5 +5,5 @@ http://www.voidcn.com/article/p-dfbvizda-bpc.html
 
 **需要添加的额外的jar**
 
-![1561711185360](E:\git-workspace\note\images\idea\ides_web.png)
+![1561711185360](../../note/images/idea/ides_web.png)
 
