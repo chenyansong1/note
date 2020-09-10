@@ -55,3 +55,24 @@ a1.sinks.k1.channel = c1
 curl -X POST -d'[{"headers":{"h1":"v1","h2":"v2"},"body":"hello body from cys"}]'  http://172.16.12.111:51400
 ```
 
+具体的格式如下：
+
+```shell
+[
+    {
+        "headers":{
+            "h1":"v1",
+            "h2":"v2"
+        },
+        "body":"hello body from cys"
+    },
+    {
+        "headers":{
+            "h1":"v1",
+            "h2":"v2"
+        },
+        "body":"hello body from cys"
+    }
+]
+```
+
