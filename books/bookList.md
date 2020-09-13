@@ -99,7 +99,7 @@
   - [x] [红墙深处](https://book.douban.com/subject/26670865/)
   - [x] [蒋介石与现代中国](https://book.douban.com/subject/10797092/)
   - [ ] [硅谷钢铁侠:埃隆·马斯克的冒险人生](https://book.douban.com/subject/26759508/)
-  - [ ] [蒋经国传](https://book.douban.com/subject/5288371/)
+  - [x] [蒋经国传](https://book.douban.com/subject/5288371/)
 
 
 todo list
