@@ -190,19 +190,19 @@ FILE1 -ot FILE2
 
 > 单分支结构
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/shell/1.png)
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/shell/2.png)
+![](../../../img/linux/shell/1.png)
+![](../../../img/linux/shell/2.png)
 
 
 > 双分支结构
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/shell/3.png)
+![](../../../img/linux/shell/3.png)
 
 
 > 多分支结构
 
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/shell/4.png)
+![](../../../img/linux/shell/4.png)
 
 
 

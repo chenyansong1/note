@@ -760,6 +760,12 @@ num  target     prot opt source               destination
 4    ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0           state NEW tcp dpt:22 
 5    REJECT     all  --  0.0.0.0/0            0.0.0.0/0           reject-with icmp-host-prohibited 
 
+#查看指定的链
+root@bdsoc-pc:~# iptables --line-number -L INPUT 
+Chain INPUT (policy ACCEPT)
+num  target     prot opt source               destination         
+1    ACCEPT     all  --  anywhere             172.16.100.7        
+root@bdsoc-pc:~#
 ```
 
 
