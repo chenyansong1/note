@@ -274,7 +274,485 @@ cc_test
 
 
 
+# flume采集目录数据，流程如下
 
+```shell
+flume（采集目录） ---------> flume(avro 源)----syslog----->syslog-ng
+
+```
+
+## 采集器端配置文件
+
+
+```shell
+[root@bdsoc conf]# cat flume_client.conf
+a1.sources = s1 s2
+a1.channels = c1
+a1.sinks = k1
+
+
+#sources
+a1.sources.s1.type = spooldir
+#配置本地的采集目录
+a1.sources.s1.spoolDir = /home/workspace/flume-test-dir/
+a1.sources.s1.basenameHeader = true
+a1.sources.s1.fileHeader = true
+a1.sources.s1.deletePolicy = immediate
+a1.sources.s1.recursiveDirectorySearch = true
+a1.sources.s1.consumeOrder = random
+
+
+a1.sources.s2.type = http                 
+a1.sources.s2.port = 51400
+a1.sources.s2.handler = com.bluedon.flume.HTTPSourceJsonHandler
+
+
+
+#channels
+a1.channels.c1.type = memory
+a1.channels.c1.capacity = 100
+a1.channels.c1.transactionCapacity = 100
+
+
+
+# source 拦截器
+a1.sources.s1.interceptors =i1
+a1.sources.s1.interceptors.i1.type = regex_filter
+a1.sources.s1.interceptors.i1.regex=(test3333)|(test444)|(test555)
+a1.sources.s1.interceptors.i1.excludeEvents = true
+
+
+
+#sinks
+a1.sinks.k1.type = avro
+#日志上报Ip
+a1.sinks.k1.hostname=172.16.110.204
+a1.sinks.k1.port=44444
+
+
+#enable ssl
+a1.sinks.k1.ssl=true
+a1.sinks.k1.trust-all-certs=true
+a1.sinks.k1.truststore=/home/workspace/apache-flume-1.8.0-bin/conf/truststore.jks
+a1.sinks.k1.truststore-type=JKS
+a1.sinks.k1.truststore-password=Admin_1234
+a1.sinks.k1.compression-type=deflate
+
+
+a1.sources.s2.channels = c1
+a1.sources.s1.channels = c1
+a1.sinks.k1.channel = c1
+
+
+#启动
+ ./bin/flume-ng agent -n a1 -f ./conf/flume_client.conf -Dflume.monitoring.type=http -Dflume.monitoring.port=34546  -Dflume.root.logger=INFO,console
+```
+
+
+
+## server端（日志接收端）
+
+```shell
+[root@bdsoc conf]# cat flume_server.conf 
+a1.sources = s1
+a1.channels = c1
+a1.sinks = k1
+
+#sources
+a1.sources.s1.type = avro
+a1.sources.s1.bind = 0.0.0.0
+a1.sources.s1.port = 44444
+
+
+#enable SSL
+a1.sources.s1.ssl=true
+a1.sources.s1.keystore=/home/workspace/apache-flume-1.8.0-bin/conf/keystore.jks
+a1.sources.s1.keystore-password=Admin_1234
+a1.sources.s1.keystore-type=JKS
+a1.sources.s1.compression-type=deflate
+
+#channels
+a1.channels.c1.type = memory
+a1.channels.c1.capacity = 1000
+a1.channels.c1.transactionCapacity = 100
+
+
+#sinks
+#a1.sinks.k1.type = logger
+a1.sinks.k1.type = com.bluedon.flume.MySyslogSink
+a1.sinks.k1.reportIp = 172.16.110.204
+a1.sinks.k1.reportPort = 514 
+
+
+a1.sources.s1.channels = c1
+a1.sinks.k1.channel = c1
+
+
+#启动
+ ./bin/flume-ng agent -n a1 -c conf -f ./conf/flume_server.conf -Dflume.root.logger=INFO,console -Dflume.monitoring.type=http -Dflume.monitoring.port=34546
+```
+
+
+
+## 自定义的syslogSink
+
+```java
+package com.bluedon.flume;
+
+import com.cloudbees.syslog.Facility;
+import com.cloudbees.syslog.MessageFormat;
+import com.cloudbees.syslog.Severity;
+import com.cloudbees.syslog.sender.UdpSyslogMessageSender;
+import com.google.common.base.Throwables;
+import org.apache.commons.lang.StringUtils;
+import org.apache.flume.*;
+import org.apache.flume.conf.Configurable;
+import org.apache.flume.sink.AbstractSink;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+
+/**
+ * Created by landun on 2020/9/11.
+ */
+public class MySyslogSink extends AbstractSink implements Configurable {
+    private static final Logger logger = LoggerFactory.getLogger(MySyslogSink.class);
+
+    private String reportIp;
+    private int reportPort;
+    private UdpSyslogMessageSender messageSender;
+
+    @Override
+    public void configure(Context context) {
+        reportIp = context.getString("reportIp");
+        reportPort = context.getInteger("reportPort");
+        if (StringUtils.isNotBlank(this.reportIp) || StringUtils.isNotBlank(Integer.toString(this.reportPort))) {
+            logger.info("sink configure reportIp, reportPort");
+        } else {
+            logger.error("sink configure reportIp is empty...");
+        }
+
+    }
+
+
+    @Override
+    public void start(){
+
+        logger.info("MySyslogSink start............");
+
+        // Initialise sender
+        messageSender = new UdpSyslogMessageSender();
+        //messageSender.setDefaultMessageHostname("flume"); // some syslog cloud services may use this field to transmit a secret key
+        messageSender.setDefaultAppName("flumeAgent");
+        messageSender.setDefaultFacility(Facility.SYSLOG);
+        messageSender.setDefaultSeverity(Severity.INFORMATIONAL);
+        messageSender.setSyslogServerHostname(reportIp);
+        messageSender.setSyslogServerPort(reportPort);
+        messageSender.setMessageFormat(MessageFormat.RFC_5424);
+
+        logger.info("MySyslogSink start end ...............");
+
+    }
+
+
+    @Override
+    public Status process() throws EventDeliveryException {
+        logger.info("MySyslogSink process start ........... ");
+
+        Status result = Status.READY;
+        Channel channel = getChannel();
+        Transaction transaction = null;
+        Event event = null;
+
+        try {
+            transaction = channel.getTransaction();
+            transaction.begin();
+
+            event = channel.take();
+            if(event!=null){
+                byte[] eventBody = event.getBody();
+                String syslogMsg = new String(eventBody);
+                messageSender.sendMessage(syslogMsg);
+            }
+
+            logger.info("MySyslogSink process messageSender  start ........... ");
+
+            transaction.commit();
+
+        } catch (Exception ex) {
+            String errorMsg = "Failed to publish events";
+            logger.info("MySyslogSink send syslog exceptions");
+            result = Status.BACKOFF;
+            if (transaction != null) {
+                try {
+                    transaction.rollback();
+                } catch (Exception e) {
+                    logger.error("Transaction rollback failed", e);
+                    throw Throwables.propagate(e);
+                }
+            }
+            throw new EventDeliveryException(errorMsg, ex);
+        } finally {
+            if (transaction != null) {
+                transaction.close();
+            }
+        }
+
+        logger.info("MySyslogSink process end ........... ");
+
+        return result;
+    }
+
+
+    public static void main(String[] args) {
+
+        // Initialise sender
+        UdpSyslogMessageSender messageSender = new UdpSyslogMessageSender();
+        messageSender.setDefaultMessageHostname("myhostname"); // some syslog cloud services may use this field to transmit a secret key
+        messageSender.setDefaultAppName("myapp");
+        messageSender.setDefaultFacility(Facility.USER);
+        messageSender.setDefaultSeverity(Severity.INFORMATIONAL);
+        messageSender.setSyslogServerHostname("127.0.0.1");
+        messageSender.setSyslogServerPort(1234);
+        messageSender.setMessageFormat(MessageFormat.RFC_5424);
+
+        // send a Syslog message
+        try {
+            messageSender.sendMessage("This is a test message");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+}
+```
+
+## 自定义HTTPSourceJsonHandler
+
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.bluedon.flume;
+
+import com.bluedon.util.PropertiesUtil;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.*;
+import java.lang.reflect.Type;
+import java.nio.charset.UnsupportedCharsetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.flume.Context;
+import org.apache.flume.Event;
+import org.apache.flume.event.EventBuilder;
+import org.apache.flume.event.JSONEvent;
+import org.apache.flume.source.http.HTTPBadRequestException;
+import org.apache.flume.source.http.HTTPSourceHandler;
+import org.apache.flume.source.http.JSONHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * JSONHandler for HTTPSource that accepts an array of events.
+ *
+ * This handler throws exception if the deserialization fails because of bad
+ * format or any other reason.
+ *
+ * Each event must be encoded as a map with two key-value pairs. <p> 1. headers
+ * - the key for this key-value pair is "headers". The value for this key is
+ * another map, which represent the event headers. These headers are inserted
+ * into the Flume event as is. <p> 2. body - The body is a string which
+ * represents the body of the event. The key for this key-value pair is "body".
+ * All key-value pairs are considered to be headers. An example: <p> [{"headers"
+ * : {"a":"b", "c":"d"},"body": "random_body"}, {"headers" : {"e": "f"},"body":
+ * "random_body2"}] <p> would be interpreted as the following two flume events:
+ * <p> * Event with body: "random_body" (in UTF-8/UTF-16/UTF-32 encoded bytes)
+ * and headers : (a:b, c:d) <p> *
+ * Event with body: "random_body2" (in UTF-8/UTF-16/UTF-32 encoded bytes) and
+ * headers : (e:f) <p>
+ *
+ * The charset of the body is read from the request and used. If no charset is
+ * set in the request, then the charset is assumed to be JSON's default - UTF-8.
+ * The JSON handler supports UTF-8, UTF-16 and UTF-32.
+ *
+ * To set the charset, the request must have content type specified as
+ * "application/json; charset=UTF-8" (replace UTF-8 with UTF-16 or UTF-32 as
+ * required).
+ *
+ * One way to create an event in the format expected by this handler, is to
+ * use {@linkplain JSONEvent} and use {@linkplain Gson} to create the JSON
+ * string using the
+ * {@linkplain Gson#toJson(java.lang.Object, java.lang.reflect.Type) }
+ * method. The type token to pass as the 2nd argument of this method
+ * for list of events can be created by: <p>
+ * {@code
+ * Type type = new TypeToken<List<JSONEvent>>() {}.getType();
+ * }
+ */
+
+public class HTTPSourceJsonHandler implements HTTPSourceHandler {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HTTPSourceJsonHandler.class);
+    private final Type listType = new TypeToken<List<JSONEvent>>() {}.getType();
+    private final Gson gson;
+
+    public HTTPSourceJsonHandler() {
+        gson = new GsonBuilder().disableHtmlEscaping().create();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Event> getEvents(HttpServletRequest request) throws Exception {
+        BufferedReader reader = request.getReader();
+        String charset = request.getCharacterEncoding();
+        //UTF-8 is default for JSON. If no charset is specified, UTF-8 is to
+        //be assumed.
+        if (charset == null) {
+            LOG.debug("Charset is null, default charset of UTF-8 will be used.");
+            charset = "UTF-8";
+        } else if (!(charset.equalsIgnoreCase("utf-8")
+                || charset.equalsIgnoreCase("utf-16")
+                || charset.equalsIgnoreCase("utf-32"))) {
+            LOG.error("Unsupported character set in request {}. "
+                    + "JSON handler supports UTF-8, "
+                    + "UTF-16 and UTF-32 only.", charset);
+            throw new UnsupportedCharsetException("JSON handler supports UTF-8, "
+                    + "UTF-16 and UTF-32 only.");
+        }
+
+        /*
+         * Gson throws Exception if the data is not parseable to JSON.
+         * Need not catch it since the source will catch it and return error.
+         */
+        List<Event> eventList = new ArrayList<Event>(0);
+        try {
+            eventList = gson.fromJson(reader, listType);
+            //-----------------form me-----------------------------------
+            LOG.info("http rev msg----->"+eventList);
+
+        } catch (JsonSyntaxException ex) {
+            throw new HTTPBadRequestException("Request has invalid JSON Syntax.", ex);
+        }
+//        for (Event e : eventList) {
+//            ((JSONEvent) e).setCharset(charset);
+//        }
+        //return getSimpleEvents(eventList);
+        Event event = eventList.get(0);
+        byte[] body = event.getBody(); //过滤关键字
+        Map<String, String> headers = event.getHeaders();
+        String reportIp = headers.get("reportIp");//上报ip
+        LOG.info("keyword:{}",body);
+        LOG.info("reportIp:{}",reportIp);
+        String keyword = new String(body);
+        String[] split = keyword.split(",");
+        String keyRegex = null;
+        if(split.length>0){
+            keyRegex = "("+StringUtils.join(split,")|(")+")";
+        }else{
+            keyRegex = "(test)";
+        }
+        LOG.info("keyRegex:{}",keyRegex);
+        updateFlumeConf("a1.sources.s1.interceptors.i1.regex",keyRegex);
+        updateFlumeConf("a1.sinks.k1.hostname",reportIp);
+        updateFlumeConf("a1.sinks.k1.port","44444");
+        LOG.info("update conf success & restart flume....");
+        //return null;
+
+        return getSimpleEvents(null);
+
+        //----------------------------------------------------
+    }
+
+    @Override
+    public void configure(Context context) {
+    }
+
+    private List<Event> getSimpleEvents(List<Event> events) {
+        List<Event> newEvents = new ArrayList<Event>(events.size());
+        for (Event e:events) {
+            newEvents.add(EventBuilder.withBody(e.getBody(), e.getHeaders()));
+        }
+        return newEvents;
+    }
+
+
+    /**
+     * 更新flume配置文件
+     * @param
+     */
+    public static void updateFlumeConf(String key,String value){
+
+        Properties prop = new Properties();
+
+        FileInputStream fis = null;
+        OutputStream fos = null;
+        Properties flumeConf = new PropertiesUtil();
+        try {
+            prop.load(MyNetcatUdpSource.class.getResourceAsStream("/filter-ip.properties"));
+            //获取flume配置文件绝对路径
+            String flumeConfPath = prop.getProperty("flumeConfPath");
+
+            //更新regex
+            fis = new FileInputStream(flumeConfPath);
+            flumeConf.load(fis);// 将属性文件流装载到Properties对象中
+            flumeConf.setProperty(key,value);
+            fos = new FileOutputStream(flumeConfPath);
+            flumeConf.store(fos,null);
+        }catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                if(fos!=null){
+                    fos.close();
+                }
+                if (fis!=null){
+                    fis.close();
+                }
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+        }
+    }
+    public static void main(String[] args) {
+        String keyword = "aaaa,bbbb,cccc,ddd";
+        String[] split = keyword.split(",");
+        String keyRegex = null;
+        if(split.length>0){
+            keyRegex = "("+StringUtils.join(split,")|(")+")";
+        }else{
+            keyRegex = "(攻击)";
+        }
+
+        System.out.println(keyRegex);
+    }
+}
+```
 
 
 
