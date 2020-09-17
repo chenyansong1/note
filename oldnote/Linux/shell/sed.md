@@ -255,7 +255,7 @@ end
 
 在以 / 开头的行下方加上指定的一行或者两行
 
-![image-20180828205933378](/Users/chenyansong/Documents/note/images/linux/shell/sed_add.png)
+![image-20180828205933378](../../../images/linux/shell/sed_add.png)
 
 
 
