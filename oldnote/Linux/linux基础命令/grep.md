@@ -353,6 +353,8 @@ IPADDR=192.168.0.3
 [root@lamp01 chenyansong]# cat /etc/sysconfig/network-scripts/ifcfg-eth0|grep "IPADDR"|cut -d= -f2
 192.168.0.3
 
+
+echo '{udp("172.16.110.21" port(514));};'|grep -E -o '([0-9]{1,3}\.){3}[0-9]{1,3}/[0-9]{1,2}'
 ```
 
 
