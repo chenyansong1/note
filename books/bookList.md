@@ -51,7 +51,7 @@
     
     * [ ] [Linux内核源码剖析:TCP/IP实现](https://book.douban.com/subject/5914256/)
     
-    * [ ] [Linux内核网络栈源代码情景分析-曹桂平](https://book.douban.com/subject/4212924/)
+    * [x] [Linux内核网络栈源代码情景分析-曹桂平](https://book.douban.com/subject/4212924/)
     
       
     
@@ -83,6 +83,7 @@
   - [ ] [一生的旅程](https://book.douban.com/subject/35009826/)
   - [ ] [进化心理学(第4版)-戴维·巴斯](https://book.douban.com/subject/26683297/)
   - [ ] [自私的基因](https://book.douban.com/subject/30309613/)
+  - [x] [熬过](https://book.douban.com/subject/26342488/)
   
 * 专栏
   
