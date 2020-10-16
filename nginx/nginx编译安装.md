@@ -203,13 +203,12 @@ drwxr-xr-x 2 root  root 4096 8月   1 2016 sbin    #启动目录
 
 # 7.错误排查
 
-
 没有安装pcre-devel
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/nginx/install/2.png)
+![](../img/linux/nginx/install/2.png)
 
 安装操作系统的时候没有安装gcc
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/nginx/install/3.png)
+![](../img/linux/nginx/install/3.png)
 
 
 需要安装下面的软件包
@@ -218,13 +217,13 @@ yum groupinstall "Development tools"
 
 ```
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/nginx/install/4.png)
+![](../img/linux/nginx/install/4.png)
 
  
 
 查看log日志
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/nginx/install/5.png)
+![](../img/linux/nginx/install/5.png)
 
 
 
