@@ -63,6 +63,7 @@ unit 类型如下：
 
 
 
+
 # systemd的一些命令
 
 Systemd 并不是一个命令，而是一组命令，涉及到系统管理的方方面面。
@@ -270,6 +271,31 @@ $ sudo systemctl disable clamd@scan.service
 ```
 
 配置文件的后缀名，就是该 Unit 的种类，比如sshd.socket。如果省略，Systemd 默认后缀名为.service，所以sshd会被理解成sshd.service。
+
+
+
+enable可能报如下的错误
+
+```shell
+update-rc.d: error: XXX Default-Start contains no runlevels, aborting.
+
+#参考：https://blog.csdn.net/weixin_33898233/article/details/94102320
+
+#需要在编辑/etc/init.d下的你的服务，头部#!/usr/bin/env bash 下添加如下内容：
+================================================================================
+#! /bin/sh
+  
+### BEGIN INIT INFO
+# Provides:          XXX
+# Required-Start:
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start XXX daemon at boot time
+# Description:       Start XXX daemon at boot time
+### END INIT INFO
+================================================================================
+```
 
 
 
