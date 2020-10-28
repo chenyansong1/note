@@ -6,7 +6,7 @@
 
 https://www.howtoforge.com/tutorial/install-nginx-with-mod_security-on-ubuntu-15-04/
 
-https://www.dyxmq.cn/uncategorized/nginx-modsecurity.html
+https://www.dyxmq.cn/uncategorized/nginx-modsecurity.html       （这篇文章解决的）
 
 # nginx安装（无modsecurity)
 

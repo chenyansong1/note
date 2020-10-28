@@ -876,8 +876,10 @@ $ sudo journalctl -u nginx.service --since today
 # 实时滚动显示某个 Unit 的最新日志
 $ sudo journalctl -u nginx.service -f
 
-# 合并显示多个 Unit 的日志
+# 合并显示多个 Unit 的日志 （常用）
 $ journalctl -u nginx.service -u php-fpm.service --since today
+journalctl -u nginx.service
+
 
 # 查看指定优先级（及其以上级别）的日志，共有8级
 # 0: emerg
