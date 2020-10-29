@@ -97,3 +97,26 @@ firewall-cmd --reload
 添加本地的
 
  
+
+## firewalld报错问题
+
+```shell
+#如下的报错
+Debian Bug report logs - #914694
+firewall-cmd --reload fails: RULE_REPLACE failed (No such file or directory): rule in chain {INPUT,OUTPUT}
+
+
+#解决的方式：设置为yes
+root@soc-PC:/home/workspaces/apache-flume-1.8.0-bin# cat /etc/firewalld/firewalld.conf|grep IndividualCalls
+# IndividualCalls
+IndividualCalls=yes
+```
+
+
+
+
+
+
+
+
+
