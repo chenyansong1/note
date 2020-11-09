@@ -22,10 +22,10 @@ tags: [nginx]
 * 动态web服务器：直接和数据库打交道
 * 静态数据请求服务器：直接请求NFS数据
 
-![图片来自老男孩](http://ols7leonh.bkt.clouddn.com//assert/img/linux/nginx/static-dam/1.png)
+![图片来自老男孩](../img/linux/nginx/static-dam/1.png)
 
  
- 
+
 # 3.程序没有拆分
 &emsp;如果：文件上传程序、动态web程序和静态数据请求程序没有拆分，那么将所有的程序在下面三种服务器中都存放一份，然后，对于负载均衡器中的请求，要根据条件过滤是找静态数据请求服务器，还是找动态程序服务器（此时上传程序和动态web程序一起了）
 
@@ -54,18 +54,18 @@ upload default_pools {
 }
 
 ```
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/nginx/static-dam/2.png)
+![](../img/linux/nginx/static-dam/2.png)
 
- 
+
 ## 4.3.location正则匹配
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/nginx/static-dam/3.png)
+![](../img/linux/nginx/static-dam/3.png)
 
 
 ## 4.4.if判断
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/nginx/static-dam/4.png)
- 
+![](../img/linux/nginx/static-dam/4.png)
+
 
 # 5.实战2
 
@@ -84,9 +84,9 @@ location / {
 
 ```
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/nginx/static-dam/5.png)
- 
+![](../img/linux/nginx/static-dam/5.png)
+
 
 ## 5.2根据移动端设备拆分
 
-![](http://ols7leonh.bkt.clouddn.com//assert/img/linux/nginx/static-dam/6.png)
+![](../img/linux/nginx/static-dam/6.png)
