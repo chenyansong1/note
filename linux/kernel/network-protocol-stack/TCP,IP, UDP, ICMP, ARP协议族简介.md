@@ -28,6 +28,8 @@
 
 ![99](../../../images/linux/kernel/network/497865-20170113225337713-639753439.png)
 
+![](../../../images/linux/kernel/network/image-20201114135217673.png)
+
  ![](../../../images/linux/kernel/network/6-191106153044K1.png)
 
 # ICMP协议
@@ -36,7 +38,7 @@
 
 ![88](../../../images/linux/kernel/network/497865-20170113225641400-13205599.png)
 
-![](../../../images/linux/kernel/network/image-20201114135217673.png)
+
 
 ![img](../../../images/linux/kernel/network/180924150424623.jpg)　
 
