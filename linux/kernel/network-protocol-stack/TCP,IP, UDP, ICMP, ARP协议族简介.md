@@ -28,6 +28,8 @@
 
 ![99](../../../images/linux/kernel/network/497865-20170113225337713-639753439.png)
 
+![](../../../images/linux/kernel/network/image-20201114135217673.png)
+
  ![](../../../images/linux/kernel/network/6-191106153044K1.png)
 
 # ICMP协议
@@ -35,6 +37,8 @@
 　　ICMP协议用于传递差错信息， 时间， 回显， 网络信息等报文数据， ICMP在IP报文中的位置为：
 
 ![88](../../../images/linux/kernel/network/497865-20170113225641400-13205599.png)
+
+
 
 ![img](../../../images/linux/kernel/network/180924150424623.jpg)　
 
