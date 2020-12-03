@@ -53,8 +53,10 @@
     
     * [x] [Linux内核网络栈源代码情景分析-曹桂平](https://book.douban.com/subject/4212924/)
     
-      
-    
+  * JAVA
+
+    * [ ] [深入理解Java虚拟机（第3版）](https://book.douban.com/subject/34907497/)
+
   * C语言
   	* [ ] [C程序设计语言(第2版·新版)-The_C_Programming_Language](https://book.douban.com/subject/1139336/)
   	* [ ] [C和指针](https://book.douban.com/subject/3012360/)
