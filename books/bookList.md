@@ -65,7 +65,8 @@
   * 算法
   	
   	* [ ] [算法（第4版）--塞奇威克 (Robert Sedgewick)/韦恩 (Kevin Wayne)](https://book.douban.com/subject/19952400/)
-
+  * [ ] [算法图解-Aditya Bhargava](https://book.douban.com/subject/26979890/)
+  	
   * 工具
 
     - [ ] [Pro Git](https://book.douban.com/subject/3420144/)
