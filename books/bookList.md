@@ -39,7 +39,7 @@
     
     * [ ] [TCP/IP详解 卷2：实现](https://book.douban.com/subject/1087767/)
     
-    * [ ] [Wireshark网络分析就这么简单](https://book.douban.com/subject/26268767/)
+    * [x] [Wireshark网络分析就这么简单](https://book.douban.com/subject/26268767/)
     
     * [ ] [wireshark网络分析的艺术](https://book.douban.com/subject/26710788/)
     
