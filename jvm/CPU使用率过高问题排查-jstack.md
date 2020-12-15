@@ -79,7 +79,7 @@ ps -mp pid(6359) -o THREAD,tid,time | sort -rn
 
 **2.通过上一步定位线程较高的pid转换为16进制。**
 
-printf “%x\n” 6360 (这里是线程的ID) 为181d
+  6360 (这里是线程的ID) 为181d
 
 **3.查找线程dump文件中线程执行的代码**
 
