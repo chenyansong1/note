@@ -62,7 +62,7 @@ server {
         proxy_set_header  X-Forwarded-For  $proxy_add_x_forwarded_for;
         proxy_set_header X-NginX-Proxy true;
 
-        proxy_pass http://user/;
+        proxy_pass http://127.0.0.1:8080/BDSOC/user/;
     }
 
     location ^~/order/ {
@@ -121,3 +121,169 @@ server {
 ```
 
 注意到proxy_pass结尾没有`/`， `rewrite`重写了url。
+
+
+
+
+
+
+
+# 示例
+
+```shell
+
+user  root;
+worker_processes  1;
+
+#error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+
+#pid        logs/nginx.pid;
+
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+    #                  '$status $body_bytes_sent "$http_referer" '
+    #                  '"$http_user_agent" "$http_x_forwarded_for"';
+
+    #access_log  logs/access.log  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    #keepalive_timeout  0;
+    keepalive_timeout  65;
+	fastcgi_connect_timeout 300;
+	fastcgi_send_timeout 300;
+	fastcgi_read_timeout 300;
+	proxy_connect_timeout 300s;
+	proxy_send_timeout 300s;
+	proxy_read_timeout 300s;
+    #gzip  on;
+	client_max_body_size 1025m;
+	proxy_temp_path /tmp/temp_dir;
+	proxy_cache_path /tmp/cache levels=1:2 keys_zone=cache_one:100m inactive=1d max_size=10g;
+    server {
+         listen  80;
+	 server_name 127.0.0.1 ;
+   	 rewrite ^(.*) https://$host$1 permanent;
+    }
+    server {
+        listen 443 ssl;
+        ssl_certificate  /usr/local/nginx/conf/server.crt;
+        ssl_certificate_key  /usr/local/nginx/conf/server_nopwd.key;
+	#ssl_protocols     TLSv1.2 TLSv1.3;
+        ssl_protocols     TLSv1 TLSv1.1 TLSv1.2;	 
+        #ssl_protocols    SSLv2  TLSv1.2 TLSv1.3 TLSv1.1;
+	ssl_prefer_server_ciphers on;
+	ssl_dhparam /usr/local/nginx/conf/dhparams.pem;
+        #charset koi8-r;
+	server_name  localhost;
+	ssl_session_cache    shared:SSL:1m;
+	ssl_session_timeout  5m;
+	ssl_ciphers  HIGH:!aNULL:!MD5;
+	server_tokens off;		
+
+	add_header Strict-Transport-Security "max-age=31536000; includeSubdomains";
+
+        location / {
+           root   html;
+           index  index.html;
+#	   ModSecurityEnabled on;  
+#           ModSecurityConfig modsecurity.conf;
+           proxy_pass   https://127.0.0.1:8443;
+	   proxy_set_header   X-Real-IP $remote_addr;
+        }
+	location ~ /ukey{
+	   root /usr/local;
+	   index test.html;	
+	}
+
+	location ^~/SOCWeb/csoc/ {
+
+		proxy_set_header Host $host;
+		proxy_set_header  X-Real-IP        $remote_addr;
+		proxy_set_header  X-Forwarded-For  $proxy_add_x_forwarded_for;
+		proxy_set_header X-NginX-Proxy true;
+
+       		proxy_pass http://127.0.0.1:8080/BDSOCWeb/;
+        }
+#	location /SOCWeb {
+#           root   html;
+#           index  index.html;
+#           ModSecurityEnabled on;  
+#           ModSecurityConfig modsecurity.conf;
+#           proxy_pass   https://127.0.0.1:8443/SOCWeb;
+#	   proxy_set_header   X-Real-IP $remote_addr;
+#        }
+#	location /ZZSY {
+#           root   html;
+#           index  index.html;
+#           ModSecurityEnabled on;  
+#           ModSecurityConfig modsecurity.conf;
+#           proxy_pass   https://127.0.0.1:8443/ZZSY;
+#	   proxy_set_header   X-Real-IP $remote_addr;
+#        }
+#	location /nereport {
+#           root   html;
+#           index  index.html;
+#	   ModSecurityEnabled on;  
+#           ModSecurityConfig modsecurity.conf;
+#           proxy_pass   https://127.0.0.1:8443/nereport;
+#	   proxy_set_header   X-Real-IP $remote_addr;
+#        }
+	location /SOCWeb/websocket {
+                        proxy_pass https://127.0.0.1:8443;
+                        proxy_http_version 1.1;
+                        proxy_read_timeout 86400s;
+                        proxy_set_header Upgrade $http_upgrade;
+                        proxy_set_header Connection "upgrade";
+                }
+        location /guacamole/ {
+           # root   html;
+           # index  index.html index.htm;
+           proxy_pass   https://127.0.0.1:8443/guacamole/;
+           proxy_set_header   X-Real-IP $remote_addr;
+           proxy_set_header Upgrade $http_upgrade;
+           proxy_set_header Connection "Upgrade";
+        }
+
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+
+        # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+        #
+        location ~ \.(js|css|jpg|png|json|gif|swf|ico|xml)$ {
+		proxy_pass  https://127.0.0.1:8443;
+                proxy_redirect off;
+                proxy_set_header Host $host;
+                proxy_cache cache_one;
+                proxy_cache_valid 200 302 24h;
+                proxy_cache_valid 301 30d;
+                proxy_cache_valid any 5m;
+                expires 90d;
+                add_header wall  "hey!guys!give me a star.";
+	}
+
+    }
+
+
+}
+
+```
+
