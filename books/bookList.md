@@ -37,7 +37,7 @@
   * 协议栈-网络
     * [x] [TCP/IP详解 卷1：协议](https://book.douban.com/subject/1088054/)
     
-    * [ ] [TCP/IP详解 卷2：实现](https://book.douban.com/subject/1087767/)
+    * [x] [TCP/IP详解 卷2：实现](https://book.douban.com/subject/1087767/)
     
     * [x] [Wireshark网络分析就这么简单](https://book.douban.com/subject/26268767/)
     
@@ -65,7 +65,7 @@
   * 算法
   	
   	* [ ] [算法（第4版）--塞奇威克 (Robert Sedgewick)/韦恩 (Kevin Wayne)](https://book.douban.com/subject/19952400/)
-   * [ ] [算法图解-Aditya Bhargava](https://book.douban.com/subject/26979890/)
+  	 * [ ] [算法图解-Aditya Bhargava](https://book.douban.com/subject/26979890/)
   	
   * 工具
 
@@ -87,7 +87,7 @@
   - [ ] [进化心理学(第4版)-戴维·巴斯](https://book.douban.com/subject/26683297/)
   - [ ] [自私的基因](https://book.douban.com/subject/30309613/)
   - [x] [熬过](https://book.douban.com/subject/26342488/)
-  - [ ] [黄金时代](https://book.douban.com/subject/1089243/)
+  - [x] [黄金时代](https://book.douban.com/subject/1089243/)
   
 * 专栏
   
@@ -96,6 +96,7 @@
 * 鸡汤（用来间歇性励志）
   
   - [ ] [你从未真正拼过](https://book.douban.com/subject/26882462/)
+  - [ ] [一往无前]()
 
 
 
