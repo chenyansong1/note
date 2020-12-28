@@ -28,9 +28,13 @@
 
   	* [x] [Linux内核源代码情景分析-毛德操/胡希明](https://book.douban.com/subject/1231584/)
   	
+  	* [ ] [Linux设备驱动程序-v3](https://book.douban.com/subject/1723151/)
+  	
   	* [ ] [深入Linux内核架构](https://book.douban.com/subject/4843567/)
   	
   	  看不下去了，很痛苦，缓一阵再来看吧（2020年7月20日）
+  	  
+  	  
   	  
   	  
   	
@@ -96,7 +100,7 @@
 * 鸡汤（用来间歇性励志）
   
   - [ ] [你从未真正拼过](https://book.douban.com/subject/26882462/)
-  - [ ] [一往无前]()
+  - [x] [一往无前]()
 
 
 
