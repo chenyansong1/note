@@ -66,6 +66,14 @@
   	* [ ] [C和指针](https://book.douban.com/subject/3012360/)
   	* [ ] [UNIX环境高级编程-3edition](https://book.douban.com/subject/25900403/)
 
+
+  * C++语言
+  	* [ ] [C++程序设计（原书第3版）)](https://book.douban.com/subject/26390133/)
+  	* [ ] [C++ Primer 中文版（第 5 版）](https://book.douban.com/subject/25708312/)
+
+
+
+
   * 算法
   	
   	* [ ] [算法（第4版）--塞奇威克 (Robert Sedgewick)/韦恩 (Kevin Wayne)](https://book.douban.com/subject/19952400/)
