@@ -30,7 +30,7 @@
   	
   	* [ ] [Linux设备驱动程序-v3](https://book.douban.com/subject/1723151/)
   	
-  	  不知是我基础不行，反正看的很蒙
+  	  不知是我基础不行，反正看的很蒙（弃了）
   	
   	* [ ] [深入Linux内核架构](https://book.douban.com/subject/4843567/)
   	
@@ -72,7 +72,7 @@
   
     * [ ] [C++程序设计（原书第3版）)](https://book.douban.com/subject/26390133/)
     * [ ] [C++ Primer 中文版（第 5 版）](https://book.douban.com/subject/25708312/)
-      	* [ ] [C++ Reference Books 参考书](https://github.com/chenyansong1/note/blob/master/books/C%2B%2B%20Reference%20Books%20%20%E5%8F%82%E8%80%83%E4%B9%A6.md)
+    * [ ] [C++ Reference Books 参考书](https://github.com/chenyansong1/note/blob/master/books/C%2B%2B%20Reference%20Books%20%20%E5%8F%82%E8%80%83%E4%B9%A6.md)
 
 
 
