@@ -65,27 +65,29 @@
   	* [ ] [C程序设计语言(第2版·新版)-The_C_Programming_Language](https://book.douban.com/subject/1139336/)
   	* [ ] [C和指针](https://book.douban.com/subject/3012360/)
   	* [ ] [UNIX环境高级编程-3edition](https://book.douban.com/subject/25900403/)
-
-
+  	
   * C++语言
-  	* [ ] [C++程序设计（原书第3版）)](https://book.douban.com/subject/26390133/)
-  	* [ ] [C++ Primer 中文版（第 5 版）](https://book.douban.com/subject/25708312/)
+
+    * [ ] [C++程序设计（原书第3版）)](https://book.douban.com/subject/26390133/)
+    * [ ] [C++ Primer 中文版（第 5 版）](https://book.douban.com/subject/25708312/)
+      	* [ ] [C++ Reference Books 参考书](https://github.com/chenyansong1/note/blob/master/books/C%2B%2B%20Reference%20Books%20%20%E5%8F%82%E8%80%83%E4%B9%A6.md)
+
 
 
 
 
   * 算法
-  	
-  	* [ ] [算法（第4版）--塞奇威克 (Robert Sedgewick)/韦恩 (Kevin Wayne)](https://book.douban.com/subject/19952400/)
-  	 * [ ] [算法图解-Aditya Bhargava](https://book.douban.com/subject/26979890/)
-  	
+  
+    	* [ ] [算法（第4版）--塞奇威克 (Robert Sedgewick)/韦恩 (Kevin Wayne)](https://book.douban.com/subject/19952400/)
+     * [ ] [算法图解-Aditya Bhargava](https://book.douban.com/subject/26979890/)
+  
   * 工具
 
     - [ ] [Pro Git](https://book.douban.com/subject/3420144/)
 
     
 
-  ---
+---
 
 * 文学
   - [x] [权力密码——当历史遇见经济学](https://book.douban.com/subject/30364261/)
