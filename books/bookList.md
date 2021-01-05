@@ -139,7 +139,7 @@
 
 ## 技术
 
-### SQL
+### SQL和数据库
 
 - [ ] [MySQL必知必会](https://book.douban.com/subject/3354490/)
 
