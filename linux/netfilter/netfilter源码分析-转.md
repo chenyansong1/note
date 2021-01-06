@@ -121,16 +121,18 @@ Netfilter/IPTables是继2.0.x的IPfwadm、2.2.x的IPchains之后，新一代的L
 
 **2.HOOK的调用**
 
-```
-    HOOK的调用是通过宏NF_HOOK实现的，其定义位于include/linux/netfilter.h，Line122：
-1
+```c
+//HOOK的调用是通过宏NF_HOOK实现的，其定义位于include/linux/netfilter.h，Line122：
+
 #define NF_HOOK(pf, hook, skb, indev, outdev, okfn) /
 (list_empty(&nf_hooks[(pf)][(hook)])    /
 ? (okfn)(skb)   /
-: nf_hook_slow((pf), (hook), (skb), (indev), (outdev), (okfn)))1234
-    这里先调用list_empty函数检查HOOK点存储数组nf_hooks是否为空，为空则表示没有HOOK注册，则直接调用okfn继续处理。如果不为空，则转入nf_hook_slow()函数。
-    nf_hook_slow()函数（位于net/core/netfilter.c，Line449）的工作主要是读nf_hook数组遍历所有的nf_hook_ops结构，并调用nf_hookfn()处理各个数据报。
-    即HOOK的调用过程如图:
+: nf_hook_slow((pf), (hook), (skb), (indev), (outdev), (okfn)))
+   
+/*
+这里先调用list_empty函数检查HOOK点存储数组nf_hooks是否为空，为空则表示没有HOOK注册，则直接调用okfn继续处理。如果不为空，则转入nf_hook_slow()函数。
+nf_hook_slow()函数（位于net/core/netfilter.c，Line449）的工作主要是读nf_hook数组遍历所有的nf_hook_ops结构，并调用nf_hookfn()处理各个数据报。即HOOK的调用过程如图:
+*/
 ```
 
 ![](../../images/linux/kernel/network/SouthEast4.png)
@@ -146,7 +148,7 @@ Netfilter/IPTables是继2.0.x的IPfwadm、2.2.x的IPchains之后，新一代的L
 - skb：是含有需要被处理包的sk_buuff数据结构的指针。sk_buff是Linux网络缓存，指那些linux内核处理IP分组报文的缓存，即套接字缓冲区。
 
   ```
-      网卡收到IP分组报文后，将它们放入sk_buff，然后再传送给网络堆栈，网络堆栈几乎一直要用到sk_buff。其定义在include/linux/skbuff.h，Line 129，下面列出我认为对分析有意义的部分成员：
+  网卡收到IP分组报文后，将它们放入sk_buff，然后再传送给网络堆栈，网络堆栈几乎一直要用到sk_buff。其定义在include/linux/skbuff.h，Line 129，下面列出我认为对分析有意义的部分成员：
   ```
 
   - ’struct sock *sk;’：指向创建分组报文的socket；
