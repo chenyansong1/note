@@ -123,6 +123,7 @@
 ## 专栏
 
 - [ ] [趣谈Linux操作系统](https://time.geekbang.org/column/intro/164)
+- [ ] [Linux性能优化实战](https://time.geekbang.org/column/intro/140)
 
 
 
