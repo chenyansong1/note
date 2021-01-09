@@ -255,3 +255,25 @@ set cscopequickfix=s-,c-,d-,i-,t-,e-
 
 ![image-20200805101002509](../../../images/vim/image-20200805101002509.png)
 
+# vimrc的常见配置
+
+```shell
+
+" colorscheme gruvbox
+colorscheme flattened_light
+" colorscheme flattened_dark
+
+" 如果taglist窗口是最后一个窗口，则退出vim
+let Tlist_Exit_OnlyWindow = 1    
+
+
+set nu
+
+```
+
+
+
+
+
+
+
