@@ -1,6 +1,6 @@
-sendfile:Linux中的"零拷贝"
+[toc]
 
-sendfile:Linux中的"零拷贝"
+# sendfile:Linux中的"零拷贝"
 
 转载：http://blog.csdn.net/caianye/article/details/7576198
 
@@ -12,18 +12,22 @@ sendfile:Linux中的"零拷贝"
 
 什么是”零拷贝”
 
-为了更好的理解问题的解决法，我们首先需要理解问题本身。首先我们以一个网络服务守护进程为例，考虑它在将存储在文件中的信息通过网络传送给客户这样的简单过程中，所涉及的操作。下面是其中的部分简单代阿：
+为了更好的理解问题的解决法，我们首先需要理解问题本身。**首先我们以一个网络服务守护进程为例，考虑它在将存储在文件中的信息通过网络传送给客户这样的简单过程中，所涉及的操作**。下面是其中的部分简单代阿：
 
-    read(file, tmp_buf, len);
-    write(socket, tmp_buf, len);
+```c
+read(file, tmp_buf, len);
+write(socket, tmp_buf, len);
+```
 
-看起来不能更简单了。你也许认为执行这两个系统调用并未产生多少开销。实际上，这简直错的一塌糊涂。在执行这两个系统调用的过程中，目标数据至少被复制了4次，同时发生了同样多次数的用户/内核空间的切换(实际上该过程远比此处描述的要复杂，但是我希望以简单的方式描述之，以更好的理解本文的主题)。
+看起来不能更简单了。你也许认为执行这两个系统调用并未产生多少开销。实际上，这简直错的一塌糊涂。在执行这两个系统调用的过程中，**目标数据至少被复制了4次，同时发生了同样多次数的用户/内核空间的切换**(实际上该过程远比此处描述的要复杂，但是我希望以简单的方式描述之，以更好的理解本文的主题)。
+
 
 为了更好的理解这两句代码所涉及的操作，请看图1。图的上半部展示了上下文切换，而下半部展示了复制操作。
 
-
+![img](https://images2017.cnblogs.com/blog/480488/201712/480488-20171206234611003-1161479554.jpg)
 
 图1. Copying in Two Sample System Calls
+
 
 步骤一：系统调用read导致了从用户空间到内核空间的上下文切换。DMA模块从磁盘中读取文件内容，并将其存储在内核空间的缓冲区内，完成了第1次复制。
 
@@ -37,8 +41,10 @@ sendfile:Linux中的"零拷贝"
 
 消除复制的一种方法是将read系统调用，改为mmap系统调用，例如：
 
-    tmp_buf = mmap(file, len);
-    write(socket, tmp_buf, len);
+```c
+tmp_buf = mmap(file, len);
+write(socket, tmp_buf, len);
+```
 
 
 
@@ -46,9 +52,10 @@ sendfile:Linux中的"零拷贝"
 
 
 
-
+![img](https://images2017.cnblogs.com/blog/480488/201712/480488-20171206234630441-695349087.jpg)
 
 图2. Calling mmap
+
 
 步骤一：mmap系统调用导致文件的内容通过DMA模块被复制到内核缓冲区中，该缓冲区之后与用户进程共享，这样就内核缓冲区与用户缓冲区之间的复制就不会发生。
 
@@ -66,17 +73,19 @@ sendfile:Linux中的"零拷贝"
 
 第二种方式应用了文件租借（在Microsoft Windows系统中被称为“机会锁”)。这才是解劝前面问题的正确方式。通过对文件描述符执行租借，可以同内核就某个特定文件达成租约。从内核可以获得读/写租约。当另外一个进程试图将你正在传输的文件截断时，内核会向你的进程发送实时信号——RT_SIGNAL_LEASE。该信号通知你的进程，内核即将终止在该文件上你曾获得的租约。这样，在write调用访问非法内存地址、并被随后接收到的SIGBUS信号杀死之前，write系统调用就被RT_SIGNAL_LEASE信号中断了。write的返回值是在被中断前已写的字节数，全局变量errno设置为成功。下面是一段展示如何从内核获得租约的示例代码。
 
-    if(fcntl(fd, F_SETSIG, RT_SIGNAL_LEASE) == -1) {
-    perror("kernel lease set signal");
-    return -1;
-    }
-    
-    /* l_type can be F_RDLCK F_WRLCK */
-    if(fcntl(fd, F_SETLEASE, l_type)){
-    perror("kernel lease set type");
-    return -1;
-    }
-    
+```c
+if(fcntl(fd, F_SETSIG, RT_SIGNAL_LEASE) == -1) {
+perror("kernel lease set signal");
+return -1;
+}
+
+/* l_type can be F_RDLCK F_WRLCK */
+if(fcntl(fd, F_SETLEASE, l_type)){
+perror("kernel lease set type");
+return -1;
+}
+
+```
 
 
 
@@ -90,11 +99,12 @@ sendfile(socket, file, len);
 
 
 
-
+![img](https://images2017.cnblogs.com/blog/480488/201712/480488-20171206234646816-2111582694.jpg)
 
  
 
 图3. Replacing Read and Write with Sendfile
+
 
 步骤一：sendfile系统调用导致文件内容通过DMA模块被复制到某个内核缓冲区，之后再被复制到与socket相关联的缓冲区内。
 
@@ -109,3 +119,27 @@ sendfile(socket, file, len);
 sendfile(socket, file, len);
 
 为了更好的理解所涉及的操作，请看图4
+
+
+
+![img](https://images2017.cnblogs.com/blog/480488/201712/480488-20171206234701019-196596868.jpg)
+
+Figure 4. Hardware that supports gather can assemble data from multiple memory locations, eliminating another copy.
+
+
+步骤一：sendfile系统调用导致文件内容通过DMA模块被复制到内核缓冲区中。
+
+步骤二：数据并未被复制到socket关联的缓冲区内。取而代之的是，只有记录数据位置和长度的描述符被加入到socket缓冲区中。DMA模块将数据直接从内核缓冲区传递给协议引擎，从而消除了遗留的最后一次复制。
+
+由于数据实际上仍然由磁盘复制到内存，再由内存复制到发送设备，有人可能会声称这并不是真正的"零拷贝"。然而，从操作系统的角度来看，这就是"零拷贝",因为内核空间内不存在冗余数据。应用"零拷贝"特性，出了避免复制之外，还能获得其他性能优势，例如更少的上下文切换，更少的CPU cache污染以及没有CPU必要计算校验和。
+
+
+
+展望
+
+Linux中“零拷贝”的实现还远未结束，并很可能在不久的未来发生变化。更多的功能将会被添加，例如，现在的sendfile不支持向量化传输，而诸如Samba和Apache这样的服务器不得不是用TCP_COKR标志来执行多个sendfile调用。该标志告知系统还有数据要在下一个sendfile调用中到达。TCP_CORK和TCP_NODELAY不兼容，后者在我们希望为数据添加头部时使用。这也正是一个完美的例子，用于说明支持向量化的sendfile将在那些情况下，消除目前实现所强制产生的多个sendfile调用和延迟。
+
+当前sendfile一个相当令人不愉快的限制是它无法用户传输大于2GB的文件。如此尺寸大小的文件，在今天并非十分罕见，不得不复制数据是十分令人失望的。由于这种情况下sendfile和mmap都是不可用的，在未来内核版本中提供sendfile64，将会提供很大的帮助。
+
+
+
