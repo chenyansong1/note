@@ -148,12 +148,14 @@
 
 - [ ] [深入理解LINUX网络技术内幕](https://book.douban.com/subject/1834459/)
 
-
+觉得言过其实了，看了大半
 
 
 
 ## 文学
 
+
+- [ ] [边城](https://book.douban.com/subject/25759355/)
 
 
 
@@ -171,15 +173,11 @@ todo list
    1. 数据库基础知识：慕课
    2. MySQL的那两本书
    3. SQL提高
-3. 网络
-   1. 赵炯的邮件
-   2. OSI的7层模型：慕课
-   3. TCP/IP那两本书
-   4. 内核计算机网络内幕
-4. java
+
+3. java
    1. JVM的书-周志明
    2. java的代码的书
    3. 大数据的框架源码（kafka，spark，other）
    4. java的框架源码（spring，mybatis）
-5. 数据结构
+4. 数据结构
    1. 慕课
