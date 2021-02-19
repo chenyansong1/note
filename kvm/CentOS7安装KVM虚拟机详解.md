@@ -1050,7 +1050,7 @@ $ kill -9 <进程号>
 $ /etc/init.d/libvirt-bin restart
 # 方案3
 $ ps aux | grep kvm
-$ kill 对应的虚拟机进程
+$ kill 对应的虚拟机进程	
 ```
 
 ## 参考文章

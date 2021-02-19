@@ -101,6 +101,16 @@ Disk /dev/sdb: 10.7 GB, 10737418240 bytes
 /dev/sdb1               1         654     5253223+  8e  Linux LVM
 ```
 
+重新加载磁盘
+
+```shell
+# 使用下面的命令可以看到当前内核已经识别了哪些分区
+cat /proc/partitions
+
+# 重读分区表
+partprobe /dev/sdb
+```
+
 
 
 3. 分区sdb1格式化LVM并加入卷组 
