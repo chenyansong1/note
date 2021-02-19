@@ -12,9 +12,7 @@ Linux用户安装Linux操作系统时遇到的一个最常见的难以决定的�
 
 
 
-![](E:\note\images\linux\filesystem\lvm-use1.png)
-
-
+![](../../../images/linux/filesystem/lvm-use1.png)
 
 ### 查看磁盘详细信息
 
