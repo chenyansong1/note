@@ -151,9 +151,16 @@
 
   觉得言过其实了，看了大半
 
-- [ ] [程序员的自我修养--链接、装载与库](https://book.douban.com/subject/3652388/)
+- [x] [程序员的自我修养--链接、装载与库](https://book.douban.com/subject/3652388/)
 
 * [x] [Linux内核源码剖析:TCP/IP实现](https://book.douban.com/subject/5914256/)
+
+### C语言
+
+* [ ] [C程序设计语言(第2版·新版)-The_C_Programming_Language](https://book.douban.com/subject/1139336/)
+* [ ] [C和指针](https://book.douban.com/subject/3012360/)
+* [ ] [C Primer Plus（第6版）中文版](https://book.douban.com/subject/26792521/)
+* [ ] [UNIX环境高级编程-3edition](https://book.douban.com/subject/25900403/)
 
 
 
