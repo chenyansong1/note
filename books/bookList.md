@@ -157,10 +157,11 @@
 
 ### C语言
 
-* [ ] [C程序设计语言(第2版·新版)-The_C_Programming_Language](https://book.douban.com/subject/1139336/)
+* [x] [C程序设计语言(第2版·新版)-The_C_Programming_Language](https://book.douban.com/subject/1139336/)
 * [ ] [C和指针](https://book.douban.com/subject/3012360/)
 * [ ] [C Primer Plus（第6版）中文版](https://book.douban.com/subject/26792521/)
 * [ ] [UNIX环境高级编程-3edition](https://book.douban.com/subject/25900403/)
+* [ ] [C语言程序设计：现代方法（第2版）](https://book.douban.com/subject/4279678/)
 
 
 
