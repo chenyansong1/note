@@ -19,6 +19,9 @@ yum install nc -y
 ```bash
 # 监听在tcp的3307端口 : -l listen,默认不指定是tcp
 nc -lv 3307
+
+# 指定IP地址
+nc -lv 127.0.0.1 8888
 ```
 
 
