@@ -373,3 +373,8 @@ POSIX标准定义的头文件包括：
 
 
 
+# unix系统家族树
+
+
+
+![img](/Users/chenyansong/Documents/note/images/c_languge/unix-family.png)
