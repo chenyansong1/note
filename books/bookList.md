@@ -169,6 +169,8 @@
 
 * [ ] [Unix/Linux编程实践教程](https://book.douban.com/subject/1219329/)
 
+* [ ] [跟我一起写Makefile-陈皓](https://seisman.github.io/how-to-write-makefile/)
+
 
 
 ## 文学
