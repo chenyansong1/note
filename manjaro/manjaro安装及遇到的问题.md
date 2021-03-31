@@ -50,6 +50,16 @@ https://linux.cn/article-11487-1.html
 
 
 
+# vim 报错
+
+会报glibc的version不对，解决的方式
+
+````shell
+sudo pacman -Syyu  #整个更新
+````
+
+
+
 # shell ---zsh
 
 https://zhuanlan.zhihu.com/p/19556676
