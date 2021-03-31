@@ -20,6 +20,8 @@
 
 https://zhuanlan.zhihu.com/p/334808120
 
+http://mirrors.ustc.edu.cn/help/manjaro.html
+
 由于manjaro默认的软件源在国外，使用默认的软件源会导致安装和更新程序很慢。因此第一件事就是将软件源替换为国内镜像源。
 
 在Terminal中执行命令

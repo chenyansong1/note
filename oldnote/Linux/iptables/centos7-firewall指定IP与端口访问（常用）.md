@@ -88,6 +88,11 @@ firewall-cmd --permanent --remove-rich-rule='rule family='ipv4' source address='
 firewall-cmd --permanent --add-rich-rule="rule family='ipv4' source address='192.168.10.0/24' accept"
 firewall-cmd --permanent --add-rich-rule="rule family='ipv4' source address='192.168.1.0/24' port protocol='tcp' port='9200' accept"
 
+#mac地址
+firewall-cmd --zone=work --add-source=00:11:22:33:44:55
+firewall-cmd --zone=work --add-rich-rule='rule source mac=11:22:33:44:55:66 drop'
+
+
 # 添加操作后别忘了执行重载
 firewall-cmd --reload
 ```
