@@ -2,6 +2,10 @@
 
 
 
+我在manjaro上安装了如下的插件
+
+![](../images/shell/image-20210401173910392.png)
+
 # 安装
 
 ## 安装zsh
