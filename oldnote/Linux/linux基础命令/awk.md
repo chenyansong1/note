@@ -182,3 +182,10 @@ hchen, 6020KB
 
 
 
+# awk 字符串拼接
+
+```shell
+root@leyan-RIS-297:/home/workspace/Soc_sh# iptables -n --line-number -L INPUT |awk 'NR>2 {print $5"-"$8}'|grep -v  "0.0.0.0" 
+172.16.110.199-00:16:31:D7:3F:63
+```
+

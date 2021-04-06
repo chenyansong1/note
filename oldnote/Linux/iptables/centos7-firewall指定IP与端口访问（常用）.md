@@ -92,6 +92,10 @@ firewall-cmd --permanent --add-rich-rule="rule family='ipv4' source address='192
 firewall-cmd --zone=work --add-source=00:11:22:33:44:55
 firewall-cmd --zone=work --add-rich-rule='rule source mac=11:22:33:44:55:66 drop'
 
+#iptables的设置方式
+iptables -I INPUT -m mac --mac-source 00:16:31:D7:3F:63  -j ACCEPT
+
+
 
 # 添加操作后别忘了执行重载
 firewall-cmd --reload
@@ -118,6 +122,37 @@ IndividualCalls=yes
 ```
 
 
+
+
+
+# iptables-save
+
+```shell
+iptables-save > /etc/sysconfig/iptables
+iptables-restore </etc/sysconfig/iptables 
+```
+
+
+
+
+
+#  防火墙脚本实例
+
+```shell
+#!/bin/bash
+systemctl stop firewalld
+\cp -p /usr/lib/firewalld/zones/drop.xml /etc/firewalld/zones/
+systemctl start firewalld
+firewall-cmd --set-default-zone=drop
+firewall-cmd --permanent --zone=drop --change-interface=ens32
+firewall-cmd --permanent --zone=drop --add-service=https
+firewall-cmd --permanent --zone=drop --add-protocol=icmp
+firewall-cmd --permanent --zone=drop --add-masquerade
+firewall-cmd --permanent --zone=drop --add-rich-rule="rule family="ipv4" source address="192.168.2.208" port protocol="tcp" port="5210" accept"
+firewall-cmd --permanent --zone=drop --add-rich-rule="rule family="ipv4" source address="192.168.2.206" port protocol="tcp" port="5210" accept"
+firewall-cmd --permanent --zone=drop --add-rich-rule="rule family="ipv4" source address="116.226.230.115" port protocol="tcp" port="8023" accept"
+firewall-cmd --reload
+```
 
 
 
