@@ -234,9 +234,21 @@ func main()  {
   	}
   
   	// 遍历方式2, for range ===> python 支持
-  	for idx,value := range nums {//value是nums[0]的副本，value每次都是重新赋值nums[x]
+  	for idx,value := range nums {//value是nums[0]的副本
   		// value = 111 ----> nums[0] = 1
   		fmt.Println("idx", idx, ",value:", value)
+  	}
+  
+  	// go中如果想要忽略一个值，可以使用_
+  	for _, value := range nums {
+  		fmt.Println("value:", value)
+  	}
+  
+  	for _, _ := range nums { //error 如果两个都忽略，那么就不能使用 :=
+  
+  	}
+  	for _, _ = range nums {//ok
+  
   	}
   
   }
@@ -246,13 +258,300 @@ func main()  {
 
 
 
-* 不定长数组
+* 不定长数组(切片， slice)
+
+  slice，他的底层也是数组，可以动态改变长度
+
+  ```go
+  package main
+  
+  import (
+  	"fmt"
+  )
+  
+  func main()  {
+  
+  	// 定义一个切片，包含多个地名
+  	//names := [10]string{"beijing", "shanghai", "guangzhou"}
+  	names := []string{"beijing", "shanghai", "guangzhou"}
+  
+  	for i, v := range names {
+  		fmt.Println("i:", i, "v:", v)
+  	}
+  	/*
+  	i: 0 v: beijing
+  	i: 1 v: shanghai
+  	i: 2 v: guangzhou
+  	*/
+  
+  
+  	// 2.追加数据
+  	name2 := append(names, "wuhan")
+  
+  	fmt.Println("names:", names)
+  	fmt.Println("name2:", name2)
+  	/*
+  	names: [beijing shanghai guangzhou]
+  	name2: [beijing shanghai guangzhou wuhan]
+  	*/
+  
+  	// 3.对于一个slice，不仅有len(), 还有容量cap()
+  	fmt.Println("befor append,len=", len(names), "cap:", cap(names))
+  	names = append(names, "tianjin")
+  	fmt.Println("after append,len=", len(names), "cap:", cap(names))
+  	/*
+  	befor append,len= 3 cap: 3
+  	after append,len= 4 cap: 6  //如果cap不够，那么会一个分配原来的两倍的cap
+  	 */
+  	names = append(names, "tianjin2")
+  	fmt.Println("after append,len=", len(names), "cap:", cap(names))
+  	/*
+  	befor append,len= 3 cap: 3
+  	after append,len= 4 cap: 6
+  	after append,len= 5 cap: 6  //此时cap还是6，如果超过6个，那么cap变成12，1k之后，比率不再是2，而是1.x
+  	 */
+  
+  }
+  
+  ```
+
+  
+
+* 切片截取
+
+  ```go 
+  package main
+  
+  import "fmt"
+  
+  func main()  {
+  
+  	// 定义一个切片，包含多个地名
+  	names := [5]string{"beijing", "shanghai", "guangzhou", "wuhan", "xian"}
+  
+  	// copy 数组的部分元素
+  	name1 := [3]string{}
+  	name1[0] = names[0]
+  	name1[1] = names[1]
+  	name1[2] = names[2]
+  
+  
+  	// 切片可以基于一个数组，灵活的创建新的数组
+  	name2 := names[0:3] // [0,3) 得到的是一个切片
+  	fmt.Println("name2:", name2)
+  	/*
+  	name2: [beijing shanghai guangzhou]
+  	*/
+  
+  	// modify name2 element
+  	name2[0] = "hello"
+  	fmt.Println("names:", names)
+  	fmt.Println("name2", name2, "cap:", cap(name2))
+  	/*
+  	names: [hello shanghai guangzhou wuhan xian]
+  	name2 [hello shanghai guangzhou] cap: 5
+  	*/
+  
+  	// 如果从0元素开始
+  	name3 := names[:3]
+  	fmt.Println("name3:", name3)
+  
+  	// 如果截取到末尾
+  	name4 := names[3:]
+  	fmt.Println("name4:", name4)
+  
+  	// 如果是全部
+  	name5 := names[:]
+  	fmt.Println("name5:", name5)
+  
+  	// 也可以基于一个字符串进行切片截取，取字符串的子串
+  	sub1 := "helloworld"[5:7]
+  	fmt.Println("sub1:", sub1)//sub1: wo
+  
+  	// 可以在创建空切片的时候，明确指定切片的容量
+  	str2 := make([]string, 10, 20) // len, cap
+  	fmt.Println("str2:", len(str2), "cap:", cap(str2))//str2: 10 cap: 20
+  
+  	// 一般常用的方式,创建空切片，明确指定容量，这样可以提供运行效率
+  	str3 := make([]string, 0, 20)//cap这个参数并不是必须的，如果没有，默认与length相同
+  	fmt.Println(str3)
+  
+  
+  
+  	// 如果想要使切片完全独立于原始数组（深拷贝），可以使用copy()函数来完成
+  	namesCopy := make([]string , len(names))
+  	copy(namesCopy, names[:]) //copy的参数都是切片
+  
+  }
+  ```
+
+  
+
+# 字典map
+
+```go
+package main
+
+import "fmt"
+
+func main()  {
+
+	// 哈希表，key=>value, 存储的key是经过哈希运算的
+	//1. 定义： (studId,studName)
+	var stdMap map[int]string// 这里只是定义变量，并没有初始化他
+
+	//2. 分配空间,可以不指定长度，建议指定
+	stdMap = make(map[int]string, 10)
+	stdMap[0] = "zhangsan"
+	stdMap[1] = "lisi"
+
+	for stdId, name := range stdMap {
+		fmt.Println(stdId, name)
+	}
+	/*
+	0 zhangsan
+	1 lisi
+	*/
+
+	// 定义的时候，直接分配空间
+	stdMap2 := make(map[int]string, 10)
+	fmt.Println(stdMap2)
+
+
+	// 如何确定一个key是否存在map中
+	name9 := stdMap2[111]
+	fmt.Println("name9:", name9)
+	//name9:
+	// 在map中，他认为所有的key都是有效的，他返回这个数字的零值
+	// 零值：bool=false ， 数字=0； str=空
+	// 无法通过获取value的值，来判断一个key是否存在，因此需要一个机制：能够校验一个key是否存在
+	value, ok := stdMap2[222]
+	if ok {//通过判断ok的返回值判断value是否存在
+		fmt.Println(value)
+	} else {
+		fmt.Println("key not exist")
+	}
+
+
+	// del key of map
+	delete(stdMap2, 1)//ok
+	delete(stdMap2, 111)//ok
+
+}
+
+```
 
 
 
+# 函数
+
+```go
+package main
+
+import "fmt"
+
+func main()  {
+	
+	v1, s1,_ := func222(10, 20, "hello")
+
+	fmt.Println("v1:", v1, ",s1:", s1)
+	
+}
+
+//1. 函数的返回值在参数列表之后，如果有多个返回值，需要使用 ()
+func func222(a int, b int, c string) (int, string, bool) {
+	return a+b, c,true
+}
+
+//2. 类型一样，可以一起定义
+func test333(a, b int, c string) (res int, str string, b1 bool) {
+
+	// 直接使用返回值的变量名字，参与运算
+	res = a+b
+	str = c
+	b1 = true
+
+	//3. 当返回值有名字的时候，可以直接写return，返回值就可以返回了
+	return
+	//equal return res, str, b1
+
+}
+```
 
 
 
+内存逃逸（原本在栈上的变量，最终在堆上了）
+
+```go
+
+func funcPtr() *string {
+	adName := "shengzhang"
+	namePtr := &adName
+
+	return namePtr
+}
+
+
+func main()  {
+
+	v1, s1,_ := func222(10, 20, "hello")
+
+	fmt.Println("v1:", v1, ",s1:", s1)
+
+	p1 := funcPtr()
+	fmt.Println(*p1)
+
+}
+```
+
+
+
+# import
+
+```go
+package add
+
+// 手写字母大写表示public，小写是protected，只有相同包名的文件才能使用(此时不需要使用包名作前缀)
+func Add(a, b int) int {
+
+	return a+b
+}
+```
+
+```go
+package sub
+
+// 需要导出的函数，首字母要大写
+func Sub(a, b int) int {
+
+	return a-b
+}
+```
+
+```go
+package main
+
+import (
+	"11-import/add"
+	"11-import/sub"
+	"fmt"
+)
+
+func main() {
+
+	res := sub.Sub(10, 5)
+	res2 := add.Add(1,2)
+
+	fmt.Println(res, res2)
+
+}
+```
+
+
+
+![](../../images/go/image-20210411160210180.png)
+
+> 同一个目录下不同的文件中不能出现 package xxx , package yyy 多个包名
 
 
 
