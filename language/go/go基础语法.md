@@ -555,3 +555,97 @@ func main() {
 
 
 
+# 获取命令行参数
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func main() {
+	// c: argc, argv
+	//go: os.Args ==> 直接可以获取命令输入，是一个字符串切片
+	cms := os.Args
+	/**
+	os.Args[0] ===> 程序名
+	os.Args[1] ===> 第一个参数，以此类推
+	 */
+	for key, cmd := range cms {
+		fmt.Println(key,":", cmd)
+	}
+	
+}
+
+
+/**
+wxr-xr-x  3 chenyansong  staff   102B Apr 11 16:13 add
+-rw-r--r--  1 chenyansong  staff   364B Apr 11 16:27 main.go
+drwxr-xr-x  3 chenyansong  staff   102B Apr 11 15:58 sub
+-rw-r--r--  1 chenyansong  staff   253B Apr 11 16:27 switch_.go
+ ~/De/g/s/11-import  go build switch_.go              ok | 16:28:02 
+
+~/De/g/s/11-import  ll                               ok | 16:28:10 
+total 3976
+drwxr-xr-x  3 chenyansong  staff   102B Apr 11 16:13 add
+-rw-r--r--  1 chenyansong  staff   364B Apr 11 16:27 main.go
+drwxr-xr-x  3 chenyansong  staff   102B Apr 11 15:58 sub
+-rwxr-xr-x  1 chenyansong  staff   1.9M Apr 11 16:28 switch_
+-rw-r--r--  1 chenyansong  staff   253B Apr 11 16:27 switch_.go
+
+ ~/De/g/s/11-import  ./switch_ 22 33 44               ok | 16:28:20 
+0 : ./switch_
+1 : 22
+2 : 33
+3 : 44
+ ~/De/g/s/11-impor
+
+*/
+```
+
+
+
+# switch
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func main() {
+	// c: argc, argv
+	//go: os.Args ==> 直接可以获取命令输入，是一个字符串切片
+	cms := os.Args
+	/**
+	os.Args[0] ===> 程序名
+	os.Args[1] ===> 第一个参数，以此类推
+	 */
+	for key, cmd := range cms {
+		fmt.Println(key,":", cmd)
+	}
+
+	if len(cms) <2 {
+		fmt.Println("pls args..")
+		return
+	}
+
+	//go的switch默认加上break了
+	switch cms[1] {
+	case "hello":
+		fmt.Println("hellow")
+		// 如果需要向下穿透的话，需要加关键字： fallthrough
+		fallthrough
+	case "world":
+		fmt.Println("world")
+	default:
+		fmt.Println("default")
+	}
+}
+
+```
+
