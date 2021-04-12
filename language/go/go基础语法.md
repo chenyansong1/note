@@ -649,3 +649,289 @@ func main() {
 
 ```
 
+# 标签goto,break,continue
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	//label
+	//goto label
+	//break label
+	//continue label
+	LABEL1:
+	for i :=0; i<5; i++ {
+		for j :=0; j<5; j++ {
+			if j==3 {
+				//goto LABEL1 // i 从0开始
+				//continue LABEL1 // i从上一次的值开始
+				//break // 结束当前循环
+				break LABEL1 //直接跳出所有的循环
+			}
+			fmt.Println("i:", i , ",j:", j)
+		}
+	}
+}
+
+```
+
+
+
+# 变量组
+
+```go
+	var number int
+	var name string
+	var flag bool
+	
+	// 等价于
+	var (
+		number int
+		name string
+		flag bool
+	)
+```
+
+
+
+# iota枚举
+
+在go中是没有枚举类型的，但是可以使用const + iota(自动累加器)来进行模拟
+
+```go
+package main
+
+import "fmt"
+
+
+/*
+iota：
+1.常量组累加器，从0开始，
+2.每换一行递增1；
+3.常量组有个特点，如果不赋值，默认与上一行表达式相同
+4.如果同一行出现了两个iota，那么两个iota的值是相同的
+5.每个常量组的iota是独立的，每一个const里面iota会清零
+ */
+const (
+	MONDAY = iota //0
+	TUESDAY = iota //1
+	WEDESDAY = iota //2
+	THURS // 默认与上一行表达式相同，即 ： =iota
+	FRIDAY
+	SATUDAY
+	SUNDAY
+	M, N = iota, iota
+)
+
+const (
+	FIRST = iota + 1 //1
+	SECOND //2
+	THird //3
+)
+
+func main() {
+
+	fmt.Println(MONDAY, TUESDAY, FRIDAY)//0 1 4
+	fmt.Println(MONDAY, TUESDAY, M, N)//0 1 7 7
+	fmt.Println(FIRST, SECOND, THird)//1 2 3
+
+	//var number int
+	//var name string
+	//var flag bool
+	//
+	//var (
+	//	number int
+	//	name string
+	//	flag bool
+	//)
+
+}
+
+```
+
+
+
+# 结构体
+
+```go
+package main
+
+import "fmt"
+
+// 使用type + struct
+type Student struct {
+	name string
+	age int
+	score float64
+}
+
+type Myint int
+
+func main() {
+	var i, j Myint
+	i, j = 10, 20
+
+	fmt.Println(i, j)
+
+	//定义变量，并初始化
+	lily := Student{
+		name:  "lily",
+		age:   20,
+		score: 80, //这里的 , 是必须的；如果不加逗号，必须与）同一行
+	}
+	//引用结构体
+	fmt.Println(lily.name, lily.age, lily.score)
+
+	s1 := &lily
+	// -> 不同于c 的指针
+	fmt.Println(s1.name, s1.age, s1.score)
+
+	// 如果是全部的字段，可以不用key
+	duke := Student{
+		"zhangsan",
+		23,
+		333,
+	}
+
+	duke.score = 88
+	fmt.Println(duke)//{zhangsan 23 88}
+
+}
+
+```
+
+
+
+# init函数
+
+go语言自带init函数，每一个包都可以包含一个或多个init函数，这个init会在包被引用的时候（import的时候）自动调用
+
+用于加载系统配置
+
+```go
+package sub
+
+import (
+	"fmt"
+	_ "database/sql/driver"
+)
+
+//init函数没有参数，没有返回值
+//一个包中包含多个init时，调用的顺序是不确定的
+//init函数是不允许用户显示调用的
+//如果只想要使用一个包中的init函数（比如MySQL的init对驱动进行初始化）,为了防止编译器报错，可以使用 _ 处理
+import _ "database/sql/driver"
+func init() {
+
+	fmt.Println("this is first in package sub")
+
+}
+
+func init() {
+
+	fmt.Println("this is 222 in package sub")
+
+}
+// 需要导出的函数，首字母要大写
+func Sub(a, b int) int {
+
+	return a-b
+}
+
+```
+
+
+
+# defer(延迟)
+
+用于修饰语句、函数，确保这条语句可以在当前栈退出的时候执行，一般用于资源清理
+
+```go
+lock.Lock()
+a = "hello"
+lock.Unlock() //如果代码过长，经常忘掉解锁
+```
+
+go语言可以使用defer来解决这个问题
+
+```go
+lock.Lock()
+defer lock.Unlock() //当前栈退出的时候(比如函数结束)执行
+a = "hello"
+
+
+//打开，关闭文件
+{
+  f1 := file.Open()
+  defer f1.Close()
+}
+```
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func main() {
+
+	//可以在一个函数中多次调用defer,执行时类似于栈的机制，先入后出
+	fileName := "defer_.go"
+	readFile(fileName)
+
+
+
+}
+
+
+func readFile(filename string) {
+	//go会将错误码作为最后一个参数返回,error =nil 执行成功
+	f1, err := os.Open(filename)
+	//defer f1.Close()
+
+
+	// 在函数退出的时候会执行这里
+	defer func(){
+		fmt.Println("准备关闭文件！")
+		f1.Close()
+	}()//创建一个匿名函数，并调用
+
+	//多个defer
+	defer fmt.Println("00000")
+	defer fmt.Println("11111")
+	defer fmt.Println("22222")
+	/**
+	22222
+	11111
+	00000
+	准备关闭文件！
+	*/
+
+	if err != nil {
+		fmt.Println("open file failure")
+	}
+	buf := make([]byte, 1024)
+
+	n, err := f1.Read(buf)
+	fmt.Println("读取文件长度n=", n)
+	fmt.Println("file content:", string(buf))
+
+	//f1.Close()
+
+}
+
+```
+
+
+
+
+
+
+
+
+
