@@ -803,6 +803,52 @@ func main() {
 
 ```
 
+结构体与json
+
+```go
+[{"name":"zhangsan"}, {}]
+
+//序列化：把go语言中的结构体变量--->json格式的字符串
+//反序列化：json格式的字符串 ----> go中的结构体
+
+type persion struct{
+  Name string `json:"name" db:"name" ini:"ini_name"` //当使用json解析的时候使用的是name替换Name
+  Age int `json:"age"`
+}
+
+
+func main(){
+  
+  p1 := persion{
+    Name:"zhansan",
+    Age:22,
+  }
+  
+  
+  //序列化
+  b, err := json.Marshal(p1)//b --> []byte
+  if err != nil {
+    fmt.Print("error %s", err)
+    return
+  }
+  fmt.Printf("%v\n", string(b))//"{'Name':'zhangsan', 'Age':22}"
+  
+  
+  //反序列化
+  str := '{"name":"zhangsan", "age":11}'
+  var p2 persion
+  json.UnMarshal([]byte(str), &p2)
+  fmt.Printf("%v\n", p2)
+  
+  
+  
+  
+  
+}
+
+
+```
+
 
 
 # init函数
