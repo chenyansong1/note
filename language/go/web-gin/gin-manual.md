@@ -762,6 +762,139 @@ session模块设计
 
 ![image-20210417163453089](/Users/chenyansong/Documents/note/images/go/image-20210417163453089.png)
 
+### session/session.go
+
+```go
+type Session interface {
+  Set(key string, value interface{}) error
+  Get(key string) (interface{}, error)
+  Del(key string) error
+  Save() error
+}
+
+```
+
+
+
+### session/session_mgr.go
+
+```go
+type SessionMgr interface {
+  Init(addr string, options ...string) error
+  CreateSession()(session Session, err error)
+  Get(sessionId string)(session Session, err error)
+}
+```
+
+
+
+### session/memSession.go
+
+```go
+type MemSession struct{
+  sessionId string
+  data map[string]interface{}
+  rwlock sync.RWMutex //锁
+  
+}
+
+func NewMemSession(id string) *MemSession{
+  s := &MemSession{
+    sessionId: id,
+    data: make(map[string]interface{}, 16),
+  }
+  
+  return s
+}
+
+
+func (m *MemSession)Set(key string, value interface{}) (err error){
+  //lock
+  m.rwlock.Lock()
+  defer m.rwlock.Unlock()
+  
+  //设置值
+  m.data[key] = value
+  
+  return 
+}
+
+func (m *MemSession)Get(key string) (value interface{}, err error){
+  //lock
+  m.rwlock.Lock()
+  defer m.rwlock.Unlock()
+  
+  //get
+  value,ok != m.data[key]
+  if !ok {
+    err = error.New("key not exist")
+    return 
+  }
+  return value
+}
+
+
+func (m *MemSession)Del(key string) (err error){
+  //lock
+  m.rwlock.Lock()
+  defer m.rwlock.Unlock()
+  
+  //del
+  delete(m.data, key)
+  return
+  
+}
+
+func (m *MemSession)Save(key string) (err error){
+  
+  return
+  
+}
+```
+
+### session/MemSessionMgr
+
+```go
+type MemSessionMgr struct{
+  sessionMap map[string]Session
+  rwlock sync.RWMUtex
+}
+
+func NewMemSessionMgr() *MemSessionMgr{
+  sr := &MemSessionMgr{
+    sessionMap: make(map[string]Session, 1024)
+  }
+  
+  return sr
+}
+
+
+func (s *MemSessionMgr)Init(addr string, options ...string) (err error){
+  return
+}
+
+func (s *MemSessionMgr)CreateSession() (session Session, err error){
+  m.rwlock.Lock()
+  defer s.rwlock.Unlock()
+  
+  
+}
+
+
+```
+
+17:00
+
+
+
+
+
+
+
+
+
+
+
 
 
 
