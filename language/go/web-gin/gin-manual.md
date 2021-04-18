@@ -1309,7 +1309,7 @@ blogger
 */
 ```
 
-
+![image-20210418140459235](/Users/chenyansong/Documents/note/images/go/image-20210418140459235.png)
 
 ## model
 
@@ -1419,35 +1419,392 @@ func GetCategory(id int64)(category *model.Category, err error){
   err = DB.Get(category, sqlStr, id)
   return
 }
+
+
+//get mutil category
+func CategoryList(ids []int64)(categoryList []*model.Category, err erro){
+  //构建SQL
+  sqlStr,args, err := sqlx.In("select id, category_name, category_no from category where id in(?)", ids)
+  if err != nil {
+    return
+  }
+  
+  //query
+  DB.Select(&categoryList, sqlStr, args...)
+  
+  return
+}
+
+// get all category of title
+func GetAllCategoryList(categoryList []*model.Category, err error){
+  sqlStr := "select id, category_name, category_no from category order by category_no desc "
+  DB.Select(&categoryList, sqlStr)
+  return
+}
+
+
+
 ```
 
-https://www.bilibili.com/video/BV1fz4y1m7Pm?p=197&spm_id_from=pageDriver
+写测试类
+
+```go
+// db/category_test.go
+
+func init(){
+  //parseTime=true 将MySQL中的时间类型，自动解析为go结构体重的时间类型
+  dns := "root:admin@tcp(localhost:3306)/blogger?parseTime=true"
+  err := Init(dns)
+  if err != nil {
+    panic(err)
+  }
+}
+
+
+func TestGetCategoryById(t *testing.T){
+  category, err := GetCategoryById(1)
+  if err != nil {
+    panic(err)
+  }
+  
+  t.Logf("category:%#v", category)
+}
+
+
+func TestGetCategoryList(t *testing.T){
+  var categoryIds []int64
+  categoryIds = append(categoryIds, 1,2,3)
+  
+  categoryList, err := GetCategoryList(categoryIds)
+  if err != nil {
+    panic(err)
+  }
+  
+  for _,v := range categoryList{
+    t.Logf("category:%#v", v)
+  }
+  
+}
+
+func TestGetAllCategoryList(t *testing.T){
+  categoryList, err := GetAllCategoryList()
+  if err != nil {
+    panic(err)
+  }
+  
+  for _,v := range categoryList{
+    t.Logf("category:%#v", v)
+  }
+  
+}
+```
+
+```go
+// db/article.go
+
+import (
+	_ "github.com/go-sql-driver/mysql"
+)
+
+//insert
+func InsertAarticle(article *model.ArticleDetail)(artigleId int64, err error){
+  //validate
+  if article == nil{
+    return
+  }
+  
+  sqlStr := "insert into "+ 
+  							"article(content, summary, title, username, category_id, view_count, comment_count) values(?,?,?,?,?,?,?)"
+  
+  result, err := DB.Exec(sqlStr, article.Content, article.Summary.....)
+  
+  if err != nil {
+    return
+  }
+  
+  articleId, err = result.LastInsertId()
+  
+  return
+}
+
+
+
+//文章列表，+分页
+func GetArticleList(pageNum, pageSize int)(articleList []*model.ArticleInfo, err error){
+  
+  if pageNum < 0 || pageSize <0 {
+    return
+  }
+  
+  // order by time desc
+  sqlStr := "select id, summary, title,view_count, create_time,...from article where status =1 order by create_time desc limit ?,? "
+  
+  err = DB.Select(&articleList, sqlStr, pageNum, pageSize)
+  return
+}
+
+
+// 根据articleId 查询单个文章
+func GetArticleDetail(articleId int64)(articleDetail *model.ArticleDetail, err error){
+  if articleId <0 {
+    return
+  }
+  
+  sqlStr := "select id, summary, title, view_count,.... from article where id=? and status =1 "
+  
+  err = DB.Get(&articleDetail, sqlStr, articleId)
+  return
+  
+}
+
+
+// 查询一类的article
+func GetArticleListByCategoryId(categoryId, pageNum, pageSize int)(articleList []*model.ArticleInfo, err error){
+  if pageNum < 0 || pageSize <0 {
+    return
+  }
+  
+  sqlStr := "select id, summary, title, view_count,.... from article where  status =1 and category_id=? order by create_time desc limit ?,? "
+  
+  err = DB.Select(&articleList, sqlStr, categoryId, pageNum, pageSize)
+  return
+  
+}
+
+```
+
+```go
+// db/article_test.go
+
+
+func init(){
+  //parseTime=true 将MySQL中的时间类型，自动解析为go结构体重的时间类型
+  dns := "root:admin@tcp(localhost:3306)/blogger?parseTime=true"
+  err := Init(dns)
+  if err != nil {
+    panic(err)
+  }
+}
+
+func TestInsertArticle(t *testing.T){
+  //new obj
+  article := &model.ArticleDetail{}
+  article.ArticleInfo.CategoryId =1
+  article.content = "sfsfsfsfsfsfs"
+  article.ArticleInfo.title = "titlexxxxx"
+  //....
+  
+  articleId, err := InsertArticle(article)
+  t.Logf("articleId:%d\n", articleId)
+  
+}
+
+
+func TestGetArticleList(t *testing.T){
+  articleList, err := GetArticleList(1, 15)// pageNum=1; pageSize=15
+  if err != nil {
+    return
+  }
+  
+  t.Logf("article leng %d\n", len(articleList))
+}
+
+
+func TestGetArticleDetail(t *testing.T){
+  artile, err := GetArticleDetail(1)
+  if err != nil {
+    return
+  }
+  
+  t.Logf("article leng %%#v\n", artile)
+}
+
+
+```
 
 
 
 ## service
 
+* 获取分类列表
+* 获取所有的文章和分类信息
+* 根据分类ID，获取该类的文章和分类信息
 
+```go
+// service/category.go
+
+func GetAllCategoryList()(categoryList []*model.Category, err error){
+  categoryList, err = db.GetAllCategoryList()
+  
+  if err != nil {
+    return
+  }
+  
+  return
+}
+
+```
+
+
+
+```go
+// service/article.go
+
+
+//获取文章和对应的分类
+func GetArticleRecordList(pageNum, pageSize int)(articleRecordList *model.ArticleRecord, err error){
+  //获取文章的列表
+  articleInfoList, err := db.GetArticleList(pageNum, pageSize)
+  if err != nil {
+    return
+  }
+  
+  if len(articleInfoList)<=0{
+    return
+  }
+  
+  //获取文章对应的分类(多个)
+  categoryIds :=getCategoryIds(articleInfoList)
+  
+  categoryList, err := 	db.GetCategoryList(categoryIds)
+  if err != nil {
+    return
+  }
+  
+  //遍历所有的文章
+  for _,article := range articleInfoList {
+    //封装数据
+    articleRecord := &model.ArticleRecord{
+      ArticleInfo: article,
+    }
+    
+    //文章分类
+    categoryId := article.CategoryId
+    for _, category := range categoryList{
+      if categoryId == category.CategoryId {
+        articleRecord.Category = *category
+        break
+      }
+    }
+    
+    articleRecordList = append(articleRecordList, articleRecord)
+    
+  }
+  
+}
+
+//根据多个categoryId, get mutil categoryId
+func getCategoryIds(articleInfoList []*model.ArticleInfo)(ids []int64){
+  //range
+  for _,article := range articleInfoList {
+    categoryId := article.CategoryId
+    //去重
+    for _,id := range ids {
+      if id != categoryId {
+        ids = append(ids, categoryId)
+      }
+    }
+  }
+  
+  return
+}
+
+```
 
 
 
 ## controller
 
+* 访问主页，展现所有的文章和分类云
+* 点击文章，显示显示文章detail
+
+```go
+// controller/hander.go
+
+
+func IndexHandle(c *gin.Context){
+  //从service取数据
+  articleRecordList, err := service.GetArticleRecordList(0, 15)
+  if err != nil {
+    c.HTML(http.statusBad, "views/500.html", nil)
+    return
+  }
+  
+  //加载分类数据
+  categoryList, err := service.GetAllCategoryList()
+  if err != nil {
+    c.HTML(http.statusBad, "views/500.html", nil)
+    return
+  }
+  
+  //gin.H本质十上是一个map
+  c.HTML(http.ok, "views/index.html", gin.H{"article_list":articleRecordList, "category_list":categoryList})
+  
+  
+}
+
+
+//点击分类云，展示分类
+func CategoryList(c *gin.Context){
+  //获取参数
+  categoryIdStr := c.Query("category_id")
+  
+  categoryId, err := strconv.ParseInt(categoryIdStr, 10, 64)
+  if err != nil {
+    c.HTML(http.statusBad, "views/500.html", nil)
+    return
+  }
+  
+  articleRecordList, err := service.GetArticleRecordListById(categoryId, 0, 15)
+  if err != nil {
+    c.HTML(http.statusBad, "views/500.html", nil)
+    return
+  }
+  
+  //再次加载分类云数据(因为页面中需要这部分数据)
+  categoryList, err := service.GetAllCategoryList()
+  c.HTML(http.ok, "views/index.html", gin.H{"article_list":articleRecordList, "category_list":categoryList})
+  
+  
+}
+```
 
 
 
+## main.go
+
+```go
+//main.go
+
+
+func main(){
+  r := gin.Default()
+  dns := "root:admin@tcp(localhost:3306)/blogger?parseTime=true"
+  err := db.Init(dns)
+  if err != nil {
+    panic(err)
+  }
+  
+  //加载静态文件
+  r.Static("/static", "./static")
+  
+  //加载模板
+  r.LoadHTMLBlob("view/*")
+  
+  //路由
+  r.GET("/", controller.IndexHandle)
+  
+  
+  r.Run(":8000")
+  
+}
+```
 
 
 
+## debug
 
-
-
-
-
-
-https://www.bilibili.com/video/BV1fz4y1m7Pm?p=196&spm_id_from=pageDriver
-
-
+goland和idea的方式一样
 
 
 
