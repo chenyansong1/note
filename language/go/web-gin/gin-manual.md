@@ -876,14 +876,562 @@ func (s *MemSessionMgr)Init(addr string, options ...string) (err error){
 func (s *MemSessionMgr)CreateSession() (session Session, err error){
   m.rwlock.Lock()
   defer s.rwlock.Unlock()
+  //用UUID作为sessionId
+  id,err := uuid.NewV4()
+  if err != nil{
+    return
+  }
+  //to string
+  sessionId := id.String()
   
+  //create session
+  session := NewMemSession(sessionId)
+  s.sessionMap[sessionId] = session
   
+  return
+}
+
+
+func (s *MemSessionMgr)Get(sessionId string) (session Session, err error){
+  
+  m.rwlock.Lock()
+  defer s.rwlock.Unlock()
+  session, ok := s.sessionMap[sessionId]
+  if !ok {
+    err = errors.New("session not exist")
+    return
+  }
+  return
 }
 
 
 ```
 
-17:00
+
+
+### session/redisSession
+
+```go
+
+type RedisSession struct{
+  sessionId string
+  pool *redis.Pool
+  //设置session，可以先放在内存的map中
+  //批量导入Redis，提升性能
+  sessionMap map[string]interface{}
+  //lock
+  rwlock sync.RWMutex
+  //记录内存中map是否被操作
+  flag int
+  
+}
+
+//
+const (
+	//内存数据没变化
+  SessionFlagNone = iota
+  //变化
+  SessionFlagModify
+)
+
+//construct
+func NewRedisSession(id string, pool *redis.Pool) *RedisSession{
+  s := &RedisSession{
+    sessionId:id,
+    sessionMap: make(map[string]interface{}, 16),
+    pool:pool,
+    flag: SessionFlagNone,
+  }
+  
+  return s
+}
+
+
+//将session存储到内存中的map
+func (r *RedisSession)Set(key string, value interface{})(err error){
+  r.rwlock.Lock()
+  defer r.rwlock.Unlock()
+  
+  r.sessionMap[key] = value
+  
+  //change flag
+  r.flag = SessionFlagModify
+  
+  return
+}
+
+// save to redis
+func (r *RedisSession)Save()(err error){
+  r.rwlock.Lock()
+  defer r.rwlock.Unlock()
+	
+  //data no change
+  if r.flag != SessionFlagModify {
+    return
+  }
+  
+  //内存中的sessionMap进行序列化
+  data, err := json.Marshal(r.sessionMap)
+  if err != nil {
+    return
+  }
+  
+  //get redis conn
+  conn := r.pool.Get()
+  
+  //save 
+  _, err := conn.Do("SET", r.sessionId, string(data))
+  r.flag = SessionFlagModify
+  
+  if err != nil {
+    return
+  }
+  return
+}
+
+
+
+// save to redis
+func (r *RedisSession)Get(key string)(result interface{}, err error){
+  r.rwlock.Lock()
+  defer r.rwlock.Unlock()
+	
+  //先判断内存
+  result, err := r.sessionMap[key]
+  if !ok {
+    err = errors.New("key not exist")
+  }
+  
+  return
+}
+
+// 从Redis中再次加载
+func (r *RedisSession)LoadFromRedis()(err error){
+  conn : = r.Pool.Get()
+  reply, err := conn.Do("GET", r.sessionId)
+  if err != nil {
+    return
+  }
+  
+  data, err := redis.String(reply, err)
+  if err != nil {
+    return
+  }
+  
+  //put to map
+  err := json.UnMarshal([]byte(data), &r.sessionMap)
+  if err != nil {
+    return
+  }
+  return
+}
+
+
+// del to redis
+func (r *RedisSession)Del(key string)(err error){
+  r.rwlock.Lock()
+  defer r.rwlock.Unlock()
+	r.flag = SessionFlagModify
+  
+  delete(r.sessionMap, key)
+  
+  return
+}
+```
+
+
+
+### session/RedisSessionMgr
+
+```go
+type RedisSessionMgr struct{
+  //init redis
+  addr string
+  password string
+  pool *redis.Pool
+  pool sync.RWMutex
+  
+  sessionMap map[string]Session
+  
+}
+
+func (r *RedisSessionMgr)Init(addr string, options ...string)(err error){
+  if len(options)>0 {
+    r.password = options[0]
+  }
+  
+  //create pool
+  r.pool = myPool(addr, r.password)
+  r.addr = addr
+  return
+}
+
+//create pool
+func myPool(add, password string)*redis.Pool{
+  return &redis.Pool{
+    maxIdle: 64,
+    MaxActive:1000,
+    IdleTimeout:240*time.Second,
+    Dial: func()(redis.Conn, error){
+      conn, err := redis.Dial("tcp", addr)
+      if err != nil {
+        return nil, err
+      }
+      //password
+      if _, err := conn.Do("AUTH", password);err != nil {
+        conn.Close()
+        return nil,err
+      }
+      return conn, err
+    },
+    
+    //连接测试, 开发时用
+    TestOnBorrow:func(conn redis.Conn, t time.Time) error{
+      _, err := conn.Do("PING")
+      return err
+    },
+    
+  }
+}
+
+func NewRedisSessionMgr() SessionMgr{
+  sr := RedisSessionMgr{
+    sessionMap: make(map[string]String, 32),
+  }
+  
+  return sr
+}
+
+
+func (r *RedisSessionMgr)CreateSession()(session Session, err error){
+  r.rwlock.Lock()
+  defer r.rwlock.Unlock()
+  
+  id, err := uuid.NewV4()
+  if err != nil {
+    return
+  }
+  
+  sessionId := id.String()
+  
+  //create session
+  session = NewRedisSession(sessionId, r.pool)
+  r.sessionMap[sessionId] = session
+  return
+}
+
+
+func (r *RedisSessionMgr)Get(sessionId string)(session Session, err error){
+  r.rwlock.Lock()
+  defer r.rwlock.Unlock()
+  
+  session, ok := r.sessionMap[sessionId]
+  if !ok {
+    err = error.New("session not exist")
+    return
+  }
+  
+  return 
+}
+
+```
+
+### session/init.go
+
+```go
+//中间件让用户去选择使用哪个版本
+
+var (
+	sessionMgr SessionMgr
+)
+func Init(provider string , addr string, options ...string)(err error){
+  switch provider {
+  case "memory":
+    sessionMgr = NewMemorySessonMgr()
+  case "redis":
+    sessionMgr = NewRedisSessionMgr()
+  default:
+  	fmt.Error("not support")
+  	return
+  }
+  
+  sessionMgr.Init(addr, options...)
+  return
+}
+```
+
+
+
+# 数据库
+
+```go
+//model.go
+
+type Book struct{
+  ID int64 `db: "id"`
+  Title string `db: "title"`
+  Price int64 `db:"price"`
+}
+```
+
+
+
+```go
+//db.go
+
+import (
+	
+  _ "github.com/go-sql-driver/mysql"
+  "github.com/jmoiron/sqls"
+
+)
+
+
+
+var db *sqls.DB
+func initDB(err error){
+  
+  addr := "root:admin@tcp(127.0.0.1:3306)/test"
+  
+  db, err := sqls.Connect("mysql", addr)
+  if err != nil{
+    return err
+  }
+  
+  //最大连接
+  db.SetMasOpenConns(100)
+  
+  //最大空闲
+  db.SetMaxIdleConns(16)
+  return
+  
+}
+
+func queryAllBook() (bookList []*Book, err error){
+  sqlStr := "select id, title, price from book"
+  
+  err := db.Select(&bookList, sqlStr)
+  
+  if err!=nil {
+    fmt.println("query fail")
+    return
+  }
+  
+  return
+  
+}
+
+
+func insertBook(title string, price int64)(err error){
+  sqlStr := "insert into book(title, price) values(?, ?)"
+  err := db.Exec(sqlStr, title, price)
+  
+  if err!=nil {
+    fmt.println("insert fail")
+    return
+  }
+  
+  return
+  
+}
+
+
+func delBook(id string)(err error){
+  sqlStr := "delete from book where id =?"
+  err := db.Exec(sqlStr, id)
+  
+  if err!=nil {
+    fmt.println("delete fail")
+    return
+  }
+  
+  return
+  
+}
+```
+
+```go
+//main.go
+
+
+func main(){
+  
+  err := initDB()
+  if err !=nil {
+    panic(err)
+  }
+  
+  r := gin.Default()
+  
+  // load html
+  r.LoadHTMLGlob("./book/templates/*")
+  
+  //查询所有图书
+  r.GET("/book/list", bookListHander)
+  
+  
+  _ = r.Run(":8000")
+  
+}
+
+func bookListHander(c * gin.Context){
+  bookList, err := queryAllBook()
+  
+  if err!=nil{
+    c.JSON(http.ok, gin.H{"code":1, "msg":err})
+    return
+  }
+  
+  //return data
+  c.HTML(http.ok, "book_list.html", gin.H{"code":0, "data":bookList})
+  
+}
+```
+
+
+
+# blog项目
+
+项目结构
+
+```go
+/*
+blogger
+  controller ：请求参数处理
+  dao			: 数据层
+  model   : 实体
+  service 业务逻辑：
+  static ：css, js
+  utils		: 工具包
+  views		：HTML模板
+  main.go ：入口，路由
+
+*/
+```
+
+
+
+## model
+
+* 分类结构体
+* 文章结构体（可以不写文章内容，另外查询）
+
+```go
+//category.go
+
+type Category struct{
+  CategoryId int64 `db:"id"`
+  CategoryName string `db:"category_name"`
+  CategoryNo int `db:"category_no"`
+}
+
+```
+
+```go
+//article.go
+
+type ArticleInfo struct {
+  Id int64 `db:"id"`
+  CategoryId int64 `db:"category_id"`
+  Summary string `db:"summary"`
+  Title string `db:"title"`
+  ViewCount uint32 `db:"view_count"`
+  CommentCount uint32 `db:"comment_count"`
+  Username string `db:"username"`
+  CreateTime time.Time `db:"create_time"`
+}
+
+type ArticleDetail struct {
+  ArticleInfo
+  //文章内容
+  Content string `db:"content"`
+  Category
+}
+
+//用于文章上下页
+type ArticleRecord struct {
+  ArticleInfo
+  Category
+}
+```
+
+
+
+## dao
+
+* init()数据库初始化
+* 分类相关的操作（CRUD）
+* 文章相关的操作（CRUD）
+
+```go
+// dao/db/db.go
+
+import (
+	_ "github.com/go-sql-driver/mysql"
+)
+
+var (
+	DB *sqlx.DB
+)
+
+func Init(dns string) error{
+  var err error
+  DB, err = sqlx.Open("mysql", dns)
+  if err != nil {
+    return err
+  }
+  
+  //查看是否conn success
+  err = DB.Ping()
+  if err != nil {
+    return err
+  }
+  
+  DB.SetMaxOpenConns(100)
+  DB.SetMaxIdleConns(16)
+  
+  return nil
+}
+```
+
+```go
+// dao/db/category.go
+
+//add
+func InsertCategory(category *model.Category)(categoryId int64, err error){
+  sqlStr := "insert into category(category_name, category_no) value(?, ?)"
+  
+  result, err := DB.Exec(sqlStr, category.CategoryName, category.CategoryNo)
+  if err != nil {
+    return
+  }
+  
+  categoryId, err = result.LastInsertId()
+  return
+}
+
+
+//get by id
+func GetCategory(id int64)(category *model.Category, err error){
+  category = &model.Category{}
+  
+  sqlStr := "select id, category_name, category_no from category where id=?"
+  err = DB.Get(category, sqlStr, id)
+  return
+}
+```
+
+https://www.bilibili.com/video/BV1fz4y1m7Pm?p=197&spm_id_from=pageDriver
+
+
+
+## service
+
+
+
+
+
+## controller
 
 
 
@@ -892,6 +1440,12 @@ func (s *MemSessionMgr)CreateSession() (session Session, err error){
 
 
 
+
+
+
+
+
+https://www.bilibili.com/video/BV1fz4y1m7Pm?p=196&spm_id_from=pageDriver
 
 
 
@@ -907,6 +1461,10 @@ todo
    1. gopath
    2. goroot
    3. 项目的放置位置
+2. redis 操作
+3. MySQL操作
+
+
 
 
 
