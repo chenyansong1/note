@@ -82,7 +82,7 @@
   #rm只能删除已经停止的容器
   ```
 
-  ![1561517770962](E:\git-workspace\note\images\docker\docker_command6.png)
+  ![1561517770962](..\images\docker\docker_command6.png)
 
 
 
@@ -106,7 +106,7 @@ docker run -i -t image /bin/bash
 docker attach containerName|containId
 ```
 
-​	![1561518846963](E:\git-workspace\note\images\docker\docker_command7.png)
+​	![1561518846963](..\images\docker\docker_command7.png)
 
 
 
@@ -118,7 +118,7 @@ docker run -d image [command] [args...]
 #-d指定容器后台运行
 ```
 
-![1561519477215](E:\git-workspace\note\images\docker\docker_command8.png)
+![1561519477215](..\images\docker\docker_command8.png)
 
 ### 查看日志
 
@@ -155,7 +155,7 @@ docker top 容器名
 
 ```
 
-![1561519477215](E:\git-workspace\note\images\docker\docker09.png)
+![1561519477215](..\images\docker\docker09.png)
 
 ### 在运行的容器中启动新进程
 ```shell
@@ -245,7 +245,7 @@ CONTAINER ID        IMAGE               COMMAND             CREATED             
 
 可以`docker inspect web` 去看容器的详情，下图，我们可看到**容器的IP地址和端口映射的情况**
 
-![1561548125207](E:\git-workspace\note\images\docker\docker_command9.png)
+![1561548125207](..\images\docker\docker_command9.png)
 
 访问Nginx
 
