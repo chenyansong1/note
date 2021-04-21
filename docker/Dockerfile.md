@@ -311,9 +311,9 @@ RUN和CMD的区别
   # \表示续行
   ```
 
-  ![1563347022284](E:\git-workspace\note\images\docker\1563347022284.png)
+  ![1563347022284](..\images\docker\1563347022284.png)
 
-  ![1563347088365](E:\git-workspace\note\images\docker\1563347088365.png)
+  ![1563347088365](..\images\docker\1563347088365.png)
 
 我们的基础镜像一般是一个centos的系统，如下，是我们在一个基础镜像之上进行的构建镜像
 
@@ -503,20 +503,21 @@ CMD只有参数，没有命令的情况
   exec "$@"
   ```
   
+
 ![1563365567131](E:\git-workspace\note\images\docker\1563365567131.png)
-  
+
 我们登陆到容器
-  
+
 ![1563365482023](E:\git-workspace\note\images\docker\1563365482023.png)
-  
+
 在启动容器的时候指定参数
-  
+
 ```shell
   docker run --name myweb1 -e "PORT=8080" --rm myweb:v0.3-4
-  ```
-  
+```
+
 ![1563365533868](E:\git-workspace\note\images\docker\1563365533868.png)
-  
+
 我们查看环境变量
 
 ​	![1563365700442](E:\git-workspace\note\images\docker\1563365700442.png)
