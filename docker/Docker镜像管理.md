@@ -94,9 +94,9 @@ Docker镜像含有启动容器所需要的文件系统及其内容，因此，�
   
   ```
 
-  ![1562309355954](E:\git-workspace\note\images\docker\im6.png)
+  ![1562309355954](..\images\docker\im6.png)
 
-  ![1562309490734](E:\git-workspace\note\images\docker\im7.png)
+  ![1562309490734](..\images\docker\im7.png)
 
 
 
@@ -106,7 +106,7 @@ Docker镜像含有启动容器所需要的文件系统及其内容，因此，�
   * 基于容器制作
   * Docker Hub automated builds
 
-  ![1562309665480](E:\git-workspace\note\images\docker\im8.png)
+  ![1562309665480](..\images\docker\im8.png)
 
 
 
@@ -228,11 +228,11 @@ Docker镜像含有启动容器所需要的文件系统及其内容，因此，�
   
   ```
 
-  ![1563184282872](E:\git-workspace\note\images\docker\push.png)
+  ![1563184282872](..\images\docker\push.png)
 
   打标签`docker tag chenyansong/httpd:v0.2  registry.cn-beijing.aliyuncs.com/chenyansong/httpd:v0.2`
 
-  ![1563184338566](E:\git-workspace\note\images\docker\push2.png)
+  ![1563184338566](..\images\docker\push2.png)
 
   
 
@@ -244,7 +244,7 @@ Docker镜像含有启动容器所需要的文件系统及其内容，因此，�
   阿里云的默认密码是账户的登录密码
   ```
 
-  ![1563184718840](E:\git-workspace\note\images\docker\push3.png)
+  ![1563184718840](..\images\docker\push3.png)
 
   
 
