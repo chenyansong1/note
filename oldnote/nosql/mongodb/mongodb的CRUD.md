@@ -5,9 +5,10 @@ toc: true
 tags: [mongodb]
 ---
 
+[toc]
 
+# mongodb的官方文档
 
-mongodb的官方文档
 ```
 #在文档上都有详细的示例
 https://docs.mongodb.com/manual/
@@ -66,7 +67,7 @@ BulkWriteResult({
 >
 
 ```
- 
+
 
 
 # 2.删除
@@ -316,7 +317,7 @@ WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
  
  
 ```
- 
+
  
 
 
@@ -363,4 +364,3 @@ db.collection.find(查询表达式, {列1:1, 列2:1})
 >
  
 ```
- 
