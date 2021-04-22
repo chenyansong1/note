@@ -17,7 +17,7 @@
 
 清华的镜像：https://mirrors.tuna.tsinghua.edu.cn/
 
-![1562242831265](E:\git-workspace\note\images\docker\instruc3.png)
+![1562242831265](..\images\docker\instruc3.png)
 
 
 
