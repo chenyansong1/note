@@ -23,6 +23,23 @@ db.orders.aggregate( [
 
 
 
+---------------------
+
+
+    { "$group": {
+        "_id": {
+            "addr": "$addr",
+            "book": "$book"
+        },
+        "bookCount": { "$sum": 1 }
+    }},
+   
+   select * from books group by add, book;
+   
+
+
+------------------------
+
 
         # 查询限定数据量(默认500条数据)中的指定字段占比的top10
         mog_results = mgo.get_assets_data_clt().aggregate([
@@ -80,4 +97,30 @@ db.orders.aggregate( [
 
  }
 ```
+
+
+
+![image-20210429141343245](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210429141343245.png)
+
+
+
+![image-20210429141606212](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210429141606212.png)
+
+![image-20210429144641897](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210429144641897.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
