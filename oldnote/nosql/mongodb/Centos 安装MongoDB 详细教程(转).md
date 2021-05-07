@@ -30,7 +30,7 @@ mv mongodb-linux-x86_64-rhel62-3.2.7 mongodb
 ```
 
 配置环境变量
- 
+
 ```
 #vim /etc/profile
 export MONGODB_HOME=/usr/local/mongodb
@@ -144,10 +144,24 @@ db.createUser(
 
 #详细权限配置参考网址: [MongoDB 3.0 用户创建](http://www.cnblogs.com/zhoujinyi/p/4610050.html)
 
+
+# 客户端连接
+docker exec -it mongo /bin/bash
+
+# 连接
+mongo secdata
+
+# 验证
+db.auth("secdata", "4FRgB/+m)DDKI3_e")
+
+# 查询
+> db.assets_terminal_meta_tb.findOne()
+
+
 ```
 
 # 配置防火墙
- 
+
 将27017端口添加到防火墙中
 ```
 vi /etc/sysconfig/iptables
@@ -157,7 +171,7 @@ vi /etc/sysconfig/iptables
 ```
 
 # 注意
- 
+
 * 我们创建了用户, 这个时候要开启权限启动, 在配置文件中添加auth=true, 然后重启一下
 * MongoDB 默认没有用户权限的, 建议大家一定要设置, 这样数据才安全.
 
