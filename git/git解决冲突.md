@@ -73,3 +73,24 @@ git stash apply 0
 
 ```
 
+
+
+其他的步骤如下：
+
+```shell
+git pull----------------从远程仓库拉取代码到本地,如果出现冲突
+git stash---------------将你修改后的代码存储到本地(一个栈结构)-->一般会在git pull 拉取代码失败时使用
+git stash pop-----------将你stash到本地的代码与重新git pull下的代码合并
+git add XXX-------------将XXX文件加入到暂存区
+git commit -m "注释"----将暂存区的文件提交到本地仓库
+git push----------------将本地仓库的内容推送到远程仓库
+```
+
+> 之所以会有这样的效果是因为我在git pull代码之前就从来没有进行过一次git commit.
+
+
+
+参见：
+
+https://blog.csdn.net/nrsc272420199/article/details/85219097
+
