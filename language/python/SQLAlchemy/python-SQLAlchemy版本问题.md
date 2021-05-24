@@ -28,6 +28,7 @@ I have also encountered the same issue today. Most likely it is an issue with `S
 To check the version, I did:
 
 ```py
+#用这个命令查看一下现在正在使用的具体的版本是什么
 $ pip3 freeze
 ```
 
