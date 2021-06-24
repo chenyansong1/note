@@ -4,6 +4,10 @@
 
 转自：https://www.cnblogs.com/hoxis/p/10287903.html
 
+参见：https://docs.python.org/3/library/pdb.html
+
+
+
 pdb 调试器是 Python 标准库提供的，因此最为方便，不需要安装其他组件，直接 import 后就能使用。
 
 pdb 调试器提供了调试所需的大多数功能，如断点、单行步进、堆栈帧的检查等等。
