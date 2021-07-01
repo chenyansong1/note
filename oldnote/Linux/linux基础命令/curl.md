@@ -35,5 +35,30 @@ http_connect   The numerical code
 curl -XGET -u esuser:test@bd http://172.16.110.241:9200
 
 
+
+#get带参数
+curl http://test.echo.com/master?mod=1&act=2
+注意：在linux下，上面的例子PHP $_GET只能获取到参数mod；因为url中有&，其他参数获取不到，在linux中，&符号会使进程系统后台运行。
+有两种解决办法：
+①使用转义：
+curl http://test.echo.com/master?mod=1\&act=2
+②用双引号把url引起来：
+curl "http://test.echo.com/master?mod=1&act=2"
+
+
+curl中post传递参数(使用-d传递post参数)：
+①一维数组：
+curl -d "name=echo&mod=1&act=1" "http://test.echo.com/test.php"
+②多维数组（二维数组为例）：
+curl -d "user[name]=echo&mod=1&act=1" "http://test.echo.com/test.php"
+以上输出结果为：
+Array(
+[user] => Array(
+[name] => echo
+)
+[mod] => 1
+[act] => 1
+)
+
 ```
 
