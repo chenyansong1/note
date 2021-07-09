@@ -83,11 +83,7 @@ ArchLinux近期更新依赖问题解决【2020.1.13】
 :: 安装 xxx 破坏依赖 'xxx' （xxx 需要）
 ```
 
-
-
 有段时间没用Arch了，今天打开执行pacman -Syu 更新系统出现该问题，看起来应该是某些软件包新旧版本依赖的问题，此时要手动解决
-
-
 
 此时执行如下命令即可解决(两个xxx指的是上面对应的“**xxx需要**”)
 
@@ -95,9 +91,7 @@ ArchLinux近期更新依赖问题解决【2020.1.13】
 sudo pacman -Rdd xxx xxx && sudo pacman -Syu
 ```
 
-https://blog.csdn.net/qq_39828850/article/details/103963706
-
-
+参见：https://blog.csdn.net/qq_39828850/article/details/103963706
 
 
 
