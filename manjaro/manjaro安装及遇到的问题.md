@@ -2,9 +2,9 @@
 
 
 
-# 安装
+# 下载及安装
 
-
+download：https://manjaro.org/downloads/official/xfce/
 
 重启之后遇到的一个问题：因为是虚拟机安装，所以每次默认的boot都是iso那个镜像的boot，这样每次都是进入镜像的boot的安装界面，其实在启动的时候需要选择`虚拟机的硬盘的boot启动`
 
@@ -12,9 +12,7 @@
 
 
 
-
-
-# 配置软件源
+# 配置软件源及更新
 
 源的问题
 
@@ -40,19 +38,9 @@ sudo pacman-mirrors -i -c China -m rank
 
 
 
-
-
-# 分区
-
-https://linux.cn/article-11487-1.html
-
-
-
-# 更新
-
 选择一个延迟最低的镜像源即可。
 
-### **更新软件库**
+## 更新软件库
 
 执行命令，更新本机中软件库缓存：
 
@@ -60,7 +48,7 @@ https://linux.cn/article-11487-1.html
 sudo pacman -Syy
 ```
 
-### **更新系统**
+## 更新系统
 
 manjaro系统是滚动更新的，所以使用镜像安装出来的系统还需要更新到最新。执行以下命令以更新系统和软件：
 
@@ -95,6 +83,16 @@ sudo pacman -Rdd xxx xxx && sudo pacman -Syu
 
 
 
+
+
+# 分区[可选]
+
+https://linux.cn/article-11487-1.html
+
+
+
+
+
 # vim 报错
 
 会报glibc的version不对，解决的方式
@@ -102,6 +100,24 @@ sudo pacman -Rdd xxx xxx && sudo pacman -Syu
 ````shell
 sudo pacman -Syyu  #整个更新
 ````
+
+
+
+# win manger -- i3
+
+```shell
+sudo pacman -S i3-wm
+```
+
+
+
+# 终端-alacritty
+
+```shell
+sudo pacman -S alacritty
+```
+
+
 
 
 
