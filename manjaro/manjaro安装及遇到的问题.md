@@ -48,6 +48,57 @@ https://linux.cn/article-11487-1.html
 
 
 
+# 更新
+
+选择一个延迟最低的镜像源即可。
+
+### **更新软件库**
+
+执行命令，更新本机中软件库缓存：
+
+```text
+sudo pacman -Syy
+```
+
+### **更新系统**
+
+manjaro系统是滚动更新的，所以使用镜像安装出来的系统还需要更新到最新。执行以下命令以更新系统和软件：
+
+```text
+sudo pacman -Syyu
+```
+
+建议经常执行该命令，以保持系统一直处于最新的状态。
+
+> 此时可能会报错，如下：
+
+
+
+ArchLinux近期更新依赖问题解决【2020.1.13】
+更新时出现(xxx代表某个包)
+
+```shell
+错误：无法准备事务处理 (无法满足依赖关系)
+:: 安装 xxx 破坏依赖 'xxx' （xxx 需要）
+:: 安装 xxx 破坏依赖 'xxx' （xxx 需要）
+```
+
+
+
+有段时间没用Arch了，今天打开执行pacman -Syu 更新系统出现该问题，看起来应该是某些软件包新旧版本依赖的问题，此时要手动解决
+
+
+
+此时执行如下命令即可解决(两个xxx指的是上面对应的“**xxx需要**”)
+
+```shell
+sudo pacman -Rdd xxx xxx && sudo pacman -Syu
+```
+
+https://blog.csdn.net/qq_39828850/article/details/103963706
+
+
+
 
 
 # vim 报错
@@ -96,4 +147,6 @@ yay -Ss <package-name>
 ```text
 yay -S <package-name>
 ```
+
+
 
