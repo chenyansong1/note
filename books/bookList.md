@@ -151,7 +151,10 @@
 
   觉得言过其实了，看了大半
 
+
 - [x] [程序员的自我修养--链接、装载与库](https://book.douban.com/subject/3652388/)
+
+- [ ] [链接器和加载器](https://book.douban.com/subject/4083265/)
 
 * [x] [Linux内核源码剖析:TCP/IP实现](https://book.douban.com/subject/5914256/)
 * [ ] [图解HTTP](https://book.douban.com/subject/25863515/)
