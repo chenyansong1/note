@@ -161,4 +161,6 @@ yay -S <package-name>
 
 # 拼音
 https://blog.ruo-chen.wang/2020/05/install-fcitx5.html
+https://www.youtube.com/watch?v=C2mWxeiq9Wo
+输入法的切换：ctrl+space ,不是ctrl+shift
 
