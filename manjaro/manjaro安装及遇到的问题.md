@@ -159,4 +159,6 @@ yay -S <package-name>
 ```
 
 
+# 拼音
+https://blog.ruo-chen.wang/2020/05/install-fcitx5.html
 
