@@ -21,5 +21,17 @@ dpdk:https://download.csdn.net/download/Rong_Toa/13044743
 
 
 1. git use
-2.  链接器、符号解析、重定位：https://www.icourse163.org/course/NJU-1001625001?from=searchPage
 
+2.  链接器、符号解析、重定位：
+
+   https://www.icourse163.org/course/NJU-1001625001?from=searchPage
+
+   http://www.piginzoo.com/tech/2019/12/01/compile-link-load#%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6%E7%9A%84%E7%BB%93%E6%9E%84
+
+
+
+- [自己动手写编译器](https://pandolia.net/tinyc/index.html) » https://pandolia.net/tinyc/ch3_Pcode_syntax_a.html
+
+1.comment
+2.func and var transition
+3.cscope function
