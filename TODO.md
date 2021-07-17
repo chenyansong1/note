@@ -15,7 +15,8 @@ dpdk:https://download.csdn.net/download/Rong_Toa/13044743
 
 
 
-
+v:
+计算机系统基础（二）：程序的执行和存储访问 https://www.icourse163.org/learn/NJU-1001964032?tid=1450227475#/learn/announce
 
 
 
