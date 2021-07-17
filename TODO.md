@@ -30,7 +30,7 @@ v:
    http://www.piginzoo.com/tech/2019/12/01/compile-link-load#%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6%E7%9A%84%E7%BB%93%E6%9E%84
 
 
-计算理论导引
+计算理论导引 https://www.bilibili.com/video/BV1m4411p7nS?from=search&seid=12825803500996305916
 
 
 - [自己动手写编译器](https://pandolia.net/tinyc/index.html) » https://pandolia.net/tinyc/ch3_Pcode_syntax_a.html
