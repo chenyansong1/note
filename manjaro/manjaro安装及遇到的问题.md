@@ -126,6 +126,14 @@ sudo pacman -S alacritty
 https://zhuanlan.zhihu.com/p/19556676
 
 
+当输入命令时，会给出建议的命令（灰色部分）按键盘 →右方向键进行 补全
+
+如果感觉 → 补全不方便，还可以自定义补全的快捷键，比如可以设置为逗号补全，在 .zshrc 文件添加这句话即可。
+
+bindkey ',' autosuggest-accept
+
+
+
 
 # 安装yay
 
