@@ -38,3 +38,58 @@ v:
 1.comment
 2.func and var transition
 3.cscope function
+
+
+alacritty 不能粘贴
+
+ranger默认打开不是vim
+
+需要安装nvim
+
+
+
+协议分析：各种协议了解
+
+
+
+alacritty mouse 的支持
+
+
+
+
+
+gateway : 17 ----
+
+
+
+![wireshark network analysis](https://img1.doubanio.com/view/subject/l/public/s24636999.jpg)
+
+
+
+
+---
+
+vlc 播放视频时，声音不清晰
+
+
+
+中文输入法：https://wiki.archlinux.org/title/Fcitx5_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)
+
+```shell
+# 刷新i3
+mod + shirt + r
+```
+
+
+
+msf 下载
+
+![web penetration testing with kali linux](https://img9.doubanio.com/view/subject/l/public/s27398305.jpg)
+
+
+
+
+
+重读：网络协议栈
+
+
