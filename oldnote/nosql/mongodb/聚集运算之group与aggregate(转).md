@@ -1,7 +1,10 @@
+[toc]
+
 ---
 title: 聚集运算之group与aggregate(转)
 categories: mongodb   
 toc: true  
+
 tags: [mongodb]
 ---
 
@@ -153,7 +156,7 @@ group其实略微有点鸡肋,因为既然用到了mongodb,那复制集和分片
 
 聚合管道是一个基于数据处理管道概念的框架。通过使用一个多阶段的管道，将一组文档转换为最终的聚合结果。
 
- 
+
 ## 2.1.语法
 参考手册: http://docs.mongoing.com/manual-zh/core/aggregation-pipeline.html
 
@@ -423,7 +426,7 @@ db.books.aggregate(
 
 邮政编码数据集的聚合实例: http://docs.mongoing.com/manual-zh/tutorial/aggregation-zip-code-data-set.html
 
- 
+
 对用户爱好数据做聚合实例: http://docs.mongoing.com/manual-zh/tutorial/aggregation-with-user-preference-data.html
 
 转自:
